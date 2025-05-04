@@ -1,0 +1,49 @@
+# Node.js
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+build/
+public/build/
+
+# IDE and OS files
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Environment variables
+.env
+*.env.local
+*.env.*.local
+
+# Logs
+logs/
+*.log
+
+# Coverage reports
+coverage/
+
+# Dependency caches
+.npm/
+.yarn/
+
+# Backend specific
+packages/backend/node_modules/
+packages/backend/dist/
+packages/backend/.env
+
+# Frontend specific
+packages/frontend/node_modules/
+packages/frontend/build/
+packages/frontend/public/build/
+
+# Optional: If you use a specific database in development (SQLite)
+*.sqlite
+*.db
+
+# Optional: If you use a specific testing framework's cache
+.nyc_output/
+.jest/

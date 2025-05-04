@@ -1,0 +1,19 @@
+{
+  "name": "inventory-online-app",
+  "version": "1.0.0",
+  "description": "inventory online app allows you manage your inventory quickly and easy",
+  "private":true,
+  "scripts": {
+    "dev:backend": "npm run dev --workspace=packages/backend"
+  },
+  "workspaces":["packages/*"],
+  "author": "pedro bastidas (bastidaspedrodev@outlook.com)",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "cookie-parser": "^1.4.7"
+  }
+}
