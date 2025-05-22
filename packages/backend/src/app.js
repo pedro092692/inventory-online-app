@@ -1,4 +1,6 @@
 import express from 'express'
+import 'dotenv/config'
+import process from 'process'
 
 class Server {
     constructor(){
@@ -9,7 +11,8 @@ class Server {
     }
 
     routes(){
-        this.app.get('/', (req, res) => res.send('Hello world'))
+        const testDotEnv = process.env.TEST
+        this.app.get('/', (req, res) => res.send(`Hello world ${ testDotEnv}`))
     }
 
     start(){
