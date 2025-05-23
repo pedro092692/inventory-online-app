@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize'
+import { DataTypes, Model } from "sequelize"
 
 class Customer extends Model {
     // model relations
@@ -36,7 +36,7 @@ function initializeCustomer(sequelize) {
             phone: {
                 type: DataTypes.STRING, 
                 allowNull: false, 
-                defaultValue: '+58424000000', // phone number for venezuela 
+                defaultValue: "+58424000000", // phone number for venezuela 
                 validate: {
                     len: {
                         args: [12],
