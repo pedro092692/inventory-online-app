@@ -1,18 +1,27 @@
 import express from 'express'
-import 'dotenv/config'
-import process from 'process'
+import Database from './database/database.js'
 
 class Server {
     constructor(){
         this.app = express()
         this.port = 4000,
+        this.db = new Database()
+
+        //app middlewares
+        this.middlewares()
+        
+        // app routes
         this.routes()
 
     }
 
+    middlewares(){
+        this.app.use(express.urlencoded({ extended: true }))
+        this.app.use(express.json())
+    }
+
     routes(){
-        const testDotEnv = process.env.TEST
-        this.app.get('/', (req, res) => res.send(`Hello world ${ testDotEnv}`))
+        this.app.get('/', (req, res) => res.send(`Hello world`))
     }
 
     start(){
