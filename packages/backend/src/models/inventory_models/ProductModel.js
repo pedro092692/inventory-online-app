@@ -29,7 +29,7 @@ function initializeProduct(sequelize) {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false, 
                 validate: {
-                    isNumeric:{
+                    isNumeric: {
                         msg: "A valid price is required."
                     }
                 }
