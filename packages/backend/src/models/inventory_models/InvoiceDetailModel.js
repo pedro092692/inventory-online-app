@@ -20,7 +20,8 @@ function initializeInvoiceDetail(sequelize) {
                 references: {
                     model: "invoices",
                     key: "id"
-                }
+                },
+                onDelete: "CASCADE"
             },
 
             product_id: {
@@ -29,7 +30,8 @@ function initializeInvoiceDetail(sequelize) {
                 references: {
                     model: "products",
                     key: "id"
-                }
+                },
+                onUpdate: "CASCADE" 
             },
 
             quantity: {
