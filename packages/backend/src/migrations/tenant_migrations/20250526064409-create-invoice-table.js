@@ -28,6 +28,16 @@ export default {
           onUpdate: "CASCADE",
         },
 
+        seller_id: {
+          type: Sequelize.INTEGER,
+          allowNull: true,
+          references: {
+            model: "sellers",
+            key: "id"
+          },
+          onUpdate: "CASCADE",
+        },
+
         total: {
           type: Sequelize.DECIMAL(10, 2),
           allowNull: false,
