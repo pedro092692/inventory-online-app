@@ -30,7 +30,8 @@ function initializeInvoice(sequelize) {
                 references: {
                     model: "customers",
                     key: "id"
-                }
+                },
+                onUpdate: "CASCADE",
             },
 
             seller_id: {
@@ -39,7 +40,8 @@ function initializeInvoice(sequelize) {
                 references: {
                     model: "sellers",
                     key: "id"
-                }
+                },
+                onUpdate: "CASCADE",
             },
 
             total: {
