@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize'
+import { Sequelize } from "sequelize"
 import { Umzug, SequelizeStorage } from "umzug"
 import dotenv from "dotenv"
 import path from "path"
@@ -10,8 +10,8 @@ const __dirname = path.dirname(__filename)
 const envPath = path.resolve(__dirname, "../../.env")
 dotenv.config({ path: envPath })
 
-async function testMigration() {
-    // sequelize new instance
+async function testSeeder() {
+    // Sequelize new instance 
     const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
         host: process.env.DB_HOST,
         port: process.env.DB_PORT,
@@ -20,20 +20,20 @@ async function testMigration() {
         schema: "test_schema"  // set test schema for testing.
     })
 
-    // queryInterface for migration 
+    // QueryInterface for seeding
     const queryInterface = sequelize.getQueryInterface()
 
-    // umzug instance 
+    // Umzug instance for seeding
     const umzug = new Umzug({
         migrations: {
-            glob: "../migrations/tenant_migrations/*.js",
+            glob: "../seeders/*.js",
             resolve: ({ name, path, context }) => {
                 return {
                     name,
                     up: async () => {
-                        const migrationPath = pathToFileURL(path)
-                        const migration = ( await import(migrationPath)).default
-                        migration.up(context.queryInterface, Sequelize, context.schema)
+                        const seederPath = pathToFileURL(path)
+                        const seeder = (await import(seederPath)).default
+                        await seeder.up(context.queryInterface, Sequelize, context.schema)
                     }
                 }
             }
@@ -51,17 +51,19 @@ async function testMigration() {
         })
     })
 
-    const new_migrations = await umzug.pending()
-    if(new_migrations.length > 0) {
-        await umzug.up() // execute migrations
+    // new_seeds
+    const new_seeds = await umzug.pending()
+    if (new_seeds.length > 0) {
+        await umzug.up() // execute seeds
     }
 
-    console.log("Migrations were executed successfully.")
-    
+    console.log("Seeds were executed successfully.")
     await sequelize.close() // close the connection
 }
 
-await testMigration().then( () => process.exit(0) ).catch(error => {
-    console.log("Error executing migrations:", error)
+await testSeeder().then(() => {
+    console.log("Test seeder completed successfully.")
+}).catch((error) => {
+    console.error("Error during test seeder:", error)
     process.exit(1)
 })

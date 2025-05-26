@@ -9,7 +9,7 @@ export default {
            primaryKey: true
          },
 
-         id_numer: {
+         id_number: {
           type: Sequelize.INTEGER, // int for Venezuelan id
           allowNull: false, 
           validate: {
