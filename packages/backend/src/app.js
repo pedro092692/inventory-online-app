@@ -1,12 +1,12 @@
-import express from 'express'
-import Database from './database/database.js'
+import express from "express"
+import Database from "./database/database.js"
+import UserRoutes from "./routes/UserRoutes.js"
 
 class Server {
     constructor(){
         this.app = express()
         this.port = 4000,
         this.db = new Database()
-
         //app middlewares
         this.middlewares()
         
@@ -22,6 +22,9 @@ class Server {
 
     routes(){
         this.app.get('/', (req, res) => res.send(`Hello world`))
+
+        // user routes
+        this.app.use("/api/users", new UserRoutes().router)
     }
 
     start(){
