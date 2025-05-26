@@ -33,7 +33,7 @@ function initializeSeller(sequelize) {
                  }
              },
 
-            last_namme: {
+            last_name: {
                 type: DataTypes.STRING,
                 allowNull: false,
                 validate: {

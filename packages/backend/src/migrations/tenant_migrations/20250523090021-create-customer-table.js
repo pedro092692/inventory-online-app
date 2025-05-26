@@ -1,7 +1,7 @@
 export default {
   up: async (queryInterface, Sequelize, schema) => {
     await queryInterface.createTable(
-      'customers',
+      "customers",
       {
         id: {
            type: Sequelize.INTEGER,
@@ -44,7 +44,7 @@ export default {
 
   down: async (queryInterface, Sequelize, schema) => {
     await queryInterface.dropTable({
-      tableName: 'customers',
+      tableName: "customers",
       schema
     })
   }
