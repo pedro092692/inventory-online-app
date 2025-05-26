@@ -11,7 +11,7 @@ export default {
           date: new Date("2023-05-01T10:00:00Z"),
           customer_id: 1, // Assuming customer with ID 1 exists
           seller_id: 1, // Assuming seller with ID 1 exists
-          total: 250.00
+          total: 225.00
         },
         {
           id: 2,
@@ -25,7 +25,7 @@ export default {
           date: new Date("2023-05-03T14:45:00Z"),
           customer_id: 3, // Assuming customer with ID 3 exists
           seller_id: 3, // Assuming seller with ID 3 exists
-          total: 300.00
+          total: 420.00
         }
       ],
     )
