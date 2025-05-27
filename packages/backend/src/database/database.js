@@ -2,7 +2,8 @@ import 'dotenv/config'
 import process from 'process'
 import { Sequelize } from 'sequelize'
 import { initializeUser } from '../models/UserModel.js'
-import { initializeCustomer } from '../models/inventory_models/CustomerModel.js'
+import { initializeCustomer, Customer } from '../models/inventory_models/CustomerModel.js'
+import { initializeInvoice, Invoice } from '../models/inventory_models/InvoiceModel.js'
 
 let instance = null
 
@@ -29,6 +30,7 @@ class Database {
 
         this.testConnection()
         this.initializeModels()
+        this.initializeRelations()
 
         // save instance 
         instance = this
@@ -49,6 +51,12 @@ class Database {
 
         // only for test purposes 
         initializeCustomer(this.sequelize)
+        initializeInvoice(this.sequelize)
+    }
+
+    initializeRelations() {
+        Customer.associate({Invoice})
+        Invoice.associate({Customer})
     }
 }
 

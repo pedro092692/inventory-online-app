@@ -2,6 +2,12 @@ import { DataTypes, Model } from "sequelize"
 
 class Invoice extends Model {
     // model relations
+    static associate(model) {
+        this.belongsTo(model.Customer, {
+            foreignKey: "customer_id",
+            as: "customers"
+        })
+    }
 }
 
 function initializeInvoice(sequelize) {
@@ -60,6 +66,7 @@ function initializeInvoice(sequelize) {
             modelName: "Invoice",
             tableName: "invoices",
             timestamps: false,
+            schema: "test_schema" // only for test purposes
         }
     )
 }

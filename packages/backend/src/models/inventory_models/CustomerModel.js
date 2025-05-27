@@ -2,6 +2,12 @@ import { DataTypes, Model } from "sequelize"
 
 class Customer extends Model {
     // model relations
+    static associate(model) {
+        this.hasMany(model.Invoice, {
+            foreignKey: "id",
+            as: "invoices"
+        })
+    }
 }
 
 function initializeCustomer(sequelize) {

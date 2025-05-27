@@ -7,6 +7,7 @@ class CustomerController {
     async allCustomers(req, res) {
         try {
             const customers = await this.customerService.getAllCustomers()
+            
             res.status(200).json(customers)
         } catch (error) {
             res.status(500).json({ message: error.message })

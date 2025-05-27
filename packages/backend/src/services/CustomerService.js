@@ -1,28 +1,31 @@
 class CustomerService {
     constructor(model) {
-        this.User = model
+        this.Customer = model
     }
 
     async getAllCustomers() {
         try {
-            return await this.User.findAll({
+            return await this.Customer.findAll({
+                include: {
+                    association: "invoices"
+                },
                 limit: 10,
-                offset: 0
+                offset: 0,
             })
         } catch (error) {
-            throw new Error(`Error fetching users: ${error.message}`)
+            throw new Error(`Error fetching customers: ${error.message}`)
         }
     }
 
     async getCustomerById(id) {
         try {
-            const user = await this.User.findByPk(id)
+            const user = await this.Customer.findByPk(id)
             if (!user) {
-                throw new Error(`User with id ${id} not found`)
+                throw new Error(`Customer with id ${id} not found`)
             }
             return user
         } catch (error) {
-            throw new Error(`Error fetching user: ${error.message}`)
+            throw new Error(`Error fetching customer: ${error.message}`)
         }
     }
 }
