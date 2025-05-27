@@ -5,7 +5,7 @@ class Invoice extends Model {
     static associate(model) {
         this.belongsTo(model.Customer, {
             foreignKey: "customer_id",
-            as: "customers"
+            as: "customer"
         })
     }
 }
