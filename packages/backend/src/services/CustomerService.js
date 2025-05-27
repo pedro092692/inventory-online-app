@@ -1,9 +1,9 @@
-class UserService {
+class CustomerService {
     constructor(model) {
         this.User = model
     }
 
-    async getAllUsers() {
+    async getAllCustomers() {
         try {
             return await this.User.findAll({
                 limit: 10,
@@ -14,7 +14,7 @@ class UserService {
         }
     }
 
-    async getUserbyId(id) {
+    async getCustomerById(id) {
         try {
             const user = await this.User.findByPk(id)
             if (!user) {
@@ -27,4 +27,4 @@ class UserService {
     }
 }
     
-export default UserService
+export default CustomerService

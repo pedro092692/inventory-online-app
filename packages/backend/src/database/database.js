@@ -2,7 +2,7 @@ import 'dotenv/config'
 import process from 'process'
 import { Sequelize } from 'sequelize'
 import { initializeUser } from '../models/UserModel.js'
-
+import { initializeCustomer } from '../models/inventory_models/CustomerModel.js'
 
 let instance = null
 
@@ -46,6 +46,9 @@ class Database {
     initializeModels() {
         // initialize public models
         initializeUser(this.sequelize)
+
+        // only for test purposes 
+        initializeCustomer(this.sequelize)
     }
 }
 

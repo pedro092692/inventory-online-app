@@ -49,7 +49,8 @@ function initializeCustomer(sequelize) {
             sequelize,
             modelName: "Customer",
             tableName: "customers",
-            timestamps: false
+            timestamps: false,
+            schema: "test_schema" // only for test purposes
         }
     )
 }
