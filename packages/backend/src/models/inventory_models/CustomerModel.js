@@ -4,7 +4,7 @@ class Customer extends Model {
     // model relations
     static associate(model) {
         this.hasMany(model.Invoice, {
-            foreignKey: "id",
+            foreignKey: "customer_id",
             as: "invoices"
         })
     }
