@@ -1,6 +1,7 @@
 import express from "express"
 import Database from "./database/database.js"
-import UserRoutes from "./routes/CustomerRoutes.js"
+import CustomerRoutes from "./routes/CustomerRoutes.js"
+import InvoiceRoutes from "./routes/InvoicesRoutes.js"
 
 class Server {
     constructor(){
@@ -24,7 +25,10 @@ class Server {
         this.app.get('/', (req, res) => res.send(`Hello world`))
 
         // customer routes
-        this.app.use("/api/customers", new UserRoutes().router)
+        this.app.use("/api/customers", new CustomerRoutes().router)
+
+        // invoices routes
+        this.app.use("/api/invoices", new InvoiceRoutes().router)
     }
 
     start(){

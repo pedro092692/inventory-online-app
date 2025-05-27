@@ -1,12 +1,10 @@
 import { Router } from "express"
-import setPathToTestTenant from "../utils/setTestSchema.js"
 import CustomerController from "../Controllers/CustomerController.js"
 import {Customer} from "../models/inventory_models/CustomerModel.js"
 
-class UserRoutes {
+class CustomerRoutes {
     constructor() {
         this.router = Router()
-        this.router.use(setPathToTestTenant) // Middleware to set the schema for test tenant
         this.initializeRoutes()
 
     }
@@ -17,4 +15,4 @@ class UserRoutes {
     }
 }
 
-export default UserRoutes
+export default CustomerRoutes
