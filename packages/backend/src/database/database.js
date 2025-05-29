@@ -1,10 +1,11 @@
-import 'dotenv/config' 
-import process from 'process'
-import { Sequelize } from 'sequelize'
-import { initializeUser } from '../models/UserModel.js'
-import { initializeCustomer, Customer } from '../models/inventory_models/CustomerModel.js'
-import { initializeInvoice, Invoice } from '../models/inventory_models/InvoiceModel.js'
-import { initializeInvoiceDetail, InvoiceDetail } from '../models/inventory_models/InvoiceDetailModel.js'
+import "dotenv/config"
+import process from "process"
+import { Sequelize } from "sequelize"
+import { initializeUser } from "../models/UserModel.js"
+import { initializeCustomer, Customer } from "../models/inventory_models/CustomerModel.js"
+import { initializeInvoice, Invoice } from "../models/inventory_models/InvoiceModel.js"
+import { initializeInvoiceDetail, InvoiceDetail } from "../models/inventory_models/InvoiceDetailModel.js"
+import { initializeSeller, Seller } from "../models/inventory_models/SellerModel.js"
 
 let instance = null
 
@@ -54,13 +55,18 @@ class Database {
         initializeCustomer(this.sequelize)
         initializeInvoice(this.sequelize)        
         initializeInvoiceDetail(this.sequelize)
+        initializeSeller(this.sequelize)
     }
 
     initializeRelations() {
         Customer.associate({Invoice})
         Invoice.associate({Customer})
         Invoice.associateDetail({InvoiceDetail})
+        Invoice.associationSeller({Seller})
         InvoiceDetail.associationInvoice({Invoice})
+
+        Seller.associationSales({Invoice})
+
     }
 }
 

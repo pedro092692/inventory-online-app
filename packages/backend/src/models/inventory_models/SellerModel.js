@@ -2,6 +2,14 @@ import { DataTypes, Model } from "sequelize"
 
 class Seller extends Model {
     // model relations 
+
+    // invoices
+    static associationSales(model) {
+        this.hasMany(model.Invoice, {
+            foreignKey: "seller_id",
+            as: "sales"
+        })
+    }
 }
 
 function initializeSeller(sequelize) {
@@ -58,7 +66,8 @@ function initializeSeller(sequelize) {
             sequelize,
             modelName: "Seller",
             tableName: "sellers",
-            timestamps: false
+            timestamps: false,
+            schema: "test_schema" // only for test purposes
         }
     )
 }

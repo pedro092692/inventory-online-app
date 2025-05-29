@@ -18,6 +18,15 @@ class Invoice extends Model {
             as: "details"
         })
     }
+
+
+    // seller 
+    static associationSeller(model) {
+        this.belongsTo(model.Seller, {
+            foreignKey: "seller_id",
+            as: "seller"
+        })
+    }
 }
 
 function initializeInvoice(sequelize) {
