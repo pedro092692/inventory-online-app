@@ -4,6 +4,7 @@ import { Sequelize } from 'sequelize'
 import { initializeUser } from '../models/UserModel.js'
 import { initializeCustomer, Customer } from '../models/inventory_models/CustomerModel.js'
 import { initializeInvoice, Invoice } from '../models/inventory_models/InvoiceModel.js'
+import { initializeInvoiceDetail, InvoiceDetail } from '../models/inventory_models/InvoiceDetailModel.js'
 
 let instance = null
 
@@ -51,12 +52,15 @@ class Database {
 
         // only for test purposes 
         initializeCustomer(this.sequelize)
-        initializeInvoice(this.sequelize)
+        initializeInvoice(this.sequelize)        
+        initializeInvoiceDetail(this.sequelize)
     }
 
     initializeRelations() {
         Customer.associate({Invoice})
         Invoice.associate({Customer})
+        Invoice.associateDetail({InvoiceDetail})
+        InvoiceDetail.associationInvoice({Invoice})
     }
 }
 

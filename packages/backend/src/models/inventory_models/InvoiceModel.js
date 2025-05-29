@@ -2,10 +2,20 @@ import { DataTypes, Model } from "sequelize"
 
 class Invoice extends Model {
     // model relations
+
+    // customers
     static associate(model) {
         this.belongsTo(model.Customer, {
             foreignKey: "customer_id",
             as: "customer"
+        })
+    }
+
+    // invoice details
+    static associateDetail(model) {
+        this.hasMany(model.InvoiceDetail, {
+            foreignKey: "invoice_id",
+            as: "details"
         })
     }
 }

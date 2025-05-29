@@ -2,6 +2,7 @@ import { DataTypes, Model } from "sequelize"
 
 class Product extends Model {
     // model relations
+    
 }
 
 function initializeProduct(sequelize) {

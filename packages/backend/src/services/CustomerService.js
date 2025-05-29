@@ -7,7 +7,8 @@ class CustomerService {
         try {
             return await this.Customer.findAll({
                 include: {
-                    association: "invoices"
+                    association: "invoices",
+                    attributes: ["id", "date", "total"]
                 },
                 limit: 10,
                 offset: 0,

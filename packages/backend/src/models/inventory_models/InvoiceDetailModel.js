@@ -3,6 +3,14 @@ import { DataTypes, Model } from "sequelize"
 
 class InvoiceDetail extends Model {
     // model ralations
+
+    // invoices: 
+    static associationInvoice(model) {
+        this.belongsTo(model.Invoice, {
+            foreignKey: "invoice_id",
+            as: "invoice"
+        })
+    }
 }
 
 function initializeInvoiceDetail(sequelize) {
@@ -59,8 +67,9 @@ function initializeInvoiceDetail(sequelize) {
         {
             sequelize,
             modelName: "InvoiceDetail",
-            tableNamme: "InvoiceDetails",
-            timestamps: false
+            tableName: "invoice_details",
+            timestamps: false,
+            schema: "test_schema" // only for test purposes
         }
     )
 }

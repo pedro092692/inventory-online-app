@@ -6,14 +6,20 @@ class InvoiceService {
     async getAllInvoices() {
         try{
             return await this.Invoice.findAll({
-                include: {
-                    association: "customer", attributes: ["name", "phone"]
-                },
+                include: [
+                    {
+                        association: "customer", attributes: ["name", "phone"],
+                    },
+                    {
+                        association: "details", attributes: ["id", "unit_price"]
+                    }
+                ],
+
                 limit: 10,
                 offset: 0,
             })
         }catch(error) {
-            throw new Error(`Error fetching customers: ${error.message}`)
+            throw new Error(`Error fetching Invoices: ${error.message}`)
         }
     }
 }
