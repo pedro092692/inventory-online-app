@@ -19,6 +19,16 @@ class Invoice extends Model {
         })
     }
 
+    // products 
+    static associationProducts(model) {
+        this.belongsToMany(model.Product, {
+            through: "invoice_details",
+            foreignKey: "invoice_id",
+            timestamps: false,
+            as: "products"
+        }) 
+    }
+
 
     // seller 
     static associationSeller(model) {
@@ -27,6 +37,7 @@ class Invoice extends Model {
             as: "seller"
         })
     }
+
 }
 
 function initializeInvoice(sequelize) {

@@ -2,6 +2,18 @@ import { DataTypes, Model } from "sequelize"
 
 class Product extends Model {
     // model relations
+
+    // invoices details
+    static associationInvoiceDetails(model) {
+        this.belongsToMany(model.Invoice, {
+            through: "invoice_details",
+            foreignKey: "product_id",
+            timestamps: false,
+            as: "invoices"
+        })
+    }
+
+  
     
 }
 
@@ -61,6 +73,7 @@ function initializeProduct(sequelize) {
             modelName: "Product",
             tableName: "products",
             timestamps: false,
+            schema: "test_schema" // only for test purposes
         }
     )
 }

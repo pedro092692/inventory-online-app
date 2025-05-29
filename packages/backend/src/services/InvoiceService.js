@@ -1,5 +1,3 @@
-import { Association } from "sequelize";
-
 class InvoiceService {
     constructor(model) {
         this.Invoice = model;
@@ -11,6 +9,13 @@ class InvoiceService {
                 include: [
                     {
                         association: "customer", attributes: ["name", "phone"],
+                    },
+                    {
+                        association: "products",
+                        attributes: ["name"],
+                        through: {
+                            attributes: ["quantity", "unit_price"] 
+                        }
                     },
                     {
                         association: "seller", attributes: ["name"]

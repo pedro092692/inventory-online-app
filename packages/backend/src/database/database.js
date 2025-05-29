@@ -6,6 +6,7 @@ import { initializeCustomer, Customer } from "../models/inventory_models/Custome
 import { initializeInvoice, Invoice } from "../models/inventory_models/InvoiceModel.js"
 import { initializeInvoiceDetail, InvoiceDetail } from "../models/inventory_models/InvoiceDetailModel.js"
 import { initializeSeller, Seller } from "../models/inventory_models/SellerModel.js"
+import { initializeProduct, Product } from "../models/inventory_models/ProductModel.js"
 
 let instance = null
 
@@ -56,6 +57,8 @@ class Database {
         initializeInvoice(this.sequelize)        
         initializeInvoiceDetail(this.sequelize)
         initializeSeller(this.sequelize)
+        initializeProduct(this.sequelize)
+    
     }
 
     initializeRelations() {
@@ -63,9 +66,11 @@ class Database {
         Invoice.associate({Customer})
         Invoice.associateDetail({InvoiceDetail})
         Invoice.associationSeller({Seller})
+        Invoice.associationProducts({Product})
         InvoiceDetail.associationInvoice({Invoice})
-
+        InvoiceDetail.associationProducts({Product})
         Seller.associationSales({Invoice})
+        Product.associationInvoiceDetails({Invoice})
 
     }
 }
