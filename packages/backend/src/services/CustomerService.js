@@ -8,8 +8,9 @@ class CustomerService {
             return await this.Customer.findAll({
                 include: {
                     association: "invoices",
-                    attributes: ["id", "date", "total"]
+                    attributes: ["id", "date", "total"],
                 },
+                order: [["id", "ASC"], ["invoices", "id", "DESC"]],
                 limit: 10,
                 offset: 0,
             })
