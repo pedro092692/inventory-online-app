@@ -3,7 +3,7 @@ class SellerService {
         this.Seller = model
     }
 
-    async getAllSeller() {
+    async getAllSellers() {
         try {
             return await this.Seller.findAll({
                 limit: 10,
