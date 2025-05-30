@@ -2,6 +2,7 @@ import express from "express"
 import Database from "./database/database.js"
 import CustomerRoutes from "./routes/CustomerRoutes.js"
 import InvoiceRoutes from "./routes/InvoicesRoutes.js"
+import SellerRoutes from "./routes/SellerRoutes.js"
 
 class Server {
     constructor(){
@@ -29,6 +30,11 @@ class Server {
 
         // invoices routes
         this.app.use("/api/invoices", new InvoiceRoutes().router)
+
+        // seller routes
+        this.app.use("/api/sellers", new SellerRoutes().router)
+
+        // this.app.get("/api/sellers", (req, res) => res.send("test"))
     }
 
     start(){
