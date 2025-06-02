@@ -3,6 +3,7 @@ import Database from "./database/database.js"
 import CustomerRoutes from "./routes/CustomerRoutes.js"
 import InvoiceRoutes from "./routes/InvoicesRoutes.js"
 import SellerRoutes from "./routes/SellerRoutes.js"
+import ProductRoutes from "./routes/ProductRoutes.js"
 
 class Server {
     constructor(){
@@ -23,7 +24,7 @@ class Server {
     }
 
     routes(){
-        this.app.get('/', (req, res) => res.send(`Hello world`))
+        this.app.get("/", (req, res) => res.send(`Hello world`))
 
         // customer routes
         this.app.use("/api/customers", new CustomerRoutes().router)
@@ -34,7 +35,8 @@ class Server {
         // seller routes
         this.app.use("/api/sellers", new SellerRoutes().router)
 
-        // this.app.get("/api/sellers", (req, res) => res.send("test"))
+        // product routes
+        this.app.use("/api/products", new ProductRoutes().router)
     }
 
     start(){
