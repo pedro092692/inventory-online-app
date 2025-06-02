@@ -6,6 +6,11 @@ class SellerService {
     async getAllSellers() {
         try {
             return await this.Seller.findAll({
+                include: {
+                    association: "sales",
+                    attributes: ["id", "date", "total"]
+                },
+                order: [["sales", "id", "DESC"]],
                 limit: 10,
                 offset: 0
             })
