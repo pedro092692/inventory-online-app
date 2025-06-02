@@ -13,6 +13,15 @@ class InvoiceController {
             res.status(500).json({ message: error.message })
         }
     }
+
+    async dayInvoices(req, res) {
+        try {
+            const dayInvoices = await this.invoiceService.getDayInvoices()
+            res.status(200).json(dayInvoices)
+        }catch(error){
+            res.status(500).json({ message: error.message })
+        }
+    }
 }
 
 export default InvoiceController

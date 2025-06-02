@@ -10,7 +10,7 @@ class CustomerService {
                     association: "invoices",
                     attributes: ["id", "date", "total"],
                 },
-                order: [["id", "ASC"], ["invoices", "id", "DESC"]],
+                order: [["id", "DESC"], ["invoices", "id", "DESC"]],
                 limit: 10,
                 offset: 0,
             })
