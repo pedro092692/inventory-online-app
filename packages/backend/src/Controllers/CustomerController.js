@@ -1,27 +1,24 @@
 import CustomerService from "../services/CustomerService.js"
+import controllerErrorHandler from "../errors/controllerErrorHandler.js"
+
 class CustomerController {
+    #error = new controllerErrorHandler()
     constructor(model) {
         this.customerService = new CustomerService(model)
+        this.#error
     }
 
-    async allCustomers(req, res) {
-        try {
-            const customers = await this.customerService.getAllCustomers()
-            res.status(200).json(customers)
-        } catch (error) {
-            res.status(500).json({ message: error.message })
-        }
-    }
+  
+    allCustomers = this.#error.handler( async(req, res) => {
+        const customers = await this.customerService.getAllCustomers()
+        res.status(200).json(customers)
+    })
 
-    async getCustomerById(req, res) {
+    getCustomerById = this.#error.handler( async(req, res) => {
         const { id } = req.params
-        try {
-            const customer = await this.customerService.getCustomerById(id)
-            res.status(200).json(customer)
-        } catch (error) {
-            res.status(404).json({ message: error.message })
-        }
-    }
+        const customer = await this.customerService.getCustomerById(id)
+        res.status(200).json(customer)
+    })
 }
 
 export default CustomerController

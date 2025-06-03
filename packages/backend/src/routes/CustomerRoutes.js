@@ -12,6 +12,7 @@ class CustomerRoutes {
     initializeRoutes() {
         this.router.get("/", (req, res) => res.send("Customers Routes"))
         this.router.get("/all", (req, res) => new CustomerController(Customer).allCustomers(req, res))
+        this.router.get("/:id", (req, res) => new CustomerController(Customer).getCustomerById(req, res))
     }
 }
 

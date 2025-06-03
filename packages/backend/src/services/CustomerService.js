@@ -27,7 +27,7 @@ class CustomerService {
     }
 
     getCustomerById(id) {
-        return this.#error.handler("Read User", id, "User", async () => {
+        return this.#error.handler(["Read User", id, "User"], async () => {
             const user = await this.Customer.findByPk(id)
             return user
         })
