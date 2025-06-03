@@ -15,6 +15,12 @@ class UserController {
         const users = await this.User.getAllUser()
         res.status(200).json(users)
     })
+
+    getUser = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const user = await this.User.getUser(id)
+        res.status(200).json(user)
+    })
 }
 
 export default UserController

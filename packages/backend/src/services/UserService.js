@@ -21,7 +21,7 @@ class UserService {
 
     getUser(id) {
         return this.#error.handler(["Read user", id, "User"], async() => {
-            const user = await this.User.findByPk(id)
+            const user = await User.findByPk(id)
             return user
         })
     }
