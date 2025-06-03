@@ -1,16 +1,22 @@
+import ServiceErrorHandler from "../errors/ServiceErrorHandler.js";
 import { Op } from "sequelize"
 
 class InvoiceService {
+    
+    // instance of error handler 
+    #error = new ServiceErrorHandler()
+
     constructor(model) {
         this.Invoice = model;
+        this.#error
     }
 
-    async getAllInvoices() {
-        try{
-            return await this.Invoice.findAll({
+    getAllInvoices(limit=10, offset=0) {
+        return this.#error.handler("Read All invoices", async () => {
+            const invoices = await this.Invoice.findAll({
                 include: [
                     {
-                        association: "customer", attributes: ["name", "phone"],
+                        association: "customer", attributes: ["name", "phone"]
                     },
                     {
                         association: "products",
@@ -24,16 +30,15 @@ class InvoiceService {
                     }
                 ],
                 order: [["id", "DESC"]],
-                limit: 10,
-                offset: 0,
+                limit: limit,
+                offset: offset,
             })
-        }catch(error) {
-            throw new Error(`Error fetching Invoices: ${error.message}`)
-        }
+            return invoices
+        })
     }
 
-    async getDayInvoices() {
-        try {
+    getDayInvoices() {
+        return this.#error.handler("Read Day Invoices", async () => {
             // set today and tomorrow
             const today = new Date()
             today.setHours(0, 0, 0)
@@ -77,12 +82,12 @@ class InvoiceService {
                 offset: 0,
             })
 
-            return {totalSelled, todayInvoices}
+            if(totalSelled == null) {
+                return "No invoices for today."
+            }
 
-
-        }catch(error) {
-            throw new Error(`Error feching Invoices: ${error.message}`)
-        }
+            return { totalSelled, todayInvoices }
+        })
     }
 }
 
