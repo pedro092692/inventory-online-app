@@ -1,7 +1,7 @@
 import express from "express"
 import Database from "./database/database.js"
 import CustomerRoutes from "./routes/CustomerRoutes.js"
-import InvoiceRoutes from "./routes/InvoicesRoutes.js"
+import InvoiceRoutes from "./routes/InvoiceRoutes.js"
 import SellerRoutes from "./routes/SellerRoutes.js"
 import ProductRoutes from "./routes/ProductRoutes.js"
 

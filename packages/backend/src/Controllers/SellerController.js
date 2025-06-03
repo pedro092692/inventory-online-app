@@ -1,18 +1,20 @@
 import SellerService from "../services/SellerService.js"
+import controllerErrorHandler from "../errors/controllerErrorHandler.js"
 
 class SellerController {
+    // new instance of controller error handler
+    #error = new controllerErrorHandler()
+
     constructor(model) {
         this.sellerService = new SellerService(model)
+        this.#error
     }
 
-    async allSeller(req, res) {
-        try{
-            const sellers = await this.sellerService.getAllSellers()
-            res.status(200).json(sellers)
-        }catch(error) {
-            res.status(500).json({ message: error.message })
-        }
-    }
+
+    allSeller = this.#error.handler(async (req, res) => {
+        const sellers = await this.sellerService.getAllSellers()
+        res.status(200).json(sellers)
+    })
 }
 
 export default SellerController
