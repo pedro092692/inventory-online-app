@@ -1,4 +1,5 @@
 import { ValidationError } from "sequelize"
+import { NotFoundError } from "./NofoundError.js"
 
 class ServiceErrorHandler {
 
@@ -25,6 +26,10 @@ class ServiceErrorHandler {
         if(error instanceof ValidationError) {
             throw new ValidationError(`Faile ${kwargs[0]} errors: ${error.message}`)
             
+        }
+
+        if(error instanceof NotFoundError) {
+            throw new NotFoundError(`${kwargs[2]} with ID ${kwargs[1]} not found`)
         }
 
         throw new Error(`Error in: ${error.message}`)

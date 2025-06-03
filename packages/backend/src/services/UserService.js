@@ -1,3 +1,4 @@
+import { NotFoundError } from "../errors/NofoundError.js"
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
 import { User } from "../models/UserModel.js"
 
@@ -22,6 +23,9 @@ class UserService {
     getUser(id) {
         return this.#error.handler(["Read user", id, "User"], async() => {
             const user = await User.findByPk(id)
+            if(!user) {
+                throw new NotFoundError()
+            }
             return user
         })
     }

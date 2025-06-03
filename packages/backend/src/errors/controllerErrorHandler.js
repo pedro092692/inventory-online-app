@@ -1,3 +1,5 @@
+import { NotFoundError } from "./NofoundError.js"
+
 class controllerErrorHandler { 
     
     handler(fn) {
@@ -11,6 +13,9 @@ class controllerErrorHandler {
     }
 
     controllerError(error, res) {
+        if (error instanceof NotFoundError){
+            return res.status(404).json({error: error.message});
+        }
         return res.status(500).json({ error: error.message })
     }
 }
