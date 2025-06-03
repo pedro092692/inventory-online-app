@@ -11,6 +11,7 @@ class SellerRoutes{
     inicializateRoutes() {
         this.router.get("/", (req, res) => res.send("Seller routes"))
         this.router.get("/all", (req, res) => new SellerController(Seller).allSeller(req, res))
+        this.router.get("/:id", (req, res) => new SellerController(Seller).getSeller(req, res))
     }
 }
 
