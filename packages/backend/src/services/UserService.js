@@ -10,6 +10,20 @@ class UserService {
         this.#error
     }
 
+    createUser(email, password, roleId) {
+        return this.#error.handler(["Create User"], async() => {
+            const newUser = await User.create({
+                email: email,
+                password: password,
+                roleId: roleId
+            })
+
+            const user = {...newUser.toJSON()}
+            user.delete.password
+            return user
+        })  
+    }
+
     getAllUser(limit=10, offset=0) {
         return this.#error.handler(["Read All Users"], async() => {
             const users = await User.findAll({
