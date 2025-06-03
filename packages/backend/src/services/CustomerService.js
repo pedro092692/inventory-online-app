@@ -1,4 +1,5 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
+import { NotFoundError } from "../errors/NofoundError.js"
 
 class CustomerService {
 
@@ -28,8 +29,11 @@ class CustomerService {
 
     getCustomerById(id) {
         return this.#error.handler(["Read User", id, "User"], async () => {
-            const user = await this.Customer.findByPk(id)
-            return user
+            const customer = await this.Customer.findByPk(id)
+            if(!customer) {
+                throw new NotFoundError()
+            }
+            return customer
         })
     }
 }

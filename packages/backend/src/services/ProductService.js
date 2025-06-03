@@ -1,4 +1,5 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
+import { NotFoundError } from "../errors/NofoundError.js"
 
 class ProductService{
     // instance of error handler
@@ -22,6 +23,11 @@ class ProductService{
     getProduct(id) {
         return this.#error.handler(["Read Product", id, "Product"], async () => {
             const product = await this.Product.findByPk(id)
+
+            if(!product) {
+                throw new NotFoundError()
+            }
+
             return product
         })
     }

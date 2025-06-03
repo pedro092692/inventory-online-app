@@ -1,4 +1,5 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
+import { NotFoundError } from "../errors/NofoundError.js"
 
 class SellerService {
     // new instance of service error handler 
@@ -33,6 +34,11 @@ class SellerService {
                 },
                 order: [["sales", "id", "DESC"]],
             })
+
+            if(!seller) {
+                throw new NotFoundError()
+            }
+
             return seller
         })
     }
