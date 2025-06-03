@@ -4,6 +4,7 @@ import CustomerRoutes from "./routes/CustomerRoutes.js"
 import InvoiceRoutes from "./routes/InvoiceRoutes.js"
 import SellerRoutes from "./routes/SellerRoutes.js"
 import ProductRoutes from "./routes/ProductRoutes.js"
+import UserRoutes from "./routes/UserRoutes.js"
 
 class Server {
     constructor(){
@@ -37,6 +38,9 @@ class Server {
 
         // product routes
         this.app.use("/api/products", new ProductRoutes().router)
+
+        // users
+        this.app.use("/api/users", new UserRoutes().router)
     }
 
     start(){
