@@ -1,34 +1,36 @@
+import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
+
 class CustomerService {
+
+    // instance of error handler 
+    #error = new ServiceErrorHandler()
+    
     constructor(model) {
         this.Customer = model
+        this.#error
     }
 
-    async getAllCustomers() {
-        try {
-            return await this.Customer.findAll({
+    getAllCustomers(limit=10, offset=0) {
+        return this.#error.handler("Read All Users", async () => {
+            const customers = await this.Customer.findAll({
                 include: {
                     association: "invoices",
                     attributes: ["id", "date", "total"],
                 },
                 order: [["id", "DESC"], ["invoices", "id", "DESC"]],
-                limit: 10,
-                offset: 0,
+
+                limit: limit,
+                offset: offset
             })
-        } catch (error) {
-            throw new Error(`Error fetching customers: ${error.message}`)
-        }
+            return customers
+        })
     }
 
-    async getCustomerById(id) {
-        try {
+    getCustomerById(id) {
+        return this.#error.handler("Read User", id, "User", async () => {
             const user = await this.Customer.findByPk(id)
-            if (!user) {
-                throw new Error(`Customer with id ${id} not found`)
-            }
             return user
-        } catch (error) {
-            throw new Error(`Error fetching customer: ${error.message}`)
-        }
+        })
     }
 }
     
