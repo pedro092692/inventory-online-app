@@ -1,18 +1,23 @@
 import ProductService from "../services/ProductService.js";
+import controllerErrorHandler from "../errors/controllerErrorHandler.js";
 
 class ProductController{
+    // error controller new instace 
+    #error = new controllerErrorHandler()
+    
     constructor(model) {
         this.ProductService = new ProductService(model)
+        this.#error
     }
 
-    async allProducts(req, res) {
-        try {
-             const products = await this.ProductService.getAllProducts()
-             res.status(200).json(products)
-        }catch(error) {
-             res.status(500).json({ message: error.message })
-        }
-    }
+    allProducts = this.#error.handler( async(req, res) => {
+        const products = await this.ProductService.getAllProducts()
+        res.status(200).json(products)
+    })
+
+  
+
+    
 }
 
 export default ProductController
