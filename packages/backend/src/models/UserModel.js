@@ -51,7 +51,7 @@ function initializeUser(sequelize) {
             sequelize,
             modelName: "User",
             tableName: "users",
-            timestamps: false
+            timestamps: false,
         }
     )
 }
