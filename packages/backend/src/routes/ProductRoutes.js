@@ -11,6 +11,7 @@ class ProductRoutes {
     initializeRoutes() {
         this.router.get("/", (req, res) => res.send("Product routes"))
         this.router.get("/all", (req, res) => new ProductController(Product).allProducts(req, res))
+        this.router.get("/:id", (req, res) => new ProductController(Product).getProduct(req, res))
     }
 }
 
