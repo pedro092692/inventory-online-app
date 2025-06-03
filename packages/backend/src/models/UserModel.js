@@ -52,6 +52,7 @@ function initializeUser(sequelize) {
             modelName: "User",
             tableName: "users",
             timestamps: false,
+            schema: "public"
         }
     )
 }

@@ -9,9 +9,9 @@ class UserService {
         this.#error
     }
 
-    getAllUser(limit, offset) {
+    getAllUser(limit=10, offset=0) {
         return this.#error.handler(["Read All Users"], async() => {
-            const users = User.findAll({
+            const users = await User.findAll({
                 limit: limit,
                 offset: offset
             })
