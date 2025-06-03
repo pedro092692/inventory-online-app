@@ -11,7 +11,7 @@ class CustomerService {
     }
 
     getAllCustomers(limit=10, offset=0) {
-        return this.#error.handler("Read All Users", async () => {
+        return this.#error.handler(["Read All Users"], async () => {
             const customers = await this.Customer.findAll({
                 include: {
                     association: "invoices",

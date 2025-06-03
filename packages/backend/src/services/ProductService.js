@@ -10,7 +10,7 @@ class ProductService{
     }
 
     getAllProducts(limit=10, offset=0) {
-        return this.#error.handler("Read All Products", async () => {
+        return this.#error.handler(["Read All Products"], async () => {
             const products = await this.Product.findAll({
                 limit: limit,
                 offset: offset

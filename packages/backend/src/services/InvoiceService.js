@@ -12,7 +12,7 @@ class InvoiceService {
     }
 
     getAllInvoices(limit=10, offset=0) {
-        return this.#error.handler("Read All invoices", async () => {
+        return this.#error.handler(["Read All invoices"], async () => {
             const invoices = await this.Invoice.findAll({
                 include: [
                     {
