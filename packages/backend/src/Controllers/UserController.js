@@ -9,6 +9,12 @@ class UserController {
         this.User = new UserService()
         this.#error
     }
+
+    createUser = this.#error.handler( async(req, res) => {
+        const { email, password, roleId } = req.body
+        const user = await this.User.createUser(email, password, roleId)
+        res.status(201).json(user)
+    })
     
 
     getAllUsers = this.#error.handler( async(req, res) => {

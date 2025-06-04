@@ -1,4 +1,5 @@
 import { NotFoundError } from "./NofoundError.js"
+import { ValidationError } from "sequelize"
 
 class controllerErrorHandler { 
     
@@ -13,8 +14,12 @@ class controllerErrorHandler {
     }
 
     controllerError(error, res) {
-        if (error instanceof NotFoundError){
+        if(error instanceof NotFoundError) {
             return res.status(404).json({error: error.message});
+        }
+        
+        if(error instanceof ValidationError) {
+            return res.status(400).json({error: error.message})
         }
         return res.status(500).json({ error: error.message })
     }

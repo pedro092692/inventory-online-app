@@ -11,17 +11,16 @@ class UserService {
     }
 
     createUser(email, password, roleId) {
-        return this.#error.handler(["Create User"], async() => {
+        return this.#error.handler(["Create user"], async () => {
             const newUser = await User.create({
                 email: email,
                 password: password,
                 roleId: roleId
             })
-
             const user = {...newUser.toJSON()}
-            user.delete.password
+            delete user.password
             return user
-        })  
+        })
     }
 
     getAllUser(limit=10, offset=0) {

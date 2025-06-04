@@ -22,8 +22,8 @@ function initializeUser(sequelize) {
                         msg: "A valid email is required."
                     }
                 },
-                unique: {
-                    msg: "This email alreday has been taken."
+                unique:{
+                    msg: "This email already has been taken"
                 }
             },
 

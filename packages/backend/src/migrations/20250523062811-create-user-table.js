@@ -18,13 +18,9 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: false,
           validate:{
-            isEmail:{
-              msg: "A valid email is required."
-            }
+            isEmail: true
           },
-          unique:{
-            msg: "This email already has been taken."
-          }
+          unique: true
         },
 
         password:{
@@ -32,8 +28,7 @@ module.exports = {
           allowNull: false,
           validate:{
             len:{
-              args: [8],
-              msg: "The password at least must be 8 character long."
+              args: [8]
             }
           }
         },
