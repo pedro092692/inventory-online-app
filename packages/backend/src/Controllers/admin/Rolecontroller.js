@@ -1,5 +1,5 @@
 import RoleService from "../../services/admin/RoleService.js"
-import ControllerErrorHandler from "../../errors/controllerErrorHandler.js"\
+import ControllerErrorHandler from "../../errors/controllerErrorHandler.js"
 
 class RoleController {
     // new instance of controller error handler 

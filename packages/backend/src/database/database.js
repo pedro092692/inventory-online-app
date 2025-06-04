@@ -2,6 +2,7 @@ import "dotenv/config"
 import process from "process"
 import { Sequelize } from "sequelize"
 import { initializeUser } from "../models/UserModel.js"
+import { initializeRole } from "../models/RoleModel.js"
 import { initializeCustomer, Customer } from "../models/inventory_models/CustomerModel.js"
 import { initializeInvoice, Invoice } from "../models/inventory_models/InvoiceModel.js"
 import { initializeInvoiceDetail, InvoiceDetail } from "../models/inventory_models/InvoiceDetailModel.js"
@@ -51,6 +52,7 @@ class Database {
     initializeModels() {
         // initialize public models
         initializeUser(this.sequelize)
+        initializeRole(this.sequelize)
 
         // only for test purposes 
         initializeCustomer(this.sequelize)
