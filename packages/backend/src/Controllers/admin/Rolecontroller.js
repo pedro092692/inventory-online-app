@@ -14,6 +14,12 @@ class RoleController {
         const roles = await this.Role.getAllRoles()
         res.status(200).json(roles)
     })
+
+    getRole = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const role = await this.Role.getRole(id)
+        res.status(200).json(role)
+    })
 }
 
 export default RoleController

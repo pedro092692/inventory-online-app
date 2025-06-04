@@ -19,6 +19,16 @@ class RoleService {
             return roles
         })
     }
+
+    getRole(id) {
+        return this.#error.handler(["Read Role", id, "Role"], async() => {
+            const role = await Role.findByPk(id)
+            if(!role) {
+                throw new NotFoundError()
+            }
+            return role
+        })
+    }
 }
 
 export default RoleService
