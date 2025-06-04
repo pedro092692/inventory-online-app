@@ -10,7 +10,7 @@ class RoleService {
         this.#error
     }
 
-    getAllServices(limit=10, offset=0) {
+    getAllRoles(limit=10, offset=0) {
         return this.#error.handler(["Read All Roles"], async() => {
             const roles = await Role.findAll({
                 limit: limit,

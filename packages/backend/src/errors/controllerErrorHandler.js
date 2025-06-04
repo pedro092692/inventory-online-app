@@ -1,7 +1,7 @@
 import { NotFoundError } from "./NofoundError.js"
 import { ValidationError } from "sequelize"
 
-class controllerErrorHandler { 
+class ControllerErrorHandler { 
     
     handler(fn) {
         return async (req, res, next) => {
@@ -25,4 +25,4 @@ class controllerErrorHandler {
     }
 }
 
-export default controllerErrorHandler
+export default ControllerErrorHandler
