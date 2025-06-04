@@ -4,7 +4,7 @@ import CustomerRoutes from "./routes/CustomerRoutes.js"
 import InvoiceRoutes from "./routes/InvoiceRoutes.js"
 import SellerRoutes from "./routes/SellerRoutes.js"
 import ProductRoutes from "./routes/ProductRoutes.js"
-import UserRoutes from "./routes/UserRoutes.js"
+import UserRoutes from "./routes/admin/UserRoutes.js"
 
 class Server {
     constructor(){

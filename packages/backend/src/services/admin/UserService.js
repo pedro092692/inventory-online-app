@@ -1,6 +1,6 @@
-import { NotFoundError } from "../errors/NofoundError.js"
-import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
-import { User } from "../models/UserModel.js"
+import { NotFoundError } from "../../errors/NofoundError.js"
+import ServiceErrorHandler from "../../errors/ServiceErrorHandler.js"
+import { User } from "../../models/UserModel.js"
 
 class UserService {
     // new instance of service error handler 
@@ -25,6 +25,7 @@ class UserService {
     getAllUser(limit=10, offset=0) {
         return this.#error.handler(["Read All Users"], async() => {
             const users = await User.findAll({
+                attributes: ["id", "email", "roleId"],
                 limit: limit,
                 offset: offset
             })

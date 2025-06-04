@@ -1,5 +1,5 @@
-import UserService from "../services/UserService.js"
-import controllerErrorHandler from "../errors/controllerErrorHandler.js"
+import UserService from "../../services/admin/UserService.js"
+import controllerErrorHandler from "../../errors/controllerErrorHandler.js"
 
 class UserController {
     // new instance of controller error handler 
