@@ -27,6 +27,13 @@ class UserController {
         const user = await this.User.getUser(id)
         res.status(200).json(user)
     })
+
+    updateUser = this.#error.handler( async(req, res) => {
+        const userId = req.body.userId
+        const updates = req.body.updates
+        const updatedUser = await this.User.updateUser(userId, updates)
+        res.status(200).json(updatedUser)
+    })
 }
 
 export default UserController

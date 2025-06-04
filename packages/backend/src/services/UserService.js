@@ -17,8 +17,7 @@ class UserService {
                 password: password,
                 roleId: roleId
             })
-            const user = {...newUser.toJSON()}
-            delete user.password
+            const user = this.detelePassword(newUser)
             return user
         })
     }
@@ -46,9 +45,16 @@ class UserService {
     updateUser(userId, updates) {
         return this.#error.handler(["Update User", userId, "User"], async () => {
             const user = await this.getUser(userId)
-            const updatedUser = user.update(updates)
-            return updatedUser
+            const updatedUser = await user.update(updates)
+            const safeUser = this.detelePassword(updatedUser)
+            return safeUser
         })
+    }
+
+    detelePassword(obj) {
+        const objNotPassword ={...obj.toJSON()}
+        delete objNotPassword.password
+        return objNotPassword
     }
 
 }
