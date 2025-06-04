@@ -11,7 +11,7 @@ class UserService {
     }
 
     createUser(email, password, roleId) {
-        return this.#error.handler(["Create user"], async () => {
+        return this.#error.handler(["Create user"], async() => {
             const newUser = await User.create({
                 email: email,
                 password: password,
@@ -43,11 +43,20 @@ class UserService {
     }
 
     updateUser(userId, updates) {
-        return this.#error.handler(["Update User", userId, "User"], async () => {
+        return this.#error.handler(["Update User", userId, "User"], async() => {
             const user = await this.getUser(userId)
             const updatedUser = await user.update(updates)
             const safeUser = this.detelePassword(updatedUser)
             return safeUser
+        })
+    }
+
+    deleteUser(userId) {
+        return this.#error.handler(["Delete User", userId, "User"], async() => {
+            const user = await this.getUser(userId)
+            //delete user
+            await user.destory()
+            return 1
         })
     }
 
