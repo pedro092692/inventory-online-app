@@ -43,6 +43,14 @@ class UserService {
         })
     }
 
+    updateUser(userId, updates) {
+        return this.#error.handler(["Update User", userId, "User"], async () => {
+            const user = await this.getUser(userId)
+            const updatedUser = user.update(updates)
+            return updatedUser
+        })
+    }
+
 }
 
 export default UserService
