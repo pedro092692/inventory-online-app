@@ -27,7 +27,8 @@ function initializeRole(sequelize) {
             sequelize, 
             modelName: "Role",
             tableName: 'roles',
-            timestamps: false
+            timestamps: false,
+            schema: "public"
         }
     )
 }
