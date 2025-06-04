@@ -34,6 +34,13 @@ class UserController {
         const updatedUser = await this.User.updateUser(userId, updates)
         res.status(200).json(updatedUser)
     })
+
+    deleteUser = this.#error.handler( async(req, res) => {
+        const userId = req.body.userId
+        // delete user 
+        await this.User.deleteUser(userId)
+        res.status(200).json({message: "User has been deleted"});
+    })
 }
 
 export default UserController

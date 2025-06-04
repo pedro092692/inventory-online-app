@@ -55,7 +55,7 @@ class UserService {
         return this.#error.handler(["Delete User", userId, "User"], async() => {
             const user = await this.getUser(userId)
             //delete user
-            await user.destory()
+            await user.destroy()
             return 1
         })
     }
