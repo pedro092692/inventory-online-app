@@ -45,6 +45,14 @@ class ProductService{
         })
     }
 
+    updateProduct(productId, updates) {
+        return this.#error.handler(["Update Product", productId, "Product"], async() => {
+            const product = await this.Product.getProduct(productId)
+            const updatedProduct = product.update(updates)
+            return updatedProduct
+        })
+    }
+
 
 }
 
