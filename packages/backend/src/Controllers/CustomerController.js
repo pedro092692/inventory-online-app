@@ -8,6 +8,12 @@ class CustomerController {
         this.#error
     }
 
+    createCustomer = this.#error.handler( async(req, res) => {
+        const { id_number, name, phone } = req.body
+        const newCustomer = await this.customerService.createCustomer(id_number, name, phone)
+        res.status(200).json({newCustomer})
+    })
+
   
     allCustomers = this.#error.handler( async(req, res) => {
         const customers = await this.customerService.getAllCustomers()
