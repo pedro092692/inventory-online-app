@@ -29,10 +29,17 @@ class RoleController {
     })
 
     updateRole = this.#error.handler( async(req, res) => {
-        const roleId  = req.body.roleId
+        const roleId = req.body.roleId
         const updates = req.body.updates
         const updatedRole = await this.Role.updateRole(roleId, updates)
         res.status(200).json(updatedRole)
+    })
+
+    deleteRole = this.#error.handler( async(req, res) => {
+        const roleId = req.body.roleId
+        // delete role
+        await this.Role.deleteRole(roleId)
+        res.status(204).json({message: "Role has been deleted"})
     })
 }
 
