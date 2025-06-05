@@ -112,6 +112,14 @@ class InvoiceService {
             return invoice
         })
     }
+
+    updateInvoice(invoiceId, updates) {
+        return this.#error.handler(["Update Invoice", invoiceId, "Invoice"], async() => {
+            const invoice = await this.getInvoice(invoiceId)
+            const updatedInvoice = await invoice.update(updates)
+            return updatedInvoice
+        })
+    }
 }
 
 export default InvoiceService
