@@ -25,6 +25,13 @@ class CustomerController {
         const customer = await this.customerService.getCustomerById(id)
         res.status(200).json(customer)
     })
+
+    updateCustomer = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const updates = req.body
+        const updatedCustomer = await this.customerService.updateCustomer(id, updates)
+        res.status(200).json(updatedCustomer)
+    })
 }
 
 export default CustomerController
