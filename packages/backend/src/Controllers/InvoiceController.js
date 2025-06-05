@@ -33,6 +33,12 @@ class InvoiceController {
         res.status(200).json(updatedInvoice)
     })
 
+    deleteInvoice = this.#error.handler( async(req, res) => {
+        const invoiceId = req.body.invoiceId
+        // delete invoice 
+        await this.invoiceService.deleteInvoice(invoiceId)
+        res.status(204).json({})
+    })
     
 }
 
