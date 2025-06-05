@@ -14,6 +14,7 @@ class SellerRoutes{
         this.router.get("/:id", (req, res) => new SellerController(Seller).getSeller(req, res))
         this.router.post("/", (req, res) => new SellerController(Seller).createSeller(req, res))
         this.router.patch("/:id", (req, res) => new SellerController(Seller).updateSeller(req, res))
+        this.router.delete("/", (req, res) => new SellerController(Seller).deleteSeller(req, res))
     }
 }
 
