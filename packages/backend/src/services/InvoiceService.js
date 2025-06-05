@@ -1,4 +1,5 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js";
+import { NotFoundError } from "../errors/NofoundError.js"
 import { Op } from "sequelize"
 
 class InvoiceService {
@@ -99,6 +100,16 @@ class InvoiceService {
             }
 
             return { totalSelled, todayInvoices }
+        })
+    }
+
+    getInvoice(id) {
+        return this.#error.handler(["Read Invoice"], async() => {
+            const invoice = await this.Invoice.findByPk(id)
+            if(!invoice) {
+                throw new NotFoundError()
+            }
+            return invoice
         })
     }
 }
