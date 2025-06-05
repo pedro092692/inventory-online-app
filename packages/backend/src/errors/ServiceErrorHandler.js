@@ -20,8 +20,7 @@ class ServiceErrorHandler {
          2. Id of desired data (1, 8, 9)
          3. Model name (User, Invoice)
         */
-        
-         if(error instanceof ValidationError) { 
+        if(error instanceof ValidationError) { 
             throw new ValidationError(`Faile ${kwargs[0]} errors: ${error.message}`)
             
         }

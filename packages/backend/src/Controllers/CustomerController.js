@@ -14,7 +14,6 @@ class CustomerController {
         res.status(201).json({newCustomer})
     })
 
-  
     allCustomers = this.#error.handler( async(req, res) => {
         const customers = await this.customerService.getAllCustomers()
         res.status(200).json(customers)
