@@ -10,6 +10,19 @@ class ProductService{
         this.#error
     }
 
+    createProduct(barcode, name, purchase_price, selling_price, stock) {
+        return this.#error.handler(["Create Product"], async() => {
+            const newProduct = await this.Product.create({
+                barcode: barcode,
+                name: name, 
+                purchase_price: purchase_price, 
+                selling_price: selling_price,
+                stock
+            })
+            return newProduct
+        })
+    }
+
     getAllProducts(limit=10, offset=0) {
         return this.#error.handler(["Read All Products"], async () => {
             const products = await this.Product.findAll({
@@ -31,6 +44,8 @@ class ProductService{
             return product
         })
     }
+
+
 }
 
 export default ProductService
