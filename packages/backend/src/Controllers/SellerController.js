@@ -12,7 +12,7 @@ class SellerController {
 
     createSeller = this.#error.handler( async(req, res) => {
         const { id_number, name, last_name, address } = req.body
-        const seller = await this.SellerController.createSeller(id_number, name, last_name, address)
+        const seller = await this.sellerService.createSeller(id_number, name, last_name, address)
         res.status(200).json(seller)
     })
 
