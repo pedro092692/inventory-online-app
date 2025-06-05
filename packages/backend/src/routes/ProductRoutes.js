@@ -13,6 +13,7 @@ class ProductRoutes {
         this.router.get("/all", (req, res) => new ProductController(Product).allProducts(req, res))
         this.router.get("/:id", (req, res) => new ProductController(Product).getProduct(req, res))
         this.router.post("/", (req, res) => new ProductController(Product).createProduct(req, res))
+        this.router.patch("/:id", (req, res) => new ProductController(Product).updateProduct(req, res))
     }
 }
 
