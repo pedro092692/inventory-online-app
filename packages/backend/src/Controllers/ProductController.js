@@ -34,7 +34,11 @@ class ProductController{
         res.status(200).json(updatedProduct)
     })
 
-  
+    deleteProduct = this.#error.handler( async(req, res) => {
+        const productId = req.body.productId 
+        await this.ProductService.deleteProduct(productId)
+        res.status(204)
+    })
 
     
 }
