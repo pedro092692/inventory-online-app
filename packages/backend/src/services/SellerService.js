@@ -54,6 +54,14 @@ class SellerService {
             return seller
         })
     }
+
+    updateSeller(sellerId, updates) {
+        return this.#error.handler(["Update Seller", sellerId, "Seller"], async() => {
+            const seller = await this.getSeller(sellerId)
+            const updatedSeller = await seller.update(updates)
+            return updatedSeller
+        })
+    }
      
 }
 
