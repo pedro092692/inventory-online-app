@@ -32,6 +32,13 @@ class CustomerController {
         const updatedCustomer = await this.customerService.updateCustomer(id, updates)
         res.status(200).json(updatedCustomer)
     })
+
+    deleteCustomer = this.#error.handler( async(req, res) => {
+        const customerId = req.body.customerId
+        // delete customers 
+        await this.customerService.deleteCustomer(customerId)
+        res.status(204).json({})
+    })
 }
 
 export default CustomerController
