@@ -27,6 +27,13 @@ class ProductController{
         res.status(200).json(product)
     })
 
+    updateProduct = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const { updates } = req.body
+        const updatedProduct = this.ProductService.updateProduct(id, updates)
+        res.status(200).json(updatedProduct)
+    })
+
   
 
     
