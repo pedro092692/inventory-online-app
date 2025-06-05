@@ -14,6 +14,7 @@ class ProductRoutes {
         this.router.get("/:id", (req, res) => new ProductController(Product).getProduct(req, res))
         this.router.post("/", (req, res) => new ProductController(Product).createProduct(req, res))
         this.router.patch("/:id", (req, res) => new ProductController(Product).updateProduct(req, res))
+        this.router.delete("/", (req, res) => new ProductController(Product).deleteProduct(req, res))
     }
 }
 

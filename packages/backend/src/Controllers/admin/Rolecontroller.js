@@ -39,7 +39,7 @@ class RoleController {
         const roleId = req.body.roleId
         // delete role
         await this.Role.deleteRole(roleId)
-        res.status(204)
+        res.status(204).json({})
     })
 }
 
