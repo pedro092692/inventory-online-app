@@ -10,6 +10,18 @@ class SellerService {
         this.#error
     }
 
+    createSeller(id_number, name, last_name, address) {
+        return this.#error.handler(["Create Seller"], async() => {
+            const newSeller = await this.Seller.create({
+                id_number: id_number,
+                name: name,
+                last_name: last_name,
+                address: address
+            })
+            return newSeller
+        })
+    }
+
     getAllSellers(limit=10, offset=0) {
         return this.#error.handler(["Read All Sellers"], async() => {
             const sellers = await this.Seller.findAll({
