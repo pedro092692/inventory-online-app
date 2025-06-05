@@ -10,6 +10,13 @@ class RoleController {
         this.#error
     }
 
+    createRole = this.#error.handler( async(req, res) => {
+        const { name } = req.body
+        const role = await this.Role.createRole(name)
+        res.status(200).json(role)
+    })
+
+
     getAllRoles = this.#error.handler( async(req, res) => {
         const roles = await this.Role.getAllRoles()
         res.status(200).json(roles)
