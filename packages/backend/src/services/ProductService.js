@@ -53,6 +53,15 @@ class ProductService{
         })
     }
 
+    deleteProduct(productId) {
+        return this.#error.handler(["Delete Product", productId, "Product"], async() => {
+            const product = await this.getProduct(productId)
+            // delete product
+            await product.destroy()
+            return 1
+        })
+    }
+
 
 }
 
