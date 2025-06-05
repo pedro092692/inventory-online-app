@@ -11,6 +11,18 @@ class InvoiceService {
         this.#error
     }
 
+    createInvoice(customer_id, seller_id) {
+        return this.#error.handler(["Create Invoice"], async() => {
+            const newInvoice = await this.Invoice.create({
+                date: new Date(),
+                customer_id: customer_id, 
+                seller_id: seller_id, 
+                total: 0
+            })
+            return newInvoice
+        })
+    }
+
     getAllInvoices(limit=10, offset=0) {
         return this.#error.handler(["Read All invoices"], async () => {
             const invoices = await this.Invoice.findAll({
