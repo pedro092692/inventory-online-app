@@ -55,6 +55,15 @@ class CustomerService {
             return updatedCustomer
         })
     }
+
+    deleteCustomer(customerId) {
+        return this.#error.handler(["Delete Customer", customerId, "Customer"], async() => {
+            const customer = await this.getCustomerById(customerId)
+            // delete customer
+            await customer.destroy()
+            return 1
+        })
+    }
 }
     
 export default CustomerService
