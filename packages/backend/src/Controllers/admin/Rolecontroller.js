@@ -27,6 +27,13 @@ class RoleController {
         const role = await this.Role.getRole(id)
         res.status(200).json(role)
     })
+
+    updateRole = this.#error.handler( async(req, res) => {
+        const { roleId } = req.body.roleId
+        const { updates } = req.body.updates
+        const updatedRole = await this.Role.updateRole(roleId, updates)
+        res.status(200).json(updatedRole)
+    })
 }
 
 export default RoleController
