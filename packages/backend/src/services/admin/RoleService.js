@@ -46,6 +46,15 @@ class RoleService {
             return updatedRole
         })
     }
+
+    deleteRole(roleId) {
+        return this.#error.handler(["Delete Role", roleId, "Role"], async() => {
+            const role = await this.getRole(roleId)
+            // delete role 
+            await role.destroy()
+            return 1
+        })
+    }
 }
 
 export default RoleService
