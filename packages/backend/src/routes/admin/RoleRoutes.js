@@ -13,6 +13,7 @@ class RoleRoutes {
         this.router.get("/:id", (req, res) => new RoleController().getRole(req, res))
         this.router.post("/", (req, res) => new RoleController().createRole(req, res))
         this.router.patch("/", (req, res) => new RoleController().updateRole(req, res))
+        this.router.delete("/", (req, res) => new RoleController().deleteRole(req, res))
     }
 }
 
