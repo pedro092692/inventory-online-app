@@ -136,6 +136,15 @@ class InvoiceService {
             return updatedInvoice
         })
     }
+
+    deleteInvoice(invoiceId) {
+        return this.#error.handler(["Delete Invoice", invoiceId, "Invoice"], async() => {
+            const invoice = await this.getInvoice(invoiceId)
+            // delete invoice 
+            await invoice.destroy()
+            return 1
+        })
+    }
 }
 
 export default InvoiceService
