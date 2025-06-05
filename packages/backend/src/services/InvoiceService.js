@@ -104,7 +104,7 @@ class InvoiceService {
     }
 
     getInvoice(id) {
-        return this.#error.handler(["Read Invoice"], async() => {
+        return this.#error.handler(["Read Invoice", id, "Invoice"], async() => {
             const invoice = await this.Invoice.findByPk(id, {
                 include: [
                     {
