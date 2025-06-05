@@ -27,6 +27,13 @@ class SellerController {
         const seller = await this.sellerService.getSeller(id)
         res.status(200).json(seller)
     })
+
+    updateSeller = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const updates = req.body 
+        const updatedSeller = await this.sellerService.updateSeller(id, updates)
+        res.status(200).json(updatedSeller)
+    })
 }
 
 export default SellerController
