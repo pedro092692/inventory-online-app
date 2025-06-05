@@ -11,8 +11,19 @@ class CustomerService {
         this.#error
     }
 
+    createCustomer(id_number, name, phone) {
+        return this.#error.handler(["Cretae Customer"], async() => {
+            const newCustomer = await this.Customer.create({
+                id_number: id_number,
+                name: name, 
+                phoen: phone
+            })
+            return newCustomer
+        })
+    }
+
     getAllCustomers(limit=10, offset=0) {
-        return this.#error.handler(["Read All Users"], async () => {
+        return this.#error.handler(["Read All Customers"], async () => {
             const customers = await this.Customer.findAll({
                 include: {
                     association: "invoices",
@@ -28,7 +39,7 @@ class CustomerService {
     }
 
     getCustomerById(id) {
-        return this.#error.handler(["Read User", id, "User"], async () => {
+        return this.#error.handler(["Read Customer", id, "User"], async () => {
             const customer = await this.Customer.findByPk(id)
             if(!customer) {
                 throw new NotFoundError()
