@@ -62,6 +62,15 @@ class SellerService {
             return updatedSeller
         })
     }
+
+    deleteSeller(sellerId) {
+        return this.#error.handler(["Delete Seller", sellerId, "Seller"], async() => {
+            const seller = await this.getSeller(sellerId)
+            // delete seller 
+            await seller.destroy()
+            return 1
+        })
+    }
      
 }
 
