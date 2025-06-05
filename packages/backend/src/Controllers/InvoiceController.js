@@ -26,6 +26,13 @@ class InvoiceController {
         res.status(200).json(invoice)
     })
 
+    updateInvoice = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const updates = req.body
+        const updatedInvoice = await this.invoiceService.updateInvoice(id, updates)
+        res.status(200).json(updatedInvoice)
+    })
+
     
 }
 
