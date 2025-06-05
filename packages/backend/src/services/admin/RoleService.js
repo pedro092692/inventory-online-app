@@ -10,6 +10,17 @@ class RoleService {
         this.#error
     }
 
+
+    createRole(name) {
+        return this.#error.handler(["Create Role"], async() => {
+            const newRole = Role.create({
+                name: name
+            })
+            return newRole
+        })
+    }
+
+
     getAllRoles(limit=10, offset=0) {
         return this.#error.handler(["Read All Roles"], async() => {
             const roles = await Role.findAll({
