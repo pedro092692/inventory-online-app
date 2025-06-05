@@ -13,7 +13,7 @@ class ProductController{
     createProduct = this.#error.handler( async(req, res) => {
         const { barcode, name, purchase_price, selling_price, stock } = req.body
         const product = await this.ProductService.createProduct(barcode, name, purchase_price, selling_price, stock)
-        res.status(200).json(product)
+        res.status(201).json(product)
     })
 
     allProducts = this.#error.handler( async(req, res) => {

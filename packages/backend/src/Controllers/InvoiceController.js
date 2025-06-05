@@ -9,6 +9,12 @@ class InvoiceController {
         this.#error
     }
 
+    createInvoice = this.#error.handler( async(req, res) => {
+        const {customer_id, seller_id } = req.body
+        const newInvoice = await this.invoiceService.createInvoice(customer_id, seller_id)
+        res.status(201).json(newInvoice)
+    })
+
     allInvoices = this.#error.handler( async(req, res) => {
         const invoices = await this.invoiceService.getAllInvoices()
         res.status(200).json(invoices)
