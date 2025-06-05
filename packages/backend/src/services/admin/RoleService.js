@@ -10,7 +10,6 @@ class RoleService {
         this.#error
     }
 
-
     createRole(name) {
         return this.#error.handler(["Create Role"], async() => {
             const newRole = Role.create({
@@ -19,7 +18,6 @@ class RoleService {
             return newRole
         })
     }
-
 
     getAllRoles(limit=10, offset=0) {
         return this.#error.handler(["Read All Roles"], async() => {
@@ -38,6 +36,14 @@ class RoleService {
                 throw new NotFoundError()
             }
             return role
+        })
+    }
+
+    updateRole(roleId, updates) {
+        return this.#error.handler(["Update Role", roleId, "Role"], async() => {
+            const role = await this.getRole(roleId)
+            const updatedRole = await role.update(updates)
+            return updatedRole
         })
     }
 }
