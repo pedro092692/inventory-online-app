@@ -105,7 +105,23 @@ class InvoiceService {
 
     getInvoice(id) {
         return this.#error.handler(["Read Invoice"], async() => {
-            const invoice = await this.Invoice.findByPk(id)
+            const invoice = await this.Invoice.findByPk(id, {
+                include: [
+                    {
+                        association: "customer", attributes: ["name", "phone"]
+                    },
+                    {
+                        association: "products",
+                        attributes: ["name"],
+                        through: {
+                            attributes: ["quantity", "unit_price"] 
+                        }
+                    },
+                    {
+                        association: "seller", attributes: ["name"]
+                    }
+                ],
+            })
             if(!invoice) {
                 throw new NotFoundError()
             }
