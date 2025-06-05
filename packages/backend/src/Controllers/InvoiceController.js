@@ -1,27 +1,26 @@
+import ControllerErrorHandler from "../errors/controllerErrorHandler.js";
 import InvoiceService from "../services/InvoiceService.js";
 
 class InvoiceController {
+    // error controller new instace 
+    #error = new ControllerErrorHandler()
     constructor(model) {
         this.invoiceService = new InvoiceService(model)
+        this.#error
     }
 
-    async allInvoices(req, res) {
-        try{
-            const invoices = await this.invoiceService.getAllInvoices()
-            res.status(200).json(invoices)
-        }catch(error){
-            res.status(500).json({ message: error.message })
-        }
-    }
+    allInvoices = this.#error.handler( async(req, res) => {
+        const invoices = await this.invoiceService.getAllInvoices()
+        res.status(200).json(invoices)
+    })
+    
 
-    async dayInvoices(req, res) {
-        try {
-            const dayInvoices = await this.invoiceService.getDayInvoices()
-            res.status(200).json(dayInvoices)
-        }catch(error){
-            res.status(500).json({ message: error.message })
-        }
-    }
+    dayInvoices = this.#error.handler( async(req, res) => {
+        const dayInvoices = await this.invoiceService.getDayInvoices()
+        res.status(200).json(dayInvoices)
+    })
+
+    
 }
 
 export default InvoiceController

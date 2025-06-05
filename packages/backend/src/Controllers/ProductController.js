@@ -1,9 +1,9 @@
 import ProductService from "../services/ProductService.js";
-import controllerErrorHandler from "../errors/controllerErrorHandler.js";
+import ControllerErrorHandler from "../errors/controllerErrorHandler.js";
 
 class ProductController{
     // error controller new instace 
-    #error = new controllerErrorHandler()
+    #error = new ControllerErrorHandler()
     
     constructor(model) {
         this.ProductService = new ProductService(model)
