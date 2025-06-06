@@ -123,7 +123,7 @@ class InvoiceService {
                         association: "products",
                         attributes: ["name"],
                         through: {
-                            attributes: ["quantity", "unit_price"] 
+                            attributes: ["id", "quantity", "unit_price"] 
                         }
                     },
                     {
