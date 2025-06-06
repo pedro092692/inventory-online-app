@@ -1,4 +1,5 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js";
+import InvoiceDetailService from "./InvoiceDestailService.js"
 import { NotFoundError } from "../errors/NofoundError.js"
 import { Op } from "sequelize"
 
@@ -7,8 +8,9 @@ class InvoiceService {
     // instance of error handler 
     #error = new ServiceErrorHandler()
 
-    constructor(model) {
-        this.Invoice = model;
+    constructor(model, detailModel=null) {
+        this.Invoice = model
+        this.InvoiceDetail = new InvoiceDetailService(detailModel)
         this.#error
     }
 
@@ -21,6 +23,13 @@ class InvoiceService {
                 total: 0
             })
             return newInvoice
+        })
+    }
+
+    addInvoiceDetails(details) {
+        return this.#error.handler(["Add invoices details"], async() => {
+            const newDetails = await this.InvoiceDetail.createInvoiceDetail(details)
+            return newDetails
         })
     }
 

@@ -4,15 +4,35 @@ import InvoiceService from "../services/InvoiceService.js";
 class InvoiceController {
     // error controller new instace 
     #error = new ControllerErrorHandler()
-    constructor(model) {
-        this.invoiceService = new InvoiceService(model)
+    constructor(model, detailModel=null) {
+        this.invoiceService = new InvoiceService(model, detailModel)
         this.#error
     }
 
     createInvoice = this.#error.handler( async(req, res) => {
         const {customer_id, seller_id } = req.body
+        const details = req.body.details
+        
         const newInvoice = await this.invoiceService.createInvoice(customer_id, seller_id)
-        res.status(201).json(newInvoice)
+        
+        if(!details) {
+            throw new Error('Details is required')
+        }
+        
+        // add invoice_id to details 
+        for(const detail of details) {
+            detail["invoice_id"] = newInvoice.id
+        }
+
+        // create invoice details
+        await this.invoiceService.addInvoiceDetails(details)
+
+        // update total value 
+        const total = details.reduce( (sum, detail) => sum + (detail.quantity * detail.unit_price), 0)
+
+        const updatedInvoice = await this.invoiceService.updateInvoice(newInvoice.id, { total: total})
+
+        res.status(201).json(updatedInvoice)
     })
 
     allInvoices = this.#error.handler( async(req, res) => {
