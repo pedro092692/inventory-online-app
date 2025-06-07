@@ -1,5 +1,6 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
 import { NotFoundError } from "../errors/NofoundError.js"
+import { where } from "sequelize"
 
 class ProductService{
     // instance of error handler
@@ -59,6 +60,16 @@ class ProductService{
             // delete product
             await product.destroy()
             return 1
+        })
+    }
+
+    getProductStock(details) {
+        return this.#error.handler(["Read Stock Product"], async() => {
+            const products = await this.Product.findAll({
+                where: { id: details.map(detail => detail.product_id) },
+                attributes: ["id", "stock"]
+            })
+            return products
         })
     }
 
