@@ -72,6 +72,23 @@ class ProductService{
         })
     }
 
+    updateStock(details) {
+        return this.#error.handler(["Update Stock"], async() => {
+            await Promise.all(
+                details.map(detail => this.Product.increment(
+                    {
+                      stock: - detail.quantity
+                    },
+                    {
+                        where: {
+                            id: detail.product_id
+                        }
+                    }
+                ))
+            )
+        })
+    }
+
 
 }
 

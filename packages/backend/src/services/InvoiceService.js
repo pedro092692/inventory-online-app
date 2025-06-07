@@ -41,7 +41,13 @@ class InvoiceService {
                     throw new Error(`Not enougth stock for this product: ${product.id}, Avaliale stock: ${product.stock}`)
                 }
             }
+            // subtract stock from products table
+            await this.Product.updateStock(details)
+            
+
             const newDetails = await this.InvoiceDetail.createInvoiceDetail(details)
+            
+
             return newDetails
         })
     }
