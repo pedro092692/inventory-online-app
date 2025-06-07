@@ -31,6 +31,16 @@ class InvoiceService {
 
     addInvoiceDetails(details) {
         return this.#error.handler(["Add invoices details"], async() => {
+            // check for product stock
+            const produtscStock = await this.Product.getProductStock(details)
+            
+            // validate stock for each product
+            for(const detail of details) {
+                const product = produtscStock.find(p => p.id === detail.product_id)
+                if(!product || product.stock < detail.quantity) {
+                    throw new Error(`Not enougth stock for this product: ${product.id}, Avaliale stock: ${product.stock}`)
+                }
+            }
             const newDetails = await this.InvoiceDetail.createInvoiceDetail(details)
             return newDetails
         })
