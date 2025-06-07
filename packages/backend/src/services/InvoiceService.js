@@ -1,5 +1,6 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler.js";
+import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
 import InvoiceDetailService from "./InvoiceDestailService.js"
+import calculeTotalInvoice from "../utils/calculeTotal.js"
 import { NotFoundError } from "../errors/NofoundError.js"
 import { Op } from "sequelize"
 
@@ -141,7 +142,20 @@ class InvoiceService {
     updateInvoice(invoiceId, updates) {
         return this.#error.handler(["Update Invoice", invoiceId, "Invoice"], async() => {
             const invoice = await this.getInvoice(invoiceId)
-            const updatedInvoice = await invoice.update(updates)
+            let { customer_id, seller_id, total } = updates
+            // if data have details update invoice details
+            if(updates.details) {
+                // add invoice id to details
+                for(const detail of updates.details) {
+                    detail["invoice_id"] = invoiceId
+                }
+                // update invoice details
+                await this.InvoiceDetail.updateInvoiceDetail(updates.details)
+                
+                // update total value 
+                total = calculeTotalInvoice(updates.details)
+            }
+            const updatedInvoice = await invoice.update({customer_id, seller_id, total})
             return updatedInvoice
         })
     }

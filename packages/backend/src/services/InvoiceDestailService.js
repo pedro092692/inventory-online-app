@@ -20,9 +20,8 @@ class InvoiceDetailService {
 
     updateInvoiceDetail(updates) {
         return this.#error.handler(["Update Details"], async() => {
-            const updatedDetails = await this.InvoiceDetail.bulkCreate(updates, {
-                updateOnDuplicate: ["quantity", "unit_price"]
-            })
+            const updatedDetails = await this.InvoiceDetail.bulkCreate(updates, { 
+                updateOnDuplicate: ["quantity", "unit_price"]})
 
             return updatedDetails
         })

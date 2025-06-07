@@ -1,5 +1,6 @@
-import ControllerErrorHandler from "../errors/controllerErrorHandler.js";
-import InvoiceService from "../services/InvoiceService.js";
+import ControllerErrorHandler from "../errors/controllerErrorHandler.js"
+import calculeTotalInvoice from "../utils/calculeTotal.js"
+import InvoiceService from "../services/InvoiceService.js"
 
 class InvoiceController {
     // error controller new instace 
@@ -28,7 +29,7 @@ class InvoiceController {
         await this.invoiceService.addInvoiceDetails(details)
 
         // update total value 
-        const total = details.reduce( (sum, detail) => sum + (detail.quantity * detail.unit_price), 0)
+        const total = calculeTotalInvoice(details)
 
         const updatedInvoice = await this.invoiceService.updateInvoice(newInvoice.id, { total: total})
 
