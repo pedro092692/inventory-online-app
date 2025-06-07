@@ -89,6 +89,20 @@ class ProductService{
         })
     }
 
+    restoreStock(product_id, quantity) {
+         return this.#error.handler(["Update Stock"], async() => {
+            await this.Product.increment(
+                {
+                    stock: + quantity
+                },
+                {
+                    where: { id: product_id }
+                }
+            )
+            
+        })
+    }
+
 
 }
 

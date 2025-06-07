@@ -26,6 +26,13 @@ class InvoiceDetailService {
             return updatedDetails
         })
     }
+
+    getInvoiceDetail(id) {
+        return this.#error.handler(["Read invoice Detail"], async() => {
+            const detail = await this.InvoiceDetail.findByPk(id)
+            return detail
+        })
+    }
 }
 
 export default InvoiceDetailService

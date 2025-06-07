@@ -35,19 +35,13 @@ class InvoiceService {
             const produtscStock = await this.Product.getProductStock(details)
             
             // validate stock for each product
-            for(const detail of details) {
-                const product = produtscStock.find(p => p.id === detail.product_id)
-                if(!product || product.stock < detail.quantity) {
-                    throw new Error(`Not enougth stock for this product: ${product.id}, Avaliale stock: ${product.stock}`)
-                }
-            }
+            this.validateStockProduct(produtscStock, details)
+
             // subtract stock from products table
             await this.Product.updateStock(details)
             
-
             const newDetails = await this.InvoiceDetail.createInvoiceDetail(details)
             
-
             return newDetails
         })
     }
@@ -159,20 +153,56 @@ class InvoiceService {
 
     updateInvoice(invoiceId, updates) {
         return this.#error.handler(["Update Invoice", invoiceId, "Invoice"], async() => {
-            const invoice = await this.getInvoice(invoiceId)
+            let invoice = await this.getInvoice(invoiceId)
             let { customer_id, seller_id, total } = updates
             // if data have details update invoice details
             if(updates.details) {
                 // add invoice id to details
                 for(const detail of updates.details) {
                     detail["invoice_id"] = invoiceId
+
+                    // actual detail
+                    if(detail.id){
+                        const actualDetail = await this.InvoiceDetail.getInvoiceDetail(detail.id)
+
+                        // get product 
+                        const product = await this.Product.getProduct(actualDetail.product_id)
+
+                        // defference 
+                        const originalStock = product.stock + actualDetail.quantity
+                        if(detail.quantity <= originalStock) {
+                            // restore stock
+                            await this.Product.restoreStock(actualDetail.product_id, actualDetail.quantity)
+                            // update stock 
+                            await this.Product.updateProduct(actualDetail.product_id, { stock: originalStock - detail.quantity})
+                        }else{
+                            throw new Error('No enought stock for this quantity')
+                        }
+                        
+                        
+                    }
+                    
                 }
+
+                // check for product stock
+                // const produtscStock = await this.Product.getProductStock(updates.details)
+            
+                // validate stock for each product
+                // this.validateStockProduct(produtscStock, updates.details)
+
+                // subtract stock from products table
+                // await this.Product.updateStock(updates.details)
+
                 // update invoice details
                 await this.InvoiceDetail.updateInvoiceDetail(updates.details)
                 
                 // update total value 
                 total = calculeTotalInvoice(updates.details)
+
+                // update invoice with new products:
+                invoice = await this.getInvoice(invoiceId)
             }
+
             const updatedInvoice = await invoice.update({customer_id, seller_id, total})
             return updatedInvoice
         })
@@ -185,6 +215,16 @@ class InvoiceService {
             await invoice.destroy()
             return 1
         })
+    }
+
+    validateStockProduct(produtscStock, details) {
+    // validate stock for each product
+        for(const detail of details) {
+            const product = produtscStock.find(p => p.id === detail.product_id)
+            if(!product || product.stock < detail.quantity) {
+                throw new Error(`Not enougth stock for this product: ${product.id}, Avaliale stock: ${product.stock}`)
+            }
+        }
     }
 }
 
