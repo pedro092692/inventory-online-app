@@ -1,6 +1,5 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
 import { NotFoundError } from "../errors/NofoundError.js"
-import { where } from "sequelize"
 
 class ProductService{
     // instance of error handler

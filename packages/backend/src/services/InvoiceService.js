@@ -1,5 +1,6 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
 import InvoiceDetailService from "./InvoiceDestailService.js"
+import ProductService from "./ProductService.js"
 import calculeTotalInvoice from "../utils/calculeTotal.js"
 import { NotFoundError } from "../errors/NofoundError.js"
 import { Op } from "sequelize"
@@ -9,9 +10,10 @@ class InvoiceService {
     // instance of error handler 
     #error = new ServiceErrorHandler()
 
-    constructor(model, detailModel=null) {
+    constructor(model, detailModel=null, productModel=null) {
         this.Invoice = model
         this.InvoiceDetail = new InvoiceDetailService(detailModel)
+        this.Product = new ProductService(productModel)
         this.#error
     }
 
