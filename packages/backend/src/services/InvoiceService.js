@@ -1,7 +1,6 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
 import InvoiceDetailService from "./InvoiceDestailService.js"
 import ProductService from "./ProductService.js"
-import calculeTotalInvoice from "../utils/calculeTotal.js"
 import { NotFoundError } from "../errors/NofoundError.js"
 import { Op } from "sequelize"
 
@@ -201,10 +200,14 @@ class InvoiceService {
                 await this.InvoiceDetail.updateInvoiceDetail(updates.details)
                 
                 // update total value 
-                total = calculeTotalInvoice(updates.details)
+                // total = calculeTotalInvoice(updates.details)
 
                 // update invoice with new products:
                 invoice = await this.getInvoice(invoiceId)
+
+                total = this.calculeTotalFromInvoice(invoice.products)
+
+                
             }
 
             const updatedInvoice = await invoice.update({customer_id, seller_id, total})
@@ -266,6 +269,15 @@ class InvoiceService {
                 throw new Error(`Not enougth stock for this product: ${product.id}, Avaliale stock: ${product.stock}`)
             }
         }
+    }
+
+    calculeTotalFromInvoice(object) {
+        const total = object.map( product => {
+            const quantity = product.invoice_details.dataValues.quantity
+            const unitPrice = product.invoice_details.dataValues.unit_price
+            return quantity * unitPrice
+        })
+        return total.reduce(( sum, acc) => sum + acc, 0)
     }
 }
 
