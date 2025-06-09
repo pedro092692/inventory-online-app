@@ -221,6 +221,43 @@ class InvoiceService {
         })
     }
 
+    deleteInvoiceDetails(ids) {
+        return this.#error.handler(["Delete Detail", ids, "Detail"], async() => {
+            // get details
+            const details = await this.InvoiceDetail.getInvoiceDetails(ids)
+            if(!details || details.length === 0) {
+                throw new NotFoundError()
+            }
+            
+             // restore stock for each product
+            for(const detail of details) {
+                const product = await this.Product.getProduct(detail.product_id)
+                if(!product) {
+                    throw new NotFoundError(`Product with id ${detail.product_id} not found`)
+                }
+                // restore stock
+                await this.Product.restoreStock(detail.product_id, detail.quantity)
+            }
+
+            // delete details
+            await this.InvoiceDetail.deleteInvoiceDetail(ids)
+
+            // update invoice total
+            const invoice = await this.getInvoice(details[0].invoice_id)
+            
+            // calculate new total 
+            const newTotal = invoice.products.map( product => {
+                const quantity = product.invoice_details.dataValues.quantity
+                const unitPrice = product.invoice_details.dataValues.unit_price
+                return quantity * unitPrice
+            })
+
+            // update invoice with new total
+            await this.updateInvoice(invoice.id, { total: newTotal.reduce(( sum, acc) => sum + acc, 0) })
+            return 1
+        }) 
+    }
+ 
     validateStockProduct(produtscStock, details) {
     // validate stock for each product
         for(const detail of details) {

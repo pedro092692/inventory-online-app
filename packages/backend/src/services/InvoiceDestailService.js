@@ -33,6 +33,28 @@ class InvoiceDetailService {
             return detail
         })
     }
+
+    getInvoiceDetails(ids) {
+        return this.#error.handler(["Read Invoice Details"], async() => {
+            const details = await this.InvoiceDetail.findAll({
+                where: {
+                    id: ids
+                }
+            })
+            return details
+        })
+    }
+
+    deleteInvoiceDetail(ids) {
+        return this.#error.handler(["Delete Invoice Details"], async() => {
+            await this.InvoiceDetail.destroy({
+                where: {
+                    id: ids
+                }
+            })
+        })
+    }
+    
 }
 
 export default InvoiceDetailService
