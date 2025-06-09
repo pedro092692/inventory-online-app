@@ -178,20 +178,24 @@ class InvoiceService {
                         }else{
                             throw new Error('No enought stock for this quantity')
                         }
+                               
+                    }else {
+                        // if detail is new, check for product stock
+                        const product = await this.Product.getProduct(detail.product_id)
+                        if(!product) {
+                            throw new NotFoundError(`Product with id ${detail.product_id} not found`)
+                        }
                         
-                        
+                        // validate stock
+                        if(detail.quantity > product.stock) {
+                            throw new Error(`Not enought stock for this product: ${product.id}, Avaliale stock: ${product.stock}`)
+                        }
+
+                        // subtract stock from products table
+                        await this.Product.updateProduct(product.id, { stock: product.stock - detail.quantity })
                     }
                     
                 }
-
-                // check for product stock
-                // const produtscStock = await this.Product.getProductStock(updates.details)
-            
-                // validate stock for each product
-                // this.validateStockProduct(produtscStock, updates.details)
-
-                // subtract stock from products table
-                // await this.Product.updateStock(updates.details)
 
                 // update invoice details
                 await this.InvoiceDetail.updateInvoiceDetail(updates.details)
