@@ -2,6 +2,7 @@ import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
 import InvoiceDetailService from "./InvoiceDestailService.js"
 import ProductService from "./ProductService.js"
 import { NotFoundError } from "../errors/NofoundError.js"
+import verifyDetails from "../utils/VerifiyDetails.js"
 import { Op } from "sequelize"
 
 class InvoiceService {
@@ -30,6 +31,9 @@ class InvoiceService {
 
     addInvoiceDetails(details) {
         return this.#error.handler(["Add invoices details"], async() => {
+            // verify details
+            verifyDetails(details)
+
             // check for product stock
             const produtscStock = await this.Product.getProductStock(details)
             
@@ -152,10 +156,14 @@ class InvoiceService {
 
     updateInvoice(invoiceId, updates) {
         return this.#error.handler(["Update Invoice", invoiceId, "Invoice"], async() => {
+            
             let invoice = await this.getInvoice(invoiceId)
             let { customer_id, seller_id, total } = updates
             // if data have details update invoice details
             if(updates.details) {
+                 // verify details
+                verifyDetails(updates.details, true)
+
                 // add invoice id to details
                 for(const detail of updates.details) {
                     detail["invoice_id"] = invoiceId
