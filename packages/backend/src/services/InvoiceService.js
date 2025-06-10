@@ -146,6 +146,7 @@ class InvoiceService {
                         association: "seller", attributes: ["name"]
                     }
                 ],
+                order: [["products", "name", "ASC"]]
             })
             if(!invoice) {
                 throw new NotFoundError()
