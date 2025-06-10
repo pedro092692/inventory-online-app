@@ -45,6 +45,17 @@ class InvoiceDetailService {
         })
     }
 
+    getDetailByInvoiceId(invoiceId) {
+        return this.#error.handler(["Read Invoice Details by Invoice ID"], async() => {
+            const details = await this.InvoiceDetail.findAll({
+                where: {
+                    invoice_id: invoiceId
+                }
+            })
+            return details
+        })
+    }
+
     deleteInvoiceDetail(ids) {
         return this.#error.handler(["Delete Invoice Details"], async() => {
             await this.InvoiceDetail.destroy({

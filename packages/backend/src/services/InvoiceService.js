@@ -161,13 +161,13 @@ class InvoiceService {
                     detail["invoice_id"] = invoiceId
 
                     // actual detail
-                    if(detail.id){
+                    if(detail.id) {
                         const actualDetail = await this.InvoiceDetail.getInvoiceDetail(detail.id)
 
                         // get product 
                         const product = await this.Product.getProduct(actualDetail.product_id)
 
-                        // defference 
+                        // difference between actual detail and new detail
                         const originalStock = product.stock + actualDetail.quantity
                         if(detail.quantity <= originalStock) {
                             // restore stock
@@ -179,6 +179,15 @@ class InvoiceService {
                         }
                                
                     }else {
+                        // check if product already exist in details
+                        const invoiceDetails = await this.InvoiceDetail.getDetailByInvoiceId(invoiceId)
+                        let productsId = invoiceDetails.map(detail => detail.product_id)
+                    
+                        if(productsId.includes(detail.product_id)) {
+                            throw new Error(`Product with id ${detail.product_id} already exists in invoice details add id to details.`)
+                            
+                        }
+    
                         // if detail is new, check for product stock
                         const product = await this.Product.getProduct(detail.product_id)
                         if(!product) {
@@ -189,25 +198,21 @@ class InvoiceService {
                         if(detail.quantity > product.stock) {
                             throw new Error(`Not enought stock for this product: ${product.id}, Avaliale stock: ${product.stock}`)
                         }
-
+                        
                         // subtract stock from products table
                         await this.Product.updateProduct(product.id, { stock: product.stock - detail.quantity })
-                    }
-                    
+                    }                 
                 }
 
                 // update invoice details
                 await this.InvoiceDetail.updateInvoiceDetail(updates.details)
                 
                 // update total value 
-                // total = calculeTotalInvoice(updates.details)
-
                 // update invoice with new products:
                 invoice = await this.getInvoice(invoiceId)
 
+                // caculete total
                 total = this.calculeTotalFromInvoice(invoice.products)
-
-                
             }
 
             const updatedInvoice = await invoice.update({customer_id, seller_id, total})
@@ -260,7 +265,9 @@ class InvoiceService {
             return 1
         }) 
     }
- 
+    
+    // utils
+
     validateStockProduct(produtscStock, details) {
     // validate stock for each product
         for(const detail of details) {
