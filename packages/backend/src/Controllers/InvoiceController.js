@@ -49,23 +49,50 @@ class InvoiceController {
         res.status(201).json(updatedInvoice)
     })
 
+    /**
+     * Retrieves all invoices
+     * @param {Object} req - request object
+     * @param {Object} res - response object
+     * @returns {Promise<void>} - returns a list of all invoices in the response
+     * @throws {ServiceError} - throws an error if invoices could not be retrieved
+     */
     allInvoices = this.#error.handler( async(req, res) => {
         const invoices = await this.invoiceService.getAllInvoices()
         res.status(200).json(invoices)
     })
     
-
+    /**
+     * Retrieves all invoices for the current day
+     * @param {Object} req - request object
+     * @param {Object} res - response object
+     * @returns {Promise<void>} - returns a list of all invoices for the current day in the response
+     * @throws {ServiceError} - throws an error if invoices could not be retrieved
+     */
     dayInvoices = this.#error.handler( async(req, res) => {
         const dayInvoices = await this.invoiceService.getDayInvoices()
         res.status(200).json(dayInvoices)
     })
 
+    /**
+     * Retrieves an invoice by its ID
+     * @param {Object} req - request object containing the invoice ID in the params
+     * @param {Object} res - response object
+     * @returns {Promise<void>} - returns the invoice in the response
+     * @throws {ServiceError} - throws an error if the invoice could not be retrieved
+     */
     getInvoice = this.#error.handler( async(req, res) => {
         const { id } = req.params
         const invoice = await this.invoiceService.getInvoice(id)
         res.status(200).json(invoice)
     })
 
+    /**
+     * Updates an invoice by its ID
+     * @param {Object} req - request object containing the invoice ID in the params and updates in the body
+     * @param {Object} res - response object
+     * @returns {Promise<void>} - returns the updated invoice in the response
+     * @throws {ServiceError} - throws an error if the invoice could not be updated
+     */
     updateInvoice = this.#error.handler( async(req, res) => {
         const { id } = req.params
         const updates = req.body
@@ -73,6 +100,13 @@ class InvoiceController {
         res.status(200).json(updatedInvoice)
     })
 
+    /**
+     * Deletes an invoice by its ID
+     * @param {Object} req - request object containing the invoice ID in the body
+     * @param {Object} res - response object
+     * @returns {Promise<void>} - returns a success status in the response if the invoice is deleted
+     * @throws {ServiceError} - throws an error if the invoice could not be deleted
+     */
     deleteInvoice = this.#error.handler( async(req, res) => {
         const invoiceId = req.body.invoiceId
         // delete invoice 
@@ -80,6 +114,13 @@ class InvoiceController {
         res.status(204).json({})
     })
 
+    /**
+     * Deletes an invoice detail by its ID
+     * @param {Object} req - request object containing the detail ID in the body
+     * @param {Object} res - response object
+     * @returns {Promise<void>} - returns a success status in the response if the detail is deleted
+     * @throws {ServiceError} - throws an error if the detail could not be deleted
+     */
     deleteInvoiceDetail = this.#error.handler( async(req, res) => {
         const { id } = req.body
         // delete invoice detail
