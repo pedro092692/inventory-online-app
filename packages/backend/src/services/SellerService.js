@@ -99,6 +99,14 @@ class SellerService {
         })
     }
 
+    /**
+     * Deletes a seller by their ID.
+     * @description Deletes the seller with the given ID.
+     * @param {Number} sellerId - ID of the seller to delete
+     * @throws {NotFoundError} - throws an error if the seller with the given ID does not exist
+     * @throws {ServiceError} - throws an error if the seller could not be deleted
+     * @returns {Promise<Number>} - returns 1 if the seller was deleted successfully
+     */
     deleteSeller(sellerId) {
         return this.#error.handler(["Delete Seller", sellerId, "Seller"], async() => {
             const seller = await this.getSeller(sellerId)
