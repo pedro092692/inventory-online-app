@@ -55,6 +55,13 @@ class InvoiceDetailService {
         })
     }
 
+    /**
+     * 
+     * @param {Array} - ids - An array of invoice detail IDs to retrieve.
+     * Retrieves invoice details by their IDs. 
+     * @returns <Promise<Array>} - A promise that resolves to an array of invoice detail objects.
+     * @throws {ServiceError} - If an error occurs during the retrieval operation.
+     */
     getInvoiceDetails(ids) {
         return this.#error.handler(["Read Invoice Details"], async() => {
             const details = await this.InvoiceDetail.findAll({
