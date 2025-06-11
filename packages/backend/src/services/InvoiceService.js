@@ -95,14 +95,20 @@ class InvoiceService {
     }
 
     getDayInvoices() {
+        /*
+            This function get all invoice of today
+            @returns {Object} - object with total selled and today invoices
+        */
         return this.#error.handler("Read Day Invoices", async () => {
-            // set today and tomorrow
+            // set today date to 00:00:00
             const today = new Date()
             today.setHours(0, 0, 0)
 
+            // set tomorrow date to 00:00:00
             const tomorrow = new Date(today)
             tomorrow.setDate(tomorrow.getDate() + 1)
-
+            
+            // create query to get total selled today
             const totalSelled = await this.Invoice.sum("total", {
                 where: {
                     date: {
@@ -111,6 +117,7 @@ class InvoiceService {
                     }
                 }
             })
+            // create query to get all invoices of today
 
             const todayInvoices = await this.Invoice.findAll({
                 where: {
@@ -138,6 +145,8 @@ class InvoiceService {
                 limit: 10,
                 offset: 0,
             })
+
+            // if no invoices found return message
 
             if(totalSelled == null) {
                 return "No invoices for today."
