@@ -10,6 +10,14 @@ class UserService {
         this.#error
     }
 
+    /**
+     * Creates a new user with the given email, password, and roleId.
+     * @param {string} email - The email of the user.
+     * @param {string} password - The password of the user.
+     * @param {number} roleId - The role ID of the user.
+     * @return {Promise<Object>} - A promise that resolves to the created user object without the password.
+     * @throws {ServiceError} - If an error occurs during user creation.
+     */
     createUser(email, password, roleId) {
         return this.#error.handler(["Create user"], async() => {
             const newUser = await User.create({
