@@ -78,6 +78,19 @@ class SellerService {
         })
     }
 
+    /**
+     * Updates a seller by their ID.
+     * @description Updates the seller with the given ID using the provided updates.
+     * @param {Number} sellerId - ID of the seller to update
+     * @param {Object} updates - object containing the updates to apply
+     * @param {String} updates.id_number - id number of the seller
+     * @param {String} updates.name - name of the seller
+     * @param {String} updates.last_name - last name of the seller
+     * @param {String} updates.address - address of the seller
+     * @throws {NotFoundError} - throws an error if the seller with the given ID does not exist
+     * @throws {ServiceError} - throws an error if the seller could not be updated
+     * @returns {Promise<Object>} - returns the updated seller
+     */
     updateSeller(sellerId, updates) {
         return this.#error.handler(["Update Seller", sellerId, "Seller"], async() => {
             const seller = await this.getSeller(sellerId)
