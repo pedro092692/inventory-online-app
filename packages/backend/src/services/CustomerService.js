@@ -30,6 +30,13 @@ class CustomerService {
         })
     }
 
+    /**
+     * Retrieves all customers with their associated invoices.
+     * @param {number} limit - The maximum number of customers to retrieve.
+     * @param {number} offset - The number of customers to skip before starting to retrieve.
+     * @return {Promise<Array>} - A promise that resolves to an array of customer objects with their invoices.
+     * @throws {ServiceError} - If an error occurs during customer retrieval.
+     */
     getAllCustomers(limit=10, offset=0) {
         return this.#error.handler(["Read All Customers"], async () => {
             const customers = await this.Customer.findAll({
