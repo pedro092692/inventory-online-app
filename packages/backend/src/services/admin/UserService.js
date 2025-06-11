@@ -65,6 +65,13 @@ class UserService {
         })
     }
 
+    /**
+     * Updates a user with the given ID and updates.
+     * @param {number} userId - The ID of the user to update.
+     * @param {Object} updates - An object containing the updates to apply to the user.
+     * @return {Promise<Object>} - A promise that resolves to the updated user object without the password.
+     * @throws {ServiceError} - If the user is not found or an error occurs during the update.
+     */
     updateUser(userId, updates) {
         return this.#error.handler(["Update User", userId, "User"], async() => {
             const user = await this.getUser(userId)
