@@ -202,7 +202,7 @@ class InvoiceService {
     updateInvoice(invoiceId, updates) {
         return this.#error.handler(["Update Invoice", invoiceId, "Invoice"], async() => {
             const invoice = await this.getInvoice(invoiceId)
-            
+
             const { customer_id, seller_id, total, details } = updates
 
             if (!customer_id && !seller_id && !total && !details) {
@@ -362,10 +362,7 @@ class InvoiceService {
             const invoice = await this.getInvoice(details[0].invoice_id)
             
             // calculate new total 
-            let newTotal = 0
-            if(invoice.products.length > 1) {
-                newTotal = this.calculeTotalFromInvoice(invoice.products)
-            }            
+            const newTotal = this.calculeTotalFromInvoice(invoice.products)           
 
             // update invoice with new total
             

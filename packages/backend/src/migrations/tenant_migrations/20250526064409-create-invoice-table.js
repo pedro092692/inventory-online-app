@@ -35,6 +35,7 @@ export default {
             model: "sellers",
             key: "id"
           },
+          onDelete: "CASCADE",
           onUpdate: "CASCADE",
         },
 

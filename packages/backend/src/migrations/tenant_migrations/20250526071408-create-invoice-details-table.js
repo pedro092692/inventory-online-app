@@ -16,7 +16,7 @@ export default {
             model: "invoices",
             key: "id"
           },
-          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
         },
 
         product_id: {
@@ -26,6 +26,7 @@ export default {
             model: "products",
             key: "id"
           },
+          onDelete: "CASCADE",
           onUpdate: "CASCADE"
         },
 
