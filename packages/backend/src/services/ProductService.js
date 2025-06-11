@@ -11,6 +11,7 @@ class ProductService{
     }
 
     /**
+     * Creates a new product.
      * @param {Srting} barcode - barcode of the product
      * @param {String} name - name of the product
      * @param {Number} purchase_price - purchase price of the product
@@ -33,6 +34,7 @@ class ProductService{
     }
 
     /**
+     * Retrieves all products with pagination.
      * @param {Number} limit - limit of products to return
      * @param {Number} offset - offset of products to return
      * @returns {Promise<Array>} - returns an array of products
@@ -49,6 +51,7 @@ class ProductService{
     }
     
     /**
+     * Retrieves a product by its ID.
      * @param {Number} id - id of the product to retrieve
      * @returns {Promise<Object>} - returns the product with the given id
      * @throws {ServiceError} - throws an error if the product could not be retrieved
@@ -65,6 +68,17 @@ class ProductService{
         })
     }
 
+    /**
+     * Updates a product by its ID.
+     * @param {Number} productId - id of the product to update
+     * @param {Object} updates - object containing the updates to be made
+     * @param {String} updates.barcode - barcode of the product
+     * @param {String} updates.name - name of the product
+     * @param {Number} updates.purchase_price - purchase price of the product
+     * @param {Number} updates.selling_price - selling price of the product
+     * @param {Number} updates.stock - stock of the product
+     * @returns {Promise<Object>} - returns the updated product
+     */
     updateProduct(productId, updates) {
         return this.#error.handler(["Update Product", productId, "Product"], async() => {
             const product = await this.getProduct(productId)
@@ -73,6 +87,12 @@ class ProductService{
         })
     }
 
+    /**
+     * Deletes a product by its ID.
+     * @param {Number} productId - id of the product to delete
+     * @returns {Promise<Number>} - returns 1 if the product was deleted successfully
+     * @throws {ServiceError} - throws an error if the product could not be deleted
+     */
     deleteProduct(productId) {
         return this.#error.handler(["Delete Product", productId, "Product"], async() => {
             const product = await this.getProduct(productId)
@@ -82,6 +102,13 @@ class ProductService{
         })
     }
 
+    /**
+     * Retrieves stock for multiple products based on their IDs.
+     * @param {Array} details - array of objects containing product_id and quantity
+     * @param {Number} details.product_id - id of the product
+     * @returns {Promise<Array>} - returns an array of products with their stock
+     * @throws {ServiceError} - throws an error if the stock could not be retrieved
+     */
     getProductStock(details) {
         return this.#error.handler(["Read Stock Product"], async() => {
             const products = await this.Product.findAll({
@@ -92,6 +119,14 @@ class ProductService{
         })
     }
 
+    /**
+     * Updates stock for multiple products by decrementing their stock quantity.
+     * @param {Array} details - array of objects containing product_id and quantity
+     * @param {Number} details.product_id - id of the product
+     * @param {Number} details.quantity - quantity of the product to be updated
+     * @returns {Promise<void>} - returns nothing
+     * @throws {ServiceError} - throws an error if the stock could not be updated
+     */
     updateStock(details) {
         return this.#error.handler(["Update Stock"], async() => {
             await Promise.all(
@@ -109,6 +144,13 @@ class ProductService{
         })
     }
 
+    /**
+     * Restores stock for a product by incrementing its stock quantity.
+     * @param {Number} product_id - id of the product to restore stock
+     * @param {Number} quantity - quantity of the product to be restored
+     * @returns {Promise<void>} - returns nothing
+     * @throws {ServiceError} - throws an error if the stock could not be restored
+     */
     restoreStock(product_id, quantity) {
          return this.#error.handler(["Update Stock"], async() => {
             await this.Product.increment(
