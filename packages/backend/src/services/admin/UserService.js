@@ -30,6 +30,13 @@ class UserService {
         })
     }
 
+    /**
+     * Retrieves all users with pagination.
+     * @param {number} limit - The maximum number of users to retrieve.
+     * @param {number} offset - The number of users to skip before starting to retrieve.
+     * @return {Promise<Array>} - A promise that resolves to an array of user objects.
+     * @throws {ServiceError} - If an error occurs during user retrieval.
+     */
     getAllUser(limit=10, offset=0) {
         return this.#error.handler(["Read All Users"], async() => {
             const users = await User.findAll({
