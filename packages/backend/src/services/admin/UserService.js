@@ -81,6 +81,13 @@ class UserService {
         })
     }
 
+    /**
+     * Deletes a user by their ID.
+     * @param {number} userId - The ID of the user to delete.
+     * @return {Promise<number>} - A promise that resolves to the number of deleted users (1 if successful).
+     * @throws {ServiceError} - If the user is not found or an error occurs during deletion.
+     * @return 1 if user is deleted successfully
+     */
     deleteUser(userId) {
         return this.#error.handler(["Delete User", userId, "User"], async() => {
             const user = await this.getUser(userId)
@@ -90,6 +97,11 @@ class UserService {
         })
     }
 
+    /**
+     * Deletes the password field from the user object.
+     * @param {Object} obj - The user object to process.
+     * @return {Object} - The user object without the password field.
+     */
     detelePassword(obj) {
         const objNotPassword ={...obj.toJSON()}
         delete objNotPassword.password
