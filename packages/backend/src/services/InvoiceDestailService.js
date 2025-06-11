@@ -90,7 +90,12 @@ class InvoiceDetailService {
         })
     }
 
-    
+    /**
+     * Deletes invoice details by their IDs.
+     * @param {Array} ids - An array of invoice detail IDs to delete.
+     * @return {Promise<void>} - A promise that resolves when the deletion is complete.
+     * @throws {ServiceError} - If an error occurs during the deletion operation.
+     */
     deleteInvoiceDetail(ids) {
         return this.#error.handler(["Delete Invoice Details"], async() => {
             await this.InvoiceDetail.destroy({
