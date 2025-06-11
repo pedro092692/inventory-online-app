@@ -73,6 +73,12 @@ class InvoiceDetailService {
         })
     }
 
+    /**
+     * Retrieves invoice details by the associated invoice ID.
+     * @param {number} invoiceId - The ID of the invoice for which to retrieve details.
+     * @return {Promise<Array>} - A promise that resolves to an array of invoice detail objects.
+     * @throws {ServiceError} - If an error occurs during the retrieval operation.
+     */
     getDetailByInvoiceId(invoiceId) {
         return this.#error.handler(["Read Invoice Details by Invoice ID"], async() => {
             const details = await this.InvoiceDetail.findAll({
@@ -84,6 +90,7 @@ class InvoiceDetailService {
         })
     }
 
+    
     deleteInvoiceDetail(ids) {
         return this.#error.handler(["Delete Invoice Details"], async() => {
             await this.InvoiceDetail.destroy({
