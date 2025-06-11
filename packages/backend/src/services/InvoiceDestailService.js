@@ -22,16 +22,23 @@ class InvoiceDetailService {
             return newDetails
         })
     }
-
+    
+    /**
+     * Update existing invoice details
+     * @param {Array} updates - An array of objects containing the details to be updated.
+     * Each object should have the properties: id, quantity, and unit_price.  
+     * @returns {Promise<Array>} - A promise that resolves to an array of updated invoice detail objects.
+     * @throws {ServiceError} - If an error occurs during the update operation.
+     */
     updateInvoiceDetail(updates) {
         return this.#error.handler(["Update Details"], async() => {
             const updatedDetails = await this.InvoiceDetail.bulkCreate(updates, { 
                 updateOnDuplicate: ["quantity", "unit_price"]})
-
             return updatedDetails
         })
     }
 
+    
     getInvoiceDetail(id) {
         return this.#error.handler(["Read invoice Detail"], async() => {
             const detail = await this.InvoiceDetail.findByPk(id)
