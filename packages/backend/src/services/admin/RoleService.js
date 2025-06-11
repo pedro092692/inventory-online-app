@@ -24,6 +24,13 @@ class RoleService {
         })
     }
 
+    /**
+     * Retrieves all roles with pagination.
+     * @param {number} limit - The maximum number of roles to retrieve.
+     * @param {number} offset - The number of roles to skip before starting to retrieve.
+     * @return {Promise<Array>} - A promise that resolves to an array of role objects.
+     * @throws {ServiceError} - If an error occurs during role retrieval.
+     */
     getAllRoles(limit=10, offset=0) {
         return this.#error.handler(["Read All Roles"], async() => {
             const roles = await Role.findAll({
