@@ -63,6 +63,12 @@ class InvoiceService {
     }
 
     getAllInvoices(limit=10, offset=0) {
+        /*
+            This function get all invoice with details 
+            @param {number} limit - number of invoices to return
+            @param {number} offset - number of invoices to skip 
+            @returns {Array} - array of invoices with details
+        */
         return this.#error.handler(["Read All invoices"], async () => {
             const invoices = await this.Invoice.findAll({
                 include: [
