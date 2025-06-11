@@ -57,6 +57,13 @@ class RoleService {
         })
     }
 
+    /**
+     * Updates a role by its ID.
+     * @param {number} roleId - The ID of the role to update.
+     * @param {Object} updates - The updates to apply to the role.
+     * @return {Promise<Role>} - A promise that resolves to the updated role object.
+     * @throws {NotFoundError} - If the role is not found.
+     */
     updateRole(roleId, updates) {
         return this.#error.handler(["Update Role", roleId, "Role"], async() => {
             const role = await this.getRole(roleId)
