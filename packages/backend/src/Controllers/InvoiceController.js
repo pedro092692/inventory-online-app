@@ -13,6 +13,10 @@ class InvoiceController {
     createInvoice = this.#error.handler( async(req, res) => {
         const {customer_id, seller_id } = req.body
         const details = req.body.details
+        // validate required fields
+        if(!customer_id || !seller_id || !details) {
+            throw new Error('Customer ID, Seller ID and Details are required')
+        }
         
         const newInvoice = await this.invoiceService.createInvoice(customer_id, seller_id)
         

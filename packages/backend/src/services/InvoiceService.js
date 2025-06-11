@@ -18,7 +18,13 @@ class InvoiceService {
     }
 
     createInvoice(customer_id, seller_id) {
+        /*
+            this funcion create a new invoice
+            @param {number} customer_id - id of the customer
+            @param {number} seller_id - id of the seller    
+        */ 
         return this.#error.handler(["Create Invoice"], async() => {
+            // create new invoice
             const newInvoice = await this.Invoice.create({
                 date: new Date(),
                 customer_id: customer_id, 
