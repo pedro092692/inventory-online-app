@@ -1,0 +1,39 @@
+export default {
+  async up (queryInterface, Sequelize, schema) {
+    queryInterface.createTable(
+      "payment_methods",
+      {
+        id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          primaryKey: true
+        },
+        
+        name: {
+          type: Sequelize.STRING,
+          allowNull: false, 
+          validate: {
+            notEmpty: true
+          }
+        },
+        currency: {
+          type: Sequelize.STRING,
+          allowNull: false,
+          validate: {
+            notEmpty: true
+          }
+        }
+      },
+      {
+        schema
+      }
+    )
+  },
+
+  async down (queryInterface, Sequelize, schema) {
+    await queryInterface.dropTable({
+      tableName: "invoice_details",
+      schema
+    })
+  }
+};
