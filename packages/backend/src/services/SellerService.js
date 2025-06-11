@@ -53,6 +53,13 @@ class SellerService {
         })
     }
 
+    /**
+     * Retrieves a seller by their ID.
+     * @description Retrieves a seller with their sales by the given ID.
+     * @param {Number} id - ID of the seller to retrieve
+     * @throws {ServiceError} - throws an error if the seller could not be found
+     * @returns {Promise<Object>} - returns the seller with their sales
+     */ 
     getSeller(id) {
         return this.#error.handler(["Read Seller", id, "Seller"], async () => {
             const seller = await this.Seller.findByPk(id, {
