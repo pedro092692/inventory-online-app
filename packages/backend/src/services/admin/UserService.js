@@ -48,6 +48,13 @@ class UserService {
         })
     }
 
+    /**
+     * Retrieves a user by their ID.
+     * @param {number} id - The ID of the user to retrieve.
+     * @return {Promise<Object>} - A promise that resolves to the user object without the password.
+     * @throws {ServiceError} - If the user is not found or an error occurs during retrieval.
+     * 
+     */
     getUser(id) {
         return this.#error.handler(["Read user", id, "User"], async() => {
             const user = await User.findByPk(id)
