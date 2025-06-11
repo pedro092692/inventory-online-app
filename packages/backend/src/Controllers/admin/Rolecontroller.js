@@ -9,7 +9,14 @@ class RoleController {
         this.Role = new RoleService()
         this.#error
     }
-
+    
+    /**
+     * Creates a new role.
+     * @param {Object} req - request object containing the role name in the body
+     * @param {Object} res - response object to send the created role
+     * @throws {ServiceError} - throws an error if the role could not be created
+     * @returns {Promise<void>} - returns the created role in the response
+     */
     createRole = this.#error.handler( async(req, res) => {
         const { name } = req.body
         const role = await this.Role.createRole(name)
