@@ -26,6 +26,10 @@ class InvoiceDetailService {
     /**
      * Update existing invoice details
      * @param {Array} updates - An array of objects containing the details to be updated.
+     * @param {number} [updates.id] - The ID of the invoice detail to be updated.
+     * @param {number} [updates.quantity] - The new quantity for the invoice detail.
+     * @param {number} [updates.unit_price] - The new unit price for the invoice detail.
+     * @param {number} [updates.product_id] - The ID of the product associated with the invoice detail.
      * Each object should have the properties: id, quantity, and unit_price.  
      * @returns {Promise<Array>} - A promise that resolves to an array of updated invoice detail objects.
      * @throws {ServiceError} - If an error occurs during the update operation.
@@ -38,7 +42,12 @@ class InvoiceDetailService {
         })
     }
 
-    
+    /**
+     * Retrieves an invoice detail by its ID.
+     * @param {number} id - The ID of the invoice detail to retrieve.
+     * @return {Promise<Object>} - A promise that resolves to the invoice detail object.
+     * @throws {ServiceError} - If an error occurs during the retrieval operation.
+     */
     getInvoiceDetail(id) {
         return this.#error.handler(["Read invoice Detail"], async() => {
             const detail = await this.InvoiceDetail.findByPk(id)
