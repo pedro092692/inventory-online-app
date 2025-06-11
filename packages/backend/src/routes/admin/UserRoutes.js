@@ -7,6 +7,10 @@ class UserRoutes {
         this.initializeRoutes()
     }
 
+    /**
+     * Initializes the routes for the User API.
+     * @returns {void}
+     */
     initializeRoutes() {
         this.router.get("/", (req, res) => res.send("User routes"))
         this.router.get("/all", (req, res) => new UserController().getAllUsers(req, res))

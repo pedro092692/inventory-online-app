@@ -7,7 +7,10 @@ class ProductRoutes {
         this.router = Router()
         this.initializeRoutes()
     }
-
+    /**
+     * Initializes the routes for the Product API.
+     * @returns {void}
+     */
     initializeRoutes() {
         this.router.get("/", (req, res) => res.send("Product routes"))
         this.router.get("/all", (req, res) => new ProductController(Product).allProducts(req, res))

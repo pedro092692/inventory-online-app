@@ -8,7 +8,10 @@ class CustomerRoutes {
         this.initializeRoutes()
 
     }
-
+    /**
+     * Initializes the routes for the Customer API.
+     * @returns {void}
+     */
     initializeRoutes() {
         this.router.get("/", (req, res) => res.send("Customers Routes"))
         this.router.get("/all", (req, res) => new CustomerController(Customer).allCustomers(req, res))

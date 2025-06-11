@@ -7,7 +7,10 @@ class SellerRoutes{
         this.router = Router()
         this.inicializateRoutes()
     }  
-    
+    /**
+     * Initializes the routes for the Seller API.
+     * @returns {void}
+     */
     inicializateRoutes() {
         this.router.get("/", (req, res) => res.send("Seller routes"))
         this.router.get("/all", (req, res) => new SellerController(Seller).allSeller(req, res))

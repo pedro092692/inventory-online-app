@@ -7,6 +7,10 @@ class RoleRoutes {
         this.initializeRoutes()
     }
 
+    /**
+     * Initializes the routes for the Role API.
+     * @returns {void}
+     */
     initializeRoutes() {
         this.router.get("/", (req, res) => res.send("Roles Routes"))
         this.router.get("/all", (req, res) => new RoleController().getAllRoles(req, res))

@@ -10,7 +10,10 @@ class InvoiceRoutes {
         this.router = Router()
         this.inicializateRoutes()
     }
-
+    /**
+     * Initializes the routes for the Invoice API.
+     * @returns {void}
+     */
     inicializateRoutes() {
         this.router.get("/", (req, res) => res.send("Invoices Routes"))
         this.router.get("/all", (req, res) => new InvoiceController(Invoice).allInvoices(req, res))
