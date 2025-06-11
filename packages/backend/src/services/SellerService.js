@@ -30,6 +30,14 @@ class SellerService {
         })
     }
 
+    /**
+     * Get all sellers with pagination.
+     * @description Retrieves all sellers with their sales, limited by the specified limit and offset.
+     * @param {Number} limit - limit of sellers to return
+     * @param {Number} offset - offset of sellers to return
+     * @throws {ServiceError} - throws an error if the sellers could not be retrieved
+     * @returns {Promise<Array>} - returns an array of sellers with their sales
+     */
     getAllSellers(limit=10, offset=0) {
         return this.#error.handler(["Read All Sellers"], async() => {
             const sellers = await this.Seller.findAll({
