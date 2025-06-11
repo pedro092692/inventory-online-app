@@ -10,6 +10,11 @@ class RoleService {
         this.#error
     }
 
+    /**
+     * Create a new role
+     * @param {string} name - The name of the role
+     * @returns {Promise<Role>} - The created role
+     */
     createRole(name) {
         return this.#error.handler(["Create Role"], async() => {
             const newRole = Role.create({
