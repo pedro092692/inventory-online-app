@@ -72,6 +72,12 @@ class RoleService {
         })
     }
 
+    /**
+     * Deletes a role by its ID.
+     * @param {number} roleId - The ID of the role to delete.
+     * @return {Promise<number>} - A promise that resolves to the number of deleted roles (1 if successful).
+     * @throws {NotFoundError} - If the role is not found.
+     */
     deleteRole(roleId) {
         return this.#error.handler(["Delete Role", roleId, "Role"], async() => {
             const role = await this.getRole(roleId)
