@@ -32,6 +32,12 @@ class ProductService{
         })
     }
 
+    /**
+     * @param {Number} limit - limit of products to return
+     * @param {Number} offset - offset of products to return
+     * @returns {Promise<Array>} - returns an array of products
+     * @throws {ServiceError} - throws an error if the products could not be retrieved
+     */
     getAllProducts(limit=10, offset=0) {
         return this.#error.handler(["Read All Products"], async () => {
             const products = await this.Product.findAll({
@@ -41,7 +47,7 @@ class ProductService{
             return products
         })    
     }
-
+    
     getProduct(id) {
         return this.#error.handler(["Read Product", id, "Product"], async () => {
             const product = await this.Product.findByPk(id)
