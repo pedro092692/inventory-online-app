@@ -17,13 +17,13 @@ class InvoiceService {
         this.#error
     }
 
+    /**
+    * Create a new invoice (without details)
+    * @param {number} customer_id - id of the customer
+    * @param {number} seller_id - id of the seller 
+    * @returns {Object} - new invoice created   
+    */  
     createInvoice(customer_id, seller_id) {
-        /*
-            this funcion create a new invoice
-            @param {number} customer_id - id of the customer
-            @param {number} seller_id - id of the seller 
-            @returns {Object} - new invoice created   
-        */ 
         return this.#error.handler(["Create Invoice"], async() => {
             // create new invoice
             const newInvoice = await this.Invoice.create({
@@ -36,12 +36,12 @@ class InvoiceService {
         })
     }
 
+    /**
+    * Add details to invoice (create new details, subtract stock from products)
+    * @param {Array} details - array of details to add to invoice
+    * @returns {Array} - array of new details created
+    */
     addInvoiceDetails(details) {
-        /*
-            This function add details to invoice
-            @param {Array} details - array of details to add to invoice
-            @returns {Array} - array of new details created
-        */
         return this.#error.handler(["Add invoices details"], async() => {
             // verify details if details is empty or not an array throw error
             verifyDetails(details)
@@ -62,13 +62,14 @@ class InvoiceService {
         })
     }
 
+    /**
+    * Get all invoice with details: seller, customer and products 
+    * @param {number} limit - number of invoices to return
+    * @param {number} offset - number of invoices to skip 
+    * @returns {Array} - array of invoices with details
+    */
     getAllInvoices(limit=10, offset=0) {
-        /*
-            This function get all invoice with details 
-            @param {number} limit - number of invoices to return
-            @param {number} offset - number of invoices to skip 
-            @returns {Array} - array of invoices with details
-        */
+        
         return this.#error.handler(["Read All invoices"], async () => {
             const invoices = await this.Invoice.findAll({
                 include: [
@@ -94,11 +95,11 @@ class InvoiceService {
         })
     }
 
+    /**
+    * Get all invoices of today with total selled, a message if no invoices found
+    * @returns {Object} - object with total selled and today invoices
+    */
     getDayInvoices() {
-        /*
-            This function get all invoice of today
-            @returns {Object} - object with total selled and today invoices
-        */
         return this.#error.handler("Read Day Invoices", async () => {
             // set today date to 00:00:00
             const today = new Date()
@@ -156,13 +157,13 @@ class InvoiceService {
         })
     }
 
+    /**
+    * Get an invoice by id
+    * @param {number} id - id of the invoice
+    * @returns {Object} - invoice with details, customer and seller
+    * @throws {NotFoundError} - if invoice not found
+    */
     getInvoice(id) {
-        /* 
-            This function get an invoice by id
-            @param {number} id - id of the invoice
-            @returns {Object} - invoice with details, customer and seller
-            @throws {NotFoundError} - if invoice not found
-        */
         return this.#error.handler(["Read Invoice", id, "Invoice"], async() => {
             const invoice = await this.Invoice.findByPk(id, {
                 include: [
@@ -224,6 +225,13 @@ class InvoiceService {
         })
     }
 
+    /**
+     * Validates and updates invoice details, handling both existing and new details.
+     * @param {number} invoiceId - ID of the invoice to update details for.
+     * @param {Array} details - Array of detail objects to validate and update.
+     * @throws {Error} - Throws an error if validation fails or if stock is insufficient.
+     * @returns {Promise<void>} - Returns a promise that resolves when the details are successfully validated and updated.
+     */
     async _validateAndUpdateDetails(invoiceId, details) {
         
         verifyDetails(details)
@@ -243,6 +251,12 @@ class InvoiceService {
         await this.InvoiceDetail.updateInvoiceDetail(details)
     } 
 
+    /**
+     * Handles the update of an existing invoice detail, restoring stock and updating product stock.
+     * @param {Object} detail - The detail object containing the id and quantity to update.
+     * @throws {Error} - Throws an error if the detail is not found or if there is insufficient stock.
+     *  * @returns {Promise<void>} - Returns a promise that resolves when the detail is successfully handled.
+     */
     async _handleExistingDetail(detail) {
         const actualDetail = await this.InvoiceDetail.getInvoiceDetail(detail.id)
         if(!actualDetail) {
@@ -262,6 +276,13 @@ class InvoiceService {
         )
     }
 
+    /**
+     * Handles the addition of a new invoice detail, checking for existing products and sufficient stock.
+     * @param {number} invoiceId - The ID of the invoice to which the detail is being added.
+     * @param {Object} detail - The detail object containing product_id and quantity.
+     * @throws {Error} - Throws an error if the product already exists in the invoice details or if there is insufficient stock.
+     * @return {Promise<void>} - Returns a promise that resolves when the detail is successfully handled.
+     */
     async _handleNewDetail(invoiceId, detail) {
         
         const invoiceDetails = await this.InvoiceDetail.getDetailByInvoiceId(invoiceId)
@@ -280,12 +301,24 @@ class InvoiceService {
         await this.Product.updateProduct(product.id, { stock: product.stock - detail.quantity })
     }
 
+    /**
+     * Recalculates the total of an invoice based on its products.
+     * @param {number} invoiceId - The ID of the invoice to recalculate.
+     * @returns {Promise<number>} - Returns a promise that resolves to the recalculated total.
+     * @throws {NotFoundError} - Throws an error if the invoice is not found.
+     * 
+     */
     async _recalculateTotal(invoiceId) {
         const invoice = await this.getInvoice(invoiceId)
         return this.calculeTotalFromInvoice(invoice.products)
     }
     
-
+    /**
+     * Deletes an invoice by its ID
+     * @param {number} invoiceId - The ID of the invoice to delete.
+     * @returns {Promise<number>} - Returns a promise that resolves to 1 if the invoice is successfully deleted.
+     * @throws {NotFoundError} - Throws an error if the invoice is not found.
+     */
     deleteInvoice(invoiceId) {
         return this.#error.handler(["Delete Invoice", invoiceId, "Invoice"], async() => {
             const invoice = await this.getInvoice(invoiceId)
@@ -295,6 +328,13 @@ class InvoiceService {
         })
     }
 
+    /**
+     * Deletes invoice details by their IDs, restores stock for each product, and updates the invoice total.
+     * @param {Array} ids - Array of detail IDs to delete.
+     * @returns {Promise<number>} - Returns a promise that resolves to 1 if the details are successfully deleted.
+     * @throws {NotFoundError} - Throws an error if no details are found for the provided IDs.
+     * @throws {Error} - Throws an error if a product is not found while restoring stock.
+     */
     deleteInvoiceDetails(ids) {
         return this.#error.handler(["Delete Detail", ids, "Detail"], async() => {
             // get details
@@ -320,20 +360,21 @@ class InvoiceService {
             const invoice = await this.getInvoice(details[0].invoice_id)
             
             // calculate new total 
-            const newTotal = invoice.products.map( product => {
-                const quantity = product.invoice_details.dataValues.quantity
-                const unitPrice = product.invoice_details.dataValues.unit_price
-                return quantity * unitPrice
-            })
+            const newTotal = this.calculeTotalFromInvoice(invoice.products)
 
             // update invoice with new total
-            await this.updateInvoice(invoice.id, { total: newTotal.reduce(( sum, acc) => sum + acc, 0) })
+            await this.updateInvoice(invoice.id, { total: newTotal })
             return 1
         }) 
     }
     
-    // utils
-
+    /**
+     * Validates the stock of products against the details provided.
+     * @param {Array} produtscStock - Array of products with their stock information.
+     * @param {Array} details - Array of invoice details containing product IDs and quantities. 
+     * @throws {Error} - Throws an error if any product does not have enough stock for the requested quantity.
+     * @return {void} - Returns nothing if all products have sufficient stock.
+     */
     validateStockProduct(produtscStock, details) {
     // validate stock for each product
         for(const detail of details) {
@@ -343,7 +384,12 @@ class InvoiceService {
             }
         }
     }
-
+    
+    /**
+     * Calculates the total amount from an array of invoice products.
+     * @param {Array} object - Array of products with invoice details.
+     * @returns {number} - The total amount calculated from the products.
+     */
     calculeTotalFromInvoice(object) {
         const total = object.map( product => {
             const quantity = product.invoice_details.dataValues.quantity
