@@ -202,6 +202,7 @@ class InvoiceService {
     updateInvoice(invoiceId, updates) {
         return this.#error.handler(["Update Invoice", invoiceId, "Invoice"], async() => {
             const invoice = await this.getInvoice(invoiceId)
+            
             const { customer_id, seller_id, total, details } = updates
 
             if (!customer_id && !seller_id && !total && !details) {
@@ -350,20 +351,27 @@ class InvoiceService {
                     throw new NotFoundError(`Product with id ${detail.product_id} not found`)
                 }
                 // restore stock
-                await this.Product.restoreStock(detail.product_id, detail.quantity)
+                await this.Product.restoreStock(detail.product_id, detail.quantity) 
             }
 
             // delete details
             await this.InvoiceDetail.deleteInvoiceDetail(ids)
 
+
             // update invoice total
             const invoice = await this.getInvoice(details[0].invoice_id)
             
             // calculate new total 
-            const newTotal = this.calculeTotalFromInvoice(invoice.products)
+            let newTotal = 0
+            if(invoice.products.length > 1) {
+                newTotal = this.calculeTotalFromInvoice(invoice.products)
+            }            
 
             // update invoice with new total
-            await this.updateInvoice(invoice.id, { total: newTotal })
+            
+            await invoice.update({
+                total: newTotal
+            })
             return 1
         }) 
     }
