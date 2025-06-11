@@ -86,6 +86,13 @@ class CustomerService {
         })
     }
 
+    /**
+     * Deletes a customer by their ID.
+     * @param {number} customerId - The ID of the customer to delete.
+     * @return {Promise<number>} - A promise that resolves to the number of deleted customers (1 if successful).
+     * @throws {NotFoundError} - If the customer is not found.
+     * @throws {ServiceError} - If an error occurs during customer deletion.
+     */
     deleteCustomer(customerId) {
         return this.#error.handler(["Delete Customer", customerId, "Customer"], async() => {
             const customer = await this.getCustomerById(customerId)
