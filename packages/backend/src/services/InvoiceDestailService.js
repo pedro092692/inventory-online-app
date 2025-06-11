@@ -10,7 +10,12 @@ class InvoiceDetailService {
         this.#error
     }
 
-
+    /**
+     * Creates new invoice details.
+     * @param {Array} details - An array of invoice detail objects to be created.
+     * @return {Promise<Array>} - A promise that resolves to an array of created invoice detail objects.
+     * @throws {ServiceError} - If an error occurs during invoice detail creation.
+     */
     createInvoiceDetail(details) {
         return this.#error.handler(["Create Invoice Details"], async() => {
             const newDetails = await this.InvoiceDetail.bulkCreate(details)
