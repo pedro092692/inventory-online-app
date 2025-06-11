@@ -11,6 +11,14 @@ class CustomerService {
         this.#error
     }
 
+    /**
+     * Creates a new customer with the given id_number, name, and phone.
+     * @param {number} id_number - The ID number of the customer.
+     * @param {string} name - The name of the customer.
+     * @param {string} phone - The phone number of the customer.
+     * @return {Promise<Object>} - A promise that resolves to the created customer object.
+     * @throws {ServiceError} - If an error occurs during customer creation.
+     */ 
     createCustomer(id_number, name, phone) {
         return this.#error.handler(["Cretae Customer"], async() => {
             const newCustomer = await this.Customer.create({
