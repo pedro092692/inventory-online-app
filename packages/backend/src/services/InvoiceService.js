@@ -187,84 +187,104 @@ class InvoiceService {
             if(!invoice) {
                 throw new NotFoundError()
             }
-            
+
             return invoice
         })
     }
 
+    /**
+     * Updates an invoice by its ID with new customer, seller, total, or details.
+     * @param {number} invoiceId 
+     * @param {Object} updates 
+     * @returns {Promise<Object>}
+     */
     updateInvoice(invoiceId, updates) {
         return this.#error.handler(["Update Invoice", invoiceId, "Invoice"], async() => {
-            
-            let invoice = await this.getInvoice(invoiceId)
-            let { customer_id, seller_id, total } = updates
-            // if data have details update invoice details
-            if(updates.details) {
-                 // verify details
-                verifyDetails(updates.details, true)
+            const invoice = await this.getInvoice(invoiceId)
+            const { customer_id, seller_id, total, details } = updates
 
-                // add invoice id to details
-                for(const detail of updates.details) {
-                    detail["invoice_id"] = invoiceId
-
-                    // actual detail
-                    if(detail.id) {
-                        const actualDetail = await this.InvoiceDetail.getInvoiceDetail(detail.id)
-
-                        // get product 
-                        const product = await this.Product.getProduct(actualDetail.product_id)
-
-                        // difference between actual detail and new detail
-                        const originalStock = product.stock + actualDetail.quantity
-                        if(detail.quantity <= originalStock) {
-                            // restore stock
-                            await this.Product.restoreStock(actualDetail.product_id, actualDetail.quantity)
-                            // update stock 
-                            await this.Product.updateProduct(actualDetail.product_id, { stock: originalStock - detail.quantity})
-                        }else{
-                            throw new Error('No enought stock for this quantity')
-                        }
-                               
-                    }else {
-                        // check if product already exist in details
-                        const invoiceDetails = await this.InvoiceDetail.getDetailByInvoiceId(invoiceId)
-                        let productsId = invoiceDetails.map(detail => detail.product_id)
-                    
-                        if(productsId.includes(detail.product_id)) {
-                            throw new Error(`Product with id ${detail.product_id} already exists in invoice details add id to details.`)
-                            
-                        }
-    
-                        // if detail is new, check for product stock
-                        const product = await this.Product.getProduct(detail.product_id)
-                        if(!product) {
-                            throw new NotFoundError(`Product with id ${detail.product_id} not found`)
-                        }
-                        
-                        // validate stock
-                        if(detail.quantity > product.stock) {
-                            throw new Error(`Not enought stock for this product: ${product.id}, Avaliale stock: ${product.stock}`)
-                        }
-                        
-                        // subtract stock from products table
-                        await this.Product.updateProduct(product.id, { stock: product.stock - detail.quantity })
-                    }                 
-                }
-
-                // update invoice details
-                await this.InvoiceDetail.updateInvoiceDetail(updates.details)
-                
-                // update total value 
-                // update invoice with new products:
-                invoice = await this.getInvoice(invoiceId)
-
-                // caculete total
-                total = this.calculeTotalFromInvoice(invoice.products)
+            if (!customer_id && !seller_id && !total && !details) {
+                throw new Error("At least one of these customer_id, seller_id, total or details must be defined")
             }
 
-            const updatedInvoice = await invoice.update({customer_id, seller_id, total})
-            return updatedInvoice
+            if(details) {
+                await this._validateAndUpdateDetails(invoiceId, details)
+                updates.total = await this._recalculateTotal(invoiceId)
+            }
+
+            await invoice.update({
+                customer_id: customer_id,
+                seller_id: seller_id,
+                total: updates.total || invoice.total
+            })
+
+            const newInvoice = await this.getInvoice(invoiceId)
+            
+            return newInvoice
         })
     }
+
+    async _validateAndUpdateDetails(invoiceId, details) {
+        
+        verifyDetails(details)
+
+        for(const detail of details) {
+            detail["invoice_id"] = invoiceId
+
+            if(detail.id) {
+                // handle existing detail
+                await this._handleExistingDetail(detail)
+            }else {
+                // handle new detail
+                await this._handleNewDetail(invoiceId, detail)
+            }
+        }
+
+        await this.InvoiceDetail.updateInvoiceDetail(details)
+    } 
+
+    async _handleExistingDetail(detail) {
+        const actualDetail = await this.InvoiceDetail.getInvoiceDetail(detail.id)
+        if(!actualDetail) {
+            throw new Error(`Detail with id ${detail.id} not found`)
+        }
+
+        const product = await this.Product.getProduct(actualDetail.product_id)
+        const originalStock = product.stock + actualDetail.quantity
+
+        if(detail.quantity > originalStock) {
+            throw new Error('No enought stock for this quantity')
+        }
+
+        await this.Product.restoreStock(actualDetail.product_id, actualDetail.quantity)
+        await this.Product.updateProduct(actualDetail.product_id, { stock: originalStock - detail.quantity }
+
+        )
+    }
+
+    async _handleNewDetail(invoiceId, detail) {
+        
+        const invoiceDetails = await this.InvoiceDetail.getDetailByInvoiceId(invoiceId)
+        const productsId = invoiceDetails.map(detail => detail.product_id)
+
+        if(productsId.includes(detail.product_id))  {
+            throw new Error(`Product with id ${detail.product_id} already exists in invoice details add id to details.`)
+        }
+
+        const product = await this.Product.getProduct(detail.product_id)
+        
+        if(detail.quantity > product.stock) {
+            throw new Error(`Not enought stock for this product: ${product.id}, Avaliale stock: ${product.stock}`)
+        }
+
+        await this.Product.updateProduct(product.id, { stock: product.stock - detail.quantity })
+    }
+
+    async _recalculateTotal(invoiceId) {
+        const invoice = await this.getInvoice(invoiceId)
+        return this.calculeTotalFromInvoice(invoice.products)
+    }
+    
 
     deleteInvoice(invoiceId) {
         return this.#error.handler(["Delete Invoice", invoiceId, "Invoice"], async() => {
