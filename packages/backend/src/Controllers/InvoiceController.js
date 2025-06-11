@@ -9,7 +9,16 @@ class InvoiceController {
         this.invoiceService = new InvoiceService(model, detailModel, productModel)
         this.#error
     }
-
+    
+    /**
+     * Creates new invoice
+     * @param {Object} req - request object containing the customer, seller ID and details in the body
+     * @param {Number} req.details.customer_id - the id of customer for invoice
+     * @param {Number} req.details.seller_id - the id of actual seller 
+     * @param {Array} req.details - An array of objects with invoice details, keys: product_id, quantity, and unit_price
+     * @throws {ServiceError} - throws an error if the invoice could not be created
+     * @returns {Promise<void>} - returns a success status in the response if invoice is created.
+     */
     createInvoice = this.#error.handler( async(req, res) => {
         const {customer_id, seller_id } = req.body
         const details = req.body.details
