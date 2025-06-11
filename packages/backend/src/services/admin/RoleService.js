@@ -41,6 +41,12 @@ class RoleService {
         })
     }
 
+    /**
+     * Retrieves a role by its ID.
+     * @param {number} id - The ID of the role to retrieve.
+     * @return {Promise<Role>} - A promise that resolves to the role object.
+     * @throws {NotFoundError} - If the role is not found.
+     */
     getRole(id) {
         return this.#error.handler(["Read Role", id, "Role"], async() => {
             const role = await Role.findByPk(id)
