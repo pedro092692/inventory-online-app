@@ -21,7 +21,8 @@ class InvoiceService {
         /*
             this funcion create a new invoice
             @param {number} customer_id - id of the customer
-            @param {number} seller_id - id of the seller    
+            @param {number} seller_id - id of the seller 
+            @returns {Object} - new invoice created   
         */ 
         return this.#error.handler(["Create Invoice"], async() => {
             // create new invoice
@@ -36,8 +37,13 @@ class InvoiceService {
     }
 
     addInvoiceDetails(details) {
+        /*
+            This function add details to invoice
+            @param {Array} details - array of details to add to invoice
+            @returns {Array} - array of new details created
+        */
         return this.#error.handler(["Add invoices details"], async() => {
-            // verify details
+            // verify details if details is empty or not an array throw error
             verifyDetails(details)
 
             // check for product stock
@@ -49,6 +55,7 @@ class InvoiceService {
             // subtract stock from products table
             await this.Product.updateStock(details)
             
+            // add invoice id to details
             const newDetails = await this.InvoiceDetail.createInvoiceDetail(details)
             
             return newDetails
