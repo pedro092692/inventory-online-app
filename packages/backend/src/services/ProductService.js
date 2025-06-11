@@ -10,6 +10,15 @@ class ProductService{
         this.#error
     }
 
+    /**
+     * @param {Srting} barcode - barcode of the product
+     * @param {String} name - name of the product
+     * @param {Number} purchase_price - purchase price of the product
+     * @param {Number} selling_price - selling price of the product
+     * @param {Number} stock - stock of the product 
+     * @returns {Promise<Object>} - returns the created product
+     * @throws {ServiceError} - throws an error if the product could not be created
+     */
     createProduct(barcode, name, purchase_price, selling_price, stock) {
         return this.#error.handler(["Create Product"], async() => {
             const newProduct = await this.Product.create({
