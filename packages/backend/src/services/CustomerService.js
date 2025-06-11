@@ -70,6 +70,14 @@ class CustomerService {
         })
     }
 
+    /**
+     * Updates a customer by their ID with the provided updates.
+     * @param {number} customerId - The ID of the customer to update.
+     * @param {Object} updates - The updates to apply to the customer.
+     * @return {Promise<Object>} - A promise that resolves to the updated customer object.
+     * @throws {NotFoundError} - If the customer is not found.
+     * @throws {ServiceError} - If an error occurs during customer update.
+     */
     updateCustomer(customerId, updates) {
         return this.#error.handler(["Update Customer", customerId, "Customer"], async() => {
             const customer = await this.getCustomerById(customerId)
