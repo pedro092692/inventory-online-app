@@ -48,6 +48,11 @@ class ProductService{
         })    
     }
     
+    /**
+     * @param {Number} id - id of the product to retrieve
+     * @returns {Promise<Object>} - returns the product with the given id
+     * @throws {ServiceError} - throws an error if the product could not be retrieved
+     */
     getProduct(id) {
         return this.#error.handler(["Read Product", id, "Product"], async () => {
             const product = await this.Product.findByPk(id)
