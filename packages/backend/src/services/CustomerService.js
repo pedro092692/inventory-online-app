@@ -53,6 +53,13 @@ class CustomerService {
         })
     }
 
+    /**
+     * Retrieves a customer by their ID.
+     * @param {number} id - The ID of the customer to retrieve.
+     * @return {Promise<Object>} - A promise that resolves to the customer object.
+     * @throws {NotFoundError} - If the customer is not found.
+     * @throws {ServiceError} - If an error occurs during customer retrieval.
+     */
     getCustomerById(id) {
         return this.#error.handler(["Read Customer", id, "User"], async () => {
             const customer = await this.Customer.findByPk(id)
