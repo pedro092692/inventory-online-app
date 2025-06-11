@@ -9,7 +9,15 @@ class SellerService {
         this.Seller = model
         this.#error
     }
-
+    /**
+     * Creates a new seller.
+     * @param {Number} id_number - id number of the seller
+     * @param {String} name - name of the seller
+     * @param {String} last_name - last name of the seller
+     * @param {Strind} address - address of the seller
+     * @throws {ServiceError} - throws an error if the seller could not be created
+     * @returns {Promise<Object>} - returns the created seller
+     */
     createSeller(id_number, name, last_name, address) {
         return this.#error.handler(["Create Seller"], async() => {
             const newSeller = await this.Seller.create({
