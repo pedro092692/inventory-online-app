@@ -323,6 +323,17 @@ class InvoiceService {
     deleteInvoice(invoiceId) {
         return this.#error.handler(["Delete Invoice", invoiceId, "Invoice"], async() => {
             const invoice = await this.getInvoice(invoiceId)
+           
+            // gets invoices details ids 
+            const product_details = invoice.products.map((product => product.invoice_details.id))
+            const details = await this.InvoiceDetail.getInvoiceDetails(product_details)
+            
+            //restore product stock
+            await this._restoreStockProduct(details)
+
+            // delete details 
+            await this.InvoiceDetail.deleteInvoiceDetail(product_details)
+
             // delete invoice 
             await invoice.destroy()
             return 1
@@ -345,14 +356,7 @@ class InvoiceService {
             }
             
              // restore stock for each product
-            for(const detail of details) {
-                const product = await this.Product.getProduct(detail.product_id)
-                if(!product) {
-                    throw new NotFoundError(`Product with id ${detail.product_id} not found`)
-                }
-                // restore stock
-                await this.Product.restoreStock(detail.product_id, detail.quantity) 
-            }
+            await this._restoreStockProduct(details)
 
             // delete details
             await this.InvoiceDetail.deleteInvoiceDetail(ids)
@@ -371,6 +375,25 @@ class InvoiceService {
             })
             return 1
         }) 
+    }
+
+    /**
+     * Restore product stock when it is delete of invoice details
+     * @param {Array} details - Array of objects with product_id and quantity keys
+     * @param {Number} detatil
+     * @returns {Promise<number>} - Return a promise that resolve 1 if invoice details are deleted
+     * @throws {Error} Throws an error if cannot delete invoice details.
+     */
+    async _restoreStockProduct(details) {
+        for(const detail of details) {
+            const product = await this.Product.getProduct(detail.product_id)
+            if(!product) {
+                throw new NotFoundError(`Product with id ${detail.product_id} not found`)
+            }
+            // restore stock
+            await this.Product.restoreStock(detail.product_id, detail.quantity) 
+        }
+        return 1
     }
     
     /**
