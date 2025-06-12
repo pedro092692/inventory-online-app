@@ -1,5 +1,5 @@
-import ControllerErrorHandler from "../errors/controllerErrorHandler"
-import PaymentMethodService from "../services/PaymentMethodService"
+import ControllerErrorHandler from "../errors/controllerErrorHandler.js"
+import PaymentMethodService from "../services/PaymentMethodService.js"
 
 class PaymentMethodController {
     // Error handler instance 

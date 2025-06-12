@@ -6,6 +6,7 @@ import SellerRoutes from "./routes/SellerRoutes.js"
 import ProductRoutes from "./routes/ProductRoutes.js"
 import UserRoutes from "./routes/admin/UserRoutes.js"
 import RoleRoutes from "./routes/admin/RoleRoutes.js"
+import PaymentMethodRoutes from "./routes/PaymentMethodRoutes.js"
 
 class Server {
     constructor(){
@@ -45,6 +46,9 @@ class Server {
 
         // roles 
         this.app.use("/api/roles", new RoleRoutes().router)
+
+        // payment methods
+        this.app.use("/api/payment-methods", new PaymentMethodRoutes().router)
     }
 
     start(){

@@ -1,6 +1,6 @@
 import { Router } from "express"
-import PaymentMethodController from "../Controllers/PaymentMethodController"
-import { Payment } from "../models/inventory_models/PaymentModel"
+import PaymentMethodController from "../Controllers/PaymentMethodController.js"
+import { Payment } from "../models/inventory_models/PaymentModel.js"
 
 class PaymentMethodRoutes { 
     
