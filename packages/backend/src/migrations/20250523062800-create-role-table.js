@@ -18,9 +18,7 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: false, 
           validate: {
-            notEmpty: {
-              msg: "Role name cannot be empty."
-            }
+            notEmpty: true
           }
         }
 

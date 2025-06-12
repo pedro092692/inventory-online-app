@@ -46,7 +46,14 @@ export default {
           validate: {
             isNumeric: true
           }
+        },
+
+        status: {
+          type: Sequelize.ENUM('paid', 'unpaid'),
+          allowNull: false,
+          defaultValue: 'unpaid',
         }
+        
       },
       {
         schema
