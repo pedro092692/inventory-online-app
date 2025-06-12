@@ -35,4 +35,16 @@ class PaymentMethodController {
         const paymentMethod = await this.PaymentMethod.getPaymentMethod(id)
         res.status(200).json(paymentMethod)
     })
+
+    /**
+     * Retrieves all payment methods.
+     * @param {Object} req - request object
+     * @param {Object} res - response object to send the list of payment methods
+     * @throws {ServiceError} - throws an error if the payment methods could not be retrieved
+     * @returns {Promise<void>} - returns the list of payment methods in the response
+     */
+    getAllProducts = this.#error.handler( async(req, res) => {
+        const allPaymentMethods = await this.PaymentMethod.getAllPaymentMethods()
+        res.status(200).json(allPaymentMethods)
+    })
 }
