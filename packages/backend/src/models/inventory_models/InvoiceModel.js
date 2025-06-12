@@ -38,6 +38,24 @@ class Invoice extends Model {
         })
     }
 
+    // payment details
+    static associatePaymentDetail(model) {
+        this.hasMany(model.PaymentDetail, {
+            foreignKey: "invoice_id",
+            as: "payments-details"
+        })
+    }
+
+    // payments
+    static associatePayments(model) {
+        this.belongsToMany(model.Payment, {
+            through: "payment_details",
+            foreignKey: "invoice_id",
+            timestamps: false,
+            as: "payments"
+        })
+    }
+
 }
 
 function initializeInvoice(sequelize) {

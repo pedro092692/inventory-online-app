@@ -2,6 +2,16 @@ import { DataTypes, Model } from "sequelize"
 
 class Payment extends Model {
     // model realations
+
+    // payments details
+    static associationPaymentDetail(model) {
+        this.belongsToMany(model.Invoice, {
+            through: "payment_details",
+            foreignKey: "payment_id",
+            timestamps: false,
+            as: "payments"
+        })
+    }
 }
 
 function initializePayment(sequelize) {
