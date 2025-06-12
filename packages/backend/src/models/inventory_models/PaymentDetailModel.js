@@ -2,6 +2,22 @@ import { DataTypes, Model } from "sequelize"
 
 class PaymentDetail extends Model {
     // model relations
+
+    //invoices
+    static associationInvoice(model) {
+        this.belongsTo(model.Invoice, {
+             foreignKey: "invoice_id",
+             as: "invoice"
+        })
+    }
+
+    // payments methods
+    static associationPaymentMethod(model) {
+        this.belongsTo(model.Payment, {
+            foreignKey: "payment_id",
+            as: "payments"
+        })
+    }
 }
 
 function initializePaymentDetail(sequelize) {
