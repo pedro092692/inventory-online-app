@@ -32,7 +32,7 @@ class PaymentMethodService {
     /**
      * 
      * @param {Number} id - Id of the payment method 
-     * @returns {Promise<object}  A object with data of new payment method
+     * @returns {Promise<object>}  A object with data of new payment method
      * @throws {Error} - Throws an error if get payment method fails.
      */
     getPaymentMethod(id) {
@@ -62,6 +62,22 @@ class PaymentMethodService {
             })
 
             return allMethods
+        })
+    }
+
+    /**
+     * Updates a Payment Methods by its ID.
+     * @param {Number} PaymentMethodId - id of the payment method to update
+     * @param {Object} updates - object containing the updates to be made
+     * @param {String} updates.name - name of the payment method
+     * @param {String} updates.currency - name of the currency of the payment method
+     * @returns {Promise<Object>} - returns the updated Payment Method
+     */
+    updatePaymentMethod(paymentMethodId, updates) {
+        return this.#error.handler(["Update payment method", paymentMethodId, "Payment Method"], async() => {
+            const paymentMethod = await this.getPaymentMethod(paymentMethodId)
+            const updatedPaymentMethod = await paymentMethod.update(updates)
+            return updatedPaymentMethod
         })
     }
 }
