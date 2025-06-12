@@ -46,6 +46,24 @@ class PaymentMethodService {
             return paymentMethod
         })
     }
+
+    /**
+     * Retrieves all Payment Methods with pagination.
+     * @param {Number} limit - limit of payment methods to return
+     * @param {Number} offset - offset of payment methods to return
+     * @returns {Promise<Array>} - returns an array of payment methods
+     * @throws {ServiceError} - throws an error if the payment methods could not be retrieved
+     */
+    getAllPaymentMethods(limit=10, offset=0) {
+        return this.#error.handler(["Read All Payment Methods"], async() => {
+            const allMethods = await this.PaymentMethod.findAll({
+                limit: limit,
+                offset: offset
+            })
+
+            return allMethods
+        })
+    }
 }
 
 export default PaymentMethodService
