@@ -47,4 +47,18 @@ class PaymentMethodController {
         const allPaymentMethods = await this.PaymentMethod.getAllPaymentMethods()
         res.status(200).json(allPaymentMethods)
     })
+
+    /**
+     * Updates a payment method by its ID.
+     * @param {Object} req - request object containing the payment method in the params ID and updates in the body
+     * @param {Object} res - response object to send the updated payment method
+     * @throws {ServiceError} - throws an error if the payment method could not be updated
+     * @returns {Promise<void>} - returns the updated payment method in the response
+     */
+    updatePaymentMethod = this.#error.handler( async(req, res) => {
+        const { paymentMethodId } = req.params
+        const { updates } = req.body
+        const updatedPaymentMethod = await this.PaymentMethod.updatePaymentMethod(paymentMethodId, updates)
+        res.status(200).json(updatedPaymentMethod)
+    })
 }

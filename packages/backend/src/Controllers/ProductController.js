@@ -50,7 +50,7 @@ class ProductController{
 
     /**
      * Updates a product by its ID.
-     * @param {Object} req - request object containing the product ID and updates in the body
+     * @param {Object} req - request object containing the product ID in the params ID and updates in the body
      * @param {Object} res - response object to send the updated product
      * @throws {ServiceError} - throws an error if the product could not be updated
      * @returns {Promise<void>} - returns the updated product in the response
