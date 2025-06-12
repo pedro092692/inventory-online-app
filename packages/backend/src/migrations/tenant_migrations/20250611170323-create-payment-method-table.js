@@ -1,7 +1,7 @@
 export default {
   async up (queryInterface, Sequelize, schema) {
     queryInterface.createTable(
-      "payment_methods",
+      "payments",
       {
         id: {
           type: Sequelize.INTEGER,
