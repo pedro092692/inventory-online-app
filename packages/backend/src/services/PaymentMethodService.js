@@ -80,6 +80,23 @@ class PaymentMethodService {
             return updatedPaymentMethod
         })
     }
+
+    /**
+     * Deletes a payment methods by its ID.
+     * @param {Number} paymentMethodId - id of the  payment method to delete
+     * @returns {Promise<Number>} - returns 1 if the  payment method was deleted successfully
+     * @throws {ServiceError} - throws an error if the  payment method could not be deleted
+     */
+    deletePaymentMethod(paymentMethodId) {
+        return this.#error.handler(["Delete Payment Method", paymentMethodId, "Payment Method"], async() => {
+            // get payment methods
+            const paymentMethod = await this.getPaymentMethod(paymentMethodId)
+
+            // delete payment method
+            await paymentMethod.destroy()
+            return 1
+        })
+    }
 }
 
 export default PaymentMethodService
