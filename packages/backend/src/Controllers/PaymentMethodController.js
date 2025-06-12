@@ -76,3 +76,5 @@ class PaymentMethodController {
         res.status(204).json({})
     })
 }
+
+export default PaymentMethodController
