@@ -61,4 +61,18 @@ class PaymentMethodController {
         const updatedPaymentMethod = await this.PaymentMethod.updatePaymentMethod(paymentMethodId, updates)
         res.status(200).json(updatedPaymentMethod)
     })
+
+    /**
+     * Deletes a payment method by its ID.
+     * @param {Object} req - request object containing the payment method ID in the body
+     * @param {Object} res - response object to send a success status
+     * @throws {ServiceError} - throws an error if the payment method could not be deleted
+     * @returns {Promise<void>} - returns a success status in the response
+     */
+    deletePaymentMethod = this.#error.handler( async(req, res) => {
+        const { paymentMethodId } = req.body.paymentMethodId
+        // delete payment method
+        await this.PaymentMethod.deletePaymentMethod(paymentMethodId)
+        res.status(204).json({})
+    })
 }
