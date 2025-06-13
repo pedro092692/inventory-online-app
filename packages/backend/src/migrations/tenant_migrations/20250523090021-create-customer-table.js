@@ -45,7 +45,7 @@ export default {
   down: async (queryInterface, Sequelize, schema) => {
     await queryInterface.dropTable({
       tableName: "customers",
-      schema
+      schema: schema
     })
   }
 };

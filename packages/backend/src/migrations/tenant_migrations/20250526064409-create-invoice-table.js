@@ -61,7 +61,7 @@ export default {
     )
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface, Sequelize, schema) => {
     await queryInterface.dropTable({
       tableName: "invoices",
       schema
