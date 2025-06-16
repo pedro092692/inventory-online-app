@@ -1,4 +1,4 @@
-export default{
+export default {
   up: async (queryInterface, Sequelize, schema) => {
     await queryInterface.bulkInsert(
       {
