@@ -1,5 +1,5 @@
-import ControllerErrorHandler from "../errors/controllerErrorHandler"
-import PayInvoiceService from "../services/PayInvoiceService"
+import ControllerErrorHandler from "../errors/controllerErrorHandler.js"
+import PayInvoiceService from "../services/PayInvoiceService.js"
 
 class PayInvoiceController {
     // Error hanlder instance 

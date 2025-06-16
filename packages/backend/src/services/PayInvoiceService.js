@@ -1,4 +1,4 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler"
+import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
 import { NotFoundError } from "../errors/NofoundError.js"
 
 class PayInvoiceService {
@@ -39,7 +39,7 @@ class PayInvoiceService {
      */
     getPaymentInvoiceDetail(id) {
         return this.#error.handler(["Read Payment Detail", id, "Pay Invoice"], async() => {
-            const paymentDetail = await this.paymentDetail.findByPk(id)
+            const paymentDetail = await this.PaymentDetail.findByPk(id)
             
             if(!paymentDetail) {
                 throw new NotFoundError();       

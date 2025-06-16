@@ -7,6 +7,7 @@ import ProductRoutes from "./routes/ProductRoutes.js"
 import UserRoutes from "./routes/admin/UserRoutes.js"
 import RoleRoutes from "./routes/admin/RoleRoutes.js"
 import PaymentMethodRoutes from "./routes/PaymentMethodRoutes.js"
+import PayInvoiceRoutes from "./routes/PaymentDetailRoutes.js"
 
 class Server {
     constructor(){
@@ -49,6 +50,9 @@ class Server {
 
         // payment methods
         this.app.use("/api/payment-methods", new PaymentMethodRoutes().router)
+
+        // payment invoices 
+        this.app.use("/api/pay-invoice", new PayInvoiceRoutes().router)
     }
 
     start(){
