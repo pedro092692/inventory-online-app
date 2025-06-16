@@ -107,6 +107,11 @@ function initializeInvoice(sequelize) {
                         msg: "A valid number is required."
                     }
                 }
+            },
+            status: {
+                type: DataTypes.ENUM('paid', 'unpaid'),
+                allowNull: false,
+                defaultValue: 'unpaid',
             }
         },
         {
