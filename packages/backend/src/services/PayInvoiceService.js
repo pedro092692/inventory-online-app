@@ -29,6 +29,19 @@ class PayInvoiceService {
             return newPayment
         })
     }
+
+    /**
+     * Retrieves an invoice payment detail by its ID.
+     * @param {number} id - The ID of the invoice payment detail to retrieve.
+     * @return {Promise<Object>} - A promise that resolves to the invoice payment detail object.
+     * @throws {ServiceError} - If an error occurs during the retrieval operation.
+     */
+    getPaymentInvoiceDetail(id) {
+        return this.#error.handler(["Read Payment Detail", id, "Pay Invoice"], async() => {
+            const paymentDetail = await this.paymentDetail.findByPk(id)
+            return paymentDetail
+        })
+    }
 }
 
 
