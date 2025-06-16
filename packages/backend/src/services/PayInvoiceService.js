@@ -69,6 +69,22 @@ class PayInvoiceService {
                 return updatedPaymentDetail
         })
     }
+
+    /**
+     * Deletes an invoice payment detail by its ID
+     * @param {number} paymentDetailId - The ID of the invoice payment detail to delete.
+     * @returns {Promise<number>} - Returns a promise that resolves to 1 if the invoice payment detail is successfully deleted.
+     * @throws {NotFoundError} - Throws an error if the invoice payment detail is not found.
+     */
+    deletePaymenInvoiceDetail(paymentDetailId) {
+        return this.#error.handler(
+            ["Delete Invoice Payment Detail", paymentDetailId, "Pay Invoice"], async() => {
+                const paymentDetail = await this.getPaymentInvoiceDetail(paymentDetailId)
+                // delete payment details
+                await paymentDetail.destroy()
+                return 1
+            })
+    }
 }
 
 
