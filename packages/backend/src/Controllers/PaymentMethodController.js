@@ -56,9 +56,9 @@ class PaymentMethodController {
      * @returns {Promise<void>} - returns the updated payment method in the response
      */
     updatePaymentMethod = this.#error.handler( async(req, res) => {
-        const { paymentMethodId } = req.params
-        const { updates } = req.body
-        const updatedPaymentMethod = await this.PaymentMethod.updatePaymentMethod(paymentMethodId, updates)
+        const { id } = req.params
+        const  updates  = req.body
+        const updatedPaymentMethod = await this.PaymentMethod.updatePaymentMethod(id, updates)
         res.status(200).json(updatedPaymentMethod)
     })
 
@@ -70,7 +70,7 @@ class PaymentMethodController {
      * @returns {Promise<void>} - returns a success status in the response
      */
     deletePaymentMethod = this.#error.handler( async(req, res) => {
-        const { paymentMethodId } = req.body.paymentMethodId
+        const paymentMethodId = req.body.paymentMethodId
         // delete payment method
         await this.PaymentMethod.deletePaymentMethod(paymentMethodId)
         res.status(204).json({})

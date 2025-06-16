@@ -68,7 +68,7 @@ function initializePaymentDetail(sequelize) {
             modelName: "PaymentDetail",
             tableName: "payment_details",
             timestamps: false,
-           schema: "test_schema" // only for test purposes
+            schema: "test_schema" // only for test purposes
         }
     )
 }

@@ -47,7 +47,8 @@ function initializePayment(sequelize) {
             sequelize,
             modelName: "Payment",
             tableName: "payments",
-            timestamps: false
+            timestamps: false,
+            schema: "test_schema" // only for test purposes
         }
     )
 }

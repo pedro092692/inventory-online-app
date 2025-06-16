@@ -25,6 +25,8 @@ class PaymentMethodService {
                 currency: currency
             })
 
+            console.log(newPayment)
+
             return newPayment
         })
     }

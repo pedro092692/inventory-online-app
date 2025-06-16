@@ -8,6 +8,8 @@ import { initializeInvoice, Invoice } from "../models/inventory_models/InvoiceMo
 import { initializeInvoiceDetail, InvoiceDetail } from "../models/inventory_models/InvoiceDetailModel.js"
 import { initializeSeller, Seller } from "../models/inventory_models/SellerModel.js"
 import { initializeProduct, Product } from "../models/inventory_models/ProductModel.js"
+import { initializePayment, Payment } from "../models/inventory_models/PaymentModel.js"
+import { initializePaymentDetail, PaymentDetail } from "../models/inventory_models/PaymentDetailModel.js" 
 
 let instance = null
 
@@ -60,6 +62,8 @@ class Database {
         initializeInvoiceDetail(this.sequelize)
         initializeSeller(this.sequelize)
         initializeProduct(this.sequelize)
+        initializePayment(this.sequelize)
+        initializePaymentDetail(this.sequelize)
     
     }
 
@@ -69,10 +73,15 @@ class Database {
         Invoice.associateDetail({InvoiceDetail})
         Invoice.associationSeller({Seller})
         Invoice.associationProducts({Product})
+        Invoice.associatePayments({Payment})
+        Invoice.associatePaymentDetail({PaymentDetail})
         InvoiceDetail.associationInvoice({Invoice})
         InvoiceDetail.associationProducts({Product})
         Seller.associationSales({Invoice})
         Product.associationInvoiceDetails({Invoice})
+        Payment.associationPaymentDetail({Invoice})
+        PaymentDetail.associationInvoice({Invoice})
+        PaymentDetail.associationPaymentMethod({Payment})
 
     }
 }

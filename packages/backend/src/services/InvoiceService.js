@@ -179,6 +179,13 @@ class InvoiceService {
                     },
                     {
                         association: "seller", attributes: ["name"]
+                    },
+                    {
+                        association: "payments",
+                        attributes: ["name", "currency"],
+                        through: {
+                            attributes: ["amount"]
+                        }
                     }
                 ],
                 order: [["products", "name", "ASC"]]
