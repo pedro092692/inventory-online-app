@@ -1,4 +1,5 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler"
+import { NotFoundError } from "../errors/NofoundError.js"
 
 class PayInvoiceService {
     // instace of error handler
@@ -39,7 +40,33 @@ class PayInvoiceService {
     getPaymentInvoiceDetail(id) {
         return this.#error.handler(["Read Payment Detail", id, "Pay Invoice"], async() => {
             const paymentDetail = await this.paymentDetail.findByPk(id)
+            
+            if(!paymentDetail) {
+                throw new NotFoundError();       
+            }
+
             return paymentDetail
+        })
+    }
+
+    /**
+     * Updates a invoice payment detail by its ID.
+     * @param {number} paymentDetailId - id of the payment invoice detail to update
+     * @param {object} updates - object containing the updates to be made
+     * @param {number} updates.payment_id - the id of payment method
+     * @param {number} updates.amount - the amount of paid money
+     * @returns {Promise<Object>} - returns the updated payment detail
+     */
+    updatePaymentInvoiceDetail(paymentDetailId, updates) {
+        return this.#error.handler(
+            ["Update Payment Detail", paymentDetailId, "Pay Invoice"], async() => {
+                const paymentDetail = await this.getPaymentInvoiceDetail(paymentDetailId)
+                const { payment_id, amount } = updates
+                const updatedPaymentDetail = await paymentDetail.update({
+                    payment_id: payment_id,
+                    amount: amount
+                })
+                return updatedPaymentDetail
         })
     }
 }
