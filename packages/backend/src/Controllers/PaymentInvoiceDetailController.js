@@ -22,6 +22,15 @@ class PayInvoiceController {
         const newPaymentDetail = await this.PayInvoice.createPaymentDetail(invoice_id, payment_id, amount)
         res.status(201).json(newPaymentDetail)
     })
+
+    /**
+     * 
+     */
+    getPaymentDetail = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const paymentDetail = await this.PayInvoice.getPaymentInvoiceDetail(id)
+        res.status(200).json(paymentDetail)
+    })
 }
 
 export default PayInvoiceController
