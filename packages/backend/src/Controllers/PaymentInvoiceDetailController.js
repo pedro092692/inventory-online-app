@@ -32,6 +32,9 @@ class PayInvoiceController {
         res.status(200).json(paymentDetail)
     })
 
+    /**
+     * 
+     */
     updatePaymentDetail = this.#error.handler( async(req, res) => {
         const { id } = req.params
         const updates = req.body
@@ -39,6 +42,15 @@ class PayInvoiceController {
         res.status(200).json(updatedPaymentDetail)
     })
 
+    /**
+     * 
+     */
+    deletePaymentDetail = this.#error.handler( async(req, res) => {
+        const payment_detail_id = req.body.payment_detail_id
+        // delete payment_detail
+        await this.PayInvoice.deletePaymenInvoiceDetail(payment_detail_id)
+        res.status(204).json({})
+    })
     
 }
 
