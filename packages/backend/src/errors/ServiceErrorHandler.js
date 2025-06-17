@@ -13,6 +13,7 @@ class ServiceErrorHandler {
     }
 
     serviceError(kwargs, error) {
+        console.error(error)
         /* 
          This funcion throw new erros on service operacion 
          kwargs can be have three options:
@@ -24,7 +25,6 @@ class ServiceErrorHandler {
         // console.error(error)
         if(error instanceof ValidationError) { 
             throw new ValidationError(`Faile ${kwargs[0]} errors: ${error.message}`)
-            
         }
 
         if(error instanceof NotFoundError) {
