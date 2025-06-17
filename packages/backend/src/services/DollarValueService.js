@@ -46,4 +46,19 @@ class DollarValue {
         })
     }
 
+    getLastValue() {
+        return this.#error.handler(["Read Last Dollar Value"], async() => {
+            const lastDollarValue = this.DollarValue.findOne({
+                order: [ ["id", "DESC"] ],
+                limit: 1
+            })
+
+            if(!lastDollarValue) {
+                throw new NotFoundError()
+            }
+
+            return lastDollarValue
+        })
+    }
+
 }
