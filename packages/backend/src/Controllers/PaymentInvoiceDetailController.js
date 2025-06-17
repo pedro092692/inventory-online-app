@@ -24,7 +24,11 @@ class PayInvoiceController {
     })
 
     /**
-     * 
+     * Get payment detail of invoice by its ID
+     * @param {Object} req - request object containing payment detail id in params
+     * @param {Object} res - response object to send the selected payment detail info
+     * @throws {ServiceError} - throws an error if the payment detail could not be read
+     * @returns {Promise<void>} - returns the seleted payment detail in the response
      */
     getPaymentDetail = this.#error.handler( async(req, res) => {
         const { id } = req.params
@@ -32,8 +36,12 @@ class PayInvoiceController {
         res.status(200).json(paymentDetail)
     })
 
-    /**
-     * 
+     /**
+     * Updates a payment details by its ID.
+     * @param {Object} req - request object containing the payment details ID  in the params and updates in the body
+     * @param {Object} res - response object to send the updated payment details
+     * @throws {ServiceError} - throws an error if the payment detail could not be updated
+     * @returns {Promise<void>} - returns the updated payment detail in the response
      */
     updatePaymentDetail = this.#error.handler( async(req, res) => {
         const { id } = req.params
@@ -43,7 +51,11 @@ class PayInvoiceController {
     })
 
     /**
-     * 
+     * Deletes a payment detail by its ID.
+     * @param {Object} req - request object containing the payment details ID in the body
+     * @param {Object} res - response object to send a success status
+     * @throws {ServiceError} - throws an error if the payment detail could not be deleted
+     * @returns {Promise<void>} - returns a success status in the response
      */
     deletePaymentDetail = this.#error.handler( async(req, res) => {
         const payment_detail_id = req.body.payment_detail_id
