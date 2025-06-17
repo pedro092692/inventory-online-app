@@ -36,6 +36,14 @@ export default {
             validate: {
               isNumeric: true
             }
+          },
+
+          reference_amount: {
+            type: Sequelize.DECIMAL(10, 2),
+            allowNull: false,
+            validate: {
+              isNumeric: true
+            }
           }
       },
       {

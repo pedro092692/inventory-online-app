@@ -11,7 +11,6 @@ export default {
 
         date: {
           type: Sequelize.DATE,
-          defaultValue: new Date(),
           allowNull: false,
           validate: {
             isDate: true
