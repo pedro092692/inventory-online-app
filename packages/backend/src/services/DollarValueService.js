@@ -26,4 +26,24 @@ class DollarValue {
         })
     }
 
+    /**
+     * Retrieves a dollar value by its ID.
+     * @param {Number} id - id of the dollar value to retrieve
+     * @returns {Promise<Object>} - returns the dollar value with the given id
+     * @throws {ServiceError} - throws an error if the dollar value could not be retrieved
+     */
+    getDollarValue(id) {
+        return this.#error.handler(["Read Dollar Value", id, "Dollar Value"], async() => {
+            const dollarValue = this.DollarValue.findByPk(id, {
+                attributes: ["value"]
+            }) 
+            
+            if(!dollarValue) {
+                throw new NotFoundError()
+            }
+
+            return dollarValue
+        })
+    }
+
 }
