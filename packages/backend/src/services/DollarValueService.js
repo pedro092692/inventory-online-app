@@ -66,7 +66,11 @@ class DollarValue {
         })
     }
 
-
+    /**
+     * Update a Dollar vaule by its ID
+     * @returns {Promise<Object>} - returns the updated dollar value.
+     * @throws {ServiceError} - throws an error if the dollar value could not be updated
+     */
     updateDollarValue(id, value) {
         return this.#error.handler(["Update Dollar Value", id, "Dollar Value"], async() => {
             const dollarValue = await this.getDollarValue(id)
@@ -78,7 +82,11 @@ class DollarValue {
         })
     }
 
-
+    /**
+     * Delete a dollar value by its ID
+     * @returns {Promise<Object>} - returns 1 if the dollar value is deleted.
+     * @throws {ServiceError} - throws an error if the dollar value could not be deleted.
+     */
     deleteDollarValue(id) {
         return this.#error.handler(["Delete Dollar Value", id, "Dollar Value"], async() => {
             const dollarValue = await this.getDollarValue(id)
