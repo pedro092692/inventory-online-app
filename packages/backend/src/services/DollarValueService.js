@@ -19,7 +19,7 @@ class DollarValue {
      */
     createDollarValue(value) {
         return this.#error.handler(["Create Dollar Value"], async() => {
-            const newDollarValue = this.DollarValue.create({
+            const newDollarValue = await this.DollarValue.create({
                 value
             })
             return newDollarValue
@@ -34,7 +34,7 @@ class DollarValue {
      */
     getDollarValue(id) {
         return this.#error.handler(["Read Dollar Value", id, "Dollar Value"], async() => {
-            const dollarValue = this.DollarValue.findByPk(id, {
+            const dollarValue = await this.DollarValue.findByPk(id, {
                 attributes: ["value"]
             }) 
             
@@ -46,9 +46,14 @@ class DollarValue {
         })
     }
 
+    /**
+     * Retrieves a dollar last dollar value.
+     * @returns {Promise<Object>} - returns the last dollar value.
+     * @throws {ServiceError} - throws an error if the last dollar value could not be retrieved
+     */
     getLastValue() {
         return this.#error.handler(["Read Last Dollar Value"], async() => {
-            const lastDollarValue = this.DollarValue.findOne({
+            const lastDollarValue = await this.DollarValue.findOne({
                 order: [ ["id", "DESC"] ],
                 limit: 1
             })
@@ -61,4 +66,29 @@ class DollarValue {
         })
     }
 
+
+    updateDollarValue(id, value) {
+        return this.#error.handler(["Update Dollar Value", id, "Dollar Value"], async() => {
+            const dollarValue = await this.getDollarValue(id)
+            const updatedDollarValue = dollarValue.update({
+                value: value, 
+                date: new Date()
+            })
+            return updatedDollarValue
+        })
+    }
+
+
+    deleteDollarValue(id) {
+        return this.#error.handler(["Delete Dollar Value", id, "Dollar Value"], async() => {
+            const dollarValue = await this.getDollarValue(id)
+            // delete dollar value
+            await dollarValue.destroy()
+            return 1
+        })
+    }
+
 }
+
+
+export default DollarValue
