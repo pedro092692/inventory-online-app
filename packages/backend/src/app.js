@@ -8,6 +8,7 @@ import UserRoutes from "./routes/admin/UserRoutes.js"
 import RoleRoutes from "./routes/admin/RoleRoutes.js"
 import PaymentMethodRoutes from "./routes/PaymentMethodRoutes.js"
 import PayInvoiceRoutes from "./routes/PaymentDetailRoutes.js"
+import DollarValueRoutes from "./routes/DollarValueRoutes.js"
 
 class Server {
     constructor(){
@@ -53,6 +54,9 @@ class Server {
 
         // payment invoices 
         this.app.use("/api/pay-invoice", new PayInvoiceRoutes().router)
+
+        // dollar value
+        this.app.use("/api/dollar-value", new DollarValueRoutes().router)
     }
 
     start(){
