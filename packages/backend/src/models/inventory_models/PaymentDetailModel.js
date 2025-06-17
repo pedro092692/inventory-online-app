@@ -61,6 +61,16 @@ function initializePaymentDetail(sequelize) {
                         msg: "A valid number is required."
                     }
                 }
+            },
+
+            reference_amount: {
+                type: DataTypes.DECIMAL(10, 2), 
+                allowNull: false, 
+                validate: {
+                    isNumeric: {
+                        msg: "A valid Number is required."
+                    }
+                }
             }
         },
         {
