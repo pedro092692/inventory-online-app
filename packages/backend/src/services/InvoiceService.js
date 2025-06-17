@@ -115,7 +115,8 @@ class InvoiceService {
                     date: {
                         [Op.gte]: today,
                         [Op.lt]: tomorrow
-                    }
+                    },
+                    status: "paid"
                 }
             })
             // create query to get all invoices of today
