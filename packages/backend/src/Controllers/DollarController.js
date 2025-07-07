@@ -47,6 +47,20 @@ class DollarValueController {
         const updateDollarValue = await this.dollarService.updateDollarValue(id, value)
         res.status(200).json({updateDollarValue})
     })
+
+    /**
+     * Deletes a dollar value by its ID.
+     * @param {Object} req - request object containing the dollar value ID in the body
+     * @param {Object} res - response object to send a success status
+     * @throws {ServiceError} - throws an error if the dollar value could not be deleted
+     * @returns {Promise<void>} - returns a success status in the response
+     */
+    deleteDollarValue = this.#error.handler( async(req, res) => {
+        const { id } = req.body
+        // delete Dollar value
+        await this.dollarService.deleteDollarValue(id)
+        res.status(204).json({})
+    })
 }
 
 export default DollarValueController
