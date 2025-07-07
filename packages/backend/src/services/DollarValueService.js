@@ -34,9 +34,7 @@ class DollarValueService {
      */
     getDollarValue(id) {
         return this.#error.handler(["Read Dollar Value", id, "Dollar Value"], async() => {
-            const dollarValue = await this.DollarValue.findByPk(id, {
-                attributes: ["value"]
-            }) 
+            const dollarValue = await this.DollarValue.findByPk(id) 
             
             if(!dollarValue) {
                 throw new NotFoundError()
@@ -74,7 +72,7 @@ class DollarValueService {
     updateDollarValue(id, value) {
         return this.#error.handler(["Update Dollar Value", id, "Dollar Value"], async() => {
             const dollarValue = await this.getDollarValue(id)
-            const updatedDollarValue = dollarValue.update({
+            const updatedDollarValue = await dollarValue.update({
                 value: value, 
                 date: new Date()
             })

@@ -9,7 +9,7 @@ function initializeDollar(sequelize) {
         {
             id: {
                 type: DataTypes.INTEGER,
-                autoIncrement: true,
+                autoIncrement: true, 
                 primaryKey: true
             },
 
