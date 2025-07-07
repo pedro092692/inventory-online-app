@@ -12,7 +12,7 @@ export default {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
-            primaaryKey: true
+            primaryKey: true
         },
 
         value: {
