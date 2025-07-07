@@ -10,12 +10,13 @@ import { initializeSeller, Seller } from "../models/inventory_models/SellerModel
 import { initializeProduct, Product } from "../models/inventory_models/ProductModel.js"
 import { initializePayment, Payment } from "../models/inventory_models/PaymentModel.js"
 import { initializePaymentDetail, PaymentDetail } from "../models/inventory_models/PaymentDetailModel.js" 
+import { initializeDollar } from "../models/inventory_models/DollarModel.js"
 
 let instance = null
 
 class Database {
     constructor() {
-        // if alreday are an instance of sequelize return it 
+        // if already are an instance of sequelize return it 
         // avoid to create a new one. 
         if(instance) {
             return instance
@@ -64,6 +65,7 @@ class Database {
         initializeProduct(this.sequelize)
         initializePayment(this.sequelize)
         initializePaymentDetail(this.sequelize)
+        initializeDollar(this.sequelize)
     
     }
 
@@ -82,7 +84,6 @@ class Database {
         Payment.associationPaymentDetail({Invoice})
         PaymentDetail.associationInvoice({Invoice})
         PaymentDetail.associationPaymentMethod({Payment})
-
     }
 }
 
