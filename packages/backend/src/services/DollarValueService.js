@@ -1,5 +1,5 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler"
-import { NotFoundError } from "../errors/NofoundError"
+import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
+import { NotFoundError } from "../errors/NofoundError.js"
 
 class DollarValueService {
     
