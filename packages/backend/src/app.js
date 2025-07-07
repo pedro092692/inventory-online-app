@@ -15,6 +15,7 @@ class Server {
         this.app = express()
         this.port = 4000,
         this.db = new Database()
+        
         //app middlewares
         this.middlewares()
         

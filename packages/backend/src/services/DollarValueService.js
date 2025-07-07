@@ -1,7 +1,7 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler"
 import { NotFoundError } from "../errors/NofoundError"
 
-class DollarValue {
+class DollarValueService {
     
     // Service Error handler instance 
     #error = new ServiceErrorHandler()
@@ -99,4 +99,4 @@ class DollarValue {
 }
 
 
-export default DollarValue
+export default DollarValueService
