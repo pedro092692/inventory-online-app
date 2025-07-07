@@ -13,7 +13,7 @@ class DollarValueService {
 
     /**
      * 
-     * @param {number} - The value of the current dollar price.
+     * @param {number} value - The value of the current dollar price.
      * @return {Promise<Object>} - A promise that resolves to an object of created new dollar value price.
      * @throws {ServiceError} - If an error occurs during create dollar value.
      */
