@@ -22,6 +22,18 @@ class DollarValueController {
         const newValue = await this.dollarService.createDollarValue(value)
         res.status(201).json({newValue})
     })
+
+    /**
+     * Creates a new value for dollar.
+     * @param {Object} req - request object
+     * @param {Object} res - response object to send the latest dollar value
+     * @throws {ServiceError} - throws an error if the dollar value could not be retrieved
+     * @returns {Promise<void>} - returns the latest dollar value in the response
+     */
+    getLastValue = this.#error.handler( async(req, res) => {
+        const lastValue = await this.dollarService.getLastValue()
+        res.status(200).json({lastValue})
+    })
 }
 
 export default DollarValueController

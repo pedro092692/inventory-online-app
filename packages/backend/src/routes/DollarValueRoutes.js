@@ -15,6 +15,7 @@ class DollarValueRoutes{
     initializeRoutes() {    
         this.router.get("/", (req, res) => res.send("Dollar Value Routes"))
         this.router.post("/", (req, res) => new DollarValueController(Dollar).createDollarValue(req, res))
+        this.router.get("/latest", (req, res) => new DollarValueController(Dollar).getLastValue(req, res))
     }
 }
 
