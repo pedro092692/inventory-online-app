@@ -36,7 +36,7 @@ export default {
         schema: schema
       },
       {
-        id: 1
+        id: [1, 2, 3]
       }
     )
   }
