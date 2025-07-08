@@ -42,10 +42,10 @@ function initializeCustomer(sequelize) {
             phone: {
                 type: DataTypes.STRING, 
                 allowNull: false, 
-                defaultValue: "+58424000000", // phone number for venezuela 
+                defaultValue: "+584240000000", // phone number for venezuela 
                 validate: {
                     len: {
-                        args: [12],
+                        args: [13],
                         msg: "A valid phone number is required."
                     }
                 }

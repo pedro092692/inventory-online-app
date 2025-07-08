@@ -5,8 +5,8 @@ class PayInvoiceController {
     // Error hanlder instance 
     #error = new ControllerErrorHandler()
 
-    constructor(model) {
-        this.PayInvoice = new PayInvoiceService(model)
+    constructor(model, dollarValueModel=null) {
+        this.PayInvoice = new PayInvoiceService(model, dollarValueModel)
         this.#error
     }
 

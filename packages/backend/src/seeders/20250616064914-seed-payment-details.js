@@ -24,7 +24,7 @@ export default {
           id: 3, 
           invoice_id: 3,
           payment_id: 5,
-          amount: 675.32,
+          amount: 6.06,
           reference_amount: 6.06
         }
       ]

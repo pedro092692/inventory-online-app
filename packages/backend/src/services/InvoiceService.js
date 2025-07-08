@@ -185,7 +185,7 @@ class InvoiceService {
                         association: "payments",
                         attributes: ["name", "currency"],
                         through: {
-                            attributes: ["amount"]
+                            attributes: ["amount", "reference_amount"]
                         }
                     }
                 ],
