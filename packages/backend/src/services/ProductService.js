@@ -1,12 +1,14 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
 import { NotFoundError } from "../errors/NofoundError.js"
+import DollarValueService from "./DollarValueService.js"
 
 class ProductService{
     // instance of error handler
     #error = new ServiceErrorHandler()
 
-    constructor(model) {
+    constructor(model, dollarValueModel=null) {
         this.Product = model
+        this.dollarValue = new DollarValueService(dollarValueModel)
         this.#error
     }
 
@@ -64,6 +66,19 @@ class ProductService{
                 throw new NotFoundError()
             }
 
+            // add reference selling price to product 
+
+            // get the last dollar value
+            const dollarValue = await this.dollarValue.getLastValue()
+
+             // set reference selling price to the product
+            product.dataValues.reference_selling_price = (parseFloat(product.selling_price) * parseFloat(dollarValue.value)).toFixed(2)
+            
+            // if dollar value is not found, set reference selling price to message 
+            if(!dollarValue) {
+                product.dataValues.reference_selling_price = "No dollar value found"
+            }
+            
             return product
         })
     }

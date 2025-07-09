@@ -57,7 +57,7 @@ class DollarValueService {
             })
 
             if(!lastDollarValue) {
-                throw new NotFoundError()
+                return false
             }
 
             return lastDollarValue
