@@ -108,6 +108,28 @@ function initializeInvoice(sequelize) {
                     }
                 }
             },
+
+            total_reference: {
+                type: DataTypes.DECIMAL(10, 2), 
+                allowNull: true,
+                defaultValue: 0.00,
+                validate: {
+                    isNumeric: {
+                        msg: "A valid number is required."
+                    }
+                }
+            },
+
+            total_paid: {
+                type: DataTypes.DECIMAL(10, 2),
+                allowNull: true,
+                defaultValue: 0.00,
+                validate: {
+                    isNumeric: {
+                        msg: "A valid number is required."
+                    }
+                }
+            },
             status: {
                 type: DataTypes.ENUM('paid', 'unpaid'),
                 allowNull: false,
