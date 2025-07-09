@@ -47,6 +47,15 @@ export default {
           }
         },
 
+        total_reference: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: true,
+          defaultValue: 0.00,
+          validate: {
+            isNumeric: true
+          }
+        },
+
         status: {
           type: Sequelize.ENUM('paid', 'unpaid'),
           allowNull: false,
