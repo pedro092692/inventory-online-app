@@ -1,14 +1,16 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
 import { NotFoundError } from "../errors/NofoundError.js"
 import DollarValueService from "./DollarValueService.js"
+import InvoiceService from "./InvoiceService.js"
 
 class PayInvoiceService {
     // instace of error handler
     #error = new ServiceErrorHandler()
 
-    constructor(model, dollarValueModel=null) {
+    constructor(model, dollarValueModel=null, invoiceModel=null) {
         this.PaymentDetail = model,
         this.dollarValue = new DollarValueService(dollarValueModel)
+        this.invoiceService = new InvoiceService(invoiceModel)
         this.#error
     }
 
@@ -30,7 +32,6 @@ class PayInvoiceService {
             let reference_amount = amount            
             
             if( [1,2,3,4].includes(paymentId) ) {
-                console.log( "this payment is not in dollar")
                 // get latest dollar value to calcule reference amount
                 const dollarValue = await this.dollarValue.getLastValue()
                 reference_amount = amount / dollarValue.toJSON().value
