@@ -30,6 +30,14 @@ export default {
           selling_price: 4.62,
           stock: 75,
         },
+        {
+          id: 4,
+          barcode: "7592710003707",
+          name: "ADELGASEN CAP X30 HERB",
+          purchase_price: 8.25,
+          selling_price: 10.31,
+          stock: 1,
+        }
       ],
     )
   },
@@ -41,7 +49,7 @@ export default {
         schema: schema
       },
       {
-        id: [1, 2, 3] // Delete all seeded products
+        id: [1, 2, 3, 4] // Delete all seeded products
       }
     )
   }

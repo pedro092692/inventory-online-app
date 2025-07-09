@@ -12,6 +12,7 @@ export default {
           customer_id: 1, // Assuming customer with ID 1 exists
           seller_id: 1, // Assuming seller with ID 1 exists
           total: 6.39,
+          total_reference: 6.39 * 112.82,
           status: "unpaid"
         },
         {
@@ -20,6 +21,7 @@ export default {
           customer_id: 2, // Assuming customer with ID 2 exists
           seller_id: 2, // Assuming seller with ID 2 exists
           total: 5.67,
+          total_reference: 5.67 * 112.82,
           status: "unpaid"
         },
         {
@@ -28,6 +30,7 @@ export default {
           customer_id: 3, // Assuming customer with ID 3 exists
           seller_id: 3, // Assuming seller with ID 3 exists
           total: 6.06,
+          total_reference: 6.06 * 112.82,
           status: "unpaid"
         }
       ],
