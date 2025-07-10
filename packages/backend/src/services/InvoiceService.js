@@ -210,6 +210,23 @@ class InvoiceService {
         })
     }
 
+    /**     * Get a simple invoice by its ID, without details.
+     * @param {number} id - The ID of the invoice to retrieve.
+     * * @returns {Promise<Object>} - Returns a promise that resolves to the invoice object.
+     * @throws {NotFoundError} - Throws an error if the invoice is not found.
+     **/
+    getSimpleInvoice(id) {
+        return this.#error.handler(["Read Invoice", id, "Invoice"], async() => {
+            const invoice = await this.Invoice.findByPk(id)
+            
+            if(!invoice) {
+                throw new Error(`Invoice with id ${id} not found`)
+            }
+            
+            return invoice
+        })
+    }
+
     /**
      * Updates an invoice by its ID with new customer, seller, total, or details.
      * @param {number} invoiceId 

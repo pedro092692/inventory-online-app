@@ -24,13 +24,17 @@ class PayInvoiceService {
      */
     createPaymentDetail(invoiceId, paymentId, amount) {
         return this.#error.handler(["Create Payment"], async() => {
+            // check if invoice exists
+            const invoice = await this._getInvoice(invoiceId)
+            
             
             if (paymentId < 1 || paymentId > 7) {
                 throw new Error("Payment Id must be between 1 and 7")
             }
             // set reference value 
-            let reference_amount = amount            
+            let reference_amount = amount  
             
+
             if( [1,2,3,4].includes(paymentId) ) {
                 // get latest dollar value to calcule reference amount
                 const dollarValue = await this.dollarValue.getLastValue()
@@ -102,6 +106,19 @@ class PayInvoiceService {
                 await paymentDetail.destroy()
                 return 1
             })
+    }
+
+
+    /**
+     * This method retrieves an invoice by its ID.
+     * It uses the invoiceService to fetch the invoice details.
+     * @param {Number} invoiceId 
+     * @returns {Promise<Object>} - Returns a promise that resolves to the invoice object.
+     * @throws {NotFoundError} - Throws an error if the invoice is not found
+     */
+    async _getInvoice(invoiceId) {
+        const invoice = await this.invoiceService.getSimpleInvoice(invoiceId)
+        return invoice
     }
 }
 
