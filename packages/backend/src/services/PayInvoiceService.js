@@ -10,7 +10,7 @@ class PayInvoiceService {
     constructor(model, dollarValueModel=null, invoiceModel=null) {
         this.PaymentDetail = model,
         this.dollarValue = new DollarValueService(dollarValueModel)
-        this.invoiceService = new InvoiceService(invoiceModel)
+        this.invoiceService = new InvoiceService(invoiceModel, null, null, dollarValueModel)
         this.#error
     }
 
@@ -26,22 +26,36 @@ class PayInvoiceService {
         return this.#error.handler(["Create Payment"], async() => {
             // check if invoice exists
             const invoice = await this._getInvoice(invoiceId)
-            
+            const total_to_pay = invoice.total
+
             
             if (paymentId < 1 || paymentId > 7) {
                 throw new Error("Payment Id must be between 1 and 7")
             }
-            // set reference value 
+
+            // set reference value and status
             let reference_amount = amount  
+            let status = "unpaid"
             
 
             if( [1,2,3,4].includes(paymentId) ) {
                 // get latest dollar value to calcule reference amount
                 const dollarValue = await this.dollarValue.getLastValue()
                 reference_amount = amount / dollarValue.toJSON().value
+
+                if( reference_amount > total_to_pay ) {
+                    throw new Error("Reference amount cannot be greater than total to pay")
+                }
+
+                if( reference_amount == total_to_pay ) {
+                    status = "paid"
+                }
+                
                 
             }
-            const newPayment = await this.PaymentDetail.create(
+
+            // create payment detail
+            await this.PaymentDetail.create(
                 {
                     invoice_id: invoiceId,
                     payment_id: paymentId,
@@ -49,7 +63,14 @@ class PayInvoiceService {
                     reference_amount: reference_amount
                 }
             )
-            return newPayment
+
+            // update invoice paid amount and status
+            const updatedInvoice = await this._updateInvoice(invoiceId, {
+                total_paid: reference_amount,
+                status: status
+            })
+            
+            return updatedInvoice
         })
     }
 
@@ -118,6 +139,18 @@ class PayInvoiceService {
      */
     async _getInvoice(invoiceId) {
         const invoice = await this.invoiceService.getSimpleInvoice(invoiceId)
+        return invoice
+    }
+
+    /**
+     * This method updates an invoice with the provided updates.
+     * It uses the invoiceService to perform the update operation.
+     * @param {Number} invoiceId - The ID of the invoice to be updated.
+     * @param {Object} updates - The updates to be applied to the invoice.
+     * @returns {Promise<Object>} - Returns a promise that resolves to the updated invoice object.
+     */
+    async _updateInvoice(invoiceId, updates) {
+        const invoice = await this.invoiceService.updateInvoice(invoiceId, updates)
         return invoice
     }
 }

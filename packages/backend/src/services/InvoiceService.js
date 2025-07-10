@@ -237,10 +237,11 @@ class InvoiceService {
         return this.#error.handler(["Update Invoice", invoiceId, "Invoice"], async() => {
             const invoice = await this.getInvoice(invoiceId)
 
-            const { customer_id, seller_id, total, details } = updates
+            const { customer_id, seller_id, total, total_reference, total_paid, details } = updates
 
-            if (!customer_id && !seller_id && !total && !details) {
-                throw new Error("At least one of these customer_id, seller_id, total or details must be defined")
+
+            if (!customer_id && !seller_id && !total && !details && !total_reference && !total_paid) {
+                throw new Error("At least one of these customer_id, seller_id, total, total_paid, total_reference or details must be defined")
             }
 
             if(details) {
@@ -251,7 +252,9 @@ class InvoiceService {
             await invoice.update({
                 customer_id: customer_id,
                 seller_id: seller_id,
-                total: updates.total || invoice.total
+                total: updates.total || invoice.total,
+                total_reference: total_reference || invoice.total_reference,
+                total_paid: total_paid || invoice.total_paid
             })
 
             const newInvoice = await this.getInvoice(invoiceId)
