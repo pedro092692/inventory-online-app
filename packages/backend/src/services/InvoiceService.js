@@ -1,6 +1,7 @@
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
 import InvoiceDetailService from "./InvoiceDestailService.js"
 import ProductService from "./ProductService.js"
+import DollarValueService from "./DollarValueService.js"
 import { NotFoundError } from "../errors/NofoundError.js"
 import verifyDetails from "../utils/VerifiyDetails.js"
 import { Op } from "sequelize"
@@ -10,10 +11,11 @@ class InvoiceService {
     // instance of error handler 
     #error = new ServiceErrorHandler()
 
-    constructor(model, detailModel=null, productModel=null) {
+    constructor(model, detailModel=null, productModel=null, dollarModel=null) {
         this.Invoice = model
         this.InvoiceDetail = new InvoiceDetailService(detailModel)
         this.Product = new ProductService(productModel)
+        this.dollarValue = new DollarValueService(dollarModel)
         this.#error
     }
 
@@ -196,6 +198,13 @@ class InvoiceService {
             if(!invoice) {
                 throw new NotFoundError()
             }
+
+            // check if invoice is paid 
+            if(invoice.status === "unpaid") {
+                // calculate refrence amount 
+                const dollarValue = await this.dollarValue.getLastValue()
+                invoice.total_reference = (invoice.total * dollarValue.value).toFixed(2)
+            }   
 
             return invoice
         })

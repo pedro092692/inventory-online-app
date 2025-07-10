@@ -5,8 +5,8 @@ import InvoiceService from "../services/InvoiceService.js"
 class InvoiceController {
     // error controller new instace 
     #error = new ControllerErrorHandler()
-    constructor(model, detailModel=null, productModel=null) {
-        this.invoiceService = new InvoiceService(model, detailModel, productModel)
+    constructor(model, detailModel=null, productModel=null, dollarModel=null) {
+        this.invoiceService = new InvoiceService(model, detailModel, productModel, dollarModel)
         this.#error
     }
     
