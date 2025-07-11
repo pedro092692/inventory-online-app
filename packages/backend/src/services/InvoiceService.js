@@ -184,11 +184,15 @@ class InvoiceService {
                         association: "seller", attributes: ["name"]
                     },
                     {
-                        association: "payments",
-                        attributes: ["name", "currency"],
-                        through: {
-                            attributes: ["amount", "reference_amount"]
-                        }
+                        association: "payments-details",
+                        include: [
+                            {
+                                association: "payments",
+                                attributes: ["name", "currency"],
+                            },
+                            
+                        ],
+                        attributes: ["amount", "reference_amount"]
                     }
                 ],
                 order: [["products", "name", "ASC"]]

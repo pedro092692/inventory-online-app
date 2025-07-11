@@ -66,7 +66,7 @@ class PayInvoiceService {
 
             // update invoice paid amount and status
             const updatedInvoice = await this._updateInvoice(invoiceId, {
-                total_paid: reference_amount,
+                total_paid: parseFloat(invoice.total_paid) + reference_amount,
                 status: status
             })
             
