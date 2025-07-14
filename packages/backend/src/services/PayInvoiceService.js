@@ -55,7 +55,7 @@ class PayInvoiceService {
 
         
             // set status based on the amount paid
-             if( reference_amount == parseFloat(total_to_pay) || parseFloat(invoice.total_paid) + reference_amount >= parseFloat(total_to_pay)) {
+             if( parseFloat(((parseFloat(invoice.total_paid) + reference_amount).toFixed(2))) >= parseFloat(invoice.total) ) {
                     status = "paid"
              }
 
@@ -181,10 +181,9 @@ class PayInvoiceService {
          
         if( [1,2,3,4,6,7].includes(paymentId) ) {
             // get latest dollar value to calcule reference amount
-
             // check if in dollar transaction if not calculate reference amount
-            if( paymentId !=6 || paymentId != 7 ) {
-                // check if bolivarReference is provided
+            if( paymentId !=6 && paymentId != 7 ) {
+                // check if bolivarReference is provided\
                 if(bolivarReference){
                     amount *= dollarValue.toJSON().value
                 }
@@ -193,6 +192,7 @@ class PayInvoiceService {
 
                 // set dollarAmount to reference amount
                 dollarAmount = amount
+
             }
             
 
@@ -201,22 +201,33 @@ class PayInvoiceService {
             }   
 
             //check if payment is in bolivars cash
+            
             if( paymentId == 4 && reference_amount > total_to_pay )  {
                 // calculate change in bolivars
                 change = ((reference_amount - total_to_pay) * dollarValue.toJSON().value).toFixed(2)
                 reference_amount = total_to_pay
                 dollarAmount = total_to_pay * dollarValue.toJSON().value
     
+            }else if( paymentId == 4 && reference_amount < total_to_pay ) {
+                dollarAmount = (reference_amount * dollarValue.toJSON().value).toFixed(2)
             }
 
+            //
+            if(amount < dollarAmount) {
+                dollarAmount = reference_amount
+            }
             
         }
 
+        
+        
         // check if payment is in dollar cash
         if( paymentId == 5 && reference_amount > total_to_pay ) {
             // calculate change in dollars
             change = (reference_amount - total_to_pay).toFixed(2)
             reference_amount = total_to_pay
+        }else if( paymentId == 5 && reference_amount < total_to_pay ) {
+            dollarAmount = amount.toFixed(2)
         }
 
         // return and object with reference amount and change
