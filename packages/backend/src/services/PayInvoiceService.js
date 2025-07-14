@@ -26,40 +26,39 @@ class PayInvoiceService {
         return this.#error.handler(["Create Payment"], async() => {
             // check if invoice exists
             const invoice = await this._getInvoice(invoiceId)
-            const total_to_pay = invoice.total
+            let total_to_pay = 0
+            
+            // calculate total to pay
+            if(parseFloat(invoice.total_paid) == 0.00){
+                total_to_pay = invoice.total
+            }else{
+                total_to_pay = invoice.total - invoice.total_paid
+            }
 
             
             if (paymentId < 1 || paymentId > 7) {
                 throw new Error("Payment Id must be between 1 and 7")
             }
 
-            // set reference value and status
-            let reference_amount = amount  
+            // set reference value, status and change 
             let status = "unpaid"
+            const dollarValue = await this.dollarValue.getLastValue()
             
+            // check payment method and calculate reference amount
+            const { reference_amount, change, dollarAmount } = this._checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay)
 
-            if( [1,2,3,4].includes(paymentId) ) {
-                // get latest dollar value to calcule reference amount
-                const dollarValue = await this.dollarValue.getLastValue()
-                reference_amount = amount / dollarValue.toJSON().value
-
-                if( reference_amount > total_to_pay ) {
-                    throw new Error("Reference amount cannot be greater than total to pay")
-                }
-
-                if( reference_amount == total_to_pay ) {
+        
+            // set status based on the amount paid
+             if( reference_amount == parseFloat(total_to_pay) || parseFloat(invoice.total_paid) + reference_amount >= parseFloat(total_to_pay)) {
                     status = "paid"
-                }
-                
-                
-            }
+             }
 
             // create payment detail
             await this.PaymentDetail.create(
                 {
                     invoice_id: invoiceId,
                     payment_id: paymentId,
-                    amount: amount,
+                    amount: dollarAmount,
                     reference_amount: reference_amount
                 }
             )
@@ -69,6 +68,10 @@ class PayInvoiceService {
                 total_paid: parseFloat(invoice.total_paid) + reference_amount,
                 status: status
             })
+
+            if(change){
+                updatedInvoice.dataValues.change = change
+            }
             
             return updatedInvoice
         })
@@ -152,6 +155,63 @@ class PayInvoiceService {
     async _updateInvoice(invoiceId, updates) {
         const invoice = await this.invoiceService.updateInvoice(invoiceId, updates)
         return invoice
+    }
+
+    /**
+     * This method checks the payment method and calculates the reference amount, change, and dollar amount
+     * based on the payment ID, dollar value, amount, and total to pay.
+     * @param {Number} paymentId - The ID of the payment method.
+     * @param {Object} dollarValue - The dollar value object containing the current exchange rate
+     * @param {Number} amount - The amount of money paid.
+     * @param {Number} total_to_pay - The total amount to be paid.
+     * @return {Object} - Returns an object containing the reference amount, change, and dollar amount.
+     * @throws {Error} - Throws an error if the reference amount is greater than the
+     * total to pay or if the payment ID is invalid.
+     */
+    _checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay) {
+        let reference_amount = amount
+        let dollarAmount = total_to_pay
+        let change = 0
+         
+        if( [1,2,3,4,6,7].includes(paymentId) ) {
+            // get latest dollar value to calcule reference amount
+
+            // check if in dollar transaction if not calculate reference amount
+            if( paymentId !=6 || paymentId != 7 ) {
+                reference_amount = amount / dollarValue.toJSON().value
+
+                // set dollarAmount to reference amount
+                dollarAmount = amount
+            }
+            
+
+            if( reference_amount > total_to_pay ) {
+                throw new Error("Reference amount cannot be greater than total to pay")
+            }   
+
+            //check if payment is in bolivars cash
+            if( paymentId == 4 && reference_amount > total_to_pay )  {
+                // calculate change in bolivars
+                change = ((reference_amount - total_to_pay) * dollarValue.toJSON().value).toFixed(2)
+    
+            }
+
+            
+        }
+
+        // check if payment is in dollar cash
+        if( paymentId == 5 && reference_amount > total_to_pay ) {
+            // calculate change in dollars
+            change = (reference_amount - total_to_pay).toFixed(2)
+            reference_amount = total_to_pay
+        }
+
+        // return and object with reference amount and change
+        return {
+            reference_amount: reference_amount,
+            change: change,
+            dollarAmount: dollarAmount
+        }
     }
 }
 
