@@ -26,6 +26,12 @@ class PayInvoiceService {
         return this.#error.handler(["Create Payment"], async() => {
             // check if invoice exists
             const invoice = await this._getInvoice(invoiceId)
+
+            // check if invoice is already paid
+            if(invoice.status == "paid") {
+                throw new Error("Invoice is already paid")
+            }
+            
             let total_to_pay = 0
             
             // calculate total to pay
