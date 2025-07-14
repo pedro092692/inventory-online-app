@@ -22,7 +22,7 @@ class PayInvoiceService {
      * @return {Promise<Object>} - A promise that resolves to an object of created invoice payment detail.
      * @throws {ServiceError} - If an error occurs during invoice detail creation.
      */
-    createPaymentDetail(invoiceId, paymentId, amount) {
+    createPaymentDetail(invoiceId, paymentId, amount, bolivarReference=false) {
         return this.#error.handler(["Create Payment"], async() => {
             // check if invoice exists
             const invoice = await this._getInvoice(invoiceId)
@@ -31,7 +31,7 @@ class PayInvoiceService {
             if(invoice.status == "paid") {
                 throw new Error("Invoice is already paid")
             }
-            
+
             let total_to_pay = 0
             
             // calculate total to pay
@@ -51,7 +51,7 @@ class PayInvoiceService {
             const dollarValue = await this.dollarValue.getLastValue()
             
             // check payment method and calculate reference amount
-            const { reference_amount, change, dollarAmount } = this._checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay)
+            const { reference_amount, change, dollarAmount } = this._checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay, bolivarReference)
 
         
             // set status based on the amount paid
@@ -174,7 +174,7 @@ class PayInvoiceService {
      * @throws {Error} - Throws an error if the reference amount is greater than the
      * total to pay or if the payment ID is invalid.
      */
-    _checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay) {
+    _checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay, bolivarReference) {
         let reference_amount = amount
         let dollarAmount = total_to_pay
         let change = 0
@@ -184,6 +184,11 @@ class PayInvoiceService {
 
             // check if in dollar transaction if not calculate reference amount
             if( paymentId !=6 || paymentId != 7 ) {
+                // check if bolivarReference is provided
+                if(bolivarReference){
+                    amount *= dollarValue.toJSON().value
+                }
+                
                 reference_amount = amount / dollarValue.toJSON().value
 
                 // set dollarAmount to reference amount

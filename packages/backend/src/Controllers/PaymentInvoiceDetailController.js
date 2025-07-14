@@ -18,8 +18,16 @@ class PayInvoiceController {
      * @returns {Promise<void>} - returns the created payment detail in the response
      */
     createPaymentInvoiceDetail = this.#error.handler( async(req, res) => {
-        const { invoice_id, payment_id, amount } = req.body
-        const newPaymentDetail = await this.PayInvoice.createPaymentDetail(invoice_id, payment_id, amount)
+        let { invoice_id, payment_id, amount, bolivarReference } = req.body
+        let isBolivarReference = false
+        // check if bolivarReference is provided and set amount to it
+        if(bolivarReference && !amount) {
+            amount = bolivarReference
+            isBolivarReference = true
+        }
+
+        
+        const newPaymentDetail = await this.PayInvoice.createPaymentDetail(invoice_id, payment_id, amount, isBolivarReference)
         res.status(201).json(newPaymentDetail)
     })
 
