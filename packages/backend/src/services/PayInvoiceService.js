@@ -196,7 +196,7 @@ class PayInvoiceService {
             }
             
 
-            if( reference_amount > total_to_pay ) {
+            if( reference_amount > total_to_pay && paymentId != 4) {
                 throw new Error("Reference amount cannot be greater than total to pay")
             }   
 
@@ -204,6 +204,8 @@ class PayInvoiceService {
             if( paymentId == 4 && reference_amount > total_to_pay )  {
                 // calculate change in bolivars
                 change = ((reference_amount - total_to_pay) * dollarValue.toJSON().value).toFixed(2)
+                reference_amount = total_to_pay
+                dollarAmount = total_to_pay * dollarValue.toJSON().value
     
             }
 
