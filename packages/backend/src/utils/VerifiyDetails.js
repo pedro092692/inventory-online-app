@@ -13,9 +13,7 @@ function verifyDetails(details, update = false) {
         if (!detail.quantity || typeof detail.quantity !== 'number' || detail.quantity <= 0) {
             throw new Error("Each detail must have a valid quantity greater than zero");
         }
-        if (!detail.unit_price || typeof detail.unit_price !== 'number' || detail.unit_price < 0) {
-            throw new Error("Each detail must have a valid unit_price greater than or equal to zero");
-        }
+        
 
         if (update && !detail.id) {
             throw new Error("Each detail must have an id when updating");

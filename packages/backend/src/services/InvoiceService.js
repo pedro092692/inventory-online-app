@@ -51,6 +51,22 @@ class InvoiceService {
             // check for product stock
             const produtscStock = await this.Product.getProductStock(details)
             
+            // get product unit price 
+            const productsUnitPrice = await this.Product.getProductUnitPrice(details)
+            
+            // add unit price to details
+            details.map(detail => {
+                const product = productsUnitPrice.find(product => product.id === detail.product_id) 
+                // throw error if product not found
+                if(!product) {
+                    // delete invoice and throw error
+                    this.deleteInvoice(details[0].invoice_id)
+                    throw new Error(`Product with id ${detail.product_id} not found`)
+                }
+                detail.unit_price = product.selling_price
+            })
+
+            
             // validate stock for each product
             this.validateStockProduct(produtscStock, details)
 

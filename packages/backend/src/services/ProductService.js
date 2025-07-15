@@ -135,6 +135,23 @@ class ProductService{
     }
 
     /**
+     * Retrieves the unit price for multiple products based on their IDs.   
+     * @param {Array} details - array of objects containing product_id and quantity
+     * @param {Number} details.product_id - id of the product
+     * @returns {Promise<Array>} - returns an array of products with their unit price
+     * @throws {ServiceError} - throws an error if the unit price could not be retrieved
+     */
+    getProductUnitPrice(details) {
+        return this.#error.handler(["Read Unit Price Product"], async() => {
+            const products = await this.Product.findAll({
+                where: { id: details.map(detail => detail.product_id)},
+                attributes: ["id", "selling_price"]
+            })
+            return products
+        })
+    }
+
+    /**
      * Updates stock for multiple products by decrementing their stock quantity.
      * @param {Array} details - array of objects containing product_id and quantity
      * @param {Number} details.product_id - id of the product
