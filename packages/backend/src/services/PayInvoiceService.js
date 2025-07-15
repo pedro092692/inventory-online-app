@@ -194,9 +194,8 @@ class PayInvoiceService {
                 dollarAmount = amount
 
             }
-            
 
-            if( reference_amount > total_to_pay && paymentId != 4) {
+            if( reference_amount.toFixed(2) > total_to_pay && paymentId != 4) {
                 throw new Error("Reference amount cannot be greater than total to pay")
             }   
 
@@ -219,7 +218,6 @@ class PayInvoiceService {
             
         }
 
-        
         
         // check if payment is in dollar cash
         if( paymentId == 5 && reference_amount > total_to_pay ) {
