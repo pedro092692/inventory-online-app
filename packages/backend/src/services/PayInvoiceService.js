@@ -54,8 +54,8 @@ class PayInvoiceService {
             const { reference_amount, change, dollarAmount } = this._checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay, bolivarReference)
 
         
-            // set status based on the amount paid
-             if( parseFloat(((parseFloat(invoice.total_paid) + reference_amount).toFixed(2))) >= parseFloat(invoice.total) ) {
+            // set status based on the amount paid\
+             if( (parseFloat(invoice.total_paid) + parseFloat(reference_amount)).toFixed(2) >= parseFloat(invoice.total) ) {
                     status = "paid"
              }
 
