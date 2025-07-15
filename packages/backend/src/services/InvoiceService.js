@@ -14,7 +14,7 @@ class InvoiceService {
     constructor(model, detailModel=null, productModel=null, dollarModel=null) {
         this.Invoice = model
         this.InvoiceDetail = new InvoiceDetailService(detailModel)
-        this.Product = new ProductService(productModel)
+        this.Product = new ProductService(productModel, dollarModel)
         this.dollarValue = new DollarValueService(dollarModel)
         this.#error
     }
@@ -365,14 +365,14 @@ class InvoiceService {
     deleteInvoice(invoiceId) {
         return this.#error.handler(["Delete Invoice", invoiceId, "Invoice"], async() => {
             const invoice = await this.getInvoice(invoiceId)
-           
+            
             // gets invoices details ids 
             const product_details = invoice.products.map((product => product.invoice_details.id))
             const details = await this.InvoiceDetail.getInvoiceDetails(product_details)
             
             //restore product stock
             await this._restoreStockProduct(details)
-
+            
             // delete details 
             await this.InvoiceDetail.deleteInvoiceDetail(product_details)
 
