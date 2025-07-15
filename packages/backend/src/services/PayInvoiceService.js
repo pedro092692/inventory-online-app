@@ -194,7 +194,6 @@ class PayInvoiceService {
                 dollarAmount = amount
 
             }
-
             if( reference_amount.toFixed(2) > total_to_pay && paymentId != 4) {
                 throw new Error("Reference amount cannot be greater than total to pay")
             }   

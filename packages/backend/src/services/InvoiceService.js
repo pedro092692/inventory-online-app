@@ -227,6 +227,9 @@ class InvoiceService {
 
                 // changed product price to reference price 
                 invoice.products = this._calculeBolivarPriceProducts(invoice.products, dollarValue)
+
+                // add total paid in boilvar to invoice
+                invoice.dataValues.total_Paid_Bolivar = (invoice.total_paid * dollarValue.value).toFixed(2)
                 
 
             }else {
@@ -235,6 +238,8 @@ class InvoiceService {
                  // changed product price to reference price 
                 invoice.products = this._calculeBolivarPriceProducts(invoice.products, { value: dollarValue })
                 
+                // add total paid in boilvar to invoice
+                invoice.dataValues.total_Paid_Bolivar = invoice.total_reference
             }   
 
             
