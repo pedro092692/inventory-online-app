@@ -224,7 +224,20 @@ class InvoiceService {
                 // calculate refrence amount 
                 const dollarValue = await this.dollarValue.getLastValue()
                 invoice.total_reference = (invoice.total * dollarValue.value).toFixed(2)
+
+                // changed product price to reference price 
+                invoice.products = this._calculeBolivarPriceProducts(invoice.products, dollarValue)
+                
+
+            }else {
+                // get reference value
+                const dollarValue = (parseFloat(invoice.total_reference) / parseFloat(invoice.total)).toFixed(2)
+                 // changed product price to reference price 
+                invoice.products = this._calculeBolivarPriceProducts(invoice.products, { value: dollarValue })
+                
             }   
+
+            
 
             return invoice
         })
@@ -484,6 +497,15 @@ class InvoiceService {
         })
         return total.reduce(( sum, acc) => sum + acc, 0)
     }
+
+
+    _calculeBolivarPriceProducts(products, dollarvalue) {
+        return products.map(product => {
+            product.invoice_details.dataValues.unit_price = (product.invoice_details.dataValues.unit_price * dollarvalue.value).toFixed(2)
+        })
+    }
 }
 
 export default InvoiceService
+
+
