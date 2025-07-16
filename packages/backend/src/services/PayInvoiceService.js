@@ -22,7 +22,7 @@ class PayInvoiceService {
      * @return {Promise<Object>} - A promise that resolves to an object of created invoice payment detail.
      * @throws {ServiceError} - If an error occurs during invoice detail creation.
      */
-    createPaymentDetail(invoiceId, paymentId, amount, bolivarReference=false) {
+    createPaymentDetail(invoiceId, paymentId, amount) {
         return this.#error.handler(["Create Payment"], async() => {
             // check if invoice exists
             const invoice = await this._getInvoice(invoiceId)
@@ -55,7 +55,7 @@ class PayInvoiceService {
             const dollarValue = await this.dollarValue.getLastValue()
             
             // check payment method and calculate reference amount
-            const { reference_amount, change, detailAmount } = this._checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay, bolivarReference)
+            const { reference_amount, change, detailAmount } = this._checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay)
 
             // set status based on the amount paid
              if( total_paid + reference_amount >= total ) {
@@ -177,7 +177,7 @@ class PayInvoiceService {
      * @throws {Error} - Throws an error if the reference amount is greater than the
      * total to pay or if the payment ID is invalid.
      */
-    _checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay, bolivarReference) {
+    _checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay) {
         // set default values
         let reference_amount = amount
         let detailAmount = total_to_pay
