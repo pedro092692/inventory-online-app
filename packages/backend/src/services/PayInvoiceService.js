@@ -219,10 +219,12 @@ class PayInvoiceService {
                 change = parseFloat((reference_amount - total_to_pay).toFixed(2))
                 // set reference amount in total pay
                 reference_amount = total_to_pay
+                
                 // if payment is in bolivar set amount and change in bolivar 
                 if(payment_type == "bolivars") {
                     change = parseFloat((amount - (total_to_pay * dollar)).toFixed(2))
                     detailAmount = parseFloat((total_to_pay * dollar).toFixed(2))
+                    reference_amount = parseFloat((detailAmount / dollar).toFixed(2))
                 }
             }else {
                 // no calcule change 
