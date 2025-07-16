@@ -36,9 +36,9 @@ class PayInvoiceService {
             
             // calculate total to pay
             if(parseFloat(invoice.total_paid) == 0.00){
-                total_to_pay = invoice.total
+                total_to_pay = this._roundToTwoDecimalPlaces(invoice.total)
             }else{
-                total_to_pay = invoice.total - invoice.total_paid
+                total_to_pay = this._roundToTwoDecimalPlaces(invoice.total - invoice.total_paid)
             }
 
             
@@ -187,13 +187,12 @@ class PayInvoiceService {
                     amount *= dollarValue.toJSON().value
                 }
                 
-                reference_amount = amount / dollarValue.toJSON().value
+                reference_amount = this._roundToTwoDecimalPlaces(amount / dollarValue.toJSON().value)
 
                 // set dollarAmount to reference amount
                 dollarAmount = amount
-
             }
-            if( reference_amount > total_to_pay && paymentId != 4) {
+            if( reference_amount > total_to_pay && paymentId != 4 ) {
                 throw new Error("Reference amount cannot be greater than total to pay")
             }   
 
@@ -232,6 +231,10 @@ class PayInvoiceService {
             change: change,
             dollarAmount: dollarAmount
         }
+    }
+
+    _roundToTwoDecimalPlaces(value) {
+        return Math.floor(value * 10000) / 10000
     }
 }
 
