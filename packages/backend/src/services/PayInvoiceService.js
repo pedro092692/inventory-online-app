@@ -55,11 +55,9 @@ class PayInvoiceService {
             const dollarValue = await this.dollarValue.getLastValue()
             
             // check payment method and calculate reference amount
-            const { reference_amount, change, dollarAmount } = this._checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay, bolivarReference)
+            const { reference_amount, change, detailAmount } = this._checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay, bolivarReference)
 
-        
             // set status based on the amount paid
-           
              if( total_paid + reference_amount >= total ) {
                     status = "paid"
              }
@@ -69,7 +67,7 @@ class PayInvoiceService {
                 {
                     invoice_id: invoiceId,
                     payment_id: paymentId,
-                    amount: dollarAmount,
+                    amount: detailAmount,
                     reference_amount: reference_amount
                 }
             )
@@ -180,68 +178,72 @@ class PayInvoiceService {
      * total to pay or if the payment ID is invalid.
      */
     _checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay, bolivarReference) {
+        // set default values
         let reference_amount = amount
-        let dollarAmount = total_to_pay
+        let detailAmount = total_to_pay
         let change = 0
-        if( [1,2,3,4,6,7].includes(paymentId) ) {
-            // get latest dollar value to calcule reference amount
-            // check if in dollar transaction if not calculate reference amount
-            if( paymentId !=6 && paymentId != 7 ) {
-                // check if bolivarReference is provided\
-                if(bolivarReference){
-                    amount *= dollarValue.toJSON().value
-                }
-                
-                reference_amount = parseFloat((amount / dollarValue.toJSON().value).toFixed(2))
+        let payment_type = null
+        let dollar = dollarValue.toJSON().value
 
-                // set dollarAmount to reference amount
-                dollarAmount = amount
-            }
-            
-            if( reference_amount > total_to_pay && paymentId != 4 ) {
-                throw new Error("Reference amount cannot be greater than total to pay")
-            }   
-
-            //check if payment is in bolivars cash
-            
-            if( paymentId == 4 && reference_amount > total_to_pay )  {
-                // calculate change in bolivars
-                change = ((reference_amount - total_to_pay) * dollarValue.toJSON().value).toFixed(2)
-                reference_amount = total_to_pay
-                dollarAmount = total_to_pay * dollarValue.toJSON().value
-    
-            }else if( paymentId == 4 && reference_amount < total_to_pay ) {
-                dollarAmount = (reference_amount * dollarValue.toJSON().value).toFixed(2)
-            }
-
-            //
-            if(amount < dollarAmount) {
-                dollarAmount = reference_amount
-            }
-            
-        }
-
+        /**
+         * Table of payment methods:
+         * 1. point of sale (POS) in bolivars
+         * 2. "pago movil" in bolivars
+         * 3. transfer in bolivars
+         * 4. cash in bolivars
+         * 5. cash in dollars
+         * 6. trasnfer in dollars
+         * 7. cripto currency
+         */
         
-        // check if payment is in dollar cash
-        if( paymentId == 5 && reference_amount > total_to_pay ) {
-            // calculate change in dollars
-            change = (reference_amount - total_to_pay).toFixed(2)
-            reference_amount = total_to_pay
-        }else if( paymentId == 5 && reference_amount < total_to_pay ) {
-            dollarAmount = amount.toFixed(2)
+        // 1 check if payment is in bolivars 
+        if( [1, 2, 3, 4].includes(paymentId)) {
+            // calculate reference amount
+            reference_amount = parseFloat((amount / dollar).toFixed(2))
+            detailAmount = amount
+
+            // set payment type to bolivars 
+            payment_type = "bolivars"
         }
 
-        // return and object with reference amount and change
+        // check if reference_amount is greather than total to pay and throw and error
+        if((paymentId != 4 && paymentId != 5) && reference_amount > total_to_pay) {
+            throw new Error("Reference amount cannot be greater than total to pay")
+        }
+
+        //if payment is in cash and greather than total amount calcule change 
+        if(paymentId == 4 || paymentId == 5) {
+            
+            // calcule change if paid amount is greather than total invoice
+            if(reference_amount > total_to_pay) {
+                change = parseFloat((reference_amount - total_to_pay).toFixed(2))
+                // set reference amount in total pay
+                reference_amount = total_to_pay
+                // if payment is in bolivar set amount and change in bolivar 
+                if(payment_type == "bolivars") {
+                    change = parseFloat((amount - (total_to_pay * dollar)).toFixed(2))
+                    detailAmount = parseFloat((total_to_pay * dollar).toFixed(2))
+                }
+            }else {
+                // no calcule change 
+                detailAmount = reference_amount
+
+                // set detail amount is pament_type is bolivars
+                if(payment_type == "bolivars") {
+                    detailAmount = amount
+                }
+            } 
+        }
+
         return {
             reference_amount: reference_amount,
             change: change,
-            dollarAmount: dollarAmount
+            detailAmount: detailAmount
         }
+       
     }
 
-    _roundToTwoDecimalPlaces(value) {
-        return Math.floor(value * 10000) / 10000
-    }
+ 
 }
 
 
