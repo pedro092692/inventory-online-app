@@ -192,6 +192,7 @@ class PayInvoiceService {
                 // set dollarAmount to reference amount
                 dollarAmount = amount
             }
+           console.log(reference_amount)
             if( reference_amount > total_to_pay && paymentId != 4 ) {
                 throw new Error("Reference amount cannot be greater than total to pay")
             }   

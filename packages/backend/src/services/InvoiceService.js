@@ -230,6 +230,9 @@ class InvoiceService {
 
                 // add total paid in boilvar to invoice
                 invoice.dataValues.total_Paid_Bolivar = (invoice.total_paid * dollarValue.value).toFixed(2)
+
+                // add total to pay in dollar
+                invoice.dataValues.total_to_pay_dollar = (invoice.total - invoice.total_paid).toFixed(2)
                 
 
             }else {
