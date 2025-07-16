@@ -54,7 +54,7 @@ function initializePaymentDetail(sequelize) {
             },
 
             amount: {
-                type: DataTypes.DECIMAL(10, 2),
+                type: DataTypes.DECIMAL(10, 4),
                 allowNull: false,
                 validate: {
                     isNumeric: {
@@ -64,7 +64,7 @@ function initializePaymentDetail(sequelize) {
             },
 
             reference_amount: {
-                type: DataTypes.DECIMAL(10, 2), 
+                type: DataTypes.DECIMAL(10, 4), 
                 allowNull: false, 
                 validate: {
                     isNumeric: {

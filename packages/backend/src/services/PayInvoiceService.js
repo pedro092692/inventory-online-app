@@ -178,7 +178,6 @@ class PayInvoiceService {
         let reference_amount = amount
         let dollarAmount = total_to_pay
         let change = 0
-         
         if( [1,2,3,4,6,7].includes(paymentId) ) {
             // get latest dollar value to calcule reference amount
             // check if in dollar transaction if not calculate reference amount
@@ -194,7 +193,7 @@ class PayInvoiceService {
                 dollarAmount = amount
 
             }
-            if( reference_amount.toFixed(2) > total_to_pay && paymentId != 4) {
+            if( reference_amount > total_to_pay && paymentId != 4) {
                 throw new Error("Reference amount cannot be greater than total to pay")
             }   
 

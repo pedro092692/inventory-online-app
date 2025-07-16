@@ -31,7 +31,7 @@ export default {
           },
 
           amount: {
-            type: Sequelize.DECIMAL(10, 2),
+            type: Sequelize.DECIMAL(10, 4),
             allowNull: false,
             validate: {
               isNumeric: true
@@ -39,7 +39,7 @@ export default {
           },
 
           reference_amount: {
-            type: Sequelize.DECIMAL(10, 2),
+            type: Sequelize.DECIMAL(10, 4),
             allowNull: false,
             validate: {
               isNumeric: true
