@@ -26,6 +26,7 @@ class PayInvoiceService {
         return this.#error.handler(["Create Payment"], async() => {
             // check if invoice exists
             const invoice = await this._getInvoice(invoiceId)
+            
 
             // check if invoice is already paid
             if(invoice.status == "paid") {
@@ -33,15 +34,18 @@ class PayInvoiceService {
             }
 
             let total_to_pay = 0
+            const total_paid = parseFloat(invoice.total_paid) || 0.00
+            const total = parseFloat(invoice.total)
             
             // calculate total to pay
             if(parseFloat(invoice.total_paid) == 0.00){
-                total_to_pay = this._roundToTwoDecimalPlaces(invoice.total)
+                total_to_pay = parseFloat(invoice.total)
             }else{
-                total_to_pay = this._roundToTwoDecimalPlaces(invoice.total - invoice.total_paid)
+                total_to_pay = parseFloat((invoice.total - total_paid).toFixed(2))
             }
 
-            
+    
+                
             if (paymentId < 1 || paymentId > 7) {
                 throw new Error("Payment Id must be between 1 and 7")
             }
@@ -54,8 +58,9 @@ class PayInvoiceService {
             const { reference_amount, change, dollarAmount } = this._checkPaymentMethod(paymentId, dollarValue, amount, total_to_pay, bolivarReference)
 
         
-            // set status based on the amount paid\
-             if( (parseFloat(invoice.total_paid) + parseFloat(reference_amount)).toFixed(2) >= parseFloat(invoice.total) ) {
+            // set status based on the amount paid
+           
+             if( total_paid + reference_amount >= total ) {
                     status = "paid"
              }
 
@@ -187,12 +192,12 @@ class PayInvoiceService {
                     amount *= dollarValue.toJSON().value
                 }
                 
-                reference_amount = this._roundToTwoDecimalPlaces(amount / dollarValue.toJSON().value)
+                reference_amount = parseFloat((amount / dollarValue.toJSON().value).toFixed(2))
 
                 // set dollarAmount to reference amount
                 dollarAmount = amount
             }
-           console.log(reference_amount)
+            
             if( reference_amount > total_to_pay && paymentId != 4 ) {
                 throw new Error("Reference amount cannot be greater than total to pay")
             }   
