@@ -47,7 +47,8 @@ function initializeInvoiceDetail(sequelize) {
                     model: "products",
                     key: "id"
                 },
-                onUpdate: "CASCADE" 
+                onUpdate: "CASCADE",
+                onDelete: 'restrict'    
             },
 
             quantity: {

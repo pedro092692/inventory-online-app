@@ -58,25 +58,27 @@ class ProductService{
      * @returns {Promise<Object>} - returns the product with the given id
      * @throws {ServiceError} - throws an error if the product could not be retrieved
      */
-    getProduct(id) {
+    getProduct(id, priceReference=true) {
         return this.#error.handler(["Read Product", id, "Product"], async () => {
             const product = await this.Product.findByPk(id)
 
             if(!product) {
                 throw new NotFoundError()
             }
-
-            // add reference selling price to product 
-
-            // get the last dollar value
-            const dollarValue = await this.dollarValue.getLastValue()
-
-             // set reference selling price to the product
-            product.dataValues.reference_selling_price = (parseFloat(product.selling_price) * parseFloat(dollarValue.value)).toFixed(2)
             
-            // if dollar value is not found, set reference selling price to message 
-            if(!dollarValue) {
-                product.dataValues.reference_selling_price = "No dollar value found"
+            // add reference selling price to product 
+            if(priceReference){
+                
+                // get the last dollar value
+                const dollarValue = await this.dollarValue.getLastValue()
+
+                // set reference selling price to the product
+                product.dataValues.reference_selling_price = (parseFloat(product.selling_price) * parseFloat(dollarValue.value)).toFixed(2)
+                
+                // if dollar value is not found, set reference selling price to message 
+                if(!dollarValue) {
+                    product.dataValues.reference_selling_price = "No dollar value found"
+                }
             }
             
             return product
@@ -110,7 +112,7 @@ class ProductService{
      */
     deleteProduct(productId) {
         return this.#error.handler(["Delete Product", productId, "Product"], async() => {
-            const product = await this.getProduct(productId)
+            const product = await this.getProduct(productId, false)
             // delete product
             await product.destroy()
             return 1
