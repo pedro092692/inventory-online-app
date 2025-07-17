@@ -402,7 +402,7 @@ class InvoiceService {
      */
     deleteInvoice(invoiceId) {
         return this.#error.handler(["Delete Invoice", invoiceId, "Invoice"], async() => {
-            const invoice = await this.getInvoice(invoiceId)
+            const invoice = await this.getInvoice(invoiceId, false)
             
             // gets invoices details ids 
             const product_details = invoice.products.map((product => product.invoice_details.id))
@@ -443,7 +443,7 @@ class InvoiceService {
 
 
             // update invoice total
-            const invoice = await this.getInvoice(details[0].invoice_id)
+            const invoice = await this.getInvoice(details[0].invoice_id, false)
             
             // calculate new total 
             const newTotal = this.calculeTotalFromInvoice(invoice.products)           

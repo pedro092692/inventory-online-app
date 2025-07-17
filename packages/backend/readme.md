@@ -426,3 +426,261 @@ Delete a dollar value ⚠️ ***destructive action*** if there are products with
 throw an 404 error if dollar value is not found.
 
 return ***status 204*** with a empty object
+
+# 📄 Invoices
+
+### GET /api/invoices/
+
+Returns a `200 OK` status with a message indicating that the ***Invoices*** routes are working properly.
+
+**Response:**
+
+```json
+{
+"status": 200,
+"message": "Invoices Routes"
+}
+
+```
+
+### GET /api/payment-methods/all
+
+Returns an array with objects of all  paid and unpaid invoices and with more info like their products seller and customer.
+**Response:**
+```json
+
+{
+
+"status": 200,
+
+[
+	{
+		"id":  27,
+		"date":  "2025-07-17T15:33:33.508Z",
+		"customer_id":  3,
+		"seller_id":  3,
+		"total":  "11.78",
+		"total_reference":  "0.00",
+		"total_paid":  "0.00",
+		"status":  "unpaid",
+		"customer":  {
+			"name":  "Carlos Perez",
+			"phone":  "+58424000002"
+			},
+		"products":  [
+			{
+				"name":  "ADIX 750MG 5 TAB LEVOFLOXACINA LEGRAND",
+				"invoice_details":  {
+					"quantity":  1,
+					"unit_price":  "11.78"
+			    }
+            }
+		],
+		"seller":  {
+			"name":  "Xavier"
+		}
+	}
+]
+}
+```
+### GET /api/invoices/day
+
+Retrieves an array of objects with ***day invoices*** and show all sold sum the amount of invoices with ***status paid***, but also show the invoices of the day with unpaid status
+
+**Response:**
+```json
+{
+"status": 200,
+	{
+		"totalSelled":  11.78,
+		"todayInvoices":  [
+			{
+				"id":  27,
+				"date":  "2025-07-17T15:33:33.508Z",
+				"customer_id":  3,
+				"seller_id":  3,
+				"total":  "11.78",
+				"total_reference":  "0.00",
+				"total_paid":  "0.00",
+				"status":  "unpaid",
+				"customer":  {
+					"name":  "Carlos Perez",
+					"phone":  "+58424000002"
+				},
+				"products":  [
+					{
+					"name":  "ADIX 750MG 5 TAB LEVOFLOXACINA LEGRAND",
+					"invoice_details":  {
+						"quantity":  1,
+							"unit_price":  "11.78"
+						}
+					}
+				],
+				"seller":  {
+					"name":  "Xavier"
+				}
+			}
+		]
+	}
+}
+
+```
+### GET /api/invoices/:id
+***/api/invoices/26***
+Returns a `200 OK` status and Retrieve a invoice information based on its ID
+**Response:**
+```json
+{
+	"id":  26,
+	"date":  "2025-07-17T15:14:22.425Z",
+	"customer_id":  3,
+	"seller_id":  3,
+	"total":  "11.78",
+	"total_reference":  "1376.02",
+	"total_paid":  "11.78",
+	"status":  "paid",
+	"customer":  {
+		"name":  "Carlos Perez",
+		"phone":  "+58424000002"
+	},
+	"products":  [
+		{
+			"name":  "ADIX 750MG 5 TAB LEVOFLOXACINA LEGRAND",
+			"invoice_details":  {
+				"id":  33,
+				"quantity":  1,
+				"unit_price":  "1376.02"
+			}
+		}
+	],
+	"seller":  {
+		"name":  "Xavier"
+	},
+	"payments-details":  [],
+	"total_Paid_Bolivar":  "1376.02"
+}
+```
+
+### POST /api/invoices/
+Create a new invoice
+📥 Request Body (`application/json`)
+-  ***customer_id*** type: Integer, ***Required*** -> Customer id number
+-  ***seller_id*** type: Integer, ***Required*** -> Seller id number
+- ***details*** type: Array, ***Required*** -> An array with products info
+	- ***details***.***product_id*** type: Integer ***required*** -> Product ID
+	-  ***details***.***quantity*** type: Integer ***required*** -> Quantity of product
+	- 
+⚠️customer_id and seller id must be exists on database otherwise will be and foreign key constraint error ⚠️ if product stock if no enough will be an error advising of not stock for the specific product ⚠️ if product not exits throw and 404 error. 
+returns a status 201 with the new invoice info
+**Response:**
+```json
+{
+	"id":  36,
+	"date":  "2025-07-17T19:17:03.359Z",
+	"customer_id":  1,
+	"seller_id":  3,
+	"total":  "10.31",
+	"total_reference":  "1204.31",
+	"total_paid":  "0.00",
+	"status":  "unpaid",
+	"customer":  {
+		"name":  "John Doe",
+		"phone":  "+58424000000"
+		},
+	"products":  [
+		{
+		"name":  "ADELGASEN CAP X30 HERB",
+		"invoice_details":  {
+			"id":  36,
+			"quantity":  1,
+			"unit_price":  "1204.31"
+			}
+		}
+	],
+	"seller":  {
+		"name":  "Xavier"
+		},
+	"payments-details":  [],
+	"total_Paid_Bolivar":  "0.00",
+	"total_to_pay_dollar":  "10.31"
+}
+```
+
+### PATCH /api/invoices/26
+***/api/invoices/26***
+Update a invoice with new data 
+To update the invoice successfully at least one of these must be defined
+📥 Request Body (`application/json`)
+-  ***customer_id*** type: Integer, ***Optional*** -> Customer ID
+-  ***seller_id*** type: Integer, ***Optional*** -> Seller Id
+-  ***total*** type: Float(2), ***Optional*** -> Total value of Invoice
+-  ***total_paid*** type: Float(2), ***Optional*** -> Total paid amount of invoice
+- ***total_reference*** type: Float(2), ***Optional*** -> Total in reference (Bolivars)
+- ***status*** type: ENUM, ***Optional*** -> Invoice status: (unpaid, paid)
+- ***details*** type: Array of Objects, ***Optional*** -> Details of invoice products
+	- ***details***.***product_id*** type: integer ***required/optional*** -> Product ID
+	- ***details***.***quantity*** type: integer ***required*** -> Product quantity
+	- ***details***.***unit_price*** type: integer ***required*** -> Product selling price
+	- ***details***.***id*** type: integer ***optional*** -> Detail ID
+
+⚠️ if details if provided with a new product ID new product will be added to the invoice and recalculated the total amount of invoice, If you want to update an existing detail you must provide a ***id*** in details the ID that you want to update for cases for examples update a product quantity ***product_id***, ****quantity***, and ***unit_price*** must be provided. 
+
+returns a status 200 with the updated invoice data:
+
+```json
+{
+	"id":  36,
+	"date":  "2025-07-17T19:17:03.359Z",
+	"customer_id":  2,
+	"seller_id":  3,
+	"total":  "45.65",
+	"total_reference":  "5332.38",
+	"total_paid":  "0.00",
+	"status":  "unpaid",
+	"customer":  {
+		"name":  "Jane Smith",
+		"phone":  "+58424000001"
+	},
+	"products":  [
+		{
+			"name":  "ADELGASEN CAP X30 HERB",
+			"invoice_details":  {
+				"id":  36,
+				"quantity":  1,
+				"unit_price":  "1204.31"
+			}
+		},
+		{
+			"name":  "ADIX 750MG 5 TAB LEVOFLOXACINA LEGRAND",
+			"invoice_details":  {
+				"id":  52,
+				"quantity":  3,
+				"unit_price":  "1376.02"
+			}
+		}
+	],
+	"seller":  {
+		"name":  "Xavier"
+	},
+	"payments-details":  [],
+	"total_Paid_Bolivar":  "0.00",
+	"total_to_pay_dollar":  "45.65"
+}
+```
+
+### DELETE /api/invoices/
+Delete a invoice ⚠️ ***destructive action*** if the invoice is paid and deleted the total sales will be affected. but the products stock will be restored.
+📥 Request Body (`application/json`)
+
+-  ***invoiceId*** type: Integer, ***required*** -> The invoice ID
+throw an 404 error if invoice is not found.
+
+return ***status 204*** with a empty object
+
+### DELETE /api/invoices/detail
+Delete a invoice detail (product) ⚠️ ***destructive action***  this action will delete products of the invoice.
+📥 Request Body (`application/json`)
+
+-  ***id*** type: Array, ***required*** -> An array of product to delete in invoice.
+Example : id:  [55] ⚠️ not invoiceId is required only the ids of product_details
+return ***status 204*** with a empty object
