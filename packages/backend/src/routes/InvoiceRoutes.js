@@ -21,7 +21,7 @@ class InvoiceRoutes {
         this.router.get("/day", (req, res) => new InvoiceController(Invoice).dayInvoices(req, res))
         this.router.get("/:id", (req, res) => new InvoiceController(Invoice, null, null, Dollar).getInvoice(req, res))
         this.router.post("/", (req, res) => new InvoiceController(Invoice, InvoiceDetail, Product, Dollar).createInvoice(req, res))
-        this.router.patch("/:id", (req, res) => new InvoiceController(Invoice, InvoiceDetail, Product).updateInvoice(req, res))
+        this.router.patch("/:id", (req, res) => new InvoiceController(Invoice, InvoiceDetail, Product, Dollar).updateInvoice(req, res))
         this.router.delete("/", (req, res) => new InvoiceController(Invoice, InvoiceDetail, Product, Dollar).deleteInvoice(req, res))
         this.router.delete("/detail", (req, res) => new InvoiceController(Invoice, InvoiceDetail, Product).deleteInvoiceDetail(req, res))
     }   

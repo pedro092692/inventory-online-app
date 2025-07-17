@@ -182,7 +182,7 @@ class InvoiceService {
     * @returns {Object} - invoice with details, customer and seller
     * @throws {NotFoundError} - if invoice not found
     */
-    getInvoice(id) {
+    getInvoice(id, referenceProduct=true) {
         return this.#error.handler(["Read Invoice", id, "Invoice"], async() => {
             const invoice = await this.Invoice.findByPk(id, {
                 include: [
@@ -219,32 +219,33 @@ class InvoiceService {
                 throw new NotFoundError()
             }
 
-            // check if invoice is paid 
-            if(invoice.status === "unpaid") {
-                // calculate refrence amount 
-                const dollarValue = await this.dollarValue.getLastValue()
-                invoice.total_reference = (invoice.total * dollarValue.value).toFixed(2)
+            if(referenceProduct){
+                // check if invoice is paid 
+                if(invoice.status === "unpaid") {
+                    // calculate refrence amount 
+                    const dollarValue = await this.dollarValue.getLastValue()
+                    invoice.total_reference = (invoice.total * dollarValue.value).toFixed(2)
 
-                // changed product price to reference price 
-                invoice.products = this._calculeBolivarPriceProducts(invoice.products, dollarValue)
+                    // changed product price to reference price 
+                    invoice.products = this._calculeBolivarPriceProducts(invoice.products, dollarValue)
 
-                // add total paid in boilvar to invoice
-                invoice.dataValues.total_Paid_Bolivar = (invoice.total_paid * dollarValue.value).toFixed(2)
+                    // add total paid in boilvar to invoice
+                    invoice.dataValues.total_Paid_Bolivar = (invoice.total_paid * dollarValue.value).toFixed(2)
 
-                // add total to pay in dollar
-                invoice.dataValues.total_to_pay_dollar = (invoice.total - invoice.total_paid).toFixed(2)
-                
+                    // add total to pay in dollar
+                    invoice.dataValues.total_to_pay_dollar = (invoice.total - invoice.total_paid).toFixed(2)
+                    
 
-            }else {
-                // get reference value
-                const dollarValue = (parseFloat(invoice.total_reference) / parseFloat(invoice.total)).toFixed(2)
-                 // changed product price to reference price 
-                invoice.products = this._calculeBolivarPriceProducts(invoice.products, { value: dollarValue })
-                
-                // add total paid in boilvar to invoice
-                invoice.dataValues.total_Paid_Bolivar = invoice.total_reference
-            }   
-
+                }else {
+                    // get reference value
+                    const dollarValue = (parseFloat(invoice.total_reference) / parseFloat(invoice.total)).toFixed(2)
+                    // changed product price to reference price 
+                    invoice.products = this._calculeBolivarPriceProducts(invoice.products, { value: dollarValue })
+                    
+                    // add total paid in boilvar to invoice
+                    invoice.dataValues.total_Paid_Bolivar = invoice.total_reference
+                }   
+            }
             
 
             return invoice
@@ -389,7 +390,7 @@ class InvoiceService {
      * 
      */
     async _recalculateTotal(invoiceId) {
-        const invoice = await this.getInvoice(invoiceId)
+        const invoice = await this.getInvoice(invoiceId, false)
         return this.calculeTotalFromInvoice(invoice.products)
     }
     
