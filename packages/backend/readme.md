@@ -279,3 +279,78 @@ Delete a seller ⚠️ ***destructive action***  if the seller has sales it will
 
 throw an 404 error if seller if not found.
 return ***status 204*** with a empty object 
+
+# 💳 Payment-methods
+###  GET /api/payment-methods
+Returns a `200 OK` status with a message indicating that the ***Payment Methods*** routes are working properly.
+**Response:**
+```json
+{
+  "status": 200,
+  "message": "Payment Methods"
+}
+``` 
+###  GET /api/payment-methods/all
+Returns an array with objects of all Payment Methods.
+**Response:**
+```json
+{
+  "status": 200,
+[
+	{
+		"id":  1,
+		"name":  "Punto de venta",
+		"currency":  "Bolivar Digital"
+	}
+]
+}
+``` 
+###  GET /api/payment-methods/:id
+***/api/payment-methods/5***
+Retrieves an object with ***payment-methods*** data of based on payment-methods ***ID*** if the payment-methods is not found throw and 404 error.
+**Response:**
+```json
+{
+  "status": 200,
+	{
+		"id":  5,
+		"name":  "Efectivo Dolares",
+		"currency":  "Dolares"
+	}
+}
+``` 
+###  POST /payment-methods/
+Create new payment-method
+📥 Request Body (`application/json`)
+- ***name*** type: String, ***required*** -> Name of payment-method
+- ***currency*** type: String, ***required*** -> Currency of payment method
+Create a new payment-method a returns a status 201 with new payment-method Data 
+```json
+{
+	"id":  9,
+	"name":  "Zelle",
+	"currency":  "Dollar"
+}
+``` 
+###  PATCH /api/payment-methods/:id
+***/api/payment-methods/9***
+
+Update a payment method with new data
+📥 Request Body (`application/json`)
+- ***name*** type: String, ***Optional*** -> Name of payment-method
+- ***currency*** type: String, ***Optional*** -> Currency of payment method
+returns a status 200 with the updated payment method data:
+```json
+{
+	"id":  10,
+	"name":  "Bitcoin",
+	"currency":  "BTC"
+}
+``` 
+###  DELETE /api/payment-methods/
+Delete a payment method ⚠️ ***destructive action***  if the payment method has sales (invoice payment detail) it will delete the invoice payment info. 
+📥 Request Body (`application/json`)
+- ***paymentMethodId*** type: Integer, ***required*** -> ID number of payment method
+
+throw an 404 error if payment method if not found.
+return ***status 204*** with a empty object 
