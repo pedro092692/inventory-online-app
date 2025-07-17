@@ -276,7 +276,7 @@ class InvoiceService {
      */
     updateInvoice(invoiceId, updates) {
         return this.#error.handler(["Update Invoice", invoiceId, "Invoice"], async() => {
-            const invoice = await this.getInvoice(invoiceId)
+            const invoice = await this.getSimpleInvoice(invoiceId)
 
             const { customer_id, seller_id, total, total_reference, total_paid, details, status } = updates
 
