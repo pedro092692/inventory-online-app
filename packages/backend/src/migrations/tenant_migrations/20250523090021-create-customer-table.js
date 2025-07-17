@@ -28,12 +28,6 @@ export default {
          phone: {
           type: Sequelize.STRING,
           allowNull: false,
-          defaultValue: "+584240000000", // phone number for venezuela 
-          validate: {
-            len: {
-              args: [13]
-            }
-          }
          }
       },
       {
