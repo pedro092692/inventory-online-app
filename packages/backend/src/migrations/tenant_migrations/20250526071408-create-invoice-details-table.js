@@ -26,7 +26,7 @@ export default {
             model: "products",
             key: "id"
           },
-          onDelete: "CASCADE",
+          onDelete: 'restrict',
           onUpdate: "CASCADE"
         },
 
