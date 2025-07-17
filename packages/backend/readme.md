@@ -176,3 +176,106 @@ Delete a product if this has not been sold
 
 throw an error if product if not found.
 return ***status 204*** with a empty object 
+
+# 🧑‍🦰 Sellers
+###  GET /api/sellers
+Returns a `200 OK` status with a message indicating that the ***sellers*** routes are working properly.
+**Response:**
+```json
+{
+  "status": 200,
+  "message": "Seller routes"
+}
+``` 
+###  GET /api/sellers/all
+Returns an array with objects of all sellers and their respectives sales
+**Response:**
+```json
+{
+  "status": 200,
+[
+	{
+	"id":  2,
+	"id_number":  6000000,
+	"name":  "Andrea",
+	"last_name":  "Gonzalez",
+	"address":  "456 Elm St, Maracaibo, Venezuela",
+	"sales":  
+		[
+			{
+			"id":  21,
+			"date":  "2025-07-16T19:34:15.182Z",
+			"total":  "8.94"
+			}
+		]
+	}
+]
+``` 
+###  GET /api/sellers/:id
+***/api/sellers/1***
+Retrieves an object with ***seller*** data of based on seller ***ID*** if the seller is not found thrown and 404 error.
+**Response:**
+```json
+{
+  "status": 200,
+	{
+		"id":  1,
+		"id_number":  5000000,
+		"name":  "Pedro",
+		"last_name":  "Bastidas",
+		"address":  "123 Main St, Caracas, Venezuela",
+		"sales":  [
+			{
+				"id":  1,
+				"date":  "2023-05-01T10:00:00.000Z",
+				"total":  "6.39"
+			}
+		]
+	}	
+}
+``` 
+###  POST /api/sellers/
+Create new seller
+📥 Request Body (`application/json`)
+- ***id_number*** type: Integer, ***required*** -> ID number of seller
+- ***name*** type: String, ***required*** -> Seller Name
+- ***last_name*** type: String, ***required*** -> Seller Last Name
+- ***address*** type: String, ***optional*** -> Seller Addresss
+Create a new seller a returns a status 201 with new Seller Data 
+```json
+{
+	"id":  4,
+	"id_number":  21222333,
+	"name":  "John",
+	"last_name":  "Doe",
+	"address":  "Fake Street 1234"
+}
+``` 
+###  PATCH /api/sellers/:id
+***/api/sellers/4***
+
+Update a seller with new data
+📥 Request Body (`application/json`)
+- ***id_number*** type: Integer, ***optional*** -> ID number of seller
+- ***name*** type: String, ***optional*** -> Seller Name
+- ***last_name*** type: String, ***optional*** -> Seller Last Name
+- ***address*** type: String, ***optional*** -> Seller Addresss
+returns a status 200 with the updated seller data:
+```json
+{
+	"id":  4,
+	"id_number":  21222333,
+	"name":  "Johnny",
+	"last_name":  "Doe",
+	"address":  "Fake Street 1234"
+}
+
+
+``` 
+###  DELETE /api/sellers/
+Delete a seller ⚠️ ***destructive action***  if the seller has sales it will delete the seller sales. 
+📥 Request Body (`application/json`)
+- ***sellerId*** type: Integer, ***required*** -> ID number of seller
+
+throw an 404 error if seller if not found.
+return ***status 204*** with a empty object 
