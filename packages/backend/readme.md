@@ -174,7 +174,7 @@ Delete a product if this has not been sold
 📥 Request Body (`application/json`)
 - ***productId*** type: Integer, ***required*** -> Barcode of product
 
-throw an error if product if not found.
+throw an error if product is not found.
 return ***status 204*** with a empty object 
 
 # 🧑‍🦰 Sellers
@@ -210,6 +210,7 @@ Returns an array with objects of all sellers and their respectives sales
 		]
 	}
 ]
+}
 ``` 
 ###  GET /api/sellers/:id
 ***/api/sellers/1***
@@ -277,7 +278,7 @@ Delete a seller ⚠️ ***destructive action***  if the seller has sales it will
 📥 Request Body (`application/json`)
 - ***sellerId*** type: Integer, ***required*** -> ID number of seller
 
-throw an 404 error if seller if not found.
+throw an 404 error if seller is not found.
 return ***status 204*** with a empty object 
 
 # 💳 Payment-methods
@@ -319,7 +320,7 @@ Retrieves an object with ***payment-methods*** data of based on payment-methods 
 	}
 }
 ``` 
-###  POST /payment-methods/
+###  POST /api/payment-methods/
 Create new payment-method
 📥 Request Body (`application/json`)
 - ***name*** type: String, ***required*** -> Name of payment-method
@@ -352,5 +353,76 @@ Delete a payment method ⚠️ ***destructive action***  if the payment method h
 📥 Request Body (`application/json`)
 - ***paymentMethodId*** type: Integer, ***required*** -> ID number of payment method
 
-throw an 404 error if payment method if not found.
+throw an 404 error if payment method is not found.
 return ***status 204*** with a empty object 
+
+# 💸 Dollar Value
+
+### GET /api/dollar-value
+
+Returns a `200 OK` status with a message indicating that the ***dollar-value*** routes are working properly.
+
+**Response:**
+```json
+{
+"status": 200,
+"message": "Dollar Value Routes"
+}
+```
+
+### POST /payment-methods/
+
+Create new dollar value data
+
+📥 Request Body (`application/json`)
+
+-  ***value*** type: Float(2), ***required*** -> The current value of dollar in Bolivars
+
+Create a new dollar value and returns a status 201 with new dollar value Data
+
+```json
+"newValue":  
+{
+	"date":  "2025-07-17T15:08:43.980Z",
+	"id":  2,
+	"value":  "117.40"
+}
+
+```
+
+### GET /api/dollar-value/latest
+Retrieves the latest value of dollar data
+
+returns a status 200 with the latest dollar value data:
+
+```json
+{
+	"id":  2,
+	"value":  "117.40",
+	"date":  "2025-07-17T15:08:43.980Z"
+}
+```
+### PATCH /dollar-value/
+📥 Request Body (`application/json`)
+-  ***value*** type: Float(2), ***optional*** -> The current value of dollar in Bolivars
+- ***id*** type: Integer ***Required*** -> The id of dollar value to updated
+return a status 200 with the updated data of dollar value
+```json
+{
+	"id":  2,
+	"value":  "118.00",
+	"date":  "2025-07-17T15:37:34.416Z"
+}
+```
+
+### DELETE /api/dollar-value/
+
+Delete a dollar value ⚠️ ***destructive action*** if there are products with reference price (price in bolivars) with this value this will be recalculated with the last one dollar value if ***there is not dollar value*** price in bolivars show and error "no dollar value found."
+
+📥 Request Body (`application/json`)
+
+-  ***id*** type: Integer, ***required*** -> dollar value ID to delete
+
+throw an 404 error if dollar value is not found.
+
+return ***status 204*** with a empty object
