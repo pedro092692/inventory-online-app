@@ -443,7 +443,7 @@ Returns a `200 OK` status with a message indicating that the ***Invoices*** rout
 
 ```
 
-### GET /api/payment-methods/all
+### GET /api/invoices/all
 
 Returns an array with objects of all  paid and unpaid invoices and with more info like their products seller and customer.
 **Response:**
@@ -683,4 +683,138 @@ Delete a invoice detail (product) ⚠️ ***destructive action***  this action w
 
 -  ***id*** type: Array, ***required*** -> An array of product to delete in invoice.
 Example : id:  [55] ⚠️ not invoiceId is required only the ids of product_details
+return ***status 204*** with a empty object
+
+# 💶 Pay-Invoice
+
+### GET /api/pay-invoice
+
+Returns a `200 OK` status with a message indicating that the ***Invoices*** routes are working properly.
+
+**Response:**
+
+```json
+{
+"status": 200,
+"message": "Pay Invoice Detail Route"
+}
+
+```
+
+
+### GET /api/invoices/:id
+***/api/invoices/31***
+Returns a `200 OK` status and Retrieve a payment detail information based on its ID
+with info like payments name amount and reference amount.
+**Response:**
+```json
+{
+	"id":  31,
+	"invoice_id":  39,
+	"payment_id":  2,
+	"amount":  "500.00",
+	"reference_amount":  "4.28",
+	"payments":  {
+		"name":  "Pago Movil"
+		}
+}
+```
+
+### POST /api/pay-invoice/
+Create a new invoice payment detail, due a invocice could be paid with differentes methods you can be able to create more than one payment details for example a invoice could be paid with cash and other part with credit card.
+📥 Request Body (`application/json`)
+-  ***invoice_id*** type: Integer, ***Required*** -> Invoice id number
+-  ***payment_id*** type: Integer, ***Required*** -> Payment method id number
+- ***amount*** type: Float(2), ***Required*** -> The amount to be paid.
+	- 
+⚠️throw an 404 error if invoice ID is not found
+⚠️throw and Error if the invoice is already paid 
+✅When you submit a new payment detail the program automatically calculate if the invoice if paid or unpaid when it happen the invoices status will be updated automatically.
+⚠️ payment_id must be a value between 1 and 7 otherwise throw and error advising the valid number for payment ID.
+⚠️ In certain cases the amount could not be greather than tota to paid of the invoice for example if the total to paid is 4$ and you tray to add new credit cart payment with the amount of 10 it will throw and error if you tray to do the same but cash the respose with also include the change. 
+✅ response a status 200 with an object with invoice information.
+
+**Response:**
+```json
+{
+	"id":  40,
+	"date":  "2025-07-19T17:43:56.734Z",
+	"customer_id":  3,
+	"seller_id":  3,
+	"total":  "42.71",
+	"total_reference":  "4988.96",
+	"total_paid":  "38.43",
+	"status":  "unpaid",
+	"customer":  {
+		"name":  "Carlos Perez",
+		"phone":  "+58424000002"
+		},
+	"products":  [
+		{
+			"name":  "ADELGASEN CAP X30 HERB",
+			"invoice_details":  {
+				"id":  60,
+				"quantity":  3,
+				"unit_price":  "1204.31"
+				}
+			},
+			{
+				"name":  "ADIX 750MG 5 TAB LEVOFLOXACINA LEGRAND",
+				"invoice_details":  {
+					"id":  59,
+					"quantity":  1,
+					"unit_price":  "1376.02"
+				}
+		}
+	],
+	"seller":  {
+		"name":  "Xavier"
+	},
+	"payments-details":  [
+		{
+			"amount":  "42.71",
+			"reference_amount":  "38.43",
+			"payments":  {
+				"name":  "Transferencia Dolares",
+				"currency":  "Dolares"
+				}
+			}
+	],
+	"total_Paid_Bolivar":  "4489.01",
+	"total_to_pay_dollar":  "4.28"
+}
+```
+
+### PATCH /api/pay-invoice/:id
+***/api/invoices/33***
+Update a invoice with new data 
+⚠️If an invoice is with paid status and you update a payment detail with less amount the invoice status keep be paid **in future update this issue will be solved**, the reference amount neither will be recalculed. 
+⚠️if payment_id if not found throw an 404 Error
+⚠️Only you can update the amount of payment detail if you want to change the payment method you will be delete it and create a new one. 
+📥 Request Body (`application/json`)
+-  ***payment_id*** type: Integer, ***Optional*** -> pyament detail ID
+-  ***amount*** type: Integer, ***Optional*** -> Amount to be paid
+
+returns a status 200 with the updated payment detail data:
+
+```json
+{
+	"id":  33,
+	"invoice_id":  40,
+	"payment_id":  6,
+	"amount":  40,
+	"reference_amount":  "38.43",
+	"payments":  {
+		"name":  "Transferencia Dolares"
+		}
+}
+```
+
+### DELETE /api/pay-invoice/
+Delete a payment invoice detail ⚠️ ***destructive action*** if the invoice is paid and is deleted a payment detail the invoice status keep be **paid**, this issue will be fix in a future update. 
+📥 Request Body (`application/json`)
+
+-  ***payment_detail_id*** type: Integer, ***required*** -> the payment invoice detail ID
+**throw an 404 error** if payment detail is not found.
+
 return ***status 204*** with a empty object
