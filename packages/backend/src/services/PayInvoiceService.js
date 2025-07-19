@@ -94,7 +94,13 @@ class PayInvoiceService {
      */
     getPaymentInvoiceDetail(id) {
         return this.#error.handler(["Read Payment Detail", id, "Pay Invoice"], async() => {
-            const paymentDetail = await this.PaymentDetail.findByPk(id)
+            const paymentDetail = await this.PaymentDetail.findByPk(id, {
+                include: [
+                    {
+                        association: "payments", attributes: ["name"]
+                    }
+                ]
+            })
             
             if(!paymentDetail) {
                 throw new NotFoundError();       
