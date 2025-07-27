@@ -110,6 +110,12 @@ class PayInvoiceService {
         })
     }
 
+    /**
+     * Retrieves all invoice payments detail by its ID.
+     * @param {number} id - The ID of the invoice payment detail to retrieve.
+     * @return {Promise<Array>} - A promise that resolves to the invoice payment detail Array.
+     * @throws {ServiceError} - If an error occurs during the retrieval operation.
+     */
     getPaymentsInvoice(invoiceId) {
         return this.#error.handler(["Read payments detail", invoiceId, "Read payments details"], async() => {
             const paymentsDetails = await this.PaymentDetail.findAll({
@@ -135,10 +141,39 @@ class PayInvoiceService {
             ["Update Payment Detail", paymentDetailId, "Pay Invoice"], async() => {
                 const paymentDetail = await this.getPaymentInvoiceDetail(paymentDetailId)
                 const { payment_id, amount } = updates
+                let reference_amount = paymentDetail.reference_amount
+
+                // check if is needed recalculated reference amount 
+                if((parseFloat(paymentDetail.amount) / parseFloat(paymentDetail.reference_amount)) !=1 && amount) {
+                    // get dollar value 
+                    const dollar_value = await this.dollarValue.getLastValue()
+                    // calcule new reference value 
+                    
+                
+                    reference_amount = (amount / parseFloat(dollar_value.value)).toFixed(2)
+                    
+                }else{ 
+                    // calcule new reference amount if payment is in dollar
+                    reference_amount = amount
+                }
                 const updatedPaymentDetail = await paymentDetail.update({
                     payment_id: payment_id,
-                    amount: amount
+                    amount: amount,
+                    reference_amount: parseFloat(reference_amount)
                 })
+
+                // calcule new total paid for current invoice 
+                const paymentDetails = await this.getPaymentsInvoice(paymentDetail.invoice_id)
+                // calcule total paid 
+                const total_paid = this._calculeInvoiceTotalPaid(paymentDetails)
+
+                // update inoivce if it is needed.
+                const invoice = await this.invoiceService.getSimpleInvoice(paymentDetail.invoice_id)
+                if(total_paid < parseFloat(invoice.total)) {
+                    //update invoice
+                    await this.invoiceService.updateInvoice(paymentDetail.invoice_id, {status: "unpaid", total_paid: total_paid})
+                }   
+                
                 return updatedPaymentDetail
         })
     }
