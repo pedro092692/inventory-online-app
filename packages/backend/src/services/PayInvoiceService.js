@@ -110,6 +110,18 @@ class PayInvoiceService {
         })
     }
 
+    getPaymentsInvoice(invoiceId) {
+        return this.#error.handler(["Read payments detail", invoiceId, "Read payments details"], async() => {
+            const paymentsDetails = await this.PaymentDetail.findAll({
+                    where: {
+                        invoice_id: invoiceId
+                    }
+                })
+
+            return paymentsDetails
+            })
+    }
+
     /**
      * Updates a invoice payment detail by its ID.
      * @param {number} paymentDetailId - id of the payment invoice detail to update
@@ -141,8 +153,26 @@ class PayInvoiceService {
         return this.#error.handler(
             ["Delete Invoice Payment Detail", paymentDetailId, "Pay Invoice"], async() => {
                 const paymentDetail = await this.getPaymentInvoiceDetail(paymentDetailId)
+
+                // get invoice details
+                const invoice_id = paymentDetail.invoice_id
+
                 // delete payment details
                 await paymentDetail.destroy()
+
+                // check if invoice total paid is incompleted
+                
+                const allPyaments = await this.getPaymentsInvoice(invoice_id)
+                const totalPaid = this._calculeInvoiceTotalPaid(allPyaments)
+                
+                // get invoice 
+                const currentInvoice = await this.invoiceService.getSimpleInvoice(invoice_id)
+                
+                if(totalPaid < parseFloat(currentInvoice.total)) {
+                    // update invoice 
+                    await this.invoiceService.updateInvoice(invoice_id, {status: "unpaid", total_paid: totalPaid})
+                }
+                
                 return 1
             })
     }
@@ -251,6 +281,17 @@ class PayInvoiceService {
        
     }
 
+
+    /**
+     * This method check the total amount paid for an specific invoice.
+     * @param {Object} details - the object of invoice payment details.
+     * @returns {Number} - The total of total paid for specific invoice.
+     */
+    _calculeInvoiceTotalPaid(details) {
+        return details.length > 1 ? details.reduce((accumulator, currentNumber) => {
+            return parseFloat(accumulator.reference_amount) + parseFloat(currentNumber.reference_amount)
+        }) : parseFloat(details[0].reference_amount)
+    }
  
 }
 
