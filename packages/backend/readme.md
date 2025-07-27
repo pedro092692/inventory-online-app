@@ -811,7 +811,7 @@ returns a status 200 with the updated payment detail data:
 ```
 
 ### DELETE /api/pay-invoice/
-Delete a payment invoice detail ⚠️ ***destructive action*** if the invoice is paid and is deleted a payment detail the invoice status keep be **paid**, this issue will be fix in a future update. 
+Delete a payment invoice detail if the invoice is paid and is deleted a payment detail the invoice status will be updated to unpaid and the total paid amount for the invoice will be updated too.
 📥 Request Body (`application/json`)
 
 -  ***payment_detail_id*** type: Integer, ***required*** -> the payment invoice detail ID
