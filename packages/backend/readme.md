@@ -788,7 +788,7 @@ Create a new invoice payment detail, due a invocice could be paid with different
 ### PATCH /api/pay-invoice/:id
 ***/api/invoices/33***
 Update a invoice with new data 
-⚠️If an invoice is with paid status and you update a payment detail with less amount the invoice status keep be paid **in future update this issue will be solved**, the reference amount neither will be recalculed. 
+⚠️If an invoice is with paid status and you update a payment detail with less amount the invoice status of invoice will be recalculated, for paid or unpaid.
 ⚠️if payment_id if not found throw an 404 Error
 ⚠️Only you can update the amount of payment detail if you want to change the payment method you will be delete it and create a new one. 
 📥 Request Body (`application/json`)

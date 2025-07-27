@@ -172,6 +172,8 @@ class PayInvoiceService {
                 if(total_paid < parseFloat(invoice.total)) {
                     //update invoice
                     await this.invoiceService.updateInvoice(paymentDetail.invoice_id, {status: "unpaid", total_paid: total_paid})
+                }else{
+                    await this.invoiceService.updateInvoice(paymentDetail.invoice_id, {status: "paid", total_paid: total_paid})
                 }   
                 
                 return updatedPaymentDetail
