@@ -370,7 +370,7 @@ Returns a `200 OK` status with a message indicating that the ***dollar-value*** 
 }
 ```
 
-### POST /api/dollar-value/latest
+### POST /api/dollar-value/
 
 Create new dollar value data
 
