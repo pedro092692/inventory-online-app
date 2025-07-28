@@ -519,6 +519,28 @@ class InvoiceService {
             product.invoice_details.dataValues.unit_price = (product.invoice_details.dataValues.unit_price * dollarvalue.value).toFixed(2)
         })
     }
+
+
+    invoiceDataForWhatsapp(invoice) {
+        return this.#error.handler(["Create invoice data for whatsapp"], async() => {
+            const date = invoice.date.toLocaleDateString('es-VE')
+            const hours = `${invoice.date.getHours()}:${invoice.date.getMinutes()}`
+            const customer = invoice.customer.name
+            const products = invoice.dataValues.products.map(product => {
+                return { name: product.name, quantity: product.invoice_details.dataValues.quantity, price: product.invoice_details.dataValues.unit_price }
+            })
+            const product_list = products.map(product => `${product.name} (${product.quantity}) x ${product.price} Bs `).join('\n')
+            const total = invoice.total_reference
+            const phone = invoice.customer.phone
+            
+            const data = `Fecha: ${date},  Hora: ${hours}\nCliente: ${customer}\n\nContenido:\n${product_list}\n\nTotal: ${total}`
+
+            const encoded_data = encodeURIComponent(data)
+            const waLink = `https://wa.me/${phone}?text=${encoded_data}`;
+            
+            return waLink
+        })
+    }
 }
 
 export default InvoiceService
