@@ -513,14 +513,23 @@ class InvoiceService {
         return total.reduce(( sum, acc) => sum + acc, 0)
     }
 
-
+    /**
+     * Convert dollar prices for products into a bolivars prices. 
+     * @param {Array} products 
+     * @param {Float} dollarvalue 
+     * @returns {Array} array of products with prices in bolivars.
+     */   
     _calculeBolivarPriceProducts(products, dollarvalue) {
         return products.map(product => {
             product.invoice_details.dataValues.unit_price = (product.invoice_details.dataValues.unit_price * dollarvalue.value).toFixed(2)
         })
     }
 
-
+    /**
+     * Based on invoice data create a text with a whatsapp link to send invoice info by whatsapp.
+     * @param {Object} invoice 
+     * @returns {String} A string with url to send invoice info by whatsapp. 
+     */
     invoiceDataForWhatsapp(invoice) {
         return this.#error.handler(["Create invoice data for whatsapp"], async() => {
             const date = invoice.date.toLocaleDateString('es-VE')
