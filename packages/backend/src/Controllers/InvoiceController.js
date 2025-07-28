@@ -31,7 +31,7 @@ class InvoiceController {
             throw new Error('Details is required, or Details must be a non-empty array')
         }
 
-        const newInvoice = await this.invoiceService.createInvoice(customer_id, seller_id)
+        const newInvoice = await this.invoiceService.createInvoice(customer_id, seller_id, details)
         
         // add invoice_id to details 
         for(const detail of details) {

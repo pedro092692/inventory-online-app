@@ -25,7 +25,7 @@ class InvoiceService {
     * @param {number} seller_id - id of the seller 
     * @returns {Object} - new invoice created   
     */  
-    createInvoice(customer_id, seller_id) {
+    createInvoice(customer_id, seller_id, details) {
         return this.#error.handler(["Create Invoice"], async() => {
             // get dollar value 
             const dollar_value = await this.dollarValue.getLastValue()
@@ -33,6 +33,10 @@ class InvoiceService {
             if(!dollar_value) {
                 throw new Error('A valid dollar value is required please update dollar value.')
             }
+            
+            // verify details if details is empty or not an array throw error
+            verifyDetails(details)
+            
             // create new invoice
             const newInvoice = await this.Invoice.create({
                 date: new Date(),
