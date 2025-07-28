@@ -24,7 +24,7 @@ class CustomerService {
             const newCustomer = await this.Customer.create({
                 id_number: id_number,
                 name: name, 
-                phoen: phone
+                phone: phone
             })
             return newCustomer
         })
