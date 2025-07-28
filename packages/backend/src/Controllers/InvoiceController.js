@@ -86,6 +86,15 @@ class InvoiceController {
         res.status(200).json(invoice)
     })
 
+
+    sendWhatsappInvoice = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        // get invoice information 
+        const invoice = await this.invoiceService.getInvoice(id)
+        console.log(invoice.customer)
+        res.status(200).json({ message: `The invoice with id ${id} will be send by whatsapp.`})
+    })
+
     /**
      * Updates an invoice by its ID
      * @param {Object} req - request object containing the invoice ID in the params and updates in the body
