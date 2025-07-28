@@ -27,7 +27,7 @@ export default {
           customer_id: 3, // Assuming customer with ID 3 exists
           seller_id: 3, // Assuming seller with ID 3 exists
           total: 6.06,
-          total_reference: 6,
+          total_reference: 6.06 * 112.82,
           status: "unpaid"
         }
       ],

@@ -34,6 +34,7 @@ class PayInvoiceService {
             }
 
             let total_to_pay = 0
+            let total_reference = 0
             const total_paid = parseFloat(invoice.total_paid) || 0.00
             const total = parseFloat(invoice.total)
             
@@ -60,6 +61,7 @@ class PayInvoiceService {
             // set status based on the amount paid
              if( total_paid + reference_amount >= total ) {
                     status = "paid"
+                    total_reference = (total * parseFloat(dollarValue.value)).toFixed(2)
              }
 
             // create payment detail
@@ -75,6 +77,7 @@ class PayInvoiceService {
             // update invoice paid amount and status
             const updatedInvoice = await this._updateInvoice(invoiceId, {
                 total_paid: parseFloat(invoice.total_paid) + reference_amount,
+                total_reference: total_reference,
                 status: status
             })
 
