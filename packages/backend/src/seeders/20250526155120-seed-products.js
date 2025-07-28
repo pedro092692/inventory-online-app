@@ -7,7 +7,6 @@ export default {
       },
       [
         {
-          id: 1,
           barcode: "1234567890123",
           name: "Aflamax",
           purchase_price: 3.97,
@@ -15,7 +14,6 @@ export default {
           stock: 50,
         },
         {
-          id: 2,
           barcode: "1234567890124",
           name: "Paracetamol",
           purchase_price: 0.36,
@@ -23,7 +21,6 @@ export default {
           stock: 100,
         },
         {
-          id: 3,
           barcode: "1234567890125",
           name: "Ibuprofeno",
           purchase_price: 2.77,
@@ -31,7 +28,6 @@ export default {
           stock: 75,
         },
         {
-          id: 4,
           barcode: "7592710003707",
           name: "ADELGASEN CAP X30 HERB",
           purchase_price: 8.25,
