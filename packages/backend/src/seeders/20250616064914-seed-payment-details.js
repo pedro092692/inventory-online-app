@@ -33,8 +33,12 @@ down: async (queryInterface, Sequelize, schema) => {
       {
         tableName: "payment_details",
         schema: schema
-      },{
-        id: [1,2,3] // Delete all seeded invoice payment details
+      },
+      null, // this means "no condition" = delete all rows
+      {
+        truncate: true,
+        restartIdentity: true,
+        cascade: true
       }
     )
   }

@@ -34,8 +34,11 @@ export default {
         tableName: "sellers",
         schema: schema
       },
+      null, // this means "no condition" = delete all rows
       {
-        id: [1, 2, 3] // Delete all seeded sellers
+        truncate: true,
+        restartIdentity: true,
+        cascade: true
       }
     );
   }

@@ -46,8 +46,11 @@ export default {
         tableName: "invoice_details",
         schema: schema
       },
+      null, // this means "no condition" = delete all rows
       {
-        id: [1, 2, 3, 4, 5] // Delete all seeded invoice details
+        truncate: true,
+        restartIdentity: true,
+        cascade: true
       }
     );
   }

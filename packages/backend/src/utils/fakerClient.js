@@ -10,5 +10,4 @@ function fakerCustomer() {
 
     return customers
 }
-
 export default fakerCustomer

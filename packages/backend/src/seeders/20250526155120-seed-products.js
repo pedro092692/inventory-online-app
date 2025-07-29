@@ -44,8 +44,11 @@ export default {
         tableName: "products",
         schema: schema
       },
+      null, // this means "no condition" = delete all rows
       {
-        id: [1, 2, 3, 4] // Delete all seeded products
+        truncate: true,
+        restartIdentity: true,
+        cascade: true
       }
     )
   }

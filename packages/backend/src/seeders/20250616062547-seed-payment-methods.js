@@ -44,8 +44,11 @@ export default {
         tableName: "payments",
         schema: schema
       },
+      null, // this means "no condition" = delete all rows
       {
-        id:[1,2,3,4,5,6,7] // delete all seeded payments
+        truncate: true,
+        restartIdentity: true,
+        cascade: true
       }
     )
   }
