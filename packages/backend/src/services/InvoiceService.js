@@ -538,6 +538,7 @@ class InvoiceService {
         return this.#error.handler(["Create invoice data for whatsapp"], async() => {
             const date = invoice.date.toLocaleDateString('es-VE')
             const hours = `${invoice.date.getHours()}:${invoice.date.getMinutes()}`
+            const invoiceNumber = invoice.id.toString().padStart(8, '0');
             const customer = invoice.customer.name
             const products = invoice.dataValues.products.map(product => {
                 return { name: product.name, quantity: product.invoice_details.dataValues.quantity, price: product.invoice_details.dataValues.unit_price }
@@ -546,7 +547,7 @@ class InvoiceService {
             const total = invoice.total_reference
             const phone = invoice.customer.phone
             
-            const data = `Fecha: ${date},  Hora: ${hours}\nCliente: ${customer}\n\nContenido:\n${product_list}\n\nTotal: ${total}`
+            const data = `Pededido N°: ${invoiceNumber}\nFecha: ${date},  Hora: ${hours}\nCliente: ${customer}\n\nContenido:\n${product_list}\n\nTotal: ${total}`
 
             const encoded_data = encodeURIComponent(data)
             const waLink = `https://wa.me/${phone}?text=${encoded_data}`;
