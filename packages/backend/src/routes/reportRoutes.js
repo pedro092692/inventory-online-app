@@ -1,5 +1,6 @@
 import { Router } from "express"
-
+import ReportController from "../Controllers/reportController.js";
+import { Invoice } from "../models/inventory_models/InvoiceModel.js";
 
 class ReportRoutes {
     constructor() {
@@ -12,7 +13,8 @@ class ReportRoutes {
      * @returns {void}
      */
     initializeRoutes() {
-        this.router.get('/', (req, res) => res.send("Report routes"))
+        this.router.get("/", (req, res) => res.send("Report routes"))
+        this.router.get("/top-spending-customers", (req, res) => new ReportController(Invoice).getTopSpendingCustomer(req, res))
     }
 }
 
