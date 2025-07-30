@@ -1,5 +1,4 @@
-import fakerProduct from "../utils/fakerProducts.js";
-const products = fakerProduct()
+import { products } from "../utils/fakerProducts.js";
 export default {
   up: async (queryInterface, Sequelize, schema) => {
     await queryInterface.bulkInsert(

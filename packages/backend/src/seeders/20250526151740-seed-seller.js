@@ -7,20 +7,20 @@ export default {
       },
       [
         {
-          id_number: 5000000, // Venezuelan ID number
-          name: "Pedro",
-          last_name: "Bastidas",
+          id_number: 19101504, // Venezuelan ID number
+          name: "Daniel",
+          last_name: "Beltran",
           address: "123 Main St, Caracas, Venezuela", // Example address
         },
         {
-          id_number: 6000000, // Another Venezuelan ID number
+          id_number: 25542141, // Another Venezuelan ID number
           name: "Andrea",
           last_name: "Gonzalez",
           address: "456 Elm St, Maracaibo, Venezuela", // Another example address
         },
         {
-          id_number: 6000000, // Yet another Venezuelan ID number
-          name: "Xavier",
+          id_number: 12345661, // Yet another Venezuelan ID number
+          name: "Javier",
           last_name: "Martinez",
           address: "789 Oak St, Valencia, Venezuela", // Yet another example address
         }

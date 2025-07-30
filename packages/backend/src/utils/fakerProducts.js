@@ -16,4 +16,5 @@ function fakerProduct(count = 500) {
 
     
 }
-export default fakerProduct
+const products = fakerProduct()
+export { fakerProduct, products } 
