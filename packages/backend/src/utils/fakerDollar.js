@@ -3,6 +3,7 @@ class FakerDollar {
         this.today = new Date()
         this.startDate = new Date(this.today); 
         this.months = count
+        this.dollarInitial = 51.9
     }
 
     createDates() {
@@ -17,7 +18,7 @@ class FakerDollar {
         // generate each dates
         for(let currentDate = new Date(this.startDate); currentDate <= this.today; currentDate.setDate(currentDate.getDate() + 1)) {
             // generate random hours 
-            const randomHour = Math.floor(Math.random() * (20 - 8 + 1)) + 8
+            const randomHour = Math.floor(Math.random() * (18 - 18 + 1)) + 18
             // generate random minutes 
             const randomMinute = Math.floor(Math.random() * 60)
             // generate random seconds
@@ -38,7 +39,29 @@ class FakerDollar {
 
         return dates
     }
+
+
+    dollarValues(dates) {
+        let value = this.dollarInitial
+        const data = []
+        for(let date of dates) {
+            // exclude sarturday and sunday
+            if( ![0,6].includes(date.getDay()) ) {
+                // increase dollar value (inflation)
+                value = Math.round((value * 1.0058) * 100) / 100
+                data.push({
+                    value: value,
+                    date: date
+                })      
+            }
+        }
+        return data
+    }
 }
 
+const faker = new FakerDollar()
+const dates = faker.createDates()
+const dollarValues = faker.dollarValues(dates)
 
+export {dollarValues}
 
