@@ -26,5 +26,4 @@ class FakerInvoiceDetails {
 
 const faker = new FakerInvoiceDetails()
 const invoiceDetails = faker.createInvoiceDetails(faker.productsDetails)
-console.log(invoiceDetails)
 export { invoiceDetails }

@@ -51,30 +51,35 @@ class FakerInvoice {
         let j = 1
         // iterate over dates
         for(let date of dates) {
-            
-            const randomUser = this._randomId(150)
-            const randomSeller = this._randomId(3)
-            const numberOfProduct = this._randomNumberProducts()
-            const products = this._getRandomProducts(numberOfProduct, 499)
-            const total = this._getInvoiceTotal(products)
-            const dollarValue = this.dollarValues[i].value
-            invoices.push(
-                {   
-                    invoice_id: j,
-                    date: date,
-                    customer_id: randomUser,
-                    seller_id: randomSeller,
-                    // numberOfProduct: numberOfProduct,
-                    products: products,
-                    total: total,
-                    total_reference: total * dollarValue,
-                    total_paid: total,
-                    status: "paid"
-                }
-            )
+            for(let k =0; k<Math.floor(Math.random() * (122 - 10)) + 10; k++){
+                const randomUser = this._randomId(150)
+                const randomSeller = this._randomId(3)
+                const numberOfProduct = this._randomNumberProducts()
+                const products = this._getRandomProducts(numberOfProduct, 499)
+                const total = this._getInvoiceTotal(products)
+                const dollarValue = this.dollarValues[i].value
+                const newDate = new Date(date)
+                newDate.setHours = Math.floor(Math.random() * (20 - 8)) + 8
+                newDate.setMinutes = Math.floor(Math.random() * 60)
+                newDate.setSeconds = Math.floor(Math.random() * 60)
+                invoices.push(
+                    {   
+                        invoice_id: j,
+                        date: newDate,
+                        customer_id: randomUser,
+                        seller_id: randomSeller,
+                        // numberOfProduct: numberOfProduct,
+                        products: products,
+                        total: total,
+                        total_reference: total * dollarValue,
+                        total_paid: total,
+                        status: "paid"
+                    }
+                )
+                j++
+            }
             
             i++
-            j++
             if([5,6].includes(date.getDay()) ){
                i--
             }
