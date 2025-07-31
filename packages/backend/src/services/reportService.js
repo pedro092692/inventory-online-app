@@ -24,7 +24,7 @@ class ReportService {
                 ],
                 include:[
                     {
-                        association: "customer", attributes: ["name", "phone"]
+                        association: "customer", attributes: ["name", "phone", "id"]
                     }
                 ],
                 group: ['customer_id', 'customer.id'],
@@ -36,6 +36,7 @@ class ReportService {
 
             const formatted_client_list = customer.map((client) => {
                 return {
+                    id: client.customer.id,
                     name: client.customer.name,
                     total_spent: client.dataValues.total_spent,
                     first_purchase: client.dataValues.first_invoice.toLocaleDateString('es-VE'),
@@ -45,6 +46,33 @@ class ReportService {
                 }
             })
             return formatted_client_list
+        })
+    }
+
+    getTopRecurringCustomer() {
+        return this.#error.handler(["Get recurring Customer"], async() => {
+            const customers = await this.invoice.findAll({
+                where: {
+                    status: "paid"
+                },
+                attributes: [
+                    [Sequelize.fn('COUNT', Sequelize.col('customer_id')), 'total_recurring'],
+                    [Sequelize.fn('MIN', Sequelize.col('date')), 'first_invoice'],
+                    [Sequelize.fn('MAX', Sequelize.col('date')), 'last_invoice']
+                ],
+                include:[
+                    {
+                        association: "customer", attributes: ["name", "phone", "id"]
+                    }
+                ],
+                group: ['customer_id', 'customer.id'],
+                order:[
+                    [[Sequelize.literal('total_recurring'), 'DESC']]
+                ],
+                limit: 10
+            })
+
+            return customers
         })
     }
 }

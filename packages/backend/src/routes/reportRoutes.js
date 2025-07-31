@@ -15,6 +15,7 @@ class ReportRoutes {
     initializeRoutes() {
         this.router.get("/", (req, res) => res.send("Report routes"))
         this.router.get("/top-spending-customers", (req, res) => new ReportController(Invoice).getTopSpendingCustomer(req, res))
+        this.router.get("/top-recurring-customers", (req, res) => new ReportController(Invoice).getTopRecurringCustomer(req, res))
     }
 }
 

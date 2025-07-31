@@ -14,6 +14,11 @@ class ReportController {
         const customer = await this.reportService.getTopSpendingCustomer()
         res.status(200).json(customer)
     })
+
+    getTopRecurringCustomer = this.#error.handler( async(req, res) => {
+        const customers = await this.reportService.getTopRecurringCustomer()
+        res.status(200).json(customers)
+    })
 }
 
 export default ReportController
