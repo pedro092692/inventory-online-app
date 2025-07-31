@@ -62,7 +62,14 @@ class CustomerService {
      */
     getCustomerById(id) {
         return this.#error.handler(["Read Customer", id, "User"], async () => {
-            const customer = await this.Customer.findByPk(id)
+            const customer = await this.Customer.findByPk(id, {
+                include: [
+                    {
+                        association: "invoices",
+                        attributes: ["id", "total", "status", "date"]
+                    }
+                ]
+            })
             if(!customer) {
                 throw new NotFoundError()
             }
