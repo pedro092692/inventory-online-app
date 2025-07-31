@@ -68,7 +68,8 @@ class CustomerService {
                         association: "invoices",
                         attributes: ["id", "total", "status", "date"]
                     }
-                ]
+                ],
+                order: [["invoices", "id", "DESC"]]
             })
             if(!customer) {
                 throw new NotFoundError()
