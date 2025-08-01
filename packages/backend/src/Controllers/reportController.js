@@ -5,8 +5,8 @@ class ReportController {
     // new instance of controller error handler
     #error = new ControllerErrorHandler()
     
-    constructor(invoiceModel) {
-        this.reportService = new ReportService(invoiceModel)
+    constructor(invoiceModel, invoiceDetailModel=null) {
+        this.reportService = new ReportService(invoiceModel, invoiceDetailModel)
         this.#error
     }
 
@@ -18,6 +18,11 @@ class ReportController {
     getTopRecurringCustomer = this.#error.handler( async(req, res) => {
         const customers = await this.reportService.getTopRecurringCustomer()
         res.status(200).json(customers)
+    })
+
+    getTopSellingProducts = this.#error.handler( async(req, res) => {
+        const products = await this.reportService.getToSellingProduct()
+        res.status(200).json(products)
     })
 }
 

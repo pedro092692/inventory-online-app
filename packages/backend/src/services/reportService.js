@@ -1,13 +1,15 @@
+import { raw } from "express";
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js";
-import { Sequelize } from "sequelize"
+import { Sequelize, where } from "sequelize"
 
 
 class ReportService {
     // new instace of service error handler
     #error = new ServiceErrorHandler()
 
-    constructor(invoiceModel) {
+    constructor(invoiceModel, invoiceDetailModel=null) {
         this.invoice = invoiceModel
+        this.invoiceDetail = invoiceDetailModel
         this.#error
     }
 
@@ -75,6 +77,38 @@ class ReportService {
             return customers
         })
     }
+
+    getToSellingProduct(order = 'DESC') {
+        return this.#error.handler(["Get Top Selling products"], async() => {
+            const products = await this.invoiceDetail.findAll({
+                attributes: [
+                    "product_id",
+                    [Sequelize.fn('SUM', Sequelize.col('quantity')), 'total_sold']
+                ],
+                include:[
+                    {
+                        association: "products",
+                        attributes: ["name", "selling_price"]
+                    },
+                    {
+                        association: "invoice",
+                        attributes:[],
+                        where:{
+                            status: 'paid'
+                        }
+                    }
+                ],
+                group: ["product_id", "products.id"],
+                order: [
+                     [[Sequelize.literal('total_sold'), order]]
+                ],
+                limit: 10
+            })
+
+            return products
+        })
+    }
+
 }
 
 export default ReportService
