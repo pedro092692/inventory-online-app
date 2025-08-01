@@ -1,6 +1,5 @@
-import { raw } from "express";
 import ServiceErrorHandler from "../errors/ServiceErrorHandler.js";
-import { Sequelize, where } from "sequelize"
+import { Sequelize } from "sequelize"
 
 
 class ReportService {
@@ -94,7 +93,10 @@ class ReportService {
                         association: "invoice",
                         attributes:[],
                         where:{
-                            status: 'paid'
+                            status: 'paid',
+                            // date: {
+                                // [Sequelize.Op.between]: [startDate, endDate]
+                            // }
                         }
                     }
                 ],

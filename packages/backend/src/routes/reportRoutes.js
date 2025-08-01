@@ -18,6 +18,7 @@ class ReportRoutes {
         this.router.get("/top-spending-customers", (req, res) => new ReportController(Invoice).getTopSpendingCustomer(req, res))
         this.router.get("/top-recurring-customers", (req, res) => new ReportController(Invoice).getTopRecurringCustomer(req, res))
         this.router.get("/top-selling-products", (req, res) => new ReportController(null, InvoiceDetail ).getTopSellingProducts(req, res))
+        this.router.get("/worst-selling-products", (req, res) => new ReportController(null, InvoiceDetail ).getWorstWellingProducts(req, res))
 
     }
 }
