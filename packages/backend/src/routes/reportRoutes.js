@@ -20,6 +20,9 @@ class ReportRoutes {
         this.router.get("/top-selling-products", (req, res) => new ReportController(null, InvoiceDetail ).getTopSellingProducts(req, res))
         this.router.get("/worst-selling-products", (req, res) => new ReportController(null, InvoiceDetail ).getWorstWellingProducts(req, res))
         this.router.get("/best-selling-day", (req, res) => new ReportController(Invoice).bestSellingDay(req, res))
+        this.router.get("/worst-selling-day", (req, res) => new ReportController(Invoice).worstSellingDay(req, res))
+        this.router.get("/sales-per-day", (req, res) => new ReportController(Invoice).salesPerDay(req, res))
+
 
     }
 }

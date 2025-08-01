@@ -31,7 +31,17 @@ class ReportController {
     })
 
     bestSellingDay = this.#error.handler( async(req, res) => {
-        const data = await this.reportService.bestSellingDay()
+        const data = await this.reportService.bestSellingDay('DESC', 5)
+        res.status(200).json(data)
+    })
+
+    worstSellingDay = this.#error.handler( async(req, res) => {
+        const data = await this.reportService.bestSellingDay('ASC', 5)
+        res.status(200).json(data)
+    })
+
+    salesPerDay = this.#error.handler( async(req, res ) => {
+        const data = await this.reportService.salesPerDay()
         res.status(200).json(data)
     })
 }
