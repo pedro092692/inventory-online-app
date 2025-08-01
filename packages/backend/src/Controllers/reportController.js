@@ -29,6 +29,11 @@ class ReportController {
         const products = await this.reportService.getToSellingProduct('ASC')
         res.status(200).json(products)
     })
+
+    bestSellingDay = this.#error.handler( async(req, res) => {
+        const data = await this.reportService.bestSellingDay()
+        res.status(200).json(data)
+    })
 }
 
 export default ReportController

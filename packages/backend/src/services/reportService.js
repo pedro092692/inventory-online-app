@@ -111,6 +111,36 @@ class ReportService {
         })
     }
 
+    bestSellingDay(order = 'DESC', limit = 1) {
+        return this.#error.handler(['Get Best Selling Day'], async() => {
+            const today = new Date()
+            const startDate = new Date(today)
+            //set start date to 1 of the current month
+            startDate.setDate(today.getDate() - 30)
+            startDate.setHours(0, 0, 0, 0)
+
+            const data = await this.invoice.findAll({
+                where:{
+                    status: 'paid',
+                    date:{
+                        [Sequelize.Op.between]: [startDate, today]
+                    }
+                },
+                attributes:[
+                    [Sequelize.fn('DATE', Sequelize.col('date')), 'day'],
+                    [Sequelize.fn('COUNT', Sequelize.col('*')), 'sales'],
+                    [Sequelize.fn('SUM', Sequelize.col('total')), 'revenue']
+                ],
+                group: [Sequelize.literal('day')],
+                order: [[Sequelize.literal('revenue'), order]],
+                limit: limit
+
+            })
+
+            return data
+        })
+    }
+
 }
 
 export default ReportService
