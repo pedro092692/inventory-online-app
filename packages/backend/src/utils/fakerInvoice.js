@@ -57,11 +57,16 @@ class FakerInvoice {
                 const numberOfProduct = this._randomNumberProducts()
                 const products = this._getRandomProducts(numberOfProduct, 499)
                 const total = this._getInvoiceTotal(products)
-                const dollarValue = this.dollarValues[i].value
+                let dollarValue = 0
+                try{
+                    dollarValue = this.dollarValues[i].value
+                }catch{
+                    dollarValue = 1
+                }
                 const newDate = new Date(date)
-                newDate.setHours = Math.floor(Math.random() * (20 - 8)) + 8
-                newDate.setMinutes = Math.floor(Math.random() * 60)
-                newDate.setSeconds = Math.floor(Math.random() * 60)
+                newDate.setHours(Math.floor(Math.random() * (20 - 8)) + 8 )
+                newDate.setMinutes(Math.floor(Math.random() * 60) )
+                newDate.setSeconds (Math.floor(Math.random() * 60) )
                 invoices.push(
                     {   
                         invoice_id: j,
