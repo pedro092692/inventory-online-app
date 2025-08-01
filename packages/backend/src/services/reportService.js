@@ -171,15 +171,16 @@ class ReportService {
 
     peakSalesHour() {
         return this.#error.handler(['Get peak sales hours'], async() => {
+            const targetTimeZone = 'Europe/Madrid';
             const today = new Date()
-            const startDate = new Date(today)
-            //set start date to 1 of the current month
-            startDate.setDate(today.getDate() - 30)
+            const startDate = new Date(today.getDate() - 30)
+            // get last 30 days
+            startDate.setDate(today.getDate())
             startDate.setHours(0, 0, 0, 0)
             
             const data = await this.invoice.findAll({
                 attributes:[
-                    [Sequelize.fn('DATE_TRUNC', 'hour', Sequelize.col('date')), 'hour'],
+                    [Sequelize.fn('EXTRACT', Sequelize.literal(`HOUR FROM "date" AT TIME ZONE '${targetTimeZone}'`)), 'hourOfDay'],
                     [Sequelize.fn('COUNT', Sequelize.col('*')), 'Sales'],
                     [Sequelize.fn('SUM', Sequelize.col('total')), 'revenue']
                 ],
@@ -189,9 +190,9 @@ class ReportService {
                         [Sequelize.Op.between]: [startDate, today]
                     }
                 },
-                group: [Sequelize.literal('hour')],
-                order: [[Sequelize.literal('revenue'), 'DESC']],
-                limit: 10
+                group: [Sequelize.literal(`EXTRACT(HOUR FROM "date" AT TIME ZONE '${targetTimeZone}')`)],
+                order: [[Sequelize.literal('SUM(total)'), 'DESC']],
+                limit: 3
             })
 
             return data
