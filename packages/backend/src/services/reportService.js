@@ -169,6 +169,35 @@ class ReportService {
         })
     }
 
+    peakSalesHour() {
+        return this.#error.handler(['Get peak sales hours'], async() => {
+            const today = new Date()
+            const startDate = new Date(today)
+            //set start date to 1 of the current month
+            startDate.setDate(today.getDate() - 30)
+            startDate.setHours(0, 0, 0, 0)
+            
+            const data = await this.invoice.findAll({
+                attributes:[
+                    [Sequelize.fn('DATE_TRUNC', 'hour', Sequelize.col('date')), 'hour'],
+                    [Sequelize.fn('COUNT', Sequelize.col('*')), 'Sales'],
+                    [Sequelize.fn('SUM', Sequelize.col('total')), 'revenue']
+                ],
+                where:{
+                    status: 'paid',
+                    date: {
+                        [Sequelize.Op.between]: [startDate, today]
+                    }
+                },
+                group: [Sequelize.literal('hour')],
+                order: [[Sequelize.literal('revenue'), 'DESC']],
+                limit: 10
+            })
+
+            return data
+        })
+    }
+
 }
 
 export default ReportService

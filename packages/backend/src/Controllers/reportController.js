@@ -44,6 +44,11 @@ class ReportController {
         const data = await this.reportService.salesPerDay()
         res.status(200).json(data)
     })
+
+    peakSalesHour = this.#error.handler( async(req, res) => {
+        const data = await this.reportService.peakSalesHour()
+        res.status(200).json(data)
+    })
 }
 
 export default ReportController
