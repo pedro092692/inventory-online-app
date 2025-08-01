@@ -199,6 +199,46 @@ class ReportService {
         })
     }
 
+    peakSalesDayOfWeek() {
+        return this.#error.handler(['Get peak sales day of week'], async() => {
+            const today = new Date()
+            const startDate = new Date(today)
+            startDate.setDate(today.getDate() - 30)
+            startDate.setHours(0, 0, 0, 0)
+            const targetTimeZone = 'Europe/Madrid'
+
+            const data = await this.invoice.findAll({
+                attributes: [
+                    [Sequelize.fn('EXTRACT', 
+                        Sequelize.literal(`DOW FROM "date" AT TIME ZONE '${targetTimeZone}'`)), 'dayOfWeekNumber'],
+                    [Sequelize.fn('COUNT', Sequelize.col('*')), 'totalSales'],
+                    [Sequelize.fn('SUM', Sequelize.col('total')), 'totalRevenue']
+                ],
+                where:{
+                    status: 'paid',
+                    date: {
+                        [Sequelize.Op.between]: [startDate, today]
+                    }
+                },
+                group: [Sequelize.fn('EXTRACT', 
+                        Sequelize.literal(`DOW FROM "date" AT TIME ZONE '${targetTimeZone}'`)), 'dayOfWeekNumber'],
+                order: [[Sequelize.literal('SUM(total)'), 'DESC']]       
+            })
+
+            const daysNames = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado']
+            const result = data.map(item => {
+                const dayNumber = parseInt(item.dataValues.dayOfWeekNumber, 10)
+                return {
+                    dayOfWeek: daysNames[dayNumber],
+                    totalSales: parseInt(item.dataValues.totalSales, 10),
+                    totalRevenue: parseFloat(item.dataValues.totalRevenue).toFixed(2)
+                }
+            })
+
+            return result
+        })
+    }
+
 }
 
 export default ReportService

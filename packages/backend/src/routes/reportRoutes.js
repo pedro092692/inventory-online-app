@@ -23,6 +23,7 @@ class ReportRoutes {
         this.router.get("/worst-selling-day", (req, res) => new ReportController(Invoice).worstSellingDay(req, res))
         this.router.get("/sales-per-day", (req, res) => new ReportController(Invoice).salesPerDay(req, res))
         this.router.get("/peak-sales-hour", (req, res) => new ReportController(Invoice).peakSalesHour(req, res))
+        this.router.get("/peak-day-week", (req, res) => new ReportController(Invoice).peakSalesDayOfWeek(req, res))
 
 
     }
