@@ -18,9 +18,9 @@ class FakerDollar {
         // generate each dates
         for(let currentDate = new Date(this.startDate); currentDate <= this.today; currentDate.setDate(currentDate.getDate() + 1)) {
             // generate random hours 
-            const randomHour = Math.floor(Math.random() * (18 - 18 + 1)) + 18
+            const randomHour = Math.floor(Math.random() * (17 - 16 + 1)) + 16
             // generate random minutes 
-            const randomMinute = Math.floor(Math.random() * 60)
+            const randomMinute = Math.floor(Math.random() * 36)
             // generate random seconds
             const randomSeconds = Math.floor(Math.random() * 60)
 

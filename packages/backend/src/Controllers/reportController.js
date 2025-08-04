@@ -5,8 +5,8 @@ class ReportController {
     // new instance of controller error handler
     #error = new ControllerErrorHandler()
     
-    constructor(invoiceModel, invoiceDetailModel=null) {
-        this.reportService = new ReportService(invoiceModel, invoiceDetailModel)
+    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null) {
+        this.reportService = new ReportService(invoiceModel, invoiceDetailModel, invoicePayDetailModel)
         this.#error
     }
 
@@ -52,6 +52,11 @@ class ReportController {
 
     peakSalesDayOfWeek = this.#error.handler( async(req, res) => {
         const data = await this.reportService.peakSalesDayOfWeek()
+        res.status(200).json(data)
+    })
+
+    salesDetail = this.#error.handler( async(req, res) => {
+        const data = await this.reportService.dayTotalSales()
         res.status(200).json(data)
     })
 }

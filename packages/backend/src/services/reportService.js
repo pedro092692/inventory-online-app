@@ -6,9 +6,10 @@ class ReportService {
     // new instace of service error handler
     #error = new ServiceErrorHandler()
 
-    constructor(invoiceModel, invoiceDetailModel=null) {
+    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null) {
         this.invoice = invoiceModel
-        this.invoiceDetail = invoiceDetailModel
+        this.invoiceDetail = invoiceDetailModel,
+        this.invoicePayDetail = invoicePayDetailModel
         this.#error
     }
 
@@ -236,6 +237,51 @@ class ReportService {
             })
 
             return result
+        })
+    }
+
+    dayTotalSales() {
+        return this.#error.handler(['Get total sales day'], async() => {
+            const today = new Date( )
+            const startDate = new Date(today)
+            startDate.setDate(today.getDate() - 30)
+            startDate.setHours(0, 0, 0, 0)
+
+            const data = await this.invoicePayDetail.findAll({
+                attributes:[
+                    [Sequelize.fn("DATE", Sequelize.col("invoice.date")), "day"],
+                    [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_currenty'],
+                    [Sequelize.fn("SUM", Sequelize.col("reference_amount")), "total_dollar"],
+                    [Sequelize.fn('COUNT', Sequelize.col("invoice.id")), 'transactions']
+                ],
+                include:[
+                    {
+                        association: "payments",
+                        attributes: ["name", "currency"]
+                    },
+                    {
+                        association: "invoice",
+                        attributes: [],
+                        where:{
+                            status: "paid",
+                            date: {
+                                [Sequelize.Op.between]: [startDate, today]
+                            }
+                        },
+                    }
+                ],
+                group: [
+                    Sequelize.fn('DATE', Sequelize.col('invoice.date')),
+                    "payment_id", 
+                    "payments.id"
+                ],
+                order: [
+                    [[Sequelize.literal('day'), 'DESC']]
+                ]
+
+            })
+            
+            return data
         })
     }
 

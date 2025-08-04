@@ -2,6 +2,7 @@ import { Router } from "express"
 import ReportController from "../Controllers/reportController.js"
 import { Invoice } from "../models/inventory_models/InvoiceModel.js"
 import { InvoiceDetail } from "../models/inventory_models/InvoiceDetailModel.js"
+import { PaymentDetail } from "../models/inventory_models/PaymentDetailModel.js"
 
 class ReportRoutes {
     constructor() {
@@ -24,6 +25,7 @@ class ReportRoutes {
         this.router.get("/sales-per-day", (req, res) => new ReportController(Invoice).salesPerDay(req, res))
         this.router.get("/peak-sales-hour", (req, res) => new ReportController(Invoice).peakSalesHour(req, res))
         this.router.get("/peak-day-week", (req, res) => new ReportController(Invoice).peakSalesDayOfWeek(req, res))
+        this.router.get("/detail-sales", (req, res) => new ReportController(null, null, PaymentDetail).salesDetail(req, res))
 
 
     }
