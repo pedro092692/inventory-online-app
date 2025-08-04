@@ -264,10 +264,94 @@ class ReportService {
                         attributes: [],
                         where:{
                             status: "paid",
+                            // seller_id: 1
+                            // [Sequelize.Op.and]: Sequelize.where(
+                            //     Sequelize.fn('DATE', Sequelize.col('date')), '2025-08-04'
+                            // )
                             date: {
                                 [Sequelize.Op.between]: [startDate, today]
+                                
                             }
-                        },
+                        }
+                    }
+                ],
+                group: [
+                    Sequelize.fn('DATE', Sequelize.col('invoice.date')),
+                    "payment_id", 
+                    "payments.id"
+                ],
+                order: [
+                    [[Sequelize.literal('day'), 'DESC']]
+                ]
+
+            })
+            
+            return data
+        })
+    }
+
+    getInvoicePerDate() {
+        return this.#error.handler(['Read Invoices Per Date'], async() => {
+            const today = new Date()
+            const startDate = new Date(today)
+            startDate.setDate(today.getDate() - 7)
+            startDate.setHours(0, 0, 0, 0)
+
+            const data = await this.invoice.findAll({
+                attributes: [
+                    "id",
+                    "date",
+                    "total",
+                ],
+                include: [
+                    {
+                        association: "seller", 
+                        attributes: ["name"]
+                    },
+                    {
+                        association: "customer",
+                        attributes: ["name", "phone"]
+                    }
+                ],
+                where:{
+                    status: "paid",
+                    date: {
+                        [Sequelize.Op.between]: [startDate, today]
+                    }
+                },
+                order:[["date", "DESC"]],
+                limit: 4
+            })
+
+            return data
+        })
+    }
+
+    cashClosing(seller_id) {
+         return this.#error.handler(['Get total sales day'], async() => {
+            const today = new Date()
+            const data = await this.invoicePayDetail.findAll({
+                attributes:[
+                    [Sequelize.fn("DATE", Sequelize.col("invoice.date")), "day"],
+                    [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_currenty'],
+                    [Sequelize.fn("SUM", Sequelize.col("reference_amount")), "total_dollar"],
+                    [Sequelize.fn('COUNT', Sequelize.col("invoice.id")), 'transactions']
+                ],
+                include:[
+                    {
+                        association: "payments",
+                        attributes: ["name", "currency"]
+                    },
+                    {
+                        association: "invoice",
+                        attributes: [],
+                        where:{
+                            status: "paid",
+                            seller_id: seller_id,
+                            [Sequelize.Op.and]: Sequelize.where(
+                                Sequelize.fn('DATE', Sequelize.col('date')), `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
+                            )
+                        }
                     }
                 ],
                 group: [

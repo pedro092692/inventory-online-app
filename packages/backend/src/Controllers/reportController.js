@@ -59,6 +59,17 @@ class ReportController {
         const data = await this.reportService.dayTotalSales()
         res.status(200).json(data)
     })
+
+    invoicePerDate = this.#error.handler( async(req, res) => {
+        const data = await this.reportService.getInvoicePerDate()
+        res.status(200).json(data)
+    })
+
+    cashClosing = this.#error.handler( async(req, res) => {
+        const { seller_id } = req.body
+        const data = await this.reportService.cashClosing(seller_id)
+        res.status(200).json(data)
+    })
 }
 
 export default ReportController
