@@ -28,6 +28,7 @@ class ReportRoutes {
         this.router.get("/detail-sales", (req, res) => new ReportController(null, null, PaymentDetail).salesDetail(req, res))
         this.router.get("/invoices-per-day", (req, res) => new ReportController(Invoice).invoicePerDate(req, res))
         this.router.get("/cash-closing", (req, res) =>  new ReportController(null, null, PaymentDetail).cashClosing(req, res))
+        this.router.get("/pay-methods", (req, res) =>  new ReportController(null, null, PaymentDetail).payMethodPercent(req, res))
 
 
     }

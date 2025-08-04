@@ -369,6 +369,67 @@ class ReportService {
         })
     }
 
+    payMethodPercent() {
+        return this.#error.handler(["Get pay method percent"], async() => {
+            const today = new Date()
+            const startDate = new Date(today)
+            startDate.setDate(today.getDate() - 7)
+            startDate.setHours(0, 0, 0, 0)
+
+            const data = await this.invoicePayDetail.findAll({
+                attributes: [
+                    [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_amount'],
+                    [Sequelize.fn('SUM', Sequelize.col('reference_amount')), 'total_reference'],
+                    [Sequelize.fn('COUNT', Sequelize.col('invoice_id')), 'total_invoices']
+                    
+                ],
+                include: [
+                    {
+                        association: "payments",
+                        attributes: ["name", "currency"]
+                    },
+                    {
+                        association: "invoice",
+                        attributes: [],
+                        where: {
+                            status: "paid",
+                            date: {
+                                [Sequelize.Op.between]: [startDate, today]
+                            }
+                        }
+                    }
+                ], 
+                group: ["payment_id", "payments.id"],
+                order: [
+                    [[Sequelize.literal('total_reference'), 'DESC']]
+                ]
+            })
+            const totalDollar = data.reduce((accumulator, currentValue) => {
+                return accumulator + parseFloat(currentValue.dataValues.total_reference)
+            }, 0)
+            
+            const totalReference = data.reduce((accumulator, currentValue) => {
+                let value = 0
+                if(parseFloat(currentValue.dataValues.total_reference) != parseFloat(currentValue.dataValues.total_amount)) {
+                    value = parseFloat(currentValue.dataValues.total_reference)
+                }
+                return accumulator + value
+            }, 0)
+
+            const percentBolivar = (totalReference * 100 ) / totalDollar
+            const percentDollar = 100 - percentBolivar
+
+            const total = {
+                total_sold_dollar: totalDollar, 
+                total_sold_bolivars: totalReference,
+                percent_sold_in_bolivar: `${percentBolivar.toFixed(2)}%`,
+                percent_sold_in_dollar: `${percentDollar.toFixed(2)}%`
+            }
+            data.push(total)
+            return data
+        })
+    }
+
 }
 
 export default ReportService

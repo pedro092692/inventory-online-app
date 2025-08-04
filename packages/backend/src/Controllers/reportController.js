@@ -70,6 +70,11 @@ class ReportController {
         const data = await this.reportService.cashClosing(seller_id)
         res.status(200).json(data)
     })
+
+    payMethodPercent = this.#error.handler( async(req, res) => {
+        const data = await this.reportService.payMethodPercent()
+        res.status(200).json(data)
+    })
 }
 
 export default ReportController
