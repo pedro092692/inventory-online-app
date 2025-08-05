@@ -3,7 +3,10 @@ import { DataTypes, Model } from 'sequelize'
 class Product extends Model {
     // model relations
 
-    // invoices details
+    /**
+     * 
+     * @param {*} model 
+     */
     static associationInvoiceDetails(model) {
         this.belongsToMany(model.Invoice, {
             through: 'invoice_details',
@@ -17,6 +20,13 @@ class Product extends Model {
     
 }
 
+/**
+ * Initializes Product model with its schema definition and configuration.
+ * This function set up Product model with filds such as: `id`, `barcpde`, `name`, `purchase_price`, `stock` and `selling_price`.
+ * And configure Sequelize options like model name, table name, schema and timestamps.
+ * @param {import('seuqelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
+ * @return {void} This function does not return a value.
+ */
 function initializeProduct(sequelize) {
     Product.init(
         {
