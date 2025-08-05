@@ -10,7 +10,14 @@ const __dirname = path.dirname(__filename)
 const envPath = path.resolve(__dirname, '../../.env')
 dotenv.config({ path: envPath })
 
-async function testMigration() {
+/**
+ * Reverts all database migrations for the test environment.
+ * This script connects to the test database, finds all applied migrations using Umzug,
+ * and executes their `down` method to roll back the schema changes. It is designed
+ * to be run as part of a testing teardown process.
+ * @returns {Promise<void>} A promise that resolves when migrations are reverted or rejects on error.
+ */
+async function revertTestMigrations() {
     // sequelize new instance
     const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
         host: process.env.DB_HOST,
@@ -61,7 +68,7 @@ async function testMigration() {
     await sequelize.close() // close the connection
 }
 
-await testMigration().then( () => process.exit(0) ).catch(error => {
-    console.log('Error executing migrations:', error)
+await revertTestMigrations().then( () => process.exit(0) ).catch(error => {
+    console.log('Error reverting migrations:', error)
     process.exit(1)
 })
