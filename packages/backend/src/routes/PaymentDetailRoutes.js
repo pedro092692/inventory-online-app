@@ -11,6 +11,10 @@ class PayInvoiceRoutes {
         this.initializeRoutes()
     }
 
+    /**
+     * Initializes the routes for the Payment Detail API.
+     * @returns {void}
+     */
     initializeRoutes() {
         this.router.get('/', (req, res) => res.send('Pay Invoice Detail Route'))
         this.router.get('/:id', (req, res) => new PayInvoiceController(PaymentDetail).getPaymentDetail(req, res))
