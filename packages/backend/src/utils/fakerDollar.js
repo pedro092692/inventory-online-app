@@ -1,15 +1,23 @@
+/**
+ * A class to generate fake historical dollar price data.
+ */
 class FakerDollar {
+    /**
+     * @param {number} [count=6] - The number of past months to generate data for.
+     */
     constructor(count = 6) {
         this.today = new Date()
         this.startDate = new Date(this.today); 
         this.months = count
         this.dollarInitial = 51.9
     }
-
+    /**
+     * Creates an array of dates from a specified number of months ago until today.
+     * @returns {Array<Date>} An array of Date objects.
+     */
     createDates() {
         const dates = []
 
-        // set start date 
         // set monts 6 monts ago (default)
         this.startDate.setMonth(this.today.getMonth() - this.months)
         // set startDate to first date of the month
@@ -40,7 +48,12 @@ class FakerDollar {
         return dates
     }
 
-
+    /**
+     * Generates dollar values for a given array of dates, simulating inflation.
+     * It skips weekends (Saturday and Sunday).
+     * @param {Array<Date>} dates - An array of dates for which to generate dollar values.
+     * @returns {Array<{value: number, date: Date}>} An array of objects containing the value and date.
+     */
     dollarValues(dates) {
         let value = this.dollarInitial
         const data = []
@@ -64,4 +77,3 @@ const dates = faker.createDates()
 const dollarValues = faker.dollarValues(dates)
 
 export {dollarValues}
-
