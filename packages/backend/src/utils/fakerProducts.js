@@ -1,5 +1,10 @@
 import { faker } from '@faker-js/faker';
 
+/**
+ * Generate a list of faker Products with the following fields: barcode, name, purchase_price, selling_price, stock
+ * @param {Number} count Number of fake product to generate.
+ * @returns {Arrau<{barcode: string, name: string, purchase_price: number, selling_price: number, stock: number}>}
+ */
 function fakerProduct(count = 500) {
     return Array.from({ length: count }, () => {
         const purchase_price = parseFloat(faker.commerce.price({ min: 0.5, max: 6 }))
