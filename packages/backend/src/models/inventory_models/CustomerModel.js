@@ -1,7 +1,12 @@
 import { DataTypes, Model } from 'sequelize'
 
 class Customer extends Model {
-    // model relations
+    
+    /**
+     * Creates an association between the Customer model and the Invoice model.
+     * @param {{ Invoice: typeof Model }} model - An object containing the Invoice model class.
+     * @returns {void} This method does not return a value.
+     */
     static associate(model) {
         this.hasMany(model.Invoice, {
             foreignKey: 'customer_id',
@@ -10,6 +15,13 @@ class Customer extends Model {
     }
 }
 
+/**
+ * Initializes the Customer model with its schema definition and configuration.
+ * This function sets up the Customer model with fields such as `id`, `id_number`, `name`, and `phone`,
+ * and configures Sequelize options like table name, schema, and timestamps.
+ * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
+ * @returns {void} This function does not return a value.
+ */
 function initializeCustomer(sequelize) {
     Customer.init(
         {
