@@ -6,7 +6,7 @@ class PaymentDetail extends Model {
     /**
      * Craetes an association between PaymentDetail model and the invoice model.
      * @param {{Invoice: typeof Model}} model - An object containing Invoice model.
-     * @return {void} Thid method does not return a value.
+     * @return {void} This method does not return a value.
      */
     static associationInvoice(model) {
         this.belongsTo(model.Invoice, {
