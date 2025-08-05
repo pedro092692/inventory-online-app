@@ -4,6 +4,13 @@ class User extends Model {
     // relations model 
 }
 
+/**
+ * Initializes UserModel model with its schema definition and configuration.
+ * This function set up UserModel with field such as: `id`, `email`, `password`, and `roleId`
+ * and configures Sequelize options like model name, table name, schema and timestamps.
+ * @param {import('sequelize').Sequelize} sequelize -An Sequelize instance used to initialize the User model.
+ * @returns {void} This function does not return a value.
+ */
 function initializeUser(sequelize) {
     User.init(
         {
