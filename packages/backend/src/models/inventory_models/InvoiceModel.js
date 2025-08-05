@@ -86,7 +86,7 @@ class Invoice extends Model {
  * This function sets up the Invoice model with fields such as `id`, `date`, `product_id`, `customer_id`, `seller_id`, `total`, 
  * `total_reference`, `total_paid` and `status`
  * and configures Sequelize options like model name, table name, schema, and timestamps.
- * @param {*} sequelize 
+ * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
  * @return {void} This function does not return a value.
  */
 function initializeInvoice(sequelize) {

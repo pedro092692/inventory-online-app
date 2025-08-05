@@ -3,7 +3,11 @@ import { DataTypes, Model } from 'sequelize'
 class PaymentDetail extends Model {
     // model relations
 
-    //invoices
+    /**
+     * Craetes an association between PaymentDetail model and the invoice model.
+     * @param {{Invoice: typeof Model}} model - An object containing Invoice model.
+     * @return {void} Thid method does not return a value.
+     */
     static associationInvoice(model) {
         this.belongsTo(model.Invoice, {
              foreignKey: 'invoice_id',
@@ -11,7 +15,11 @@ class PaymentDetail extends Model {
         })
     }
 
-    // payments methods
+    /**
+     * Creates an association between PaymentDetail model and the Payment model.
+     * @param {{Payemnt: typeof Model}} model - An object containing Payment model.
+     * @return {void} Thid method does not return a value.
+     */
     static associationPaymentMethod(model) {
         this.belongsTo(model.Payment, {
             foreignKey: 'payment_id',
@@ -20,6 +28,13 @@ class PaymentDetail extends Model {
     }
 }
 
+/** 
+ * Initializes PaymentDetail model with its schema definition and configuration.
+ * This function set up the PaymentDetail model with fields such as `id`, `invoice_id`, `payment_id`, `amount` and `reference_amount`
+ * and configures Sequelize options like model name, table name, schema, and timestamps.
+ * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
+ * @returns {void} This function does not return a value. 
+ */
 function initializePaymentDetail(sequelize) {
     PaymentDetail.init(
         {
