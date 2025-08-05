@@ -10,7 +10,14 @@ const __dirname = path.dirname(__filename)
 const envPath = path.resolve(__dirname, '../../.env')
 dotenv.config({ path: envPath })
 
-async function testSeeder() {
+/**
+ * Reverts all database seeders for the test environment.
+ * This script connects to the test database, finds all applied seeders using Umzug,
+ * and executes their `down` method to remove the seeded data. It is designed
+ * to be run as part of a testing teardown process.
+ * @returns {Promise<void>} A promise that resolves when seeders are reverted or rejects on error.
+ */
+async function revertTestSeeders() {
     // Sequelize new instance 
     const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
         host: process.env.DB_HOST,
@@ -57,9 +64,9 @@ async function testSeeder() {
     await sequelize.close() // close the connection
 }
 
-await testSeeder().then(() => {
-    console.log('Test Undo seeder completed successfully.')
+await revertTestSeeders().then(() => {
+    console.log('Test seeders reverted successfully.')
 }).catch((error) => {
-    console.error('Error during test seeder:', error)
+    console.error('Error reverting test seeders:', error)
     process.exit(1)
 })
