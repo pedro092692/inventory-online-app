@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model } from 'sequelize'
 
 class PaymentDetail extends Model {
     // model relations
@@ -6,16 +6,16 @@ class PaymentDetail extends Model {
     //invoices
     static associationInvoice(model) {
         this.belongsTo(model.Invoice, {
-             foreignKey: "invoice_id",
-             as: "invoice"
+             foreignKey: 'invoice_id',
+             as: 'invoice'
         })
     }
 
     // payments methods
     static associationPaymentMethod(model) {
         this.belongsTo(model.Payment, {
-            foreignKey: "payment_id",
-            as: "payments"
+            foreignKey: 'payment_id',
+            as: 'payments'
         })
     }
 }
@@ -33,24 +33,24 @@ function initializePaymentDetail(sequelize) {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "invoices",
-                    key: "id"
+                    model: 'invoices',
+                    key: 'id'
                 },
 
-                onUpdate: "CASCADE",
-                onDelete: "CASCADE"
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE'
             },
 
             payment_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "payments",
-                    key: "id"
+                    model: 'payments',
+                    key: 'id'
                 },
 
-                onUpdate: "CASCADE",
-                onDelete: "CASCADE"
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE'
             },
 
             amount: {
@@ -58,7 +58,7 @@ function initializePaymentDetail(sequelize) {
                 allowNull: false,
                 validate: {
                     isNumeric: {
-                        msg: "A valid number is required."
+                        msg: 'A valid number is required.'
                     }
                 }
             },
@@ -68,17 +68,17 @@ function initializePaymentDetail(sequelize) {
                 allowNull: false, 
                 validate: {
                     isNumeric: {
-                        msg: "A valid Number is required."
+                        msg: 'A valid Number is required.'
                     }
                 }
             }
         },
         {
             sequelize,
-            modelName: "PaymentDetail",
-            tableName: "payment_details",
+            modelName: 'PaymentDetail',
+            tableName: 'payment_details',
             timestamps: false,
-            schema: "test_schema" // only for test purposes
+            schema: 'test_schema' // only for test purposes
         }
     )
 }

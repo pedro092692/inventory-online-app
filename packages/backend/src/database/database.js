@@ -1,16 +1,16 @@
-import "dotenv/config"
-import process from "process"
-import { Sequelize } from "sequelize"
-import { initializeUser } from "../models/UserModel.js"
-import { initializeRole } from "../models/RoleModel.js"
-import { initializeCustomer, Customer } from "../models/inventory_models/CustomerModel.js"
-import { initializeInvoice, Invoice } from "../models/inventory_models/InvoiceModel.js"
-import { initializeInvoiceDetail, InvoiceDetail } from "../models/inventory_models/InvoiceDetailModel.js"
-import { initializeSeller, Seller } from "../models/inventory_models/SellerModel.js"
-import { initializeProduct, Product } from "../models/inventory_models/ProductModel.js"
-import { initializePayment, Payment } from "../models/inventory_models/PaymentModel.js"
-import { initializePaymentDetail, PaymentDetail } from "../models/inventory_models/PaymentDetailModel.js" 
-import { initializeDollar } from "../models/inventory_models/DollarModel.js"
+import 'dotenv/config'
+import process from 'process'
+import { Sequelize } from 'sequelize'
+import { initializeUser } from '../models/UserModel.js'
+import { initializeRole } from '../models/RoleModel.js'
+import { initializeCustomer, Customer } from '../models/inventory_models/CustomerModel.js'
+import { initializeInvoice, Invoice } from '../models/inventory_models/InvoiceModel.js'
+import { initializeInvoiceDetail, InvoiceDetail } from '../models/inventory_models/InvoiceDetailModel.js'
+import { initializeSeller, Seller } from '../models/inventory_models/SellerModel.js'
+import { initializeProduct, Product } from '../models/inventory_models/ProductModel.js'
+import { initializePayment, Payment } from '../models/inventory_models/PaymentModel.js'
+import { initializePaymentDetail, PaymentDetail } from '../models/inventory_models/PaymentDetailModel.js' 
+import { initializeDollar } from '../models/inventory_models/DollarModel.js'
 
 let instance = null
 

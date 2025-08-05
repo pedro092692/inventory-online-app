@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model } from 'sequelize'
 
 class Dollar extends Model {
     // model relations
@@ -18,7 +18,7 @@ function initializeDollar(sequelize) {
                 allowNull: false,
                 validate: {
                     isNumeric: {
-                         msg: "A valid number is required."
+                         msg: 'A valid number is required.'
                     }
                 }
             },
@@ -29,17 +29,17 @@ function initializeDollar(sequelize) {
                 defaultValue: new Date(),
                 validate: {
                     isDate: {
-                        msg: "A valid date is required."
+                        msg: 'A valid date is required.'
                     }
                 }
             }
         },
         {
             sequelize,
-            modelName: "Dollar",
-            tableName: "dollar-value",
+            modelName: 'Dollar',
+            tableName: 'dollar-value',
             timestamps: false,
-            schema: "test_schema" // only for test purposes
+            schema: 'test_schema' // only for test purposes
         }
     )
 }

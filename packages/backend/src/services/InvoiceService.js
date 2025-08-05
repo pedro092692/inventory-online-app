@@ -1,10 +1,10 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
-import InvoiceDetailService from "./InvoiceDestailService.js"
-import ProductService from "./ProductService.js"
-import DollarValueService from "./DollarValueService.js"
-import { NotFoundError } from "../errors/NofoundError.js"
-import verifyDetails from "../utils/VerifiyDetails.js"
-import { Op } from "sequelize"
+import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
+import InvoiceDetailService from './InvoiceDestailService.js'
+import ProductService from './ProductService.js'
+import DollarValueService from './DollarValueService.js'
+import { NotFoundError } from '../errors/NofoundError.js'
+import verifyDetails from '../utils/VerifiyDetails.js'
+import { Op } from 'sequelize'
 
 class InvoiceService {
     
@@ -26,7 +26,7 @@ class InvoiceService {
     * @returns {Object} - new invoice created   
     */  
     createInvoice(customer_id, seller_id, details) {
-        return this.#error.handler(["Create Invoice"], async() => {
+        return this.#error.handler(['Create Invoice'], async() => {
             // get dollar value 
             const dollar_value = await this.dollarValue.getLastValue()
             // check is dollar value is declared.
@@ -54,7 +54,7 @@ class InvoiceService {
     * @returns {Array} - array of new details created
     */
     addInvoiceDetails(details) {
-        return this.#error.handler(["Add invoices details"], async() => {
+        return this.#error.handler(['Add invoices details'], async() => {
             // verify details if details is empty or not an array throw error
             verifyDetails(details)
 
@@ -98,24 +98,24 @@ class InvoiceService {
     */
     getAllInvoices(limit=10, offset=0) {
         
-        return this.#error.handler(["Read All invoices"], async () => {
+        return this.#error.handler(['Read All invoices'], async () => {
             const invoices = await this.Invoice.findAll({
                 include: [
                     {
-                        association: "customer", attributes: ["name", "phone"]
+                        association: 'customer', attributes: ['name', 'phone']
                     },
                     {
-                        association: "products",
-                        attributes: ["name"],
+                        association: 'products',
+                        attributes: ['name'],
                         through: {
-                            attributes: ["quantity", "unit_price"] 
+                            attributes: ['quantity', 'unit_price'] 
                         }
                     },
                     {
-                        association: "seller", attributes: ["name"]
+                        association: 'seller', attributes: ['name']
                     }
                 ],
-                order: [["id", "DESC"]],
+                order: [['id', 'DESC']],
                 limit: limit,
                 offset: offset,
             })
@@ -128,7 +128,7 @@ class InvoiceService {
     * @returns {Object} - object with total selled and today invoices
     */
     getDayInvoices() {
-        return this.#error.handler("Read Day Invoices", async () => {
+        return this.#error.handler('Read Day Invoices', async () => {
             // set today date to 00:00:00
             const today = new Date()
             today.setHours(0, 0, 0)
@@ -138,13 +138,13 @@ class InvoiceService {
             tomorrow.setDate(tomorrow.getDate() + 1)
             
             // create query to get total selled today
-            const totalSelled = await this.Invoice.sum("total", {
+            const totalSelled = await this.Invoice.sum('total', {
                 where: {
                     date: {
                         [Op.gte]: today,
                         [Op.lt]: tomorrow
                     },
-                    status: "paid"
+                    status: 'paid'
                 }
             })
             // create query to get all invoices of today
@@ -158,20 +158,20 @@ class InvoiceService {
                 },
                 include: [
                     {
-                        association: "customer", attributes: ["name", "phone"],
+                        association: 'customer', attributes: ['name', 'phone'],
                     },
                     {
-                        association: "products",
-                        attributes: ["name"],
+                        association: 'products',
+                        attributes: ['name'],
                         through: {
-                            attributes: ["quantity", "unit_price"] 
+                            attributes: ['quantity', 'unit_price'] 
                         }
                     },
                     {
-                        association: "seller", attributes: ["name"]
+                        association: 'seller', attributes: ['name']
                     }
                 ],
-                order: [["id", "DESC"]],
+                order: [['id', 'DESC']],
                 limit: 10,
                 offset: 0,
             })
@@ -179,7 +179,7 @@ class InvoiceService {
             // if no invoices found return message
 
             if(totalSelled == null) {
-                return "No invoices for today."
+                return 'No invoices for today.'
             }
 
             return { totalSelled, todayInvoices }
@@ -193,35 +193,35 @@ class InvoiceService {
     * @throws {NotFoundError} - if invoice not found
     */
     getInvoice(id, referenceProduct=true) {
-        return this.#error.handler(["Read Invoice", id, "Invoice"], async() => {
+        return this.#error.handler(['Read Invoice', id, 'Invoice'], async() => {
             const invoice = await this.Invoice.findByPk(id, {
                 include: [
                     {
-                        association: "customer", attributes: ["name", "phone"]
+                        association: 'customer', attributes: ['name', 'phone']
                     },
                     {
-                        association: "products",
-                        attributes: ["name"],
+                        association: 'products',
+                        attributes: ['name'],
                         through: {
-                            attributes: ["id", "quantity", "unit_price"] 
+                            attributes: ['id', 'quantity', 'unit_price'] 
                         }
                     },
                     {
-                        association: "seller", attributes: ["name"]
+                        association: 'seller', attributes: ['name']
                     },
                     {
-                        association: "payments-details",
+                        association: 'payments-details',
                         include: [
                             {
-                                association: "payments",
-                                attributes: ["name", "currency"],
+                                association: 'payments',
+                                attributes: ['name', 'currency'],
                             },
                             
                         ],
-                        attributes: ["amount", "reference_amount"]
+                        attributes: ['amount', 'reference_amount']
                     }
                 ],
-                order: [["products", "name", "ASC"]]
+                order: [['products', 'name', 'ASC']]
             })
 
             // if invoice not found throw not found error
@@ -231,7 +231,7 @@ class InvoiceService {
 
             if(referenceProduct){
                 // check if invoice is paid 
-                if(invoice.status === "unpaid") {
+                if(invoice.status === 'unpaid') {
                     // calculate refrence amount 
                     const dollarValue = await this.dollarValue.getLastValue()
                     invoice.total_reference = (invoice.total * dollarValue.value).toFixed(2)
@@ -268,7 +268,7 @@ class InvoiceService {
      * @throws {NotFoundError} - Throws an error if the invoice is not found.
      **/
     getSimpleInvoice(id) {
-        return this.#error.handler(["Read Invoice", id, "Invoice"], async() => {
+        return this.#error.handler(['Read Invoice', id, 'Invoice'], async() => {
             const invoice = await this.Invoice.findByPk(id)
             
             if(!invoice) {
@@ -286,14 +286,14 @@ class InvoiceService {
      * @returns {Promise<Object>}
      */
     updateInvoice(invoiceId, updates) {
-        return this.#error.handler(["Update Invoice", invoiceId, "Invoice"], async() => {
+        return this.#error.handler(['Update Invoice', invoiceId, 'Invoice'], async() => {
             const invoice = await this.getSimpleInvoice(invoiceId)
 
             const { customer_id, seller_id, total, total_reference, total_paid, details, status } = updates
 
 
             if (!customer_id && !seller_id && !total && !details && !total_reference && !total_paid && !status) {
-                throw new Error("At least one of these customer_id, seller_id, total, total_paid, total_reference, details or status must be defined")
+                throw new Error('At least one of these customer_id, seller_id, total, total_paid, total_reference, details or status must be defined')
             }
 
             if(details) {
@@ -328,7 +328,7 @@ class InvoiceService {
         verifyDetails(details)
 
         for(const detail of details) {
-            detail["invoice_id"] = invoiceId
+            detail['invoice_id'] = invoiceId
 
             if(detail.id) {
                 // handle existing detail
@@ -411,7 +411,7 @@ class InvoiceService {
      * @throws {NotFoundError} - Throws an error if the invoice is not found.
      */
     deleteInvoice(invoiceId) {
-        return this.#error.handler(["Delete Invoice", invoiceId, "Invoice"], async() => {
+        return this.#error.handler(['Delete Invoice', invoiceId, 'Invoice'], async() => {
             const invoice = await this.getInvoice(invoiceId, false)
             
             // gets invoices details ids 
@@ -438,7 +438,7 @@ class InvoiceService {
      * @throws {Error} - Throws an error if a product is not found while restoring stock.
      */
     deleteInvoiceDetails(ids) {
-        return this.#error.handler(["Delete Detail", ids, "Detail"], async() => {
+        return this.#error.handler(['Delete Detail', ids, 'Detail'], async() => {
             // get details
             const details = await this.InvoiceDetail.getInvoiceDetails(ids)
             if(!details || details.length === 0) {
@@ -535,7 +535,7 @@ class InvoiceService {
      * @returns {String} A string with url to send invoice info by whatsapp. 
      */
     invoiceDataForWhatsapp(invoice) {
-        return this.#error.handler(["Create invoice data for whatsapp"], async() => {
+        return this.#error.handler(['Create invoice data for whatsapp'], async() => {
             const date = invoice.date.toLocaleDateString('es-VE')
             const hours = `${invoice.date.getHours()}:${invoice.date.getMinutes()}`
             const invoiceNumber = invoice.id.toString().padStart(8, '0');

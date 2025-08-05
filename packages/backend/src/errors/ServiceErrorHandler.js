@@ -1,5 +1,5 @@
-import { ValidationError } from "sequelize"
-import { NotFoundError } from "./NofoundError.js"
+import { ValidationError } from 'sequelize'
+import { NotFoundError } from './NofoundError.js'
 
 class ServiceErrorHandler {
 

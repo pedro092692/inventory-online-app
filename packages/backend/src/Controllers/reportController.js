@@ -1,5 +1,5 @@
-import ReportService from "../services/reportService.js";
-import ControllerErrorHandler from "../errors/controllerErrorHandler.js";
+import ReportService from '../services/reportService.js';
+import ControllerErrorHandler from '../errors/controllerErrorHandler.js';
 
 class ReportController {
     // new instance of controller error handler

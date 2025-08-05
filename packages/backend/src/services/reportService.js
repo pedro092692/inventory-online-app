@@ -1,5 +1,5 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler.js";
-import { Sequelize } from "sequelize"
+import ServiceErrorHandler from '../errors/ServiceErrorHandler.js';
+import { Sequelize } from 'sequelize'
 
 
 class ReportService {
@@ -14,7 +14,7 @@ class ReportService {
     }
 
     getTopSpendingCustomer() {
-        return this.#error.handler(["Get best Customers"], async() => {
+        return this.#error.handler(['Get best Customers'], async() => {
             const customer = await this.invoice.findAll({
                 where: {
                     status: 'paid'
@@ -26,7 +26,7 @@ class ReportService {
                 ],
                 include:[
                     {
-                        association: "customer", attributes: ["name", "phone", "id"]
+                        association: 'customer', attributes: ['name', 'phone', 'id']
                     }
                 ],
                 group: ['customer_id', 'customer.id'],
@@ -52,10 +52,10 @@ class ReportService {
     }
 
     getTopRecurringCustomer() {
-        return this.#error.handler(["Get recurring Customer"], async() => {
+        return this.#error.handler(['Get recurring Customer'], async() => {
             const customers = await this.invoice.findAll({
                 where: {
-                    status: "paid"
+                    status: 'paid'
                 },
                 attributes: [
                     [Sequelize.fn('COUNT', Sequelize.col('customer_id')), 'total_recurring'],
@@ -64,7 +64,7 @@ class ReportService {
                 ],
                 include:[
                     {
-                        association: "customer", attributes: ["name", "phone", "id"]
+                        association: 'customer', attributes: ['name', 'phone', 'id']
                     }
                 ],
                 group: ['customer_id', 'customer.id'],
@@ -79,19 +79,19 @@ class ReportService {
     }
 
     getToSellingProduct(order = 'DESC') {
-        return this.#error.handler(["Get Top Selling products"], async() => {
+        return this.#error.handler(['Get Top Selling products'], async() => {
             const products = await this.invoiceDetail.findAll({
                 attributes: [
-                    "product_id",
+                    'product_id',
                     [Sequelize.fn('SUM', Sequelize.col('quantity')), 'total_sold']
                 ],
                 include:[
                     {
-                        association: "products",
-                        attributes: ["name", "selling_price"]
+                        association: 'products',
+                        attributes: ['name', 'selling_price']
                     },
                     {
-                        association: "invoice",
+                        association: 'invoice',
                         attributes:[],
                         where:{
                             status: 'paid',
@@ -101,7 +101,7 @@ class ReportService {
                         }
                     }
                 ],
-                group: ["product_id", "products.id"],
+                group: ['product_id', 'products.id'],
                 order: [
                      [[Sequelize.literal('total_sold'), order]]
                 ],
@@ -249,21 +249,21 @@ class ReportService {
 
             const data = await this.invoicePayDetail.findAll({
                 attributes:[
-                    [Sequelize.fn("DATE", Sequelize.col("invoice.date")), "day"],
+                    [Sequelize.fn('DATE', Sequelize.col('invoice.date')), 'day'],
                     [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_currenty'],
-                    [Sequelize.fn("SUM", Sequelize.col("reference_amount")), "total_dollar"],
-                    [Sequelize.fn('COUNT', Sequelize.col("invoice.id")), 'transactions']
+                    [Sequelize.fn('SUM', Sequelize.col('reference_amount')), 'total_dollar'],
+                    [Sequelize.fn('COUNT', Sequelize.col('invoice.id')), 'transactions']
                 ],
                 include:[
                     {
-                        association: "payments",
-                        attributes: ["name", "currency"]
+                        association: 'payments',
+                        attributes: ['name', 'currency']
                     },
                     {
-                        association: "invoice",
+                        association: 'invoice',
                         attributes: [],
                         where:{
-                            status: "paid",
+                            status: 'paid',
                             // seller_id: 1
                             // [Sequelize.Op.and]: Sequelize.where(
                             //     Sequelize.fn('DATE', Sequelize.col('date')), '2025-08-04'
@@ -277,8 +277,8 @@ class ReportService {
                 ],
                 group: [
                     Sequelize.fn('DATE', Sequelize.col('invoice.date')),
-                    "payment_id", 
-                    "payments.id"
+                    'payment_id', 
+                    'payments.id'
                 ],
                 order: [
                     [[Sequelize.literal('day'), 'DESC']]
@@ -299,27 +299,27 @@ class ReportService {
 
             const data = await this.invoice.findAll({
                 attributes: [
-                    "id",
-                    "date",
-                    "total",
+                    'id',
+                    'date',
+                    'total',
                 ],
                 include: [
                     {
-                        association: "seller", 
-                        attributes: ["name"]
+                        association: 'seller', 
+                        attributes: ['name']
                     },
                     {
-                        association: "customer",
-                        attributes: ["name", "phone"]
+                        association: 'customer',
+                        attributes: ['name', 'phone']
                     }
                 ],
                 where:{
-                    status: "paid",
+                    status: 'paid',
                     date: {
                         [Sequelize.Op.between]: [startDate, today]
                     }
                 },
-                order:[["date", "DESC"]],
+                order:[['date', 'DESC']],
                 limit: 4
             })
 
@@ -332,21 +332,21 @@ class ReportService {
             const today = new Date()
             const data = await this.invoicePayDetail.findAll({
                 attributes:[
-                    [Sequelize.fn("DATE", Sequelize.col("invoice.date")), "day"],
+                    [Sequelize.fn('DATE', Sequelize.col('invoice.date')), 'day'],
                     [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_currenty'],
-                    [Sequelize.fn("SUM", Sequelize.col("reference_amount")), "total_dollar"],
-                    [Sequelize.fn('COUNT', Sequelize.col("invoice.id")), 'transactions']
+                    [Sequelize.fn('SUM', Sequelize.col('reference_amount')), 'total_dollar'],
+                    [Sequelize.fn('COUNT', Sequelize.col('invoice.id')), 'transactions']
                 ],
                 include:[
                     {
-                        association: "payments",
-                        attributes: ["name", "currency"]
+                        association: 'payments',
+                        attributes: ['name', 'currency']
                     },
                     {
-                        association: "invoice",
+                        association: 'invoice',
                         attributes: [],
                         where:{
-                            status: "paid",
+                            status: 'paid',
                             seller_id: seller_id,
                             [Sequelize.Op.and]: Sequelize.where(
                                 Sequelize.fn('DATE', Sequelize.col('date')), `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
@@ -356,8 +356,8 @@ class ReportService {
                 ],
                 group: [
                     Sequelize.fn('DATE', Sequelize.col('invoice.date')),
-                    "payment_id", 
-                    "payments.id"
+                    'payment_id', 
+                    'payments.id'
                 ],
                 order: [
                     [[Sequelize.literal('day'), 'DESC']]
@@ -370,7 +370,7 @@ class ReportService {
     }
 
     payMethodPercent() {
-        return this.#error.handler(["Get pay method percent"], async() => {
+        return this.#error.handler(['Get pay method percent'], async() => {
             const today = new Date()
             const startDate = new Date(today)
             startDate.setDate(today.getDate() - 7)
@@ -385,21 +385,21 @@ class ReportService {
                 ],
                 include: [
                     {
-                        association: "payments",
-                        attributes: ["name", "currency"]
+                        association: 'payments',
+                        attributes: ['name', 'currency']
                     },
                     {
-                        association: "invoice",
+                        association: 'invoice',
                         attributes: [],
                         where: {
-                            status: "paid",
+                            status: 'paid',
                             date: {
                                 [Sequelize.Op.between]: [startDate, today]
                             }
                         }
                     }
                 ], 
-                group: ["payment_id", "payments.id"],
+                group: ['payment_id', 'payments.id'],
                 order: [
                     [[Sequelize.literal('total_reference'), 'DESC']]
                 ]

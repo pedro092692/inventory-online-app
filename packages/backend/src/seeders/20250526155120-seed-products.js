@@ -1,9 +1,9 @@
-import { products } from "../utils/fakerProducts.js";
+import { products } from '../utils/fakerProducts.js';
 export default {
   up: async (queryInterface, Sequelize, schema) => {
     await queryInterface.bulkInsert(
       {
-        tableName: "products",
+        tableName: 'products',
         schema: schema
       },
       products
@@ -13,7 +13,7 @@ export default {
   down: async (queryInterface, Sequelize, schema) => {
     await queryInterface.bulkDelete(
       {
-        tableName: "products",
+        tableName: 'products',
         schema: schema
       },
       null, // this means "no condition" = delete all rows

@@ -1,4 +1,4 @@
-import { invoices } from "./fakerInvoice.js"
+import { invoices } from './fakerInvoice.js'
 class FakerPayment {
     constructor() {
         this.invoices = invoices

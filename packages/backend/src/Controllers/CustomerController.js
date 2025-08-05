@@ -1,5 +1,5 @@
-import CustomerService from "../services/CustomerService.js"
-import controllerErrorHandler from "../errors/controllerErrorHandler.js"
+import CustomerService from '../services/CustomerService.js'
+import controllerErrorHandler from '../errors/controllerErrorHandler.js'
 
 class CustomerController {
     #error = new controllerErrorHandler()

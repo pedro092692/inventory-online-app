@@ -4,7 +4,7 @@
 module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.createTable(
-      { tableName: "roles", schema: "public" },
+      { tableName: 'roles', schema: 'public' },
       
       {
 

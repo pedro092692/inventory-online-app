@@ -1,5 +1,5 @@
-import { products } from "./fakerProducts.js"
-import { dollarValues } from "./fakerDollar.js";
+import { products } from './fakerProducts.js'
+import { dollarValues } from './fakerDollar.js';
 
 class FakerInvoice {
     constructor() {
@@ -78,7 +78,7 @@ class FakerInvoice {
                         total: total,
                         total_reference: total * dollarValue,
                         total_paid: total,
-                        status: "paid"
+                        status: 'paid'
                     }
                 )
                 j++

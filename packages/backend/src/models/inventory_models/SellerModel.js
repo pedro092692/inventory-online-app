@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model } from 'sequelize'
 
 class Seller extends Model {
     // model relations 
@@ -6,8 +6,8 @@ class Seller extends Model {
     // invoices
     static associationSales(model) {
         this.hasMany(model.Invoice, {
-            foreignKey: "seller_id",
-            as: "sales"
+            foreignKey: 'seller_id',
+            as: 'sales'
         })
     }
 }
@@ -26,7 +26,7 @@ function initializeSeller(sequelize) {
                  allowNull: false,
                  validate: {
                      notEmpty: {
-                         msg: "A valid id number is required."
+                         msg: 'A valid id number is required.'
                      }
                  }
              },
@@ -36,7 +36,7 @@ function initializeSeller(sequelize) {
                  allowNull: false,
                  validate: {
                      notEmpty: {
-                         msg: "A valid name is required."
+                         msg: 'A valid name is required.'
                      }
                  }
              },
@@ -46,7 +46,7 @@ function initializeSeller(sequelize) {
                 allowNull: false,
                 validate: {
                     notEmpty: {
-                        msg: "A valid last name is required."
+                        msg: 'A valid last name is required.'
                     }
                 }
             },
@@ -54,20 +54,20 @@ function initializeSeller(sequelize) {
             address: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                defaultValue: "Venezuela", // default value for Venezuelan users.
+                defaultValue: 'Venezuela', // default value for Venezuelan users.
                 validate: {
                     notEmpty:{
-                        msg: "A valid address is required."
+                        msg: 'A valid address is required.'
                     }
                 }
             },
         },
         {
             sequelize,
-            modelName: "Seller",
-            tableName: "sellers",
+            modelName: 'Seller',
+            tableName: 'sellers',
             timestamps: false,
-            schema: "test_schema" // only for test purposes
+            schema: 'test_schema' // only for test purposes
         }
     )
 }

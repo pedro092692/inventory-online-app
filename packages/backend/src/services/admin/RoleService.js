@@ -1,6 +1,6 @@
-import { NotFoundError } from "../../errors/NofoundError.js";
-import ServiceErrorHandler from "../../errors/ServiceErrorHandler.js";
-import { Role } from "../../models/RoleModel.js"
+import { NotFoundError } from '../../errors/NofoundError.js';
+import ServiceErrorHandler from '../../errors/ServiceErrorHandler.js';
+import { Role } from '../../models/RoleModel.js'
 
 class RoleService {
     // new instace of service error handler 
@@ -16,7 +16,7 @@ class RoleService {
      * @returns {Promise<Role>} - The created role
      */
     createRole(name) {
-        return this.#error.handler(["Create Role"], async() => {
+        return this.#error.handler(['Create Role'], async() => {
             const newRole = Role.create({
                 name: name
             })
@@ -32,7 +32,7 @@ class RoleService {
      * @throws {ServiceError} - If an error occurs during role retrieval.
      */
     getAllRoles(limit=10, offset=0) {
-        return this.#error.handler(["Read All Roles"], async() => {
+        return this.#error.handler(['Read All Roles'], async() => {
             const roles = await Role.findAll({
                 limit: limit,
                 offset: offset
@@ -48,7 +48,7 @@ class RoleService {
      * @throws {NotFoundError} - If the role is not found.
      */
     getRole(id) {
-        return this.#error.handler(["Read Role", id, "Role"], async() => {
+        return this.#error.handler(['Read Role', id, 'Role'], async() => {
             const role = await Role.findByPk(id)
             if(!role) {
                 throw new NotFoundError()
@@ -65,7 +65,7 @@ class RoleService {
      * @throws {NotFoundError} - If the role is not found.
      */
     updateRole(roleId, updates) {
-        return this.#error.handler(["Update Role", roleId, "Role"], async() => {
+        return this.#error.handler(['Update Role', roleId, 'Role'], async() => {
             const role = await this.getRole(roleId)
             const updatedRole = await role.update(updates)
             return updatedRole
@@ -79,7 +79,7 @@ class RoleService {
      * @throws {NotFoundError} - If the role is not found.
      */
     deleteRole(roleId) {
-        return this.#error.handler(["Delete Role", roleId, "Role"], async() => {
+        return this.#error.handler(['Delete Role', roleId, 'Role'], async() => {
             const role = await this.getRole(roleId)
             // delete role 
             await role.destroy()

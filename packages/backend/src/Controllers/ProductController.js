@@ -1,5 +1,5 @@
-import ProductService from "../services/ProductService.js";
-import ControllerErrorHandler from "../errors/controllerErrorHandler.js";
+import ProductService from '../services/ProductService.js';
+import ControllerErrorHandler from '../errors/controllerErrorHandler.js';
 
 class ProductController{
     // error controller new instace 

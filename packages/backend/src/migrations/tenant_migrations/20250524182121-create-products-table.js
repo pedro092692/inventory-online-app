@@ -1,7 +1,7 @@
 export default {
   up: async (queryInterface, Sequelize, schema)  => {
       await queryInterface.createTable(
-        "products",
+        'products',
         {
           id: {
             type: Sequelize.INTEGER, 
@@ -12,13 +12,13 @@ export default {
           barcode: {
             type: Sequelize.STRING,
             allowNull: false,
-            defaultValue: "0000000000001"
+            defaultValue: '0000000000001'
           },
 
           name: {
             type: Sequelize.STRING,
             allowNull: false,
-            defaultValue: "Default product",
+            defaultValue: 'Default product',
           },
 
           purchase_price: {
@@ -53,7 +53,7 @@ export default {
 
   down: async (queryInterface, Sequelize, schema) => {
     await queryInterface.dropTable({
-      tableName: "products",
+      tableName: 'products',
       schema: schema
     })
   }

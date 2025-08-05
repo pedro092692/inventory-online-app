@@ -1,4 +1,4 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
+import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 
 class InvoiceDetailService {
 
@@ -17,7 +17,7 @@ class InvoiceDetailService {
      * @throws {ServiceError} - If an error occurs during invoice detail creation.
      */
     createInvoiceDetail(details) {
-        return this.#error.handler(["Create Invoice Details"], async() => {
+        return this.#error.handler(['Create Invoice Details'], async() => {
             const newDetails = await this.InvoiceDetail.bulkCreate(details)
             return newDetails
         })
@@ -35,9 +35,9 @@ class InvoiceDetailService {
      * @throws {ServiceError} - If an error occurs during the update operation.
      */
     updateInvoiceDetail(updates) {
-        return this.#error.handler(["Update Details"], async() => {
+        return this.#error.handler(['Update Details'], async() => {
             const updatedDetails = await this.InvoiceDetail.bulkCreate(updates, { 
-                updateOnDuplicate: ["quantity", "unit_price"]})
+                updateOnDuplicate: ['quantity', 'unit_price']})
             return updatedDetails
         })
     }
@@ -49,7 +49,7 @@ class InvoiceDetailService {
      * @throws {ServiceError} - If an error occurs during the retrieval operation.
      */
     getInvoiceDetail(id) {
-        return this.#error.handler(["Read invoice Detail"], async() => {
+        return this.#error.handler(['Read invoice Detail'], async() => {
             const detail = await this.InvoiceDetail.findByPk(id)
             return detail
         })
@@ -63,7 +63,7 @@ class InvoiceDetailService {
      * @throws {ServiceError} - If an error occurs during the retrieval operation.
      */
     getInvoiceDetails(ids) {
-        return this.#error.handler(["Read Invoice Details"], async() => {
+        return this.#error.handler(['Read Invoice Details'], async() => {
             const details = await this.InvoiceDetail.findAll({
                 where: {
                     id: ids
@@ -80,7 +80,7 @@ class InvoiceDetailService {
      * @throws {ServiceError} - If an error occurs during the retrieval operation.
      */
     getDetailByInvoiceId(invoiceId) {
-        return this.#error.handler(["Read Invoice Details by Invoice ID"], async() => {
+        return this.#error.handler(['Read Invoice Details by Invoice ID'], async() => {
             const details = await this.InvoiceDetail.findAll({
                 where: {
                     invoice_id: invoiceId
@@ -97,7 +97,7 @@ class InvoiceDetailService {
      * @throws {ServiceError} - If an error occurs during the deletion operation.
      */
     deleteInvoiceDetail(ids) {
-        return this.#error.handler(["Delete Invoice Details"], async() => {
+        return this.#error.handler(['Delete Invoice Details'], async() => {
             await this.InvoiceDetail.destroy({
                 where: {
                     id: ids

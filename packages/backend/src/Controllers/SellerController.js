@@ -1,5 +1,5 @@
-import SellerService from "../services/SellerService.js"
-import controllerErrorHandler from "../errors/controllerErrorHandler.js"
+import SellerService from '../services/SellerService.js'
+import controllerErrorHandler from '../errors/controllerErrorHandler.js'
 
 class SellerController {
     // new instance of controller error handler

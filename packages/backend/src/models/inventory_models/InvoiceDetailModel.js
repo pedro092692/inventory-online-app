@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model } from 'sequelize'
 
 
 class InvoiceDetail extends Model {
@@ -7,16 +7,16 @@ class InvoiceDetail extends Model {
     // invoices: 
     static associationInvoice(model) {
         this.belongsTo(model.Invoice, {
-            foreignKey: "invoice_id",
-            as: "invoice"
+            foreignKey: 'invoice_id',
+            as: 'invoice'
         })
     }
 
     // products 
     static associationProducts(model) {
         this.belongsTo(model.Product, {
-            foreignKey: "product_id",
-            as: "products"
+            foreignKey: 'product_id',
+            as: 'products'
         }) 
     }
 }
@@ -34,20 +34,20 @@ function initializeInvoiceDetail(sequelize) {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "invoices",
-                    key: "id"
+                    model: 'invoices',
+                    key: 'id'
                 },
-                onDelete: "CASCADE"
+                onDelete: 'CASCADE'
             },
 
             product_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "products",
-                    key: "id"
+                    model: 'products',
+                    key: 'id'
                 },
-                onUpdate: "CASCADE",
+                onUpdate: 'CASCADE',
                 onDelete: 'restrict'    
             },
 
@@ -57,7 +57,7 @@ function initializeInvoiceDetail(sequelize) {
                 defaultValue: 1,
                 validate: {
                     isNumeric: {
-                        msg: "A valid number is required."
+                        msg: 'A valid number is required.'
                     }
                 }
             },
@@ -67,7 +67,7 @@ function initializeInvoiceDetail(sequelize) {
                 allowNull: false,
                 validate: {
                     isNumeric: {
-                        msg: "A valid price is required."
+                        msg: 'A valid price is required.'
                     }
                 }
             }
@@ -75,10 +75,10 @@ function initializeInvoiceDetail(sequelize) {
         },
         {
             sequelize,
-            modelName: "InvoiceDetail",
-            tableName: "invoice_details",
+            modelName: 'InvoiceDetail',
+            tableName: 'invoice_details',
             timestamps: false,
-            schema: "test_schema" // only for test purposes
+            schema: 'test_schema' // only for test purposes
         }
     )
 }

@@ -1,13 +1,13 @@
 import { Sequelize } from 'sequelize'
-import { Umzug, SequelizeStorage } from "umzug"
-import dotenv from "dotenv"
-import path from "path"
-import { fileURLToPath, pathToFileURL } from "url"
-import process from "process"
+import { Umzug, SequelizeStorage } from 'umzug'
+import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath, pathToFileURL } from 'url'
+import process from 'process'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const envPath = path.resolve(__dirname, "../../.env")
+const envPath = path.resolve(__dirname, '../../.env')
 dotenv.config({ path: envPath })
 
 async function testMigration() {
@@ -17,7 +17,7 @@ async function testMigration() {
         port: process.env.DB_PORT,
         dialect: 'postgres',
         logging: false,
-        schema: "test_schema"  // set test schema for testing.
+        schema: 'test_schema'  // set test schema for testing.
     })
 
     // queryInterface for migration 
@@ -26,7 +26,7 @@ async function testMigration() {
     // umzug instance 
     const umzug = new Umzug({
         migrations: {
-            glob: "../migrations/tenant_migrations/*.js",
+            glob: '../migrations/tenant_migrations/*.js',
             resolve: ({ name, path, context }) => {
                 return {
                     name,
@@ -41,13 +41,13 @@ async function testMigration() {
         context: {
             sequelize,
             queryInterface,
-            schema: "test_schema"
+            schema: 'test_schema'
         },
         logger: console,
         storage: new SequelizeStorage({
             sequelize,
-            tableName: "SequelizeMeta",
-            schema: "test_schema"
+            tableName: 'SequelizeMeta',
+            schema: 'test_schema'
         })
     })
 
@@ -56,12 +56,12 @@ async function testMigration() {
         await umzug.up() // execute migrations
     }
 
-    console.log("Migrations were executed successfully.")
+    console.log('Migrations were executed successfully.')
     
     await sequelize.close() // close the connection
 }
 
 await testMigration().then( () => process.exit(0) ).catch(error => {
-    console.log("Error executing migrations:", error)
+    console.log('Error executing migrations:', error)
     process.exit(1)
 })

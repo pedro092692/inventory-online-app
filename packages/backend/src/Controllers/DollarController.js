@@ -1,5 +1,5 @@
-import ControllerErrorHandler from "../errors/controllerErrorHandler.js"
-import DollarValueService from "../services/DollarValueService.js"
+import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
+import DollarValueService from '../services/DollarValueService.js'
 
 class DollarValueController {
     // new instance of controller error handler 

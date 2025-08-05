@@ -1,7 +1,7 @@
 export default {
   up: async (queryInterface, Sequelize, schema) => {
     await queryInterface.createTable(
-      "sellers",
+      'sellers',
       {
         id: {
           type: Sequelize.INTEGER,
@@ -36,7 +36,7 @@ export default {
         address: {
           type: Sequelize.STRING,
           allowNull: false,
-          defaultValue: "Venezuela",
+          defaultValue: 'Venezuela',
           validate: {
             notEmpty: true
           }
@@ -50,7 +50,7 @@ export default {
 
   down: async (queryInterface, Sequelize, schema) => {
     await queryInterface.dropTable({
-      tableName: "sellers",
+      tableName: 'sellers',
       schema
     })
   }

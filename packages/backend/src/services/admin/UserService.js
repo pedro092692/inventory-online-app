@@ -1,6 +1,6 @@
-import { NotFoundError } from "../../errors/NofoundError.js"
-import ServiceErrorHandler from "../../errors/ServiceErrorHandler.js"
-import { User } from "../../models/UserModel.js"
+import { NotFoundError } from '../../errors/NofoundError.js'
+import ServiceErrorHandler from '../../errors/ServiceErrorHandler.js'
+import { User } from '../../models/UserModel.js'
 
 class UserService {
     // new instance of service error handler 
@@ -19,7 +19,7 @@ class UserService {
      * @throws {ServiceError} - If an error occurs during user creation.
      */
     createUser(email, password, roleId) {
-        return this.#error.handler(["Create user"], async() => {
+        return this.#error.handler(['Create user'], async() => {
             const newUser = await User.create({
                 email: email,
                 password: password,
@@ -38,9 +38,9 @@ class UserService {
      * @throws {ServiceError} - If an error occurs during user retrieval.
      */
     getAllUser(limit=10, offset=0) {
-        return this.#error.handler(["Read All Users"], async() => {
+        return this.#error.handler(['Read All Users'], async() => {
             const users = await User.findAll({
-                attributes: ["id", "email", "roleId"],
+                attributes: ['id', 'email', 'roleId'],
                 limit: limit,
                 offset: offset
             })
@@ -56,7 +56,7 @@ class UserService {
      * 
      */
     getUser(id) {
-        return this.#error.handler(["Read user", id, "User"], async() => {
+        return this.#error.handler(['Read user', id, 'User'], async() => {
             const user = await User.findByPk(id)
             if(!user) {
                 throw new NotFoundError()
@@ -73,7 +73,7 @@ class UserService {
      * @throws {ServiceError} - If the user is not found or an error occurs during the update.
      */
     updateUser(userId, updates) {
-        return this.#error.handler(["Update User", userId, "User"], async() => {
+        return this.#error.handler(['Update User', userId, 'User'], async() => {
             const user = await this.getUser(userId)
             const updatedUser = await user.update(updates)
             const safeUser = this.detelePassword(updatedUser)
@@ -89,7 +89,7 @@ class UserService {
      * @return 1 if user is deleted successfully
      */
     deleteUser(userId) {
-        return this.#error.handler(["Delete User", userId, "User"], async() => {
+        return this.#error.handler(['Delete User', userId, 'User'], async() => {
             const user = await this.getUser(userId)
             //delete user
             await user.destroy()

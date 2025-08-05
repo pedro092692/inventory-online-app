@@ -1,6 +1,6 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
-import { NotFoundError } from "../errors/NofoundError.js"
-import DollarValueService from "./DollarValueService.js"
+import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
+import { NotFoundError } from '../errors/NofoundError.js'
+import DollarValueService from './DollarValueService.js'
 
 class ProductService{
     // instance of error handler
@@ -23,7 +23,7 @@ class ProductService{
      * @throws {ServiceError} - throws an error if the product could not be created
      */
     createProduct(barcode, name, purchase_price, selling_price, stock) {
-        return this.#error.handler(["Create Product"], async() => {
+        return this.#error.handler(['Create Product'], async() => {
             const newProduct = await this.Product.create({
                 barcode: barcode,
                 name: name, 
@@ -43,7 +43,7 @@ class ProductService{
      * @throws {ServiceError} - throws an error if the products could not be retrieved
      */
     getAllProducts(limit=10, offset=0) {
-        return this.#error.handler(["Read All Products"], async () => {
+        return this.#error.handler(['Read All Products'], async () => {
             const products = await this.Product.findAll({
                 limit: limit,
                 offset: offset
@@ -59,7 +59,7 @@ class ProductService{
      * @throws {ServiceError} - throws an error if the product could not be retrieved
      */
     getProduct(id, priceReference=true) {
-        return this.#error.handler(["Read Product", id, "Product"], async () => {
+        return this.#error.handler(['Read Product', id, 'Product'], async () => {
             const product = await this.Product.findByPk(id)
 
             if(!product) {
@@ -77,7 +77,7 @@ class ProductService{
                 
                 // if dollar value is not found, set reference selling price to message 
                 if(!dollarValue) {
-                    product.dataValues.reference_selling_price = "No dollar value found"
+                    product.dataValues.reference_selling_price = 'No dollar value found'
                 }
             }
             
@@ -97,7 +97,7 @@ class ProductService{
      * @returns {Promise<Object>} - returns the updated product
      */
     updateProduct(productId, updates) {
-        return this.#error.handler(["Update Product", productId, "Product"], async() => {
+        return this.#error.handler(['Update Product', productId, 'Product'], async() => {
             const product = await this.getProduct(productId, false)
             const updatedProduct = await product.update(updates)
             return updatedProduct
@@ -111,7 +111,7 @@ class ProductService{
      * @throws {ServiceError} - throws an error if the product could not be deleted
      */
     deleteProduct(productId) {
-        return this.#error.handler(["Delete Product", productId, "Product"], async() => {
+        return this.#error.handler(['Delete Product', productId, 'Product'], async() => {
             const product = await this.getProduct(productId, false)
             // delete product
             await product.destroy()
@@ -127,10 +127,10 @@ class ProductService{
      * @throws {ServiceError} - throws an error if the stock could not be retrieved
      */
     getProductStock(details) {
-        return this.#error.handler(["Read Stock Product"], async() => {
+        return this.#error.handler(['Read Stock Product'], async() => {
             const products = await this.Product.findAll({
                 where: { id: details.map(detail => detail.product_id) },
-                attributes: ["id", "stock"]
+                attributes: ['id', 'stock']
             })
             return products
         })
@@ -144,10 +144,10 @@ class ProductService{
      * @throws {ServiceError} - throws an error if the unit price could not be retrieved
      */
     getProductUnitPrice(details) {
-        return this.#error.handler(["Read Unit Price Product"], async() => {
+        return this.#error.handler(['Read Unit Price Product'], async() => {
             const products = await this.Product.findAll({
                 where: { id: details.map(detail => detail.product_id)},
-                attributes: ["id", "selling_price"]
+                attributes: ['id', 'selling_price']
             })
             return products
         })
@@ -162,7 +162,7 @@ class ProductService{
      * @throws {ServiceError} - throws an error if the stock could not be updated
      */
     updateStock(details) {
-        return this.#error.handler(["Update Stock"], async() => {
+        return this.#error.handler(['Update Stock'], async() => {
             await Promise.all(
                 details.map(detail => this.Product.increment(
                     {
@@ -186,7 +186,7 @@ class ProductService{
      * @throws {ServiceError} - throws an error if the stock could not be restored
      */
     restoreStock(product_id, quantity) {
-         return this.#error.handler(["Update Stock"], async() => {
+         return this.#error.handler(['Update Stock'], async() => {
             await this.Product.increment(
                 {
                     stock: + quantity

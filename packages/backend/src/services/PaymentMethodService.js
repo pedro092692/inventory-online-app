@@ -1,5 +1,5 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
-import { NotFoundError } from "../errors/NofoundError.js"
+import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
+import { NotFoundError } from '../errors/NofoundError.js'
 
 
 class PaymentMethodService {
@@ -19,7 +19,7 @@ class PaymentMethodService {
      * @throws {Error} - Throws an error if create payment fails.
      */
     cretePaymentMethod(name, currency) {
-        return this.#error.handler(["Create Payment Method"], async() => {
+        return this.#error.handler(['Create Payment Method'], async() => {
             const newPayment = await this.PaymentMethod.create({
                 name: name, 
                 currency: currency
@@ -38,7 +38,7 @@ class PaymentMethodService {
      * @throws {Error} - Throws an error if get payment method fails.
      */
     getPaymentMethod(id) {
-        return this.#error.handler(["Read Payment Method", id, "Payment"], async() => {
+        return this.#error.handler(['Read Payment Method', id, 'Payment'], async() => {
             const paymentMethod = await this.PaymentMethod.findByPk(id)
             
             if(!paymentMethod) {
@@ -57,7 +57,7 @@ class PaymentMethodService {
      * @throws {ServiceError} - throws an error if the payment methods could not be retrieved
      */
     getAllPaymentMethods(limit=10, offset=0) {
-        return this.#error.handler(["Read All Payment Methods"], async() => {
+        return this.#error.handler(['Read All Payment Methods'], async() => {
             const allMethods = await this.PaymentMethod.findAll({
                 limit: limit,
                 offset: offset
@@ -76,7 +76,7 @@ class PaymentMethodService {
      * @returns {Promise<Object>} - returns the updated Payment Method
      */
     updatePaymentMethod(paymentMethodId, updates) {
-        return this.#error.handler(["Update payment method", paymentMethodId, "Payment Method"], async() => {
+        return this.#error.handler(['Update payment method', paymentMethodId, 'Payment Method'], async() => {
             const paymentMethod = await this.getPaymentMethod(paymentMethodId)
             const updatedPaymentMethod = await paymentMethod.update(updates)
             return updatedPaymentMethod
@@ -90,7 +90,7 @@ class PaymentMethodService {
      * @throws {ServiceError} - throws an error if the  payment method could not be deleted
      */
     deletePaymentMethod(paymentMethodId) {
-        return this.#error.handler(["Delete Payment Method", paymentMethodId, "Payment Method"], async() => {
+        return this.#error.handler(['Delete Payment Method', paymentMethodId, 'Payment Method'], async() => {
             // get payment methods
             const paymentMethod = await this.getPaymentMethod(paymentMethodId)
 

@@ -1,5 +1,5 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
-import { NotFoundError } from "../errors/NofoundError.js"
+import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
+import { NotFoundError } from '../errors/NofoundError.js'
 
 class DollarValueService {
     
@@ -18,7 +18,7 @@ class DollarValueService {
      * @throws {ServiceError} - If an error occurs during create dollar value.
      */
     createDollarValue(value) {
-        return this.#error.handler(["Create Dollar Value"], async() => {
+        return this.#error.handler(['Create Dollar Value'], async() => {
             const newDollarValue = await this.DollarValue.create({
                 value
             })
@@ -33,7 +33,7 @@ class DollarValueService {
      * @throws {ServiceError} - throws an error if the dollar value could not be retrieved
      */
     getDollarValue(id) {
-        return this.#error.handler(["Read Dollar Value", id, "Dollar Value"], async() => {
+        return this.#error.handler(['Read Dollar Value', id, 'Dollar Value'], async() => {
             const dollarValue = await this.DollarValue.findByPk(id) 
             
             if(!dollarValue) {
@@ -50,9 +50,9 @@ class DollarValueService {
      * @throws {ServiceError} - throws an error if the last dollar value could not be retrieved
      */
     getLastValue() {
-        return this.#error.handler(["Read Last Dollar Value"], async() => {
+        return this.#error.handler(['Read Last Dollar Value'], async() => {
             const lastDollarValue = await this.DollarValue.findOne({
-                order: [ ["id", "DESC"] ],
+                order: [ ['id', 'DESC'] ],
                 limit: 1
             })
 
@@ -70,7 +70,7 @@ class DollarValueService {
      * @throws {ServiceError} - throws an error if the dollar value could not be updated
      */
     updateDollarValue(id, value) {
-        return this.#error.handler(["Update Dollar Value", id, "Dollar Value"], async() => {
+        return this.#error.handler(['Update Dollar Value', id, 'Dollar Value'], async() => {
             const dollarValue = await this.getDollarValue(id)
             const updatedDollarValue = await dollarValue.update({
                 value: value, 
@@ -86,7 +86,7 @@ class DollarValueService {
      * @throws {ServiceError} - throws an error if the dollar value could not be deleted.
      */
     deleteDollarValue(id) {
-        return this.#error.handler(["Delete Dollar Value", id, "Dollar Value"], async() => {
+        return this.#error.handler(['Delete Dollar Value', id, 'Dollar Value'], async() => {
             const dollarValue = await this.getDollarValue(id)
             // delete dollar value
             await dollarValue.destroy()

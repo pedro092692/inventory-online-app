@@ -1,5 +1,5 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
-import { NotFoundError } from "../errors/NofoundError.js"
+import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
+import { NotFoundError } from '../errors/NofoundError.js'
 
 class CustomerService {
 
@@ -20,7 +20,7 @@ class CustomerService {
      * @throws {ServiceError} - If an error occurs during customer creation.
      */ 
     createCustomer(id_number, name, phone) {
-        return this.#error.handler(["Cretae Customer"], async() => {
+        return this.#error.handler(['Cretae Customer'], async() => {
             const newCustomer = await this.Customer.create({
                 id_number: id_number,
                 name: name, 
@@ -38,13 +38,13 @@ class CustomerService {
      * @throws {ServiceError} - If an error occurs during customer retrieval.
      */
     getAllCustomers(limit=10, offset=0) {
-        return this.#error.handler(["Read All Customers"], async () => {
+        return this.#error.handler(['Read All Customers'], async () => {
             const customers = await this.Customer.findAll({
                 include: {
-                    association: "invoices",
-                    attributes: ["id", "date", "total"],
+                    association: 'invoices',
+                    attributes: ['id', 'date', 'total'],
                 },
-                order: [["id", "DESC"], ["invoices", "id", "DESC"]],
+                order: [['id', 'DESC'], ['invoices', 'id', 'DESC']],
 
                 limit: limit,
                 offset: offset
@@ -61,15 +61,15 @@ class CustomerService {
      * @throws {ServiceError} - If an error occurs during customer retrieval.
      */
     getCustomerById(id) {
-        return this.#error.handler(["Read Customer", id, "User"], async () => {
+        return this.#error.handler(['Read Customer', id, 'User'], async () => {
             const customer = await this.Customer.findByPk(id, {
                 include: [
                     {
-                        association: "invoices",
-                        attributes: ["id", "total", "status", "date"]
+                        association: 'invoices',
+                        attributes: ['id', 'total', 'status', 'date']
                     }
                 ],
-                order: [["invoices", "id", "DESC"]]
+                order: [['invoices', 'id', 'DESC']]
             })
             if(!customer) {
                 throw new NotFoundError()
@@ -87,7 +87,7 @@ class CustomerService {
      * @throws {ServiceError} - If an error occurs during customer update.
      */
     updateCustomer(customerId, updates) {
-        return this.#error.handler(["Update Customer", customerId, "Customer"], async() => {
+        return this.#error.handler(['Update Customer', customerId, 'Customer'], async() => {
             const customer = await this.getCustomerById(customerId)
             const updatedCustomer = await customer.update(updates)
             return updatedCustomer
@@ -102,7 +102,7 @@ class CustomerService {
      * @throws {ServiceError} - If an error occurs during customer deletion.
      */
     deleteCustomer(customerId) {
-        return this.#error.handler(["Delete Customer", customerId, "Customer"], async() => {
+        return this.#error.handler(['Delete Customer', customerId, 'Customer'], async() => {
             const customer = await this.getCustomerById(customerId)
             // delete customer
             await customer.destroy()

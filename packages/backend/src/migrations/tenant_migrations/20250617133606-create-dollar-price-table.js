@@ -7,7 +7,7 @@ export default {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
     queryInterface.createTable(
-      "dollar-value",
+      'dollar-value',
       {
         id: {
             type: Sequelize.INTEGER,
@@ -45,7 +45,7 @@ export default {
      * await queryInterface.dropTable('users');
      */
     queryInterface.dropTable({
-      tableName: "dollar-value",
+      tableName: 'dollar-value',
       schema
     })
   }

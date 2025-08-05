@@ -1,6 +1,6 @@
-import ControllerErrorHandler from "../errors/controllerErrorHandler.js"
-import calculeTotalInvoice from "../utils/calculeTotal.js"
-import InvoiceService from "../services/InvoiceService.js"
+import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
+import calculeTotalInvoice from '../utils/calculeTotal.js'
+import InvoiceService from '../services/InvoiceService.js'
 
 class InvoiceController {
     // error controller new instace 
@@ -35,7 +35,7 @@ class InvoiceController {
         
         // add invoice_id to details 
         for(const detail of details) {
-            detail["invoice_id"] = newInvoice.id
+            detail['invoice_id'] = newInvoice.id
         }
 
         // create invoice details

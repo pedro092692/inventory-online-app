@@ -7,7 +7,7 @@ const dbConfig = {
     database: process.env.DB_DATABASE,
     host: process.env.HOST,
     port: process.env.PORT,
-    dialect: "postgres"
+    dialect: 'postgres'
 }
 
 module.exports = {

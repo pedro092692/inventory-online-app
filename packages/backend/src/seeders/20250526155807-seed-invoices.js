@@ -1,10 +1,10 @@
-import { invoicesForDb } from "../utils/fakerInvoice.js";
+import { invoicesForDb } from '../utils/fakerInvoice.js';
 
 export default {
   up: async (queryInterface, Sequelize, schema) => {
     await queryInterface.bulkInsert(
       {
-        tableName: "invoices",
+        tableName: 'invoices',
         schema: schema
       },
       invoicesForDb
@@ -15,7 +15,7 @@ export default {
   down: async (queryInterface, Sequelize, schema) => {
     await queryInterface.bulkDelete(
       {
-        tableName: "invoices",
+        tableName: 'invoices',
         schema: schema
       },
       null, // this means "no condition" = delete all rows

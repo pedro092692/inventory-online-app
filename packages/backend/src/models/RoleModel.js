@@ -18,17 +18,17 @@ function initializeRole(sequelize) {
                 allowNull: false,
                 validate: {
                     notEmpty: {
-                        msg: "Role name cannot be empty."
+                        msg: 'Role name cannot be empty.'
                     }
                 }
             }
         },
         {
             sequelize, 
-            modelName: "Role",
+            modelName: 'Role',
             tableName: 'roles',
             timestamps: false,
-            schema: "public"
+            schema: 'public'
         }
     )
 }

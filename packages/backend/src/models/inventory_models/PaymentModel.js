@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model } from 'sequelize'
 
 class Payment extends Model {
     // model realations
@@ -6,10 +6,10 @@ class Payment extends Model {
     // payments details
     static associationPaymentDetail(model) {
         this.belongsToMany(model.Invoice, {
-            through: "payment_details",
-            foreignKey: "payment_id",
+            through: 'payment_details',
+            foreignKey: 'payment_id',
             timestamps: false,
-            as: "payments"
+            as: 'payments'
         })
     }
 }
@@ -28,7 +28,7 @@ function initializePayment(sequelize) {
                 allowNull: false,
                 validate: {
                     notEmpty: {
-                        msg: "Name cannot be empty."
+                        msg: 'Name cannot be empty.'
                     }
                 }
             },
@@ -38,17 +38,17 @@ function initializePayment(sequelize) {
                 allowNull: false,
                 validate: {
                     notEmpty: {
-                        msg: "A valid currency name is required."
+                        msg: 'A valid currency name is required.'
                     }
                 }
             }
         },
         {
             sequelize,
-            modelName: "Payment",
-            tableName: "payments",
+            modelName: 'Payment',
+            tableName: 'payments',
             timestamps: false,
-            schema: "test_schema" // only for test purposes
+            schema: 'test_schema' // only for test purposes
         }
     )
 }

@@ -1,7 +1,7 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
-import { NotFoundError } from "../errors/NofoundError.js"
-import DollarValueService from "./DollarValueService.js"
-import InvoiceService from "./InvoiceService.js"
+import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
+import { NotFoundError } from '../errors/NofoundError.js'
+import DollarValueService from './DollarValueService.js'
+import InvoiceService from './InvoiceService.js'
 
 class PayInvoiceService {
     // instace of error handler
@@ -23,14 +23,14 @@ class PayInvoiceService {
      * @throws {ServiceError} - If an error occurs during invoice detail creation.
      */
     createPaymentDetail(invoiceId, paymentId, amount) {
-        return this.#error.handler(["Create Payment"], async() => {
+        return this.#error.handler(['Create Payment'], async() => {
             // check if invoice exists
             const invoice = await this._getInvoice(invoiceId)
             
 
             // check if invoice is already paid
-            if(invoice.status == "paid") {
-                throw new Error("Invoice is already paid")
+            if(invoice.status == 'paid') {
+                throw new Error('Invoice is already paid')
             }
 
             let total_to_pay = 0
@@ -48,11 +48,11 @@ class PayInvoiceService {
     
                 
             if (paymentId < 1 || paymentId > 7) {
-                throw new Error("Payment Id must be between 1 and 7")
+                throw new Error('Payment Id must be between 1 and 7')
             }
 
             // set reference value, status and change 
-            let status = "unpaid"
+            let status = 'unpaid'
             const dollarValue = await this.dollarValue.getLastValue()
             
             // check payment method and calculate reference amount
@@ -60,7 +60,7 @@ class PayInvoiceService {
 
             // set status based on the amount paid
              if( total_paid + reference_amount >= total ) {
-                    status = "paid"
+                    status = 'paid'
                     total_reference = (total * parseFloat(dollarValue.value)).toFixed(2)
              }
 
@@ -96,11 +96,11 @@ class PayInvoiceService {
      * @throws {ServiceError} - If an error occurs during the retrieval operation.
      */
     getPaymentInvoiceDetail(id) {
-        return this.#error.handler(["Read Payment Detail", id, "Pay Invoice"], async() => {
+        return this.#error.handler(['Read Payment Detail', id, 'Pay Invoice'], async() => {
             const paymentDetail = await this.PaymentDetail.findByPk(id, {
                 include: [
                     {
-                        association: "payments", attributes: ["name"]
+                        association: 'payments', attributes: ['name']
                     }
                 ]
             })
@@ -120,7 +120,7 @@ class PayInvoiceService {
      * @throws {ServiceError} - If an error occurs during the retrieval operation.
      */
     getPaymentsInvoice(invoiceId) {
-        return this.#error.handler(["Read payments detail", invoiceId, "Read payments details"], async() => {
+        return this.#error.handler(['Read payments detail', invoiceId, 'Read payments details'], async() => {
             const paymentsDetails = await this.PaymentDetail.findAll({
                     where: {
                         invoice_id: invoiceId
@@ -141,7 +141,7 @@ class PayInvoiceService {
      */
     updatePaymentInvoiceDetail(paymentDetailId, updates) {
         return this.#error.handler(
-            ["Update Payment Detail", paymentDetailId, "Pay Invoice"], async() => {
+            ['Update Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
                 const paymentDetail = await this.getPaymentInvoiceDetail(paymentDetailId)
                 const { payment_id, amount } = updates
                 let reference_amount = paymentDetail.reference_amount
@@ -174,9 +174,9 @@ class PayInvoiceService {
                 const invoice = await this.invoiceService.getSimpleInvoice(paymentDetail.invoice_id)
                 if(total_paid < parseFloat(invoice.total)) {
                     //update invoice
-                    await this.invoiceService.updateInvoice(paymentDetail.invoice_id, {status: "unpaid", total_paid: total_paid})
+                    await this.invoiceService.updateInvoice(paymentDetail.invoice_id, {status: 'unpaid', total_paid: total_paid})
                 }else{
-                    await this.invoiceService.updateInvoice(paymentDetail.invoice_id, {status: "paid", total_paid: total_paid})
+                    await this.invoiceService.updateInvoice(paymentDetail.invoice_id, {status: 'paid', total_paid: total_paid})
                 }   
                 
                 return updatedPaymentDetail
@@ -191,7 +191,7 @@ class PayInvoiceService {
      */
     deletePaymenInvoiceDetail(paymentDetailId) {
         return this.#error.handler(
-            ["Delete Invoice Payment Detail", paymentDetailId, "Pay Invoice"], async() => {
+            ['Delete Invoice Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
                 const paymentDetail = await this.getPaymentInvoiceDetail(paymentDetailId)
 
                 // get invoice details
@@ -210,7 +210,7 @@ class PayInvoiceService {
                 
                 if(totalPaid < parseFloat(currentInvoice.total)) {
                     // update invoice 
-                    await this.invoiceService.updateInvoice(invoice_id, {status: "unpaid", total_paid: totalPaid})
+                    await this.invoiceService.updateInvoice(invoice_id, {status: 'unpaid', total_paid: totalPaid})
                 }
                 
                 return 1
@@ -279,12 +279,12 @@ class PayInvoiceService {
             detailAmount = amount
 
             // set payment type to bolivars 
-            payment_type = "bolivars"
+            payment_type = 'bolivars'
         }
 
         // check if reference_amount is greather than total to pay and throw and error
         if((paymentId != 4 && paymentId != 5) && reference_amount > total_to_pay) {
-            throw new Error("Reference amount cannot be greater than total to pay")
+            throw new Error('Reference amount cannot be greater than total to pay')
         }
 
         //if payment is in cash and greather than total amount calcule change 
@@ -297,7 +297,7 @@ class PayInvoiceService {
                 reference_amount = total_to_pay
                 
                 // if payment is in bolivar set amount and change in bolivar 
-                if(payment_type == "bolivars") {
+                if(payment_type == 'bolivars') {
                     change = parseFloat((amount - (total_to_pay * dollar)).toFixed(2))
                     detailAmount = parseFloat((total_to_pay * dollar).toFixed(2))
                     reference_amount = parseFloat((detailAmount / dollar).toFixed(2))
@@ -307,7 +307,7 @@ class PayInvoiceService {
                 detailAmount = reference_amount
 
                 // set detail amount is pament_type is bolivars
-                if(payment_type == "bolivars") {
+                if(payment_type == 'bolivars') {
                     detailAmount = amount
                 }
             } 

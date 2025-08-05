@@ -1,13 +1,13 @@
-import { Sequelize } from "sequelize"
-import { Umzug, SequelizeStorage } from "umzug"
-import dotenv from "dotenv"
-import path from "path"
-import { fileURLToPath, pathToFileURL } from "url"
-import process from "process"
+import { Sequelize } from 'sequelize'
+import { Umzug, SequelizeStorage } from 'umzug'
+import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath, pathToFileURL } from 'url'
+import process from 'process'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const envPath = path.resolve(__dirname, "../../.env")
+const envPath = path.resolve(__dirname, '../../.env')
 dotenv.config({ path: envPath })
 
 async function testSeeder() {
@@ -17,7 +17,7 @@ async function testSeeder() {
         port: process.env.DB_PORT,
         dialect: 'postgres',
         logging: false,
-        schema: "test_schema"  // set test schema for testing.
+        schema: 'test_schema'  // set test schema for testing.
     })
 
     // QueryInterface for seeding
@@ -26,7 +26,7 @@ async function testSeeder() {
     // Umzug instance for seeding
     const umzug = new Umzug({
         migrations: {
-            glob: "../seeders/*.js",
+            glob: '../seeders/*.js',
             resolve: ({ name, path, context }) => {
                 return {
                     name,
@@ -41,13 +41,13 @@ async function testSeeder() {
         context: {
             sequelize,
             queryInterface,
-            schema: "test_schema"
+            schema: 'test_schema'
         },
         logger: console,
         storage: new SequelizeStorage({
             sequelize,
-            tableName: "SequelizeMeta",
-            schema: "test_schema"
+            tableName: 'SequelizeMeta',
+            schema: 'test_schema'
         })
     })
 
@@ -57,13 +57,13 @@ async function testSeeder() {
         await umzug.up() // execute seeds
     }
 
-    console.log("Seeds were executed successfully.")
+    console.log('Seeds were executed successfully.')
     await sequelize.close() // close the connection
 }
 
 await testSeeder().then(() => {
-    console.log("Test seeder completed successfully.")
+    console.log('Test seeder completed successfully.')
 }).catch((error) => {
-    console.error("Error during test seeder:", error)
+    console.error('Error during test seeder:', error)
     process.exit(1)
 })

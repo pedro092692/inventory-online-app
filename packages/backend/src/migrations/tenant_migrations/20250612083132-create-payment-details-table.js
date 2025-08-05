@@ -1,7 +1,7 @@
 export default {
   async up (queryInterface, Sequelize, schema) {
     queryInterface.createTable(
-      "payment_details",
+      'payment_details',
       {
           id: {
             type: Sequelize.INTEGER,
@@ -13,21 +13,21 @@ export default {
             type: Sequelize.INTEGER,
             allowNull: false,
             references: {
-              model: "invoices",
-              key: "id"
+              model: 'invoices',
+              key: 'id'
             },
-            onDelete: "CASCADE"
+            onDelete: 'CASCADE'
           },
 
           payment_id: {
             type: Sequelize.INTEGER,
             allowNull: false,
             references: {
-              model: "payments",
-              key: "id"
+              model: 'payments',
+              key: 'id'
             },
-            onDelete: "CASCADE",
-            onUpdate: "CASCADE"
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
           },
 
           amount: {
@@ -54,7 +54,7 @@ export default {
 
   async down (queryInterface, Sequelize, schema) {
     queryInterface.dropTable({
-      tableName: "payment_details",
+      tableName: 'payment_details',
       schema
     })
   }

@@ -1,5 +1,5 @@
-import ServiceErrorHandler from "../errors/ServiceErrorHandler.js"
-import { NotFoundError } from "../errors/NofoundError.js"
+import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
+import { NotFoundError } from '../errors/NofoundError.js'
 
 class SellerService {
     // new instance of service error handler 
@@ -19,7 +19,7 @@ class SellerService {
      * @returns {Promise<Object>} - returns the created seller
      */
     createSeller(id_number, name, last_name, address) {
-        return this.#error.handler(["Create Seller"], async() => {
+        return this.#error.handler(['Create Seller'], async() => {
             const newSeller = await this.Seller.create({
                 id_number: id_number,
                 name: name,
@@ -39,13 +39,13 @@ class SellerService {
      * @returns {Promise<Array>} - returns an array of sellers with their sales
      */
     getAllSellers(limit=10, offset=0) {
-        return this.#error.handler(["Read All Sellers"], async() => {
+        return this.#error.handler(['Read All Sellers'], async() => {
             const sellers = await this.Seller.findAll({
                  include: {
-                    association: "sales",
-                    attributes: ["id", "date", "total"]
+                    association: 'sales',
+                    attributes: ['id', 'date', 'total']
                 },
-                order: [["sales", "id", "DESC"]],
+                order: [['sales', 'id', 'DESC']],
                 limit: limit,
                 offset: offset
             })
@@ -61,13 +61,13 @@ class SellerService {
      * @returns {Promise<Object>} - returns the seller with their sales
      */ 
     getSeller(id) {
-        return this.#error.handler(["Read Seller", id, "Seller"], async () => {
+        return this.#error.handler(['Read Seller', id, 'Seller'], async () => {
             const seller = await this.Seller.findByPk(id, {
                 include: {
-                    association: "sales",
-                    attributes: ["id", "date", "total"]
+                    association: 'sales',
+                    attributes: ['id', 'date', 'total']
                 },
-                order: [["sales", "id", "DESC"]],
+                order: [['sales', 'id', 'DESC']],
             })
 
             if(!seller) {
@@ -92,7 +92,7 @@ class SellerService {
      * @returns {Promise<Object>} - returns the updated seller
      */
     updateSeller(sellerId, updates) {
-        return this.#error.handler(["Update Seller", sellerId, "Seller"], async() => {
+        return this.#error.handler(['Update Seller', sellerId, 'Seller'], async() => {
             const seller = await this.getSeller(sellerId)
             const updatedSeller = await seller.update(updates)
             return updatedSeller
@@ -108,7 +108,7 @@ class SellerService {
      * @returns {Promise<Number>} - returns 1 if the seller was deleted successfully
      */
     deleteSeller(sellerId) {
-        return this.#error.handler(["Delete Seller", sellerId, "Seller"], async() => {
+        return this.#error.handler(['Delete Seller', sellerId, 'Seller'], async() => {
             const seller = await this.getSeller(sellerId)
             // delete seller 
             await seller.destroy()

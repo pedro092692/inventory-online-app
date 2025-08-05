@@ -19,11 +19,11 @@ function initializeUser(sequelize) {
                 allowNull: false,
                 validate: {
                     isEmail: {
-                        msg: "A valid email is required."
+                        msg: 'A valid email is required.'
                     }
                 },
                 unique:{
-                    msg: "This email already has been taken"
+                    msg: 'This email already has been taken'
                 }
             },
 
@@ -33,7 +33,7 @@ function initializeUser(sequelize) {
                 validate: {
                     len: {
                         args: [8],
-                        msg: "The password at least must be 8 character long."
+                        msg: 'The password at least must be 8 character long.'
                     }
                 }
             },
@@ -42,17 +42,17 @@ function initializeUser(sequelize) {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "roles",
-                    key: "id"
+                    model: 'roles',
+                    key: 'id'
                 }
             }
         },
         {
             sequelize,
-            modelName: "User",
-            tableName: "users",
+            modelName: 'User',
+            tableName: 'users',
             timestamps: false,
-            schema: "public"
+            schema: 'public'
         }
     )
 }

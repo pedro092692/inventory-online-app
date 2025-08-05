@@ -1,11 +1,11 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model } from 'sequelize'
 
 class Customer extends Model {
     // model relations
     static associate(model) {
         this.hasMany(model.Invoice, {
-            foreignKey: "customer_id",
-            as: "invoices"
+            foreignKey: 'customer_id',
+            as: 'invoices'
         })
     }
 }
@@ -24,7 +24,7 @@ function initializeCustomer(sequelize) {
                 allowNull: false,
                 validate:{
                     notEmpty:{
-                        msg: "Id number cannot be empty."
+                        msg: 'Id number cannot be empty.'
                     }
                 }
             },
@@ -34,7 +34,7 @@ function initializeCustomer(sequelize) {
                 allowNull: false,
                 validate: {
                     notEmpty:{
-                        msg: "Customer name cannot be empty."
+                        msg: 'Customer name cannot be empty.'
                     }
                 }
             },
@@ -46,10 +46,10 @@ function initializeCustomer(sequelize) {
         },
         {
             sequelize,
-            modelName: "Customer",
-            tableName: "customers",
+            modelName: 'Customer',
+            tableName: 'customers',
             timestamps: false,
-            schema: "test_schema" // only for test purposes
+            schema: 'test_schema' // only for test purposes
         }
     )
 }
