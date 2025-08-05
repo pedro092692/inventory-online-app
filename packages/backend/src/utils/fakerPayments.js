@@ -1,11 +1,21 @@
 import { invoices } from './fakerInvoice.js'
+/**
+ * @classdesc A class to generate fake payment details for invoices.
+ */
 class FakerPayment {
+    /**
+     * Initializes a new instance of the FakerPayment class.
+     */
     constructor() {
         this.invoices = invoices
         this.bolivarsTransactions = [1,2,3,4]
     }
-    
-    createTransactions() {
+    /**
+     * Creates a random number of transaction payment method IDs.
+     * @private
+     * @returns {number[]} An array of payment method IDs.
+     */
+    _createTransactions() {
         const transactions_ids = []
         // determine number of transactions
         const numberOfTransactions = this._randomNumber(4)
@@ -19,14 +29,20 @@ class FakerPayment {
         return transactions_ids
     }
 
+    /**
+     * Generates detailed payment transactions for all invoices.
+     * It can create single or multiple payment details per invoice,
+     * handling different currencies (Bolivars vs. others) and splitting
+     * the total amount accordingly.
+     * @returns {Array<Object>} An array of payment detail objects ready for the database.
+     */
     generateDetail() {
         const details = []
 
         // 1. ireate over all invoices
         for(let invoice of this.invoices) {
             // 2. determine number of transaction for current invoices 
-            // const transactions = this.createTransactions()
-            const transactions = this.createTransactions()
+            const transactions = this._createTransactions()
             // set total paid for a invoice 
             let paid_percent = 0
             let i = 0
@@ -100,10 +116,21 @@ class FakerPayment {
         return details
     }
 
+    /**
+     * Generates a random integer between 1 and a given maximum.
+     * @private
+     * @param {number} max - The maximum value (inclusive).
+     * @returns {number} A random integer.
+     */
     _randomNumber(max) {
         return Math.floor(Math.random() * max) + 1
     }
 
+    /**
+     * Selects a random payment method ID, with a higher probability for method 1.
+     * @private
+     * @returns {number} A payment method ID.
+     */
     _randomPaymentMethod() {
         if(Math.random() < 0.63) {
             return 1
@@ -114,6 +141,12 @@ class FakerPayment {
         }
     }
 
+    /**
+     * Checks if a given transaction ID corresponds to a payment in Bolivars.
+     * @private
+     * @param {number} transaction - The payment method ID.
+     * @returns {boolean} True if the transaction is in Bolivars, false otherwise.
+     */
     _checkBolivarTransaction(transaction) {
         return this.bolivarsTransactions.includes(transaction)
     }
