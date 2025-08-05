@@ -4,6 +4,13 @@ class Dollar extends Model {
     // model relations
 }
 
+/**
+ * Initializes the Dollar model with its schema definition and configuration.
+ * This function sets up the Dollar model with fields such as `id`, `value`, and `date`,
+ * and configures Sequelize options like table name, schema, and timestamps.
+ * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
+ * @returns {void} This function does not return a value.
+ */
 function initializeDollar(sequelize) {
     Dollar.init(
         {
