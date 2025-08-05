@@ -4,8 +4,9 @@ class Product extends Model {
     // model relations
 
     /**
-     * 
-     * @param {*} model 
+     * Creates an association between Product model and the Invoice model.
+     * @param {{Invoice: typeof Model}} model -An object containing the Invoice model.
+     * @return {void} This method does not return a value. 
      */
     static associationInvoiceDetails(model) {
         this.belongsToMany(model.Invoice, {
