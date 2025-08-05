@@ -4,6 +4,13 @@ class Role extends Model {
     // ralations model 
 }
 
+/**
+ * Initializes RoleModel with its schema definition and configuration.
+ * This function set up RoleModel with fields such as: `id` and `name`
+ * and configure Sequelize options like model name, table name, schema and timestamps.
+ * @param {import('sequelize').Sequelize} sequelize -An Sequelize instance used to initialize the model.
+ * @returns {void} This function does not return a value. 
+ */
 function initializeRole(sequelize) {
     Role.init(
         {
