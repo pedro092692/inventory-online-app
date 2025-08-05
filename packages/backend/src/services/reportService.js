@@ -6,13 +6,25 @@ class ReportService {
     // new instace of service error handler
     #error = new ServiceErrorHandler()
 
+    /**
+     * Constructs the ReportService.
+     * @param {Invoice: typeof Model} invoiceModel - The Invoice model.
+     * @param {InvoiceDetail: typeof Model} [invoiceDetailModel=null] - The InvoiceDetails model.
+     * @param {PaymentDetail: typeof Model} [invoicePayDetailModel=null] - The PaymentDetail model.
+     */
     constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null) {
         this.invoice = invoiceModel
         this.invoiceDetail = invoiceDetailModel,
         this.invoicePayDetail = invoicePayDetailModel
         this.#error
     }
-
+    /**
+     * Retrieves the top 10 customers who have spent the most.
+     * It calculates the total amount spent by each customer on paid invoices.
+     * @returns {Promise<Array<Object>>} A promise that resolves to a formatted list of the top spending customers.
+     * Each object contains customer id, name, total_spent, first_purchase date, last_purcahse date, and phone.
+     * @throws {ServiceError} If there is an error querying the database.
+     */
     getTopSpendingCustomer() {
         return this.#error.handler(['Get best Customers'], async() => {
             const customer = await this.invoice.findAll({
@@ -51,6 +63,12 @@ class ReportService {
         })
     }
 
+    /**
+     * Retrieves the top 10 most recurring customers based on the number of paid invoices.
+     * @returns {Promise<Array<Object>>} A promise that resolves to a list of the most frequent customers.
+     * Each object includes the customer's details and the total number of their invoices.
+     * @throws {ServiceError} If there is an error querying the database.
+     */
     getTopRecurringCustomer() {
         return this.#error.handler(['Get recurring Customer'], async() => {
             const customers = await this.invoice.findAll({
@@ -78,6 +96,13 @@ class ReportService {
         })
     }
 
+    /**
+     * Retrieves the top or worst selling products or best selling products based on the total quantity sold.
+     * @param {string} [order='DESC'] - The order to sort the results ('DESC' for top, 'ASC' for worst).
+     * @returns {Promise<Array<Object>>} A promise that resolves to a list of products.
+     * Each object includes the product_id, total_sold, and product details like name and selling_price.
+     * @throws {ServiceError} If there is an error querying the database.
+     */
     getToSellingProduct(order = 'DESC') {
         return this.#error.handler(['Get Top Selling products'], async() => {
             const products = await this.invoiceDetail.findAll({
@@ -112,6 +137,14 @@ class ReportService {
         })
     }
 
+    /**
+     * Retrieves the best or worst selling days within the last 30 days, based on total revenue.
+     * @param {string} [order='DESC'] - The order to sort the results ('DESC' for best, 'ASC' for worst).
+     * @param {number} [limit=1] - The number of days to return.
+     * @returns {Promise<Array<Object>>} A promise that resolves to a list of days.
+     * Each object contains the day, the number of sales, and the total revenue.
+     * @throws {ServiceError} If there is an error querying the database.
+     */
     bestSellingDay(order = 'DESC', limit = 1) {
         return this.#error.handler(['Get Best Selling Day'], async() => {
             const today = new Date()
@@ -142,6 +175,12 @@ class ReportService {
         })
     }
 
+    /**
+     * Retrieves sales data for each day over the last 30 days.
+     * @returns {Promise<Array<Object>>} A promise that resolves to a list of daily sales data, ordered by date.
+     * Each object contains the day, the number of sales, and the total revenue.
+     * @throws {ServiceError} If there is an error querying the database.
+     */
     salesPerDay() {
         return this.#error.handler(['Get sales per Day'], async() => {
             const today = new Date()
@@ -170,6 +209,12 @@ class ReportService {
         })
     }
 
+    /**
+     * Retrieves the top 3 peak sales hours in the last 30 days, based on total revenue.
+     * @returns {Promise<Array<Object>>} A promise that resolves to a list of the top 3 sales hours.
+     * Each object contains the hour, the number of sales, and the total revenue.
+     * @throws {ServiceError} If there is an error querying the database.
+     */
     peakSalesHour() {
         return this.#error.handler(['Get peak sales hours'], async() => {
             const targetTimeZone = 'Europe/Madrid';
@@ -200,6 +245,12 @@ class ReportService {
         })
     }
 
+    /**
+     * Retrieves sales performance for each day of the week over the last 30 days.
+     * @returns {Promise<Array<Object>>} A promise that resolves to a list of objects, one for each day of the week.
+     * Each object contains the day name, total sales count, and total revenue.
+     * @throws {ServiceError} If there is an error querying the database.
+     */
     peakSalesDayOfWeek() {
         return this.#error.handler(['Get peak sales day of week'], async() => {
             const today = new Date()
@@ -240,6 +291,12 @@ class ReportService {
         })
     }
 
+    /**
+     * Retrieves a detailed breakdown of total sales per payment method for each day in the last 30 days.
+     * @returns {Promise<Array<Object>>} A promise that resolves to a list of daily sales breakdowns.
+     * Each object includes the day, payment method details, total amount in the original currency, total in dollars, and transaction count.
+     * @throws {ServiceError} If there is an error querying the database.
+     */
     dayTotalSales() {
         return this.#error.handler(['Get total sales day'], async() => {
             const today = new Date( )
@@ -290,6 +347,12 @@ class ReportService {
         })
     }
 
+    /**
+     * Retrieves the last 4 paid invoices from the last 7 days.
+     * @returns {Promise<Array<Object>>} A promise that resolves to a list of recent invoice objects.
+     * Each object includes invoice id, date, total, and associated seller and customer names.
+     * @throws {ServiceError} If there is an error querying the database.
+     */
     getInvoicePerDate() {
         return this.#error.handler(['Read Invoices Per Date'], async() => {
             const today = new Date()
@@ -327,6 +390,13 @@ class ReportService {
         })
     }
 
+    /**
+     * Performs a cash closing for a specific seller for the current day.
+     * It aggregates sales data by payment method for all paid invoices from that seller today.
+     * @param {number} seller_id - The ID of the seller to perform the cash closing for.
+     * @returns {Promise<Array<Object>>} A promise that resolves to a list of payment summaries for the seller's daily sales.
+     * @throws {ServiceError} If there is an error querying the database.
+     */
     cashClosing(seller_id) {
          return this.#error.handler(['Get total sales day'], async() => {
             const today = new Date()
@@ -369,6 +439,13 @@ class ReportService {
         })
     }
 
+    /**
+     * Calculates the percentage of sales made through each payment method over the last 7 days.
+     * It also provides a summary of total sales in dollars and the equivalent in bolivars.
+     * @returns {Promise<Array<Object>>} A promise that resolves to a list of payment method statistics,
+     * with a final summary object appended.
+     * @throws {ServiceError} If there is an error querying the database.
+     */
     payMethodPercent() {
         return this.#error.handler(['Get pay method percent'], async() => {
             const today = new Date()
