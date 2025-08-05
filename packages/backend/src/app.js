@@ -11,7 +11,14 @@ import PayInvoiceRoutes from './routes/PaymentDetailRoutes.js'
 import DollarValueRoutes from './routes/DollarValueRoutes.js'
 import ReportRoutes from './routes/reportRoutes.js'
 
+/**
+ * @class Server
+ * @description Main class to configure and start the Express server.
+ */
 class Server {
+    /**
+     * Initializes the Express app, database, middlewares, and routes.
+     */
     constructor(){
         this.app = express()
         this.port = 4000,
@@ -25,11 +32,19 @@ class Server {
 
     }
 
+    /**
+     * Configures application-level middlewares.
+     * @returns {void}
+     */
     middlewares(){
         this.app.use(express.urlencoded({ extended: true }))
         this.app.use(express.json())
     }
 
+    /**
+     * Sets up all the API routes for the application.
+     * @returns {void}
+     */
     routes(){
         this.app.get('/', (req, res) => res.send('Hello world'))
 
@@ -64,6 +79,10 @@ class Server {
         this.app.use('/api/reports', new ReportRoutes().router)
     }
 
+    /**
+     * Starts the server and listens on the configured port.
+     * @returns {void}
+     */
     start(){
         this.app.listen(this.port, () => {
             console.log(`Server is running at http://127.0.0.1:${this.port}`)
