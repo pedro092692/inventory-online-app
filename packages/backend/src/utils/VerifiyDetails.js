@@ -1,3 +1,16 @@
+/**
+ * Verifies whether the provided invoice details meet the required validation rules.
+ *
+ * - Ensures `details` is a non-empty array.
+ * - Each item must be a non-null object with valid `product_id` and `quantity`.
+ * - If `update` is true, each item must also include an `id`.
+ *
+ * @param {Array<{ product_id: number, quantity: number, id?: number }>} details - Array of invoice detail objects to validate.
+ * @param {boolean} [update=false] - Indicates whether the validation is for an update operation.
+ * @throws {Error} If any validation rule is violated.
+ * @returns {void} This function does not return a value.
+ */
+
 function verifyDetails(details, update = false) {
     if (!Array.isArray(details) || details.length === 0) {
         throw new Error('Details must be a non-empty array');
