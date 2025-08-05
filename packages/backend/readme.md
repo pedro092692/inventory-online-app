@@ -561,6 +561,16 @@ Returns a `200 OK` status and Retrieve a invoice information based on its ID
 }
 ```
 
+### GET /api/invoices/send-whatsapp/:id
+***/api/invoices/send-whatsapp/3245***
+Returns a `200 OK` status and Retrieve an object with a link with invoice data to be send through whatsapp.
+**Response:**
+```json
+{
+	"link":  "https://wa.me/9212840683x573?info"
+}
+```
+
 ### POST /api/invoices/
 Create a new invoice
 📥 Request Body (`application/json`)
