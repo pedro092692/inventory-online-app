@@ -348,7 +348,7 @@ class ReportService {
     }
 
     /**
-     * Retrieves the last 4 paid invoices from the last 7 days.
+     * Retrieves the last 30 paid invoices from the last 7 days.
      * @returns {Promise<Array<Object>>} A promise that resolves to a list of recent invoice objects.
      * Each object includes invoice id, date, total, and associated seller and customer names.
      * @throws {ServiceError} If there is an error querying the database.
@@ -383,7 +383,7 @@ class ReportService {
                     }
                 },
                 order:[['date', 'DESC']],
-                limit: 4
+                limit: 30
             })
 
             return data

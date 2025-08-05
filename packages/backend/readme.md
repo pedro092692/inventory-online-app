@@ -828,3 +828,253 @@ Delete a payment invoice detail if the invoice is paid and is deleted a payment 
 **throw an 404 error** if payment detail is not found.
 
 return ***status 204*** with a empty object
+
+# Reports 📃
+
+### GET /api/reports
+
+Returns a `200 OK` status with a message indicating that the ***Reports*** routes are working properly.
+**Response:**
+```json
+{
+"status": 200,
+"message": "Report routes"
+}
+```
+
+### GET /api/reports/top-spending-customers
+Returns a`200 OK` status and list of top 10 customer who spent most.
+**Response**
+```json
+[
+	{
+		"id":  58,
+		"name":  "Tami Casper",
+		"total_spent":  "1306.21",
+		"first_purchase":  "1/2/2025",
+		"last_purcahse":  "23/7/2025",
+		"phone":  "812-572-5015 x51530"
+	},
+]
+```
+
+### GET /api/reports/top-recurring-customers
+Returns a`200 OK` status and list of top 10 most recurring customers based on the number of paid invoices.
+**Response**
+```json
+[
+	{
+		"total_recurring":  "38",
+		"first_invoice":  "2025-02-02T11:00:11.281Z",
+		"last_invoice":  "2025-07-18T13:42:23.281Z",
+		"customer":  {
+			"name":  "Dr. Jacob Trantow",
+			"phone":  "671-449-1592 x67691",
+			"id":  97
+		}
+	},
+]
+```
+### GET /api/reports/top-selling-products
+Returns a`200 OK` status and list of top 10 selling products.
+**Response**
+```json
+[
+	{
+		"product_id":  400,
+		"total_sold":  "94",
+		"products":  {
+		"name":  "Electronic Wooden Computer",
+		"selling_price":  "1.29"
+		}
+	},
+]
+```
+
+### GET /api/reports/worst-selling-products
+Returns a`200 OK` status and list of top 10 worst selling products.
+**Response**
+```json
+[
+	{
+		"product_id":  126,
+		"total_sold":  "28",
+		"products":  {
+		"name":  "Small Ceramic Mouse",
+		"selling_price":  "2.20"
+		}
+	},
+]
+```
+
+### GET /api/reports/best-selling-day
+Returns a`200 OK` status and list of the best selling days within the last 30 days, based on total revenue.
+**Response**
+```json
+[
+	{
+		"day":  "2025-07-12",
+		"sales":  "37",
+		"revenue":  "1143.50"
+	},
+]
+```
+
+### GET /api/reports/worst-selling-day
+Returns a`200 OK` status and list of the worst selling days within the last 30 days, based on total revenue.
+**Response**
+```json
+[
+	{
+		"day":  "2025-08-04",
+		"sales":  "4",
+		"revenue":  "72.86"
+	},
+]
+```
+
+### GET /api/reports/sales-per-day
+Returns a`200 OK` status and list of the sales data for each day over the last 30 days.
+**Response**
+```json
+[
+	{
+		"day":  "2025-07-06",
+		"sales":  "30",
+		"revenue":  "889.36"
+	},
+]
+```
+
+### GET /api/reports/peak-sales-hour
+Returns a`200 OK` status and list of the top 3 peak sales hours in the last 30 days, based on total revenue.
+**Response**
+```json
+[
+	{
+		"hourOfDay":  "17",
+		"Sales":  "358",
+		"revenue":  "10708.32"
+	},
+]
+```
+
+
+### GET /api/reports/peak-day-week
+Returns a`200 OK` status and list of the sales performance for each day of the week over the last 30 days.
+**Response**
+```json
+[
+	{
+		"dayOfWeek":  "Domingo",
+		"totalSales":  83,
+		"totalRevenue":  "2661.17"
+	},
+]
+```
+
+### GET /api/reports/detail-sales
+Returns a`200 OK` status and list of a detailed breakdown of total sales per payment method for each day in the last 30 days.
+**Response**
+```json
+[
+	{
+		"day":  "2025-08-04",
+		"total_currenty":  "5413.45",
+		"total_dollar":  "49.18",
+		"transactions":  "2",
+		"payments":  {
+			"name":  "Punto de venta",
+			"currency":  "Bolivar Digital"
+		}
+	},
+	.
+	.
+	.
+]
+```
+
+### GET /api/reports/invoices-per-day
+Returns a`200 OK` status and list of the the last 30 paid invoices from the last 7 days.
+**Response**
+```json
+[
+	{
+		"id":  3925,
+		"date":  "2025-08-04T14:31:08.861Z",
+		"total":  "7.60",
+		"seller":  {
+			"name":  "Daniel"
+		},
+		"customer":  {
+			"name":  "Evan Lang",
+			"phone":  "773-834-0911 x8474"
+		}
+	},
+]
+```
+
+### GET /api/reports/cash-closing
+Returns a`200 OK` status and list of the aggregates sales data by payment method for all paid invoices from that seller today.
+**Response**
+```json
+[
+	{
+		"day":  "2025-08-05",
+		"total_currenty":  "884.96",
+		"total_dollar":  "8.04",
+		"transactions":  "1",
+		"payments":  {
+			"name":  "Punto de venta",
+			"currency":  "Bolivar Digital"
+		}
+	}
+]
+```
+
+
+### GET /api/reports/cash-closing
+Returns a`200 OK` status and list of the aggregates sales data by payment method for all paid invoices from that seller today.
+📥 Request Body (`application/json`)
+-  ***seller_id*** type: Integer, ***required*** -> The id of seller to perform cash closing.
+**Response**
+```json
+[
+	{
+		"day":  "2025-08-05",
+		"total_currenty":  "884.96",
+		"total_dollar":  "8.04",
+		"transactions":  "1",
+		"payments":  {
+			"name":  "Punto de venta",
+			"currency":  "Bolivar Digital"
+		}
+	}
+]
+```
+
+### GET /api/reports/pay-methods
+Returns a`200 OK` status and list of the sales made through each payment method over the last 7 days, It also provides a summary of total sales in dollars and the equivalent in bolivars.
+**Response**
+```json
+[
+	{
+		"total_amount":  "114790.43",
+		"total_reference":  "1261.81",
+		"total_invoices":  "128",
+		"payments":  {
+			"name":  "Punto de venta",
+			"currency":  "Bolivar Digital"
+		}
+	},
+	.
+	.
+	.
+	{
+		"total_sold_dollar":  1993.1499999999999,
+		"total_sold_bolivars":  1578.4799999999998,
+		"percent_sold_in_bolivar":  "79.20%",
+		"percent_sold_in_dollar":  "20.80%"
+	}
+]
+```
