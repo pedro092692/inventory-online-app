@@ -9,6 +9,10 @@ class PaymentMethodRoutes {
         this.initializeRoutes()
     }
 
+    /**
+     * Initializes the routes for Payment Method API.
+     * @returns {void} This method does not return a value.
+     */
     initializeRoutes() {
         this.router.get('/', (req, res) => res.send('Payment Methods'))
         this.router.get('/all', (req, res) => new PaymentMethodController(Payment).getAllProducts(req, res))
