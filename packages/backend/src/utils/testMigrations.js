@@ -10,6 +10,13 @@ const __dirname = path.dirname(__filename)
 const envPath = path.resolve(__dirname, '../../.env')
 dotenv.config({ path: envPath })
 
+/**
+ * Runs database migrations for the test environment.
+ * This script connects to the test database, finds pending migrations using Umzug,
+ * executes them, and then closes the connection. It is designed to be run
+ * as part of a testing setup process.
+ * @returns {Promise<void>} A promise that resolves when migrations are complete or rejects on error.
+ */
 async function testMigration() {
     // sequelize new instance
     const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
