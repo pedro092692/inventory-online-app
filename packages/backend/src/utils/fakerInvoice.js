@@ -1,6 +1,9 @@
 import { products } from './fakerProducts.js'
 import { dollarValues } from './fakerDollar.js';
 
+/**
+ * @classdesc A class to generate fake invoice data.
+ */
 class FakerInvoice {
     constructor() {
         this.productRange = Math.floor(Math.random() * 7 ) + 1
@@ -10,6 +13,11 @@ class FakerInvoice {
         this.dollarValues = dollarValues
     }
 
+    /**
+     * Populates the `productsForInvoice` array with a random number of products.
+     * The number of products is determined by `this.productRange`.
+     * @returns {void}
+     */
     getProducts() {
         const range = this.productRange
         for(let i=0; i<range; i++) {
@@ -27,6 +35,11 @@ class FakerInvoice {
         }
     }
 
+    /**
+     * Generates an array of dates from a specified number of months ago until today.
+     * @param {number} [count=6] - The number of past months to generate dates for.
+     * @returns {Array<Date>} An array of Date objects.
+     */
     generateDates(count = 6) {
         const today = new Date()
         const startDate = new Date(today)
@@ -45,6 +58,11 @@ class FakerInvoice {
         return dates
     }
 
+    /**
+     * Generates a list of fake invoices for a given array of dates.
+     * @param {Array<Date>} dates - An array of dates to generate invoices for.
+     * @returns {Array<Object>} An array of fake invoice objects.
+     */
     generateInvoices(dates) {
         const invoices = []
         let i = 0
@@ -94,6 +112,12 @@ class FakerInvoice {
         return invoices
     }
 
+    /**
+     * Formats a list of invoices to be inserted into the database.
+     * It removes the 'products' and 'invoice_id' properties.
+     * @param {Array<Object>} invoices - The array of invoice objects to format.
+     * @returns {Array<Object>} An array of formatted invoice objects ready for the database.
+     */
     invoiceForDb(invoices) {
         return invoices.map((invoice) => {
             return {
@@ -108,10 +132,23 @@ class FakerInvoice {
         })
     }
 
+    /**
+     * Generates a random ID within a given maximum value.
+     * @private
+     * @param {number} [max=150] - The maximum value for the random ID.
+     * @returns {number} A random integer between 1 and `max`.
+     */
     _randomId(max = 150) {
         return Math.floor(Math.random() * max) + 1
     }
 
+    /**
+     * Gets a random list of products for an invoice.
+     * @private
+     * @param {number} numberOfProducts - The number of products to get.
+     * @param {number} [productCount=499] - The total number of available products.
+     * @returns {Array<Object>} An array of product objects for the invoice.
+     */
     _getRandomProducts(numberOfProducts, productCount = 499) {
         const products = {}
         const invoiceProducts = []
@@ -147,6 +184,12 @@ class FakerInvoice {
         return invoiceProducts
     }
 
+    /**
+     * Generates a random number of products for an invoice, typically between 1 and 7.
+     * It has a specific logic to favor 1 product.
+     * @private
+     * @returns {number} The number of products.
+     */
     _randomNumberProducts() {
         // generate random number of products, with range between 1 and 7 products
         let numberProducts = Math.floor(Math.random() * 7) + 1
@@ -159,6 +202,12 @@ class FakerInvoice {
 
     }
 
+    /**
+     * Calculates the total amount for a list of products in an invoice.
+     * @private
+     * @param {Array<{total: number}>} products - An array of product objects, each with a 'total' property.
+     * @returns {number} The sum of all product totals.
+     */
     _getInvoiceTotal(products) {
         return products.reduce((sum, currentProduct) => {
             return sum + currentProduct.total
