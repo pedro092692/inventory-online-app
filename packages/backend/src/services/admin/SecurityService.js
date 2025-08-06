@@ -30,7 +30,8 @@ class SecurityService {
                 {
                     id: user.id, 
                     email: user.email,
-                    role: user.role_id
+                    role: user.role_id,
+                    tenant_id: user.tenant_id
                 },
                 jtw_secret,
                 {

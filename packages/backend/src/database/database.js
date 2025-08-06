@@ -39,12 +39,17 @@ class Database {
             }
         })
 
+        // save connection for tenant
+        this.tenantRegister = new Map()
+
+        // save instance 
+        instance = this
+
         this.testConnection()
         this.initializeModels()
         this.initializeRelations()
 
-        // save instance 
-        instance = this
+        
     }
 
     async testConnection() {
