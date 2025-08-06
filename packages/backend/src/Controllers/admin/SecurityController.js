@@ -22,7 +22,7 @@ class SecurityController {
      * @throws {ServiceError} - throws an error if the users could not be retrieved.
      * @returns {Promise<void>} - returns the user data in the response.
      */
-    findUser = this.#error.handler( async(req, res) => {
+    login = this.#error.handler( async(req, res) => {
         const { email, password } = req.body
         const user = await this.user.findUserByEmail(email)
 
