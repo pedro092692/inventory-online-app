@@ -11,7 +11,8 @@ const dbConfig = {
 }
 
 const appConfig = {
-    saltRounds: parseInt(process.env.SALT_ROUNDS, 10)
+    saltRounds: parseInt(process.env.SALT_ROUNDS, 10),
+    jtw_secret: process.env.JWT_SECRET
 }
 
 module.exports = {
