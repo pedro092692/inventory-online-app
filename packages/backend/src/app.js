@@ -11,6 +11,7 @@ import PayInvoiceRoutes from './routes/PaymentDetailRoutes.js'
 import DollarValueRoutes from './routes/DollarValueRoutes.js'
 import ReportRoutes from './routes/reportRoutes.js'
 import SecurityRoutes from './routes/admin/SecurityRoutes.js'
+import cookieParser from 'cookie-parser'
 
 /**
  * @class Server
@@ -40,6 +41,7 @@ class Server {
     middlewares(){
         this.app.use(express.urlencoded({ extended: true }))
         this.app.use(express.json())
+        this.app.use(cookieParser())
     }
 
     /**

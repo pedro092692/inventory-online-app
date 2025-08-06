@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
-import pkg from '../../config/config.js'
+import pkg from '../config/config.js'
 import process from 'process'
 
 const currentEnv = process.env.NODE_ENV || 'development'
@@ -26,7 +26,7 @@ class AuthMiddleware {
     authenticatedToken = this.#error.handler((req, res, next) => {
         const token = req.cookies.access_token
         if (!token) {
-            return res.status(403).json({message: 'Access denied. No token provided.'})
+            return res.status(403).json({message: 'Access denied.'})
         }
         
         try {
