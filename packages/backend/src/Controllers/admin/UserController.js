@@ -18,8 +18,8 @@ class UserController {
      * @returns {Promise<void>} - returns the created user in the response
      */
     createUser = this.#error.handler( async(req, res) => {
-        const { email, password, role_id } = req.body
-        const user = await this.User.createUser(email, password, role_id)
+        const { email, password, role_id, tenant_id } = req.body
+        const user = await this.User.createUser(email, password, role_id, tenant_id)
         res.status(201).json(user)
     })
     
