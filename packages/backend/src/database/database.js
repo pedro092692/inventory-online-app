@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import pkg from '../config/config.js'
 import process from 'process'
 import { Sequelize } from 'sequelize'
 import { initializeUser, User } from '../models/UserModel.js'
@@ -12,6 +12,10 @@ import { initializePayment, Payment } from '../models/inventory_models/PaymentMo
 import { initializePaymentDetail, PaymentDetail } from '../models/inventory_models/PaymentDetailModel.js' 
 import { initializeDollar } from '../models/inventory_models/DollarModel.js'
 
+const currentEnv = process.env.NODE_ENV || 'development'
+const {username, password, database, host, port, dialect} = pkg[currentEnv]
+
+
 let instance = null
 
 class Database {
@@ -22,10 +26,10 @@ class Database {
             return instance
         }
      
-        this.sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
-            host: process.env.DB_HOST,
-            port: process.env.DB_PORT,
-            dialect: 'postgres',
+        this.sequelize = new Sequelize(database, username, password, {
+            host: host,
+            port: port,
+            dialect: dialect,
             logging: false,
             pool: {
                 max: 2, 
