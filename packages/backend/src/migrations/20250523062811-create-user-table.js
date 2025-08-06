@@ -40,6 +40,10 @@ module.exports = {
             model: 'roles',
             key: 'id'
           }
+        },
+        tenant_id:{
+          type: Sequelize.INTEGER,
+          allowNull: true,
         }
       }
     )
