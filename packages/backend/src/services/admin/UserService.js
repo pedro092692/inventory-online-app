@@ -66,6 +66,24 @@ class UserService {
     }
 
     /**
+     * Retrieves a user by a given email.
+     * @param {String} email - The meail of the user to retrieve.
+     * @return {Promise<Object>} - A promise that resolves to the user object.
+     * @throws {ServiceError} - If an error occurs during retrieval.
+     */
+    findUserByEmail(email) {
+        return this.#error.handler(['Finding User', email, 'User'], async() => {
+            const user = await User.findOne({
+                where: {
+                    email: email
+                }
+            })
+
+            return user
+        })
+    }
+
+    /**
      * Updates a user with the given ID and updates.
      * @param {number} userId - The ID of the user to update.
      * @param {Object} updates - An object containing the updates to apply to the user.
