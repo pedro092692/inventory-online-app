@@ -1,6 +1,16 @@
 import { NotFoundError } from '../../errors/NofoundError.js'
 import ServiceErrorHandler from '../../errors/ServiceErrorHandler.js'
+import pkg from '../../config/config.js'
+import process from 'process'
 import { User } from '../../models/UserModel.js'
+import bcrypt from 'bcrypt'
+
+
+const currentEnv = process.env.NODE_ENV || 'development'
+const saltRounds = pkg[currentEnv].saltRounds
+
+
+
 
 class UserService {
     // new instance of service error handler 
@@ -22,7 +32,7 @@ class UserService {
         return this.#error.handler(['Create user'], async() => {
             const newUser = await User.create({
                 email: email,
-                password: password,
+                password: await bcrypt.hash(password, saltRounds),
                 roleId: roleId
             })
             const user = this.detelePassword(newUser)

@@ -5,12 +5,16 @@ const dbConfig = {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    host: process.env.HOST,
-    port: process.env.PORT,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
     dialect: 'postgres'
 }
 
+const appConfig = {
+    saltRounds: parseInt(process.env.SALT_ROUNDS, 10)
+}
+
 module.exports = {
-    development: dbConfig,
-    production: dbConfig,
+    development: {...dbConfig, ...appConfig},
+    production: {...dbConfig, ...appConfig},
 }
