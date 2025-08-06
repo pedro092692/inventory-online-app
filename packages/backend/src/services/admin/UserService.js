@@ -33,7 +33,7 @@ class UserService {
             const newUser = await User.create({
                 email: email,
                 password: await bcrypt.hash(password, saltRounds),
-                roleId: roleId
+                role_id: roleId
             })
             const user = this.detelePassword(newUser)
             return user

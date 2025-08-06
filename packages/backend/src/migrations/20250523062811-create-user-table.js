@@ -33,7 +33,7 @@ module.exports = {
           }
         },
 
-        roleId:{
+        role_id:{
           type: Sequelize.INTEGER,
           allowNull: false,
           references: {
