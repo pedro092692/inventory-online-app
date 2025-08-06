@@ -12,7 +12,11 @@ const dbConfig = {
 
 const appConfig = {
     saltRounds: parseInt(process.env.SALT_ROUNDS, 10),
-    jtw_secret: process.env.JWT_SECRET
+    jtw_secret: process.env.JWT_SECRET,
+    admin_user: process.env.ADMIN_EMAIL,
+    admin_pass: process.env.ADMIN_PASS,
+    admin_role: process.env.ADMIN_ROLE,
+    admin_tenant: process.env.ADMIN_TENANT,
 }
 
 module.exports = {
