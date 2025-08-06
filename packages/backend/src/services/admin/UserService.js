@@ -136,6 +136,10 @@ class UserService {
         return objNotPassword
     }
 
+    async _verifyPassword(user, password) {
+        return await bcrypt.compare(password, user.password)
+    }
+
 }
 
 export default UserService
