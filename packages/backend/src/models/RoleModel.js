@@ -2,6 +2,13 @@ import { DataTypes, Model } from 'sequelize'
 
 class Role extends Model {
     // ralations model 
+
+    static association(model) {
+        this.hasMany(model.User, {
+            foreignKey: 'role_id',
+            as: 'users'
+        })
+    }
 }
 
 /**
