@@ -23,10 +23,10 @@ class SecurityController {
         const user = await this.user.findUserByEmail(email)
         
         if(!user) {
-            res.status(401).json({message: 'Involid Email or Password'})
+           return res.status(401).json({message: 'Invalid email or password.'})
         }
 
-        res.status(200).json({message: 'User found!`'})
+        return res.status(200).json({message: 'User found!.'})
     })
 }
 

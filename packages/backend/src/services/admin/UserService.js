@@ -78,7 +78,6 @@ class UserService {
                     email: email
                 }
             })
-
             return user
         })
     }

@@ -1,4 +1,5 @@
 import express from 'express'
+import SecurityController from '../../Controllers/admin/SecurityController.js'
 
 
 class SecurityRoutes {
@@ -13,6 +14,7 @@ class SecurityRoutes {
      */
     initializeRoutes() {
         this.router.get('/', (req, res) => res.send('Security Routes'))
+        this.router.post('/login', (req, res) => new SecurityController().findUser(req, res))
     }
 }
 
