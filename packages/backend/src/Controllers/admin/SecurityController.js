@@ -1,5 +1,6 @@
 import UserService from '../../services/admin/UserService.js'
 import ControllerErrorHandler from '../../errors/controllerErrorHandler.js'
+import SecurityService from '../../services/admin/SecurityService.js'
 
 
 class SecurityController {
@@ -8,6 +9,7 @@ class SecurityController {
 
     constructor() {
         this.user = new UserService()
+        this.security = new SecurityService()
         this.#error
     }
 
@@ -27,8 +29,16 @@ class SecurityController {
         if(!user || !await this.user._verifyPassword(user, password)) {
            return res.status(401).json({message: 'Invalid email or password.'})
         }
-
-        res.status(200).json({message: 'Login successful'})
+        // sign jwt token, create token
+        const token = await this.security.setJwt(user)
+        // send token 
+        res.cookie('access_token', token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 1000 * 60 * 60 
+        })
+        .status(200).json({message: 'Login successful'})
     })
 }
 
