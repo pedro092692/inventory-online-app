@@ -2,6 +2,14 @@ import { DataTypes, Model } from 'sequelize'
 
 class User extends Model {
     // relations model 
+
+    // roles
+    static association(model) {
+        this.belongsTo(model.Role, {
+            foreignKey: 'role_id',
+            as: 'role'
+        })
+    }
 }
 
 /**
@@ -45,7 +53,7 @@ function initializeUser(sequelize) {
                 }
             },
 
-            roleId: {
+            role_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
