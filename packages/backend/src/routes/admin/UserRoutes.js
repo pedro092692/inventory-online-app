@@ -1,11 +1,11 @@
 import { Router } from 'express'
 import UserController from '../../Controllers/admin/UserController.js'
-import { authenticated } from '../../middlewares/authMiddleware.js'
+import { authenticated, isAdmin } from '../../middlewares/authMiddleware.js'
 
 class UserRoutes {
     constructor(){
         this.router = Router()
-        this.router.use(authenticated)
+        this.router.use(authenticated, isAdmin)
         this.initializeRoutes()
     }
 
