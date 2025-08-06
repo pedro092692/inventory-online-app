@@ -10,7 +10,7 @@ import PaymentMethodRoutes from './routes/PaymentMethodRoutes.js'
 import PayInvoiceRoutes from './routes/PaymentDetailRoutes.js'
 import DollarValueRoutes from './routes/DollarValueRoutes.js'
 import ReportRoutes from './routes/reportRoutes.js'
-import SecurityRoutes from './routes/security.js'
+import SecurityRoutes from './routes/admin/SecurityRoutes.js'
 
 /**
  * @class Server
