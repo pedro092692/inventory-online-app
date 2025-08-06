@@ -988,9 +988,7 @@ Returns a`200 OK` status and list of a detailed breakdown of total sales per pay
 			"currency":  "Bolivar Digital"
 		}
 	},
-	.
-	.
-	.
+	
 ]
 ```
 
@@ -1067,9 +1065,7 @@ Returns a`200 OK` status and list of the sales made through each payment method 
 			"currency":  "Bolivar Digital"
 		}
 	},
-	.
-	.
-	.
+	
 	{
 		"total_sold_dollar":  1993.1499999999999,
 		"total_sold_bolivars":  1578.4799999999998,

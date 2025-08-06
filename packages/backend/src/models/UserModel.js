@@ -4,7 +4,7 @@ class User extends Model {
     // relations model 
 
     // roles
-    static association(model) {
+    static associationRole(model) {
         this.belongsTo(model.Role, {
             foreignKey: 'role_id',
             as: 'role'

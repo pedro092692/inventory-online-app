@@ -1,8 +1,8 @@
 import 'dotenv/config'
 import process from 'process'
 import { Sequelize } from 'sequelize'
-import { initializeUser } from '../models/UserModel.js'
-import { initializeRole } from '../models/RoleModel.js'
+import { initializeUser, User } from '../models/UserModel.js'
+import { initializeRole, Role } from '../models/RoleModel.js'
 import { initializeCustomer, Customer } from '../models/inventory_models/CustomerModel.js'
 import { initializeInvoice, Invoice } from '../models/inventory_models/InvoiceModel.js'
 import { initializeInvoiceDetail, InvoiceDetail } from '../models/inventory_models/InvoiceDetailModel.js'
@@ -84,6 +84,10 @@ class Database {
         Payment.associationPaymentDetail({Invoice})
         PaymentDetail.associationInvoice({Invoice})
         PaymentDetail.associationPaymentMethod({Payment})
+
+        // admin
+        User.associationRole({Role})
+        Role.associationUser({User})
     }
 }
 

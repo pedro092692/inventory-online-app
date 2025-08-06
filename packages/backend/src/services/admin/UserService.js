@@ -21,19 +21,19 @@ class UserService {
     }
 
     /**
-     * Creates a new user with the given email, password, and roleId.
+     * Creates a new user with the given email, password, and role_id.
      * @param {string} email - The email of the user.
      * @param {string} password - The password of the user.
-     * @param {number} roleId - The role ID of the user.
+     * @param {number} role_id - The role ID of the user.
      * @return {Promise<Object>} - A promise that resolves to the created user object without the password.
      * @throws {ServiceError} - If an error occurs during user creation.
      */
-    createUser(email, password, roleId) {
+    createUser(email, password, role_id) {
         return this.#error.handler(['Create user'], async() => {
             const newUser = await User.create({
                 email: email,
                 password: await bcrypt.hash(password, saltRounds),
-                role_id: roleId
+                role_id: role_id
             })
             const user = this.detelePassword(newUser)
             return user
@@ -50,7 +50,13 @@ class UserService {
     getAllUser(limit=10, offset=0) {
         return this.#error.handler(['Read All Users'], async() => {
             const users = await User.findAll({
-                attributes: ['id', 'email', 'roleId'],
+                attributes: ['id', 'email', 'role_id'],
+                include: [
+                    {
+                        association: 'role',
+                        attributes: ['name']
+                    }
+                ],
                 limit: limit,
                 offset: offset
             })
