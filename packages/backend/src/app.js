@@ -10,6 +10,7 @@ import PaymentMethodRoutes from './routes/PaymentMethodRoutes.js'
 import PayInvoiceRoutes from './routes/PaymentDetailRoutes.js'
 import DollarValueRoutes from './routes/DollarValueRoutes.js'
 import ReportRoutes from './routes/reportRoutes.js'
+import SecurityRoutes from './routes/security.js'
 
 /**
  * @class Server
@@ -77,6 +78,9 @@ class Server {
 
         // report routes
         this.app.use('/api/reports', new ReportRoutes().router)
+
+        // security routes 
+        this.app.use('/api/security', new SecurityRoutes().router)
     }
 
     /**
