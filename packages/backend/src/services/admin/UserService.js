@@ -35,8 +35,9 @@ class UserService {
                 password: await bcrypt.hash(password, saltRounds),
                 role_id: role_id
             })
-            const user = this.detelePassword(newUser)
-            return user
+            // add the tenant id 
+            const updatedUser = await this.updateUser(newUser.id, {tenant_id:newUser.id})
+            return updatedUser
         })
     }
 
