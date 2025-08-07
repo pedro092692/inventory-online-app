@@ -1,4 +1,5 @@
 import SellerService from '../services/SellerService.js'
+import UserService from '../services/admin/UserService.js'
 import controllerErrorHandler from '../errors/controllerErrorHandler.js'
 
 class SellerController {
@@ -7,6 +8,7 @@ class SellerController {
 
     constructor(model) {
         this.sellerService = new SellerService(model)
+        this.UserService = new UserService()
         this.#error
     }
 
@@ -18,9 +20,13 @@ class SellerController {
      * @returns {Promise<void>} - returns the created seller in the response
      */
     createSeller = this.#error.handler( async(req, res) => {
-        const { id_number, name, last_name, address } = req.body
+        // create a user for the seller 
+        const { id_number, name, last_name, address, email, password, role_id } = req.body
+        const user = await this.UserService.createUser(email, password, role_id, req.user.tenant_id)
+        // create seller
         const seller = await this.sellerService.createSeller(id_number, name, last_name, address)
-        res.status(201).json(seller)
+        
+        res.status(201).json({seller, user})
     })
 
     /**
