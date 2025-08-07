@@ -21,9 +21,10 @@ class Seller extends Model {
  * This function set up Seller model with fields such as: `id`, `id_number`, `name`, `last_name`, and `address`
  * and Configure Sequelize options like model name, table name, schema and timestamps.
  * @param {import('sequelize').Sequelize} sequelize -An Sequelize instance used to initialize the Seller model. 
- * @returns {void} This function does not return a value.
+ * @param {string} schema - The schame used to register the model.
+ * @return {Seller: typeof model} returns Seller model.
  */
-function initializeSeller(sequelize) {
+function initializeSeller(sequelize, schema) {
     Seller.init(
         {
             id: {
@@ -78,9 +79,10 @@ function initializeSeller(sequelize) {
             modelName: 'Seller',
             tableName: 'sellers',
             timestamps: false,
-            schema: 'test_schema' // only for test purposes
+            schema: schema
         }
     )
+    return Seller
 }
 
 export { initializeSeller, Seller }
