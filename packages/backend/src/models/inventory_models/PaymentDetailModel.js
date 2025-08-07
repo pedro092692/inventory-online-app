@@ -33,9 +33,10 @@ class PaymentDetail extends Model {
  * This function set up the PaymentDetail model with fields such as `id`, `invoice_id`, `payment_id`, `amount` and `reference_amount`
  * and configures Sequelize options like model name, table name, schema, and timestamps.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
- * @returns {void} This function does not return a value. 
+ * @param {string} schema - The schame used to register the model.
+ * @return {PaymentDetail: typeof model} returns PaymentDetail model.
  */
-function initializePaymentDetail(sequelize) {
+function initializePaymentDetail(sequelize, schema) {
     PaymentDetail.init(
         {
             id: {
@@ -93,9 +94,10 @@ function initializePaymentDetail(sequelize) {
             modelName: 'PaymentDetail',
             tableName: 'payment_details',
             timestamps: false,
-            schema: 'test_schema' // only for test purposes
+            schema: schema
         }
     )
+    return PaymentDetail
 }
 
 export { initializePaymentDetail, PaymentDetail}

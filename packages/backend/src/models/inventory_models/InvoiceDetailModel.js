@@ -35,7 +35,7 @@ class InvoiceDetail extends Model {
  * and configures Sequelize options like table name, schema, and timestamps.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
  * @param {string} schema - The schame used to register the model.
- * @returns {void} This function does not return a value.
+ * @return {InvoiceDetail: typeof model} returns InvoiceDetail model..
  */
 function initializeInvoiceDetail(sequelize, schema) {
     InvoiceDetail.init(

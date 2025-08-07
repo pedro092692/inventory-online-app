@@ -87,6 +87,7 @@ class Invoice extends Model {
  * `total_reference`, `total_paid` and `status`
  * and configures Sequelize options like model name, table name, schema, and timestamps.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
+ * @param {string} schema - The schame used to register the model.
  * @return {Invoice: typeof model} returns invoice model.
  */
 function initializeInvoice(sequelize, schema) {
