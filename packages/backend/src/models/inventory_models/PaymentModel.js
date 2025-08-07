@@ -24,9 +24,10 @@ class Payment extends Model {
  * This function set up Payment model with field such as: `id`, `name` and `currency`
  * and Configure Sequelize options like model name, table name schema, and timestamps.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
- * @return {void} This function does not return a value.
+ * @param {string} schema - The schame used to register the model.
+ * @return {Payment: typeof model} returns Payment model.
  */
-function initializePayment(sequelize) {
+function initializePayment(sequelize, schema) {
     Payment.init(
         {
             id: {
@@ -60,9 +61,10 @@ function initializePayment(sequelize) {
             modelName: 'Payment',
             tableName: 'payments',
             timestamps: false,
-            schema: 'test_schema' // only for test purposes
+            schema: schema
         }
     )
+    return Payment
 }
 
 export { initializePayment, Payment }
