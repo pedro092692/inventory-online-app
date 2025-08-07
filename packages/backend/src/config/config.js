@@ -7,7 +7,8 @@ const dbConfig = {
     database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    dialect: 'postgres'
+    dialect: 'postgres',
+    db_user_tenant: process.env.DB_USERTETANT
 }
 
 const appConfig = {

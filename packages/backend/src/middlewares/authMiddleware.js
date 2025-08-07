@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
 import pkg from '../config/config.js'
 import process from 'process'
+import Database from '../database/database.js'
 
 const currentEnv = process.env.NODE_ENV || 'development'
 const jtw_secret = pkg[currentEnv].jtw_secret
@@ -14,6 +15,10 @@ class AuthMiddleware {
     
     #error = new ControllerErrorHandler()
     
+    constructor() { 
+        this.db = new Database()
+    }
+    
     /**
      * Express middleware to verify a JWT from a cookie.
      * 
@@ -23,7 +28,7 @@ class AuthMiddleware {
      * This method is wrapped with a controller error handler to catch unexpected errors.
      * @type {import('express').RequestHandler}
      */
-    authenticatedToken = this.#error.handler((req, res, next) => {
+    authenticatedToken = this.#error.handler(async(req, res, next) => {
         const token = req.cookies.access_token
         if (!token) {
             return res.status(403).json({message: 'Access denied.'})
@@ -32,6 +37,12 @@ class AuthMiddleware {
         try {
             const decoded = jwt.verify(token, jtw_secret)
             req.user = decoded
+            
+            // set tenant path 
+            const tenant = await this.db.tenantConnection(req.user.tenant_id)
+            
+            req.tenantModels = tenant.models
+            req.sequelize = tenant.sequelize
             next()
         } catch (error) {
             console.log(error)
@@ -60,6 +71,7 @@ class AuthMiddleware {
 
         res.status(403).json({ message: 'Forbidden' })
     })
+
 }
 
 const authenticated = new AuthMiddleware().authenticatedToken

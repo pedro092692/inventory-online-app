@@ -87,9 +87,9 @@ class Invoice extends Model {
  * `total_reference`, `total_paid` and `status`
  * and configures Sequelize options like model name, table name, schema, and timestamps.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
- * @return {void} This function does not return a value.
+ * @return {Invoice: typeof model} returns invoice model.
  */
-function initializeInvoice(sequelize) {
+function initializeInvoice(sequelize, schema) {
     Invoice.init(
         {
             id: {
@@ -172,9 +172,10 @@ function initializeInvoice(sequelize) {
             modelName: 'Invoice',
             tableName: 'invoices',
             timestamps: false,
-            schema: 'test_schema' // only for test purposes
+            schema: schema
         }
     )
+    return Invoice
 }
 
 export { initializeInvoice, Invoice } 

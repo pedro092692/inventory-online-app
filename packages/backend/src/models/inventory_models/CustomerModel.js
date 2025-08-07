@@ -20,9 +20,9 @@ class Customer extends Model {
  * This function sets up the Customer model with fields such as `id`, `id_number`, `name`, and `phone`,
  * and configures Sequelize options like table name, schema, and timestamps.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
- * @returns {void} This function does not return a value.
+ * @return {Customer: typeof model} returns customer model..
  */
-function initializeCustomer(sequelize) {
+function initializeCustomer(sequelize, schema) {
     Customer.init(
         {
             id: {
@@ -61,9 +61,10 @@ function initializeCustomer(sequelize) {
             modelName: 'Customer',
             tableName: 'customers',
             timestamps: false,
-            schema: 'test_schema' // only for test purposes
+            schema: schema
         }
     )
+    return Customer
 }
 
 export { initializeCustomer, Customer }

@@ -78,7 +78,8 @@ class UserService {
             if(!user) {
                 throw new NotFoundError()
             }
-            return user
+            const safeUser = this.detelePassword(user)
+            return safeUser
         })
     }
 
