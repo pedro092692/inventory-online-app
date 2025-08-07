@@ -19,6 +19,9 @@ const __dirname = path.dirname(__filename)
 
 // path 
 const migrationsGlobPath = path.join(__dirname, '..', 'migrations', 'tenant_migrations', '*.js').replace(/\\/g, '/')
+const seedersGloPath = path.join(__dirname, '..', 'seeders', '20250616062547-seed-payment-methods.js').replace(/\\/g, '/')
+
+console.log(seedersGloPath)
 
 
 const currentEnv = process.env.NODE_ENV || 'development'
@@ -130,7 +133,9 @@ class Database {
         })
         
         //execute migrations for the tenant on create schema
-        await this.executeTenantMigration(schema, tenantSequelize)        
+        await this.executeTenantMigration(schema, tenantSequelize)    
+        // ejecute seeder for payments methods
+        await this.executeTenantMigration(schema, tenantSequelize, seedersGloPath)    
         return this.tenantRegister.get(tenant_id)
     }
 
@@ -187,13 +192,13 @@ class Database {
     }
 
     // ejecute migration for tenant
-    async executeTenantMigration(schema, sequelize) {
+    async executeTenantMigration(schema, sequelize, glop_path=migrationsGlobPath) {
        // queryInterface for migration 
     const queryInterface = sequelize.getQueryInterface()
     // umzug instance 
     const umzug = new Umzug({
         migrations: {
-            glob: migrationsGlobPath,
+            glob: glop_path,
             resolve: ({ name, path, context }) => {
                 return {
                     name,
@@ -228,6 +233,7 @@ class Database {
     
     }
 
+    
     // get all tenants 
     async getTenants() {
         const schemas = await this.sequelize.getQueryInterface().showAllSchemas()
