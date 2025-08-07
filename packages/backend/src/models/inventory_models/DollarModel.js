@@ -9,7 +9,7 @@ class Dollar extends Model {
  * This function sets up the Dollar model with fields such as `id`, `value`, and `date`,
  * and configures Sequelize options like table name, schema, and timestamps.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
- * @returns {void} This function does not return a value.
+ * @return {Dollar: typeof model} returns Dollar model.
  */
 function initializeDollar(sequelize) {
     Dollar.init(
@@ -49,6 +49,7 @@ function initializeDollar(sequelize) {
             schema: 'test_schema' // only for test purposes
         }
     )
+    return Dollar
 }
 
 export { initializeDollar, Dollar }
