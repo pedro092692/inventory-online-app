@@ -25,7 +25,7 @@ class DollarValueRoutes{
     async setRoutesModels(req, res, next) {
         const {Dollar} = req.tenantModels
         if(!Dollar) {
-            return res.status(400).json({ message: 'Customer model is required' })
+            return res.status(400).json({ message: 'Dollar model is required' })
         }
         req.Dollar = Dollar
         next()
