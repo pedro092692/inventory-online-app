@@ -20,6 +20,7 @@ class Customer extends Model {
  * This function sets up the Customer model with fields such as `id`, `id_number`, `name`, and `phone`,
  * and configures Sequelize options like table name, schema, and timestamps.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
+ * @param {string} schema - The schame used to register the model.
  * @return {Customer: typeof model} returns customer model..
  */
 function initializeCustomer(sequelize, schema) {

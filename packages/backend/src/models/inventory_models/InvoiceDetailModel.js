@@ -34,9 +34,10 @@ class InvoiceDetail extends Model {
  * This function sets up the InvoiceDetail model with fields such as `id`, `invoice_id`, `product_id`, `quantity` and `unit_price`,
  * and configures Sequelize options like table name, schema, and timestamps.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
+ * @param {string} schema - The schame used to register the model.
  * @returns {void} This function does not return a value.
  */
-function initializeInvoiceDetail(sequelize) {
+function initializeInvoiceDetail(sequelize, schema) {
     InvoiceDetail.init(
         {
             id: {
@@ -93,9 +94,10 @@ function initializeInvoiceDetail(sequelize) {
             modelName: 'InvoiceDetail',
             tableName: 'invoice_details',
             timestamps: false,
-            schema: 'test_schema' // only for test purposes
+            schema: schema
         }
     )
+    return InvoiceDetail
 }
 
 export { initializeInvoiceDetail, InvoiceDetail }
