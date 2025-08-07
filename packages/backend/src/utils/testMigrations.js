@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 import process from 'process'
+import { associations } from '../database/database.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -61,6 +62,9 @@ async function testMigration(schema='test_schema') {
     })
 
     const new_migrations = await umzug.pending()
+    // make associations 
+    associations
+    
     if(new_migrations.length > 0) {
         await umzug.up() // execute migrations
     }

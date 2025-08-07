@@ -17,14 +17,8 @@ import path from 'path'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Corregimos la ruta para que sea compatible con cualquier sistema operativo
+// path 
 const migrationsGlobPath = path.join(__dirname, '..', 'migrations', 'tenant_migrations', '*.js').replace(/\\/g, '/')
-console.log(migrationsGlobPath)
-
-
-
-
-
 
 
 const currentEnv = process.env.NODE_ENV || 'development'
@@ -95,14 +89,19 @@ class Database {
         // set schema
         const schema = `${db_user_tenant}_${tenant_id}`
 
-        // Si la conexión para el tenant ya existe en nuestro registro, la retornamos.
-        if(this.tenantRegister.has(tenant_id)) {
-            console.log(`Connection for tenant ${tenant_id} already exists.`)
-            return this.tenantRegister.get(tenant_id)
-        }
-
         // create new schema for tenant if it not exist
         await this.sequelize.query(`CREATE SCHEMA IF NOT EXISTS "${schema}"`)
+
+        // return instance if the connection already exists
+        if(this.tenantRegister.has(tenant_id)) {
+            console.log(`Connection for tenant ${tenant_id} already exists.`)
+            const tenant = this.tenantRegister.get(tenant_id)
+            // initialize models for tenant 
+            this.initializeTenantModels(tenant.sequelize, schema)
+            this.initializeTenantAssociations()
+            return tenant
+        }
+
 
         // create new connection for the tenant 
         const tenantSequelize = new Sequelize(database, username, password, {
@@ -115,40 +114,66 @@ class Database {
                 min: 0,
                 acquire: 3000,
                 idle: 10000
-            },
-            // Establecemos el schema por defecto para esta conexión
-            schema: schema
+            }
         })
         
         // initialize the models for the tenant
-        const models = this.initializeTenantModels(tenantSequelize, schema)
-
-        //execute migrations for the tenant on create schema
-        await this.executeTenantMigration(schema, tenantSequelize)
+        const models = await this.initializeTenantModels(tenantSequelize, schema)
 
         // initialize tenant model relations
         this.initializeTenantAssociations()
 
         //save connection for the tenant 
         this.tenantRegister.set(tenant_id, {
-            sequelize: tenantSequelize, // Guardamos la instancia correcta de sequelize para el tenant
+            sequelize: this.sequelize,
             models: models
         })
         
+        //execute migrations for the tenant on create schema
+        await this.executeTenantMigration(schema, tenantSequelize)        
         return this.tenantRegister.get(tenant_id)
     }
 
     // models for tenants 
-    initializeTenantModels(sequelize, schema) {
+    async initializeTenantModels(sequelize, schema) {
         console.log('initialize tenant models')
         const Customer = initializeCustomer(sequelize, schema)
         const Invoice = initializeInvoice(sequelize, schema)
-        return {Customer, Invoice}
+        const InvoiceDetail = initializeInvoiceDetail(sequelize, schema)
+        const Seller = initializeSeller(sequelize, schema)
+        const Product = initializeProduct(sequelize, schema)
+        const Payment = initializePayment(sequelize, schema)
+        const PaymentDetail = initializePaymentDetail(sequelize, schema)
+        const Dollar = initializeDollar(sequelize, schema)
+        return {
+            Customer, 
+            Invoice, 
+            InvoiceDetail, 
+            Seller, 
+            Product, 
+            Payment, 
+            PaymentDetail, 
+            Dollar
+        }
     }
 
     // initialize tenant model relations
     initializeTenantAssociations() {
         Customer.associate({Invoice})
+        Invoice.associate({Customer})
+        Invoice.associateDetail({InvoiceDetail})
+        Invoice.associationSeller({Seller})
+        Invoice.associationProducts({Product})
+        Invoice.associatePayments({Payment})
+        Invoice.associatePaymentDetail({PaymentDetail})
+        InvoiceDetail.associationInvoice({Invoice})
+        InvoiceDetail.associationProducts({Product})
+        Seller.associationSales({Invoice})
+        Product.associationInvoiceDetails({Invoice})
+        Payment.associationPaymentDetail({Invoice})
+        PaymentDetail.associationInvoice({Invoice})
+        PaymentDetail.associationPaymentMethod({Payment})
+
     }
 
     //get tenant models
@@ -209,5 +234,8 @@ class Database {
         return schemas
     }
 }
+const db = new Database()
+const associations = db.initializeTenantAssociations
+export {associations}
 
 export default Database

@@ -35,7 +35,6 @@ class UserService {
                 password: await bcrypt.hash(password, saltRounds),
                 role_id: role_id
             })
-            // add the tenant id 
             const updatedUser = await this.updateUser(newUser.id, {tenant_id: tenant_id || newUser.id})
             return updatedUser
         })
@@ -78,8 +77,7 @@ class UserService {
             if(!user) {
                 throw new NotFoundError()
             }
-            const safeUser = this.detelePassword(user)
-            return safeUser
+            return user
         })
     }
 
