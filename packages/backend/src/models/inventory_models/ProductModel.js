@@ -26,9 +26,10 @@ class Product extends Model {
  * This function set up Product model with filds such as: `id`, `barcpde`, `name`, `purchase_price`, `stock` and `selling_price`.
  * And configure Sequelize options like model name, table name, schema and timestamps.
  * @param {import('seuqelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
- * @return {void} This function does not return a value.
+ * @param {string} schema - The schame used to register the model.
+ * @return {Product: typeof model} returns Product model.
  */
-function initializeProduct(sequelize) {
+function initializeProduct(sequelize, schema) {
     Product.init(
         {
             id: {
@@ -84,9 +85,10 @@ function initializeProduct(sequelize) {
             modelName: 'Product',
             tableName: 'products',
             timestamps: false,
-            schema: 'test_schema' // only for test purposes
+            schema: schema
         }
     )
+    return Product
 }
 
 export { initializeProduct, Product }
