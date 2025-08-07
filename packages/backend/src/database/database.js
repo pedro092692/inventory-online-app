@@ -97,7 +97,6 @@ class Database {
 
         // return instance if the connection already exists
         if(this.tenantRegister.has(tenant_id)) {
-            console.log(`Connection for tenant ${tenant_id} already exists.`)
             const tenant = this.tenantRegister.get(tenant_id)
             // initialize models for tenant 
             this.initializeTenantModels(tenant.sequelize, schema)
@@ -141,7 +140,6 @@ class Database {
 
     // models for tenants 
     async initializeTenantModels(sequelize, schema) {
-        console.log('initialize tenant models')
         const Customer = initializeCustomer(sequelize, schema)
         const Invoice = initializeInvoice(sequelize, schema)
         const InvoiceDetail = initializeInvoiceDetail(sequelize, schema)
