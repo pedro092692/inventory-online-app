@@ -161,7 +161,7 @@ class Database {
     }
 
     // initialize tenant model relations
-    initializeTenantAssociations() {
+    async initializeTenantAssociations() {
         Customer.associate({Invoice})
         Invoice.associate({Customer})
         Invoice.associateDetail({InvoiceDetail})
@@ -239,7 +239,7 @@ class Database {
     }
 }
 const db = new Database()
-const associations = db.initializeTenantAssociations
+const associations = await db.initializeTenantAssociations
 export {associations}
 
 export default Database
