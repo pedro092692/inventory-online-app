@@ -1,4 +1,3 @@
-export default {
   /**
    * Inserts dummy seller data into the `sellers` table within the specified schema.
    *
@@ -7,6 +6,7 @@ export default {
    * @param {string} schema - The name of the database schema to target.
    * @returns {Promise<void>}
    */
+export default {
   up: async (queryInterface, Sequelize, schema) => {
     await queryInterface.bulkInsert(
       {

@@ -142,6 +142,13 @@ class UserService {
         return objNotPassword
     }
 
+    /**
+     * Verifies a user's password using bcrypt.
+     *
+     * @param {object} user - The user object containing the hashed password.
+     * @param {string} password - The raw password string to verify.
+     * @returns {Promise<boolean>} Resolves to `true` if the password is correct, otherwise `false`.
+     */
     async _verifyPassword(user, password) {
         return await bcrypt.compare(password, user.password)
     }
