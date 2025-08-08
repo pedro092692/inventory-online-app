@@ -45,7 +45,7 @@ function initializeDollar(sequelize, schema) {
         {
             sequelize,
             modelName: 'Dollar',
-            tableName: 'dollar-value',
+            tableName: 'exchange_rates',
             timestamps: false,
             schema: schema
         }
