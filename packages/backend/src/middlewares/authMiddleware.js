@@ -38,7 +38,7 @@ class AuthMiddleware {
             req.user = decoded
             
             // set tenant path 
-            const tenant = await this.db.tenantConnection(req.user.tenant_id)
+            const tenant = await this.db.tenant.TenantConnection(req.user.tenant_id)
             
             req.tenantModels = tenant.models
             req.sequelize = tenant.sequelize
