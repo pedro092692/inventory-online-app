@@ -17,7 +17,7 @@
 export default {
   async up (queryInterface, Sequelize, schema){
     queryInterface.createTable(
-      'dollar-value',
+      'exchange_rates',
       {
         id: {
             type: Sequelize.INTEGER,
@@ -57,7 +57,7 @@ export default {
 
   async down (queryInterface, Sequelize, schema){
     queryInterface.dropTable({
-      tableName: 'dollar-value',
+      tableName: 'exchange_rates',
       schema
     })
   }

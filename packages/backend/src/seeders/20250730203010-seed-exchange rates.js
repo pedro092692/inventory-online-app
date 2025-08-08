@@ -12,7 +12,7 @@ export default {
   up: async (queryInterface, Sequelize, schema) => {
     await queryInterface.bulkInsert(
       {
-        tableName: 'dollar-value',
+        tableName: 'exchange rates',
         schema: schema
       },
       dollarValues
@@ -30,7 +30,7 @@ export default {
   down: async (queryInterface, Sequelize, schema) => {
     await queryInterface.bulkDelete(
       {
-        tableName: 'dollar-value',
+        tableName: 'exchange rates',
         schema: schema
       },
       null, // this means "no condition" = delete all rows
