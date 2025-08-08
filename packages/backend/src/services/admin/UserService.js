@@ -34,7 +34,7 @@ class UserService {
                 email: email,
                 password: await bcrypt.hash(password, saltRounds),
                 role_id: role_id
-            })
+            }) 
             const updatedUser = await this.updateUser(newUser.id, {tenant_id: tenant_id || newUser.id})
             return updatedUser
         })

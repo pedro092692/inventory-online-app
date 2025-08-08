@@ -30,7 +30,20 @@ class ReportRoutes {
         this.router.get('/cash-closing', (req, res) =>  new ReportController(null, null, req.PaymentDetail).cashClosing(req, res))
         this.router.get('/pay-methods', (req, res) =>  new ReportController(null, null, req.PaymentDetail).payMethodPercent(req, res))
     }
-
+    
+    /**
+     * Middleware to attach the `Invoice`, `InvoiceDetail` and `PaymentDetail` models from the tenant-specific models to the request object.
+     *
+     * This method extracts the `Invoice`, `InvoiceDetail` and `PaymentDetail` models from `req.tenantModels` 
+     * and assigns it to `req.Invoice`, `req.InvoiceDetail` and `req.PaymentDetail`.
+     * If any of the models are missing, it responds with a 400 Bad Request.
+     * Otherwise, it passes control to the next middleware.
+     *
+     * @param {import('express').Request} req - Express request object.
+     * @param {import('express').Response} res - Express response object.
+     * @param {import('express').NextFunction} next - Express next middleware function.
+     * @returns {Promise<void>}
+     */
     async setRoutesModels(req, res, next) {
         const {Invoice, InvoiceDetail, PaymentDetail} = req.tenantModels
         if(!Invoice || !InvoiceDetail || !PaymentDetail) {

@@ -23,7 +23,19 @@ class PaymentMethodRoutes {
         this.router.patch('/:id', (req, res) => new PaymentMethodController(req.Payment).updatePaymentMethod(req, res))
         this.router.delete('/', (req, res) => new PaymentMethodController(req.Payment).deletePaymentMethod(req, res))
     }
-
+    /**
+     * Middleware to attach the `Payment` model from the tenant-specific models to the request object.
+     *
+     * This method extracts the `Payment` model from `req.tenantModels` 
+     * and assigns it to `req.Payment`.
+     * If the model is missing, it responds with a 400 Bad Request.
+     * Otherwise, it passes control to the next middleware.
+     *
+     * @param {import('express').Request} req - Express request object.
+     * @param {import('express').Response} res - Express response object.
+     * @param {import('express').NextFunction} next - Express next middleware function.
+     * @returns {Promise<void>}
+     */
     async setRoutesModel(req, res, next) {
         const { Payment } = req.tenantModels
         if(!Payment) {

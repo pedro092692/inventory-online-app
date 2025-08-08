@@ -13,7 +13,7 @@ class SellerController {
     }
 
     /**
-     * Creates a new seller.
+     * Creates a new seller and creates new user for the seller.
      * @param {Object} req - request object containing seller details in the body
      * @param {Object} res - response object to send the created seller
      * @throws {ServiceError} - throws an error if the seller could not be created

@@ -25,6 +25,19 @@ class InvoiceRoutes {
         this.router.delete('/detail', (req, res) => new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).deleteInvoiceDetail(req, res))
     }   
 
+    /**
+     * Middleware to attach the `Invoice`, `Product`, `Dollar`, `InvoiceDetail` models from the tenant-specific models to the request object.
+     *
+     * This method extracts the `Invoice`, `Product`, `Dollar`, `InvoiceDetail` models from `req.tenantModels` 
+     * and assigns it to `req.Invoice`, `req.Product`, `req.Dollar`.
+     * If any of the models are missing, it responds with a 400 Bad Request.
+     * Otherwise, it passes control to the next middleware.
+     *
+     * @param {import('express').Request} req - Express request object.
+     * @param {import('express').Response} res - Express response object.
+     * @param {import('express').NextFunction} next - Express next middleware function.
+     * @returns {Promise<void>}
+     */
     async setRoutesModels(req, res, next) {
         const {Invoice, Product, Dollar, InvoiceDetail} = req.tenantModels
         if(!Dollar || !Invoice || !Product || !InvoiceDetail) {

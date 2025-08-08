@@ -23,7 +23,19 @@ class CustomerRoutes {
         this.router.patch('/:id', (req, res) => new CustomerController(req.Customer).updateCustomer(req, res))
         this.router.delete('/', (req, res) => new CustomerController(req.Customer).deleteCustomer(req, res))
     }
-
+    
+    /**
+     * Middleware to attach the `Customer` model from the tenant-specific models to the request object.
+     *
+     * This method extracts the `Customer` model from `req.tenantModels` and assigns it to `req.Customer`.
+     * If the model is missing, it responds with a 400 Bad Request.
+     * Otherwise, it passes control to the next middleware.
+     *
+     * @param {import('express').Request} req - Express request object.
+     * @param {import('express').Response} res - Express response object.
+     * @param {import('express').NextFunction} next - Express next middleware function.
+     * @returns {Promise<void>}
+     */
     async setRoutesModels(req, res, next) {
         const {Customer} = req.tenantModels
         if(!Customer) {

@@ -1,3 +1,21 @@
+/**
+ * Sequelize migration to create the `products` table.
+ *
+ * The table includes:
+ * - `id`: Auto-incrementing primary key.
+ * - `barcode`: Product's barcode string required and non-empty.
+ * - `name`: Product's name, required and non-empty.
+ * - `purchase_price`: Product's purchase price number, required.
+ * - `selling_price`: Product's selling price, required.
+ * - `stock`: Product's stock number, required.
+ *
+ * The table is created within the specified schema.
+ *
+ * @param {import('sequelize').QueryInterface} queryInterface - The interface for database operations.
+ * @param {import('sequelize')} Sequelize - Sequelize library for defining data types.
+ * @param {string} schema - The database schema where the table will be created.
+ * @returns {Promise<void>}
+ */
 export default {
   up: async (queryInterface, Sequelize, schema)  => {
       await queryInterface.createTable(
@@ -50,7 +68,14 @@ export default {
         }
       )
   },
-
+/**
+   * Reverts the migration by dropping the `products` table from the specified schema.
+   *
+   * @param {import('sequelize').QueryInterface} queryInterface - The interface for database operations.
+   * @param {import('sequelize')} Sequelize - Sequelize library.
+   * @param {string} schema - The database schema where the table will be dropped.
+   * @returns {Promise<void>}
+   */
   down: async (queryInterface, Sequelize, schema) => {
     await queryInterface.dropTable({
       tableName: 'products',

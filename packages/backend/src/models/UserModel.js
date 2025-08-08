@@ -3,7 +3,11 @@ import { DataTypes, Model } from 'sequelize'
 class User extends Model {
     // relations model 
 
-    // roles
+    /**
+     * Creates an association between User model and the Role model.
+     * @param {{Role: typeof Model}} model - An object containing the Role model.
+     * @return {void} This method does not return a value. 
+     */
     static associationRole(model) {
         this.belongsTo(model.Role, {
             foreignKey: 'role_id',

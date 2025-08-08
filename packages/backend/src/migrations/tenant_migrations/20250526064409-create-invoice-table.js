@@ -1,3 +1,24 @@
+/**
+ * Sequelize migration to create the `invoices` table.
+ *
+ * The table includes:
+ * - `id`: Auto-incrementing primary key.
+ * - `date`: Invoice date, required and must be a valid date.
+ * - `customer_id`: Optional foreign key referencing `customers.id`, updates cascade.
+ * - `seller_id`: Optional foreign key referencing `sellers.id`, deletes and updates cascade.
+ * - `total`: Required total amount of the invoice, numeric with default value 0.00.
+ * - `total_reference`: Optional reference total, numeric with default value 0.00.
+ * - `total_paid`: Optional amount paid, numeric with default value 0.00.
+ * - `status`: Enum field indicating payment status, either `'paid'` or `'unpaid'`, default `'unpaid'`.
+ *
+ * The table is created within the specified schema.
+ *
+ * @param {import('sequelize').QueryInterface} queryInterface - The interface for database operations.
+ * @param {import('sequelize')} Sequelize - Sequelize library for defining data types.
+ * @param {string} schema - The database schema where the table will be created.
+ * @returns {Promise<void>}
+ */
+
 export default {
   up: async (queryInterface, Sequelize, schema) => {
     await queryInterface.createTable(
@@ -77,6 +98,14 @@ export default {
       }
     )
   },
+  /**
+   * Reverts the migration by dropping the `invoices` table from the specified schema.
+   *
+   * @param {import('sequelize').QueryInterface} queryInterface - The interface for database operations.
+   * @param {import('sequelize')} Sequelize - Sequelize library.
+   * @param {string} schema - The database schema where the table will be dropped.
+   * @returns {Promise<void>}
+   */
 
   down: async (queryInterface, Sequelize, schema) => {
     await queryInterface.dropTable({

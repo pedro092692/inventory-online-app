@@ -20,8 +20,7 @@ class AuthMiddleware {
     }
     
     /**
-     * Express middleware to verify a JWT from a cookie.
-     * 
+     * Express middleware to verify a JWT from a cookie and set the correct tenant path for the logged-in user.
      * It checks for a cookie named `access_token`. If the token is present and valid,
      * it decodes the payload, attaches it to `req.user`, and passes control to the next middleware.
      * If the token is missing or invalid, it sends a 403 or 401 response, respectively.
@@ -51,11 +50,11 @@ class AuthMiddleware {
     })
 
     /**
-     * Express middleware to verify is a user is admin.
+     * Express middleware to verify if the user has admin privileges.
      * 
-     * It checks for user in request payload and looks for role,
-     * if the role is admin continues 
-     * If the role is invalid, it sends a 403 or 401 response, respectively.
+     * It checks for a user in the request payload and verifies the role.
+     * if the role is admin (`role === 1`), it continues to the next middleware.
+     * If the role is invalid or missing, it sends a 403 or 401 response, respectively.
      * This method is wrapped with a controller error handler to catch unexpected errors.
      * @type {import('express').RequestHandler}
      */

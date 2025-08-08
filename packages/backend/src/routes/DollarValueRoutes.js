@@ -22,6 +22,18 @@ class DollarValueRoutes{
         this.router.delete('/', (req, res) => new DollarValueController(req.Dollar).deleteDollarValue(req, res))
     }
 
+    /**
+     * Middleware to attach the `Dollar` model from the tenant-specific models to the request object.
+     *
+     * This method extracts the `Dollar` model from `req.tenantModels` and assigns it to `req.Dollar`.
+     * If the model is missing, it responds with a 400 Bad Request.
+     * Otherwise, it passes control to the next middleware.
+     *
+     * @param {import('express').Request} req - Express request object.
+     * @param {import('express').Response} res - Express response object.
+     * @param {import('express').NextFunction} next - Express next middleware function.
+     * @returns {Promise<void>}
+     */
     async setRoutesModels(req, res, next) {
         const {Dollar} = req.tenantModels
         if(!Dollar) {

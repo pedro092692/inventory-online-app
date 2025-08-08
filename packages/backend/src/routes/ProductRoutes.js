@@ -22,6 +22,19 @@ class ProductRoutes {
         this.router.delete('/', (req, res) => new ProductController(req.Product).deleteProduct(req, res))
     }
 
+    /**
+     * Middleware to attach the `Product` and `Dollar` models from the tenant-specific models to the request object.
+     *
+     * This method extracts the `Product` and `Dollar` models from `req.tenantModels` 
+     * and assigns it to `req.Product` and `req.Dollar`.
+     * If any of the models are missing, it responds with a 400 Bad Request.
+     * Otherwise, it passes control to the next middleware.
+     *
+     * @param {import('express').Request} req - Express request object.
+     * @param {import('express').Response} res - Express response object.
+     * @param {import('express').NextFunction} next - Express next middleware function.
+     * @returns {Promise<void>}
+     */
     async setRoutesModels(req, res, next) {
         const {Product, Dollar} = req.tenantModels
         if(!Dollar || !Product) {
