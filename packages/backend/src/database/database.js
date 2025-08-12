@@ -25,7 +25,7 @@ class Database {
             dialect: dialect,
             logging: false,
             pool: {
-                max: 2, 
+                max: 10, 
                 min: 0,
                 acquire: 3000,
                 idle: 10000
