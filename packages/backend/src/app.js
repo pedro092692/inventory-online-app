@@ -12,6 +12,7 @@ import DollarValueRoutes from './routes/DollarValueRoutes.js'
 import ReportRoutes from './routes/reportRoutes.js'
 import SecurityRoutes from './routes/security/SecurityRoutes.js'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 /**
  * @class Server
@@ -42,6 +43,10 @@ class Server {
         this.app.use(express.urlencoded({ extended: true }))
         this.app.use(express.json())
         this.app.use(cookieParser())
+        this.app.use(cors({
+            origin: 'http://127.0.0.1:3000',
+            credentials: true
+        }))
     }
 
     /**

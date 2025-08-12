@@ -46,7 +46,7 @@ class TenantConnection {
             dialect: dialect,
             logging: false,
             pool: {
-                max: 10,
+                max: 1,
                 min: 0,
                 acquire: 3000,
                 idle: 10000
