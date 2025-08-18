@@ -4,10 +4,13 @@
   "description": "inventory online app allows you manage your inventory quickly and easy",
   "private": true,
   "scripts": {
-    "dev:backend": "npm run dev --workspace=packages/backend"
+    "dev:backend": "npm run dev --workspace=packages/backend",
+    "dev:frontend": "npm run dev --workspace=packages/frontend/inventory-online-app",
+    "dev:all": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "packages/frontend/*"
   ],
   "author": "pedro bastidas (bastidaspedrodev@outlook.com)",
   "license": "ISC",
