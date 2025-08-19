@@ -1,11 +1,8 @@
-import jwt from 'jsonwebtoken'
 import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
-import pkg from '../config/config.js'
-import process from 'process'
 import Database from '../database/database.js'
+import SecurityService from '../services/admin/SecurityService.js'
 
-const currentEnv = process.env.NODE_ENV || 'development'
-const jtw_secret = pkg[currentEnv].jtw_secret
+
 
 /**
  * @class AuthMiddleware
@@ -17,6 +14,7 @@ class AuthMiddleware {
     
     constructor() { 
         this.db = new Database()
+        this.security = new SecurityService()
     }
     
     /**
@@ -29,24 +27,24 @@ class AuthMiddleware {
      */
     authenticatedToken = this.#error.handler(async(req, res, next) => {
         const token = req.cookies.access_token
+        // check if token is present
         if (!token) {
             return res.status(403).json({message: 'Access denied.'})
         }
-        
-        try {
-            const decoded = jwt.verify(token, jtw_secret)
-            req.user = decoded
-            
-            // set tenant path 
-            const tenant = await this.db.tenant.TenantConnection(req.user.tenant_id)
-            
-            req.tenantModels = tenant.models
-            req.sequelize = tenant.sequelize
-            next()
-        } catch (error) {
-            console.log(error)
+
+        // verity token 
+        const data = await this.security.verityToken(token)
+
+        if(!data) {
             return res.status(401).json({message: 'Invalid or expired token.'})
         }
+
+        req.user = data
+        // set tenant path 
+        const tenant = await this.db.tenant.TenantConnection(req.user.tenant_id)
+        req.tenantModels = tenant.models
+        req.sequelize = tenant.sequelize
+        next()
     })
 
     /**

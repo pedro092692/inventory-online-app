@@ -40,6 +40,17 @@ class SecurityController {
         })
         .status(200).json({message: 'Login successful'})
     })
+
+    verifyToken = this.#error.handler( async(req, res) => {
+        const token = req.cookies.access_token
+        const data = await this.security.verityToken(token)
+
+        if(!data) {
+            return res.status(401).json({message: 'Invalid token'})
+        }
+
+        res.status(200).json({data})
+    }) 
 }
 
 export default SecurityController

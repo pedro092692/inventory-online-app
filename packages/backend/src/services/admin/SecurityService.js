@@ -41,6 +41,34 @@ class SecurityService {
             return token
         })
     }
+
+    /**
+     * This method verifies a given JSON Web Token (JWT).
+     * It checks if the token is provided and attempts to decode it using the secret key.
+     * @param {string} token - The JWT to be verified.
+     * @throws {Error} - Throws an error if the token is not provided. 
+     * @returns {object|boolean} - Returns the decoded token data if verification is successful, or false if verification fails.
+     * @throws {ServiceError} - Throws an error if the token verification fails.
+     */
+    verityToken(token) {
+        return this.#error.handler(['Verity token'], async() => {
+            if(!token) {
+                throw new Error('Token is required')
+            }
+
+            try {
+                const data = jwt.verify(token, jtw_secret)
+                return {
+                    id: data.id,
+                    email: data.email,
+                    role: data.role,
+                    tenant_id: data.tenant_id
+                }
+            }catch {
+                return false
+            }
+        }) 
+    }
 }
 
 
