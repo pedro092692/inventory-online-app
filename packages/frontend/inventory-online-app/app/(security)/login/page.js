@@ -1,15 +1,26 @@
 'use client'
 import axios from 'axios'
 import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
+
 
 export default function Home() {
+      const router = useRouter()
+      const searchParams = useSearchParams()
+      const nextUrl = searchParams.get('next') || '/'
+
+
       const [email, setEmail] = useState('');
       const [password, setPassword] = useState('');
 
       const login = async () => {
         try{
-            const response = await axios.post('http://127.0.0.1:4000/api/security/login', {email, password}, {withCredentials: true})
-            console.log(response.data)
+            const response = await axios.post(`${NEXT_PUBLIC_API_BASE_URL}/api/security/login`, {email, password}, {withCredentials: true})
+            setTimeout(() => {
+              router.push(nextUrl)
+            }, 10)
+
         }catch(error) {
             if(error.response) {
                 console.log(error.response.status)

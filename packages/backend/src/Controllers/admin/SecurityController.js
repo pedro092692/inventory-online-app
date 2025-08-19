@@ -42,7 +42,12 @@ class SecurityController {
     })
 
     verifyToken = this.#error.handler( async(req, res) => {
-        const token = req.cookies.access_token
+        let token
+        try {
+            token = req.body.token
+        } catch {
+            token = req.cookies.access_token
+        }
         const data = await this.security.verityToken(token)
 
         if(!data) {
