@@ -27,6 +27,11 @@
   }
 }
 
+.test {
+  color: red;
+  font-size: 48px;
+}
+
 .main {
   display: flex;
   flex-direction: column;
