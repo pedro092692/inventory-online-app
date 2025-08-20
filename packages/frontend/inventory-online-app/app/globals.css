@@ -44,6 +44,13 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  display: flex;
   font-family: var(--sfui-font), sans-serif;
+  display: flex;
+  flex-direction: column;
+  background-color: #F2F2F2;
+
+}
+
+h1, p {
+  margin: 0;
 }

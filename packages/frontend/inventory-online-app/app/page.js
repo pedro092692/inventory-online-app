@@ -4,6 +4,8 @@ import { Hero } from './ui/home/hero/heroSection.jsx'
 
 export default function Home() {
   return (
-    <Hero />
+    <section className={styles.section}>
+      <Hero />
+    </section>
   )
 }

@@ -6,7 +6,7 @@ export function Navbar() {
     return (
         <div className={styles.navbar}>
             <BrandMenu />
-            <Button />
+            <Button text={'Iniciar Sesión'}/>
         </div>
     )
 

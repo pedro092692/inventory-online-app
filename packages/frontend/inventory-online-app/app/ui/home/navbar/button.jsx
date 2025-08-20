@@ -1,8 +1,8 @@
 import styles from './page.module.css'
-export function Button() {
+export function Button({text}) {
     return (
         <button className={styles.button}>
-            Iniciar sesión
+            {text}
         </button>
     )
 }

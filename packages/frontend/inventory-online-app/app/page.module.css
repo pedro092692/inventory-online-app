@@ -112,6 +112,12 @@ a.secondary {
   flex-shrink: 0;
 }
 
+.section {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   a.primary:hover {
