@@ -40,6 +40,12 @@ a {
     color-scheme: dark;
   }
 } */
+
+:root {
+  --color-blue800: #12113B;
+  --color-blue700: #1B4279;
+}
+
 body {
   margin: 0;
   padding: 0;

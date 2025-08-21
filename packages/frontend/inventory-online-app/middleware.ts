@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
   const publicPaths = ["/login", "/register"];
   const privatePaths = ["/dashboard", "/inventory", "/orders", "/products"]
 
-   if(publicPaths.some((path) => pathname.startsWith(path))) {
+  if(publicPaths.some((path) => pathname.startsWith(path))) {
     // If the user is logged in, redirect them to the dashboard
     return redirectIfLoggedIn(request)
   }

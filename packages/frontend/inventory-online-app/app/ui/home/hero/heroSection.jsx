@@ -2,6 +2,7 @@ import styles from './page.module.css'
 import { Button } from '../navbar/button'
 import { Navbar } from '../navbar/navbar.jsx'
 import Image from 'next/image'
+import { Container } from '../../utils/container.jsx'
 
 export function Hero() {
     return (
@@ -16,7 +17,7 @@ export function Hero() {
                     <button className={styles.button}>
                         Empezar Ahora
                     </button>
-                    <Button text={'Demostración'}/>
+                    <Button text={'Demostración'} color={'blue700'}/>
                 </div>
                 <Image 
                     src="/images/home/placeholder.png"
@@ -26,6 +27,8 @@ export function Hero() {
                     alt="nexa software"
                 />
             </div>
+            <Container children={'soy un container'}/>
+
         </>
     )
 }
