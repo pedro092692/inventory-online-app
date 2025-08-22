@@ -1,6 +1,7 @@
 import styles from './page.module.css'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Logo } from '../../utils/logo'
 
 export function BrandMenu() {
     
@@ -8,13 +9,7 @@ export function BrandMenu() {
         <div className={styles.brandMenu}>
             {/* logo */}
             <Link href="/">
-                <Image 
-                    src="/images/home/logo.svg"
-                    width={190}
-                    height={24}
-                    loading="lazy"
-                    alt="Next.js Logo"
-                />
+                <Logo  />
             </Link>
             {/* menu */}
             <div className={styles.menu}>
