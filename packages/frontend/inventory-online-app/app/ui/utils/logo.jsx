@@ -26,6 +26,12 @@ export function Logo({type='fullColor'}) {
             src: `${path}/iconMono.svg`,
             with: 48,
             height: 48
+        },
+
+        iconWhite: {
+            src: `${path}/iconWhite.svg`,
+            with: 48,
+            height: 48
         }
     }
     
