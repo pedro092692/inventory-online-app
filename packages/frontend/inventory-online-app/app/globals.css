@@ -42,8 +42,25 @@ a {
 } */
 
 :root {
+  /* primary colors */
   --color-blue800: #12113B;
   --color-blue700: #1B4279;
+  --color-blue600: #80CDED;
+  --color-blue400: #D2EDF9;
+  --colro-blue100: #F7FCFF;
+  /* end primary colors */
+
+  /* neutral */
+  --color-neturaBlack: #1F2223;
+  --color-neutralGrey900: #363939;
+  --color-neutralGrey800: #57595A;
+  --color-neutralGrey700: #797A7B;
+  --color-neutralGrey600: #B1B2B2;
+  --color-neutralGrey500: #D2D3D3;
+  --color-neutralGrey300: #EFEFEF;
+  --color-neutralGrey100: #F6F6F6;
+  --color-neutralWhite: #FFFFFF;
+  /* end netural */
 }
 
 body {
