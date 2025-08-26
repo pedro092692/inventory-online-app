@@ -61,6 +61,18 @@ a {
   --color-neutralGrey100: #F6F6F6;
   --color-neutralWhite: #FFFFFF;
   /* end netural */
+
+  /* blue accent */
+  --color-accentBlue400: #7774D7;
+  --color-accentBlue300: #C5C4EE;
+  --color-accentBlue200: #D8D7F4;
+  /* end blue accent */
+
+  /* orange accent */
+  --color-accentOrange400: #DDA852;
+  --color-accentOrange300: #E2CC9C;
+  --color-accentOrange200: #EEE0C4;
+  /* end orange accent */
 }
 
 body {
