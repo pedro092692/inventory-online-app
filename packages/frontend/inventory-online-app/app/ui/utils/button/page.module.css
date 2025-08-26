@@ -1,0 +1,53 @@
+.button {
+    display: flex;
+    padding: 8px 16px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 8px;
+    border: none;
+    font-family: var(--sfui-font)
+}
+
+.primary {
+    background-color: var(--color-blue800);
+    color: var(--color-neutralWhite);
+}
+
+.secondary {
+    background-color: var(--color-blue700);
+    color: var(--color-neutralWhite);
+}
+
+
+.tertiary {
+    background-color: var(--color-blue600);
+    color: var(--color-neutralWhite);
+}
+
+.outline {
+    background: none;
+    border: 1px solid var(--color-neutralBlack);
+    color: var(--color-neturaBlack);
+
+}
+
+.danger {
+    background-color: var(--color-accentRed400);
+    color: var(--color-neutralWhite);
+}
+
+.warning {
+    background-color: var(--color-accentOrange400);
+    color: var(--color-neutralWhite);
+}
+
+.simple {
+    background: none;
+    color: var(--color-neturaBlack);
+}
+
+.grey {
+    background-color: var(--color-neutralGrey300);
+    color: var(--color-neturaBlack);
+}

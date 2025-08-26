@@ -51,7 +51,7 @@ a {
   /* end primary colors */
 
   /* neutral */
-  --color-neturaBlack: #1F2223;
+  --color-neutralBlack: #1F2223;
   --color-neutralGrey900: #363939;
   --color-neutralGrey800: #57595A;
   --color-neutralGrey700: #797A7B;
@@ -119,13 +119,13 @@ h1, p {
 /* body */
 
 .p1-r {
-  font-weight: 300;
+  font-weight: 500;
   font-size: 20px;
   line-height: 130%;
 }
 
 .p1-b {
-  font-weight: 500;
+  font-weight: 400;
   font-size: 20px;
   line-height: 130%;
 }
@@ -174,10 +174,7 @@ h1, p {
   font-size: 14px;
 }
 
-
-
 /* end body */
-
 
 /* end fonts */
 
