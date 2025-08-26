@@ -2,6 +2,7 @@
 import axios from 'axios'
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 
@@ -41,6 +42,7 @@ export default function Home() {
             <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
             <button onClick={login}>Login</button>
         </div>
+        <Link href={'/'}>Inicio</Link>
       </div>
     </>
   )

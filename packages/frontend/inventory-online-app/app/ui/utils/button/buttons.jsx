@@ -1,6 +1,7 @@
 import styles from'./page.module.css'
+import { Icon } from '../icons/icons'
 
-export function Button({text='Button', type='primary'}) {
+export function Button({text='Button', type='primary', showIcon=false, icon='person', size=[20, 20]}) {
     const textStyle = {
         primary: 'p1-b',
         secondary: 'p1-r',
@@ -16,8 +17,14 @@ export function Button({text='Button', type='primary'}) {
         type = 'primary'
     }
 
+    let color = 'white'
+    if(['outline', 'simple', 'grey'].includes(type)) {
+        color = 'var(--color-neutralBlack)'
+    }
+
     return (
         <button className={`${styles.button} ${styles[type]} ${textStyle[type]}`}>
+            {showIcon && <Icon icon={icon} color={color} size={size}/>}
             {text}
         </button>
     )

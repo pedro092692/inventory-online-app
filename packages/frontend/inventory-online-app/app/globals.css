@@ -102,16 +102,19 @@ h1, p {
 .h1 {
   font-weight: 700;
   font-size: 40px;
+  color: var(--color-neutralBlack)
 }
 
 .h2 {
   font-weight: 600;
   font-size: 32px;
+  color: var(--color-neutralBlack)
 }
 
 .h3 {
   font-weight: 500;
   font-size: 24px;
+  color: var(--color-neutralBlack)
 }
 
 /* end headings */
@@ -122,56 +125,71 @@ h1, p {
   font-weight: 500;
   font-size: 20px;
   line-height: 130%;
+  color: var(--color-neutralBlack)
 }
 
 .p1-b {
   font-weight: 400;
   font-size: 20px;
   line-height: 130%;
+  color: var(--color-neutralBlack)
 }
 
 .p2-r {
   font-weight: 300;
   font-size: 16px;
   line-height: 130%;
+  color: var(--color-neutralBlack)
 }
 
 .p2-b {
   font-weight: 500;
   font-size: 16px;
   line-height: 130%;
+  color: var(--color-neutralBlack)
 }
 
 .p3-r {
   font-weight: 300;
   font-size: 14px;
   line-height: 130%;
+  color: var(--color-neutralBlack)
 }
 
 .p3-b {
   font-weight: 500;
   font-size: 14px;
   line-height: 130%;
+  color: var(--color-neutralBlack)
 }
 
 .l1-r {
   font-weight: 500;
   font-size: 16px;
+  color: var(--color-neutralBlack)
 }
 
 .l1-b {
   font-weight: 600;
   font-size: 16px;
+  color: var(--color-neutralBlack)
 }
 
 .l2-r {
   font-weight: 500;
   font-size: 14px;
+  color: var(--color-neutralBlack)
 }
 
 .l2-b {
   font-weight: 600;
   font-size: 14px;
+  color: var(--color-neutralBlack)
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
 }
 
 /* end body */

@@ -6,7 +6,8 @@
     cursor: pointer;
     border-radius: 8px;
     border: none;
-    font-family: var(--sfui-font)
+    font-family: var(--sfui-font);
+    gap: 8px;
 }
 
 .primary {
