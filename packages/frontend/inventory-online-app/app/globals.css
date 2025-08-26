@@ -57,6 +57,93 @@ body {
 
 }
 
+/* fonts */
+
+/* headings */
 h1, p {
   margin: 0;
 }
+
+.h1 {
+  font-weight: 700;
+  font-size: 40px;
+}
+
+.h2 {
+  font-weight: 600;
+  font-size: 32px;
+}
+
+.h3 {
+  font-weight: 500;
+  font-size: 24px;
+}
+
+/* end headings */
+
+/* body */
+
+.p1-r {
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 130%;
+}
+
+.p1-b {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 130%;
+}
+
+.p2-r {
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 130%;
+}
+
+.p2-b {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 130%;
+}
+
+.p3-r {
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 130%;
+}
+
+.p3-b {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 130%;
+}
+
+.l1-r {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.l1-b {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.l2-r {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.l2-b {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+
+
+/* end body */
+
+
+/* end fonts */
+
+ 
