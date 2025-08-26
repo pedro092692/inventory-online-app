@@ -73,6 +73,12 @@ a {
   --color-accentOrange300: #E2CC9C;
   --color-accentOrange200: #EEE0C4;
   /* end orange accent */
+
+  /* red accent */
+  --color-accentRed400: #E16868;
+  --color-accentRed300: #EA9595;
+  --color-accentRed200: #F2BFBF;
+  /* end red accent */
 }
 
 body {
