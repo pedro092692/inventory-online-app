@@ -96,7 +96,6 @@ body {
   font-family: var(--sfui-font), sans-serif;
   display: flex;
   flex-direction: column;
-  background-color: #F2F2F2;
 
 }
 
@@ -137,7 +136,7 @@ h1, p {
 }
 
 .p1-b {
-  font-weight: 400;
+  font-weight: 500;
   font-size: 20px;
   line-height: 130%;
   color: var(--color-neutralBlack)
@@ -193,6 +192,15 @@ h1, p {
   font-weight: 600;
   font-size: 14px;
   color: var(--color-neutralBlack)
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-justify {
+  text-align: justify;
+
 }
 
 a {

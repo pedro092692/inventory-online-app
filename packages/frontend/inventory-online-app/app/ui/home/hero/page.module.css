@@ -1,43 +1,11 @@
 .hero {
-    flex-grow: 1;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 24px;
-    gap: 32px;
+    flex-direction: column;;
+    min-height: 100dvh;
+    padding: 0;
+    background-color: var(--color-neutralGrey100);
 }
 
-.info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
-
+.text {
+    width: 640px;
 }
-
-.info h1 {
-    font-size: 48px;
-    font-weight: 800;
-}
-
-.info p {
-    max-width: 640px;
-    font-size: 20px;
-    font-weight: 600;
-    text-align: center;
-}
-
-.callToAction {
-    display: flex;
-    gap: 16px;
-}
-
-.button {
-    padding: 8px;
-    border-radius: 8px;
-    font-size: 18px;
-    border: none;
-    cursor: pointer;
-    border: 1px solid black;
-}
-

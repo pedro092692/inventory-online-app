@@ -16,7 +16,7 @@ export function Container(
             gap: gap,
             width: width,
             height: height,
-            direction: direction,
+            flexDirection: direction,
             padding: padding,
             alignItem: alignItem,
             justifyContent: justifyContent,
