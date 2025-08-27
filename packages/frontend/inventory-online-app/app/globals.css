@@ -196,4 +196,14 @@ a {
 
 /* end fonts */
 
+
+/* container  */
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px;
+}
+/* end container  */
  
