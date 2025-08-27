@@ -8,7 +8,7 @@ export function Hero() {
     return (
         <>
             <Navbar />
-            <div className={styles.hero}>
+            {/* <div className={styles.hero}>
                 <div className={styles.info}>
                     <h1 className='h1'>El software que te ayuda a vender más, sin complicaciones.</h1>
                     <p className='p1-r'>
@@ -34,7 +34,7 @@ export function Hero() {
                     height={714}
                     alt="nexa software"
                 />
-            </div>
+            </div> */}
             <Container children={'soy un container'}/>
 
         </>

@@ -81,10 +81,18 @@ a {
   /* end red accent */
 }
 
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
 body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
   font-family: var(--sfui-font), sans-serif;
   display: flex;
   flex-direction: column;
@@ -122,7 +130,7 @@ h1, p {
 /* body */
 
 .p1-r {
-  font-weight: 500;
+  font-weight: 300;
   font-size: 20px;
   line-height: 130%;
   color: var(--color-neutralBlack)

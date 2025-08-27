@@ -60,6 +60,11 @@ export function Icon({icon='person', color='white', size=[20, 20]}) {
             viewBox: '0 0 28 36'
         },
 
+        arrowRight: {
+            path: 'M19.9999 12L17.1799 14.82L26.3399 24L17.1799 33.18L19.9999 36L31.9999 24L19.9999 12Z',
+            viewBox: '0 0 15 24'
+        }
+
 
 
     }

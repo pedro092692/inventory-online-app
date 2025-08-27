@@ -1,40 +1,8 @@
-.navbar{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.navbar {
     padding: 8px 40px;
-    background-color: #F6F6F6;
-    height: 64px;
+    background-color: var(--color-neutralWhite);
+    justify-content: start;
     box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
-}
-
-.brandMenu {
-    display: flex;
-    padding: 0;
-    gap: 48px;
-    align-items: center;
-}
-
-.menu {
-    display: flex;
-    width: auto;
-    height: auto;
-}
-
-.menu ul {
-    list-style: none;
-    display: flex;
-    gap: 16px;
-    font-size: 20px;
-    padding: 0;
-    cursor: pointer;
-}
-
-.button {
-    padding: 8px;
-    border-radius: 8px;
-    color: white;
-    font-size: 18px;
-    border: none;
-    cursor: pointer;
+    height: 56px;
+    gap: 24px;
 }
