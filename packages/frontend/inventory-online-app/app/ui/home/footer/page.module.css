@@ -1,0 +1,16 @@
+.footer {
+    flex-direction: column;
+    gap: 16px;
+    justify-content: start;
+    background-color: var(--color-neutralBlack);
+}
+
+.line {
+    width: 100%;
+    border-bottom: 1px solid var(--color-neutralGrey100);
+    background-color: blue;
+}
+
+.text {
+    color: var(--color-neutralGrey100)
+}

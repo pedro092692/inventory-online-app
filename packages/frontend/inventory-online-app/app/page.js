@@ -3,6 +3,7 @@ import { Hero } from './ui/home/hero/heroSection.jsx'
 import { Benefits } from './ui/home/benefits/benefits.jsx'
 import { Customer } from './ui/home/customers/customers.jsx'
 import { CallToAction } from './ui/home/callToAction/callToAction.jsx'
+import { Footer } from './ui/home/footer/footer.jsx'
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <Benefits /> 
       <Customer />
       <CallToAction />
+      <Footer />
     </>
   )
 }

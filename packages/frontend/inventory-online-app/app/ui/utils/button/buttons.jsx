@@ -1,7 +1,7 @@
 import styles from'./page.module.css'
 import { Icon } from '../icons/icons'
 
-export function Button({children='Button', type='primary', showIcon=false, icon='person', size=[20, 20]}) {
+export function Button({children='Button', type='primary', showIcon=false, icon='person', size=[20, 20], className=''}) {
     const textStyle = {
         primary: 'p1-b',
         secondary: 'p1-r',
@@ -23,7 +23,7 @@ export function Button({children='Button', type='primary', showIcon=false, icon=
     }
 
     return (
-        <button type='button' className={`${styles.button} ${styles[type]} ${textStyle[type]}`}>
+        <button type='button' className={`${styles.button} ${styles[type]} ${textStyle[type]} ${className}`}>
             {showIcon && <Icon icon={icon} color={color} size={size}/>}
             {children}
         </button>

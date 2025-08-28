@@ -48,7 +48,7 @@ export function Navbar() {
                 justifyContent='end'
                 flexGrow='1'>
                     <Link href={'/login'}>
-                        <Button type='grey' showIcon={true} icon='person' size={[13.33, 13,33]}>
+                        <Button type='secondary' showIcon={true} icon='person' size={[13.33, 13,33]} className='p2-r'>
                             Iniciar Sesion
                         </Button>
                     </Link>
