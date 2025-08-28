@@ -3,7 +3,7 @@
     flex-direction: column;;
     min-height: 100dvh;
     padding: 0;
-    background-color: var(--color-neutralGrey100);
+    z-index: -1;
 }
 
 .text {

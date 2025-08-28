@@ -96,13 +96,13 @@ body {
   font-family: var(--sfui-font), sans-serif;
   display: flex;
   flex-direction: column;
-
+  background-color: var(--color-neutralGrey100);
 }
 
 /* fonts */
 
 /* headings */
-h1, p {
+h1, h2, h3, label, p {
   margin: 0;
 }
 
@@ -222,4 +222,11 @@ a {
   padding: 40px;
 }
 /* end container  */
+
+/* others*/
+.shadow {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+/* end others */
  

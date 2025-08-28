@@ -1,5 +1,4 @@
 import styles from './page.module.css'
-import { Navbar } from '../navbar/navbar.jsx'
 import Image from 'next/image'
 import { Container } from '../../utils/container.jsx'
 import { Button } from '../../utils/button/buttons'
@@ -7,7 +6,6 @@ import { Button } from '../../utils/button/buttons'
 export function Hero() {
     return (
         <section className={styles.hero}>
-            <Navbar />
             <Container
                 gap='24px'
                 direction='column'

@@ -9,7 +9,8 @@ export function Container(
         alignItem,
         justifyContent,
         flexGrow,
-        backgroundColor
+        backgroundColor,
+        className = ''
     }) {
 
         const styles = {
@@ -18,13 +19,13 @@ export function Container(
             height: height,
             flexDirection: direction,
             padding: padding,
-            alignItem: alignItem,
+            alignItems: alignItem,
             justifyContent: justifyContent,
             flexGrow: flexGrow,
-            backgroundColor: backgroundColor
+            backgroundColor: backgroundColor,
         }
     return (
-        <div className="container" style={styles}>
+        <div className={`container ${className}`} style={styles}>
             {children}
         </div>
     )
