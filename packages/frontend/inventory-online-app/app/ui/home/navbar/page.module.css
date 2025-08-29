@@ -6,3 +6,17 @@
     height: 56px;
     gap: 24px;
 }
+
+.segment {
+    display: none;
+}
+
+@media screen and (max-width: 802px) {
+    .menuButton {
+        display: none;
+    }
+
+    .segment {
+        display: block;
+    }
+}

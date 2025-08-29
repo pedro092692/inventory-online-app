@@ -2,6 +2,7 @@ import { Container } from '../../utils/container'
 import styles from './page.module.css'
 import { Logo } from '../../utils/logo'
 import { Button } from '../../utils/button/buttons'
+import { Icon } from '../../utils/icons/icons'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -14,6 +15,7 @@ export function Navbar() {
 
             {/* main menu */}
             <Container 
+                className={styles.menuButton}
                 padding='10px'
                 gap='16px'
                 justifyContent='start'
@@ -47,12 +49,16 @@ export function Navbar() {
                 gap='16px'
                 justifyContent='end'
                 flexGrow='1'>
-                    <Link href={'/login'}>
+                    <Link href={'/login'} className={styles.menuButton}>
                         <Button type='secondary' showIcon={true} icon='person' size={[13.33, 13,33]} className='p2-r'>
                             Iniciar Sesion
                         </Button>
                     </Link>
+            
+                {/* burger menu */}
+                <Icon className={styles.segment}  icon='segment' color='var(--color-neutralBlack)'/>
             </Container>
+
         </nav>
     )
 }

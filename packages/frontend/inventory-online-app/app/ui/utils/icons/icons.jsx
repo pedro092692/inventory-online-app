@@ -1,4 +1,4 @@
-export function Icon({icon='person', color='white', size=[20, 20]}) {
+export function Icon({icon='person', color='white', size=[20, 20], className=''}) {
     const icons = {
         bookMark: {
             path: 'M24 0H4C1.8 0 0.0200005 1.8 0.0200005 4L0 36L14 30L28 36V4C28 1.8 26.2 0 24 0Z',
@@ -66,10 +66,15 @@ export function Icon({icon='person', color='white', size=[20, 20]}) {
         }
 
 
-
     }
+
+        
+    if(!icons[icon]) {
+        icon = 'person'
+    }
+
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width={size[0]} height={size[1]} 
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size[0]} height={size[1]} 
         viewBox={icons[icon].viewBox}>
             <path d={icons[icon].path} style={{fill: color}}/>
         </svg>
