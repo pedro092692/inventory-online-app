@@ -12,7 +12,7 @@ export default function Home() {
       <Hero />
       <Benefits /> 
       <Customer />
-      {/* <CallToAction /> */}
+      <CallToAction />
       {/* <Footer /> */}
     </>
   )

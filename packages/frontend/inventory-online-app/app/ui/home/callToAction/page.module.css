@@ -1,0 +1,39 @@
+.textContainer {
+    width: 640px;
+    flex-direction: row;
+}
+
+.textContainer p {
+    width: 452px;
+}
+
+.imageContainer {
+    position: relative;
+    padding: 0px;
+    width: 1132px;
+    aspect-ratio: 1.79;
+
+}
+
+@media screen and (max-width: 768px) {
+    .mainText {
+        font-weight: 600;
+        font-size: 32px;
+        color: var(--color-neutralBlack);
+        text-align: center;
+    }
+
+    .textContainer {
+        flex-direction: column;
+        width: 100%;
+        text-align: justify;
+    }
+
+    .textContainer p {
+        width: 100%;
+    }
+
+    .imageContainer {
+        width: 100%;
+    }
+}
