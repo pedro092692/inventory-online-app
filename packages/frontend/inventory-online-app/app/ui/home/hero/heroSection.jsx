@@ -7,18 +7,17 @@ export function Hero() {
     return (
         <section className={styles.hero}>
             <Container
+                className={styles.mainContainer}
                 gap='24px'
                 direction='column'
-                padding='40px 40px 0px 40px'
                 flexGrow='1'
                 justifyContent='start'
             >
                 {/* text content */}
                 <Container
+                    className={styles.textContainer}
                     gap='24px'
                     direction='column'
-                    padding='0'
-                    width='788px'
                     justifyContent='center'
                 >   
                     <h1 className='h1 text-center'>
@@ -46,12 +45,17 @@ export function Hero() {
                     </Container>
                 </Container>
                 {/* hero image */}
-                <Image 
+                <Container
+                    className={styles.imageContainer}
+                >
+                    <Image 
                     src='/images/home/img-1.png'
-                    width={1080}
-                    height={714}
+                    fill
+                    style={{ objectFit: 'cotain' }}
                     alt='Nexastock Software'
-                />
+                    />
+                </Container>
+                
             </Container>
         </section>
     )

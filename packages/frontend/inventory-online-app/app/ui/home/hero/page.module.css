@@ -9,3 +9,46 @@
 .text {
     width: 640px;
 }
+
+.mainContainer {
+    padding: 40px 40px 0px 40px;
+}
+
+.textContainer {
+    padding: 0px;
+    width: 768px;
+}
+
+.imageContainer {
+    position: relative;
+    padding: 0px;
+    align-items: start;
+    justify-content: start;
+    width: 900px;
+    aspect-ratio: 1.51;
+}
+
+@media screen and (max-width: 900px) {
+    .mainContainer {
+        padding: 40px 16px 0px 16px;
+        width: 100%;
+    }
+
+    .text {
+        width: 100%;
+    }
+
+    .imageContainer {
+        width: 600px;
+    }
+
+    .textContainer {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .imageContainer {
+        width: 370px;
+    }
+}
