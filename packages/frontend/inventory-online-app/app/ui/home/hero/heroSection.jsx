@@ -11,7 +11,6 @@ export function Hero() {
                 gap='24px'
                 direction='column'
                 flexGrow='1'
-                justifyContent='start'
             >
                 {/* text content */}
                 <Container

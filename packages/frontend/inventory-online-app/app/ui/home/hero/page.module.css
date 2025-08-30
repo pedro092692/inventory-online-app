@@ -12,6 +12,7 @@
 
 .mainContainer {
     padding: 40px 40px 0px 40px;
+    justify-content: start;
 }
 
 .textContainer {
@@ -29,6 +30,10 @@
 }
 
 @media screen and (max-width: 900px) {
+    .hero {
+        min-height: auto;
+    }
+
     .mainContainer {
         padding: 40px 16px 0px 16px;
         width: 100%;

@@ -22,27 +22,27 @@ export function Benefits() {
                 gap='8px'
                 justifyContent='start'
                 >
-                <h2 className='h1'>Todo lo que necesitas en un solo lugar.</h2>
-                <p className='p1-r'>Con Nexastock, llevar el control de tu <span className='p1-b'>negocio</span> nunca había sido tan fácil.</p>
+                <h2 className={`h1 ${styles.textFill} ${styles.text}`}>Todo lo que necesitas en un solo lugar.</h2>
+                <p className={`p1-r ${styles.textFill}`}>Con Nexastock, llevar el control de tu <span className='p1-b'>negocio</span> nunca había sido tan fácil.</p>
             </Container>
             {/* image and list */}
             <Container
-                padding='10px'
-                gap='10px'
-                justifyContent='center'
-                alignItem='start'
-                height='535px'
+                className={styles.imageListContainer}
             >
                 
                 {/* image */}
-
-                <Image 
-                    src={'/images/home/invoice_1.png'}
-                    width={479}
-                    height={515}
-                    alt='nexastock xample invoice image'
-                    loading='lazy'
-                />
+                <Container
+                    className={styles.imageContainer}
+                >
+                    <Image 
+                        src={'/images/home/invoice_1.png'}
+                        fill
+                        style={{objectFit: 'contain'}}
+                        alt='nexastock xample invoice image'
+                        loading='lazy'
+                    />
+                </Container>
+                
 
                 {/* list */}
                 <Container
@@ -68,7 +68,7 @@ export function Benefits() {
                                 {
                                     index % 2 == 0 ? <><img src={`/images/home/list-icons/${index}.png`} alt="icon" /> <p className='p1-r'>{item}</p></> :
                                     <>
-                                    <p className='p1-r'>{item}</p>
+                                    <p className={`p1-r ${styles.textList}`}>{item}</p>
                                     <img src={`/images/home/list-icons/${index}.png`} alt="icon" />
                                     </>
                                 }

@@ -1,3 +1,51 @@
+.imageListContainer {
+    padding: 10px;
+    gap: 40px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.imageContainer {
+    position: relative;
+    padding: 0px;
+    width: 479px;
+    aspect-ratio: 0.93;
+}
+
+
+
 .listItem {
     border-radius: 8px;
+}
+
+
+@media screen and (max-width: 900px) {
+
+    .imageListContainer {
+        width: 100%;
+        flex-direction: column-reverse;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .imageContainer {
+        width: 105%;
+    }
+
+    .textFill {
+        width: 100%;
+        text-align: center;
+    }
+
+    .textList {
+        width: 100%;
+        text-align: justify;
+    }
+
+    .text {
+        font-weight: 600;
+        font-size: 32px;
+        color: var(--color-neutralBlack)
+    }
 }
