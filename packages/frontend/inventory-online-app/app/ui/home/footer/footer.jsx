@@ -35,12 +35,7 @@ export function Footer() {
     return (
         <footer className={`container ${styles.footer}`}>
             <Container
-                gap='48px'
-                padding='0px'
-                alignItem='start'
-                justifyContent='start'
-                width='100%'
-                height='100%'
+                className={styles.footerMenuContainer}
             >  
                 {/* brand logo */}
                 <Logo  type='iconWhite' />
@@ -49,13 +44,13 @@ export function Footer() {
                 {Object.keys(footerMenu).map((key, index) => {
                     return (
                         <Container
+                            className={styles.menuItem}
                             direction='column'
                             alignItem='start'
                             justifyContent='start'
                             padding='0px'
                             gap='10px'
                             width='100%'
-                            height='194px'
                             key={index}
                         >
                             <p className={`p3-b ${styles.text}`}>{footerMenu[key].title}</p>

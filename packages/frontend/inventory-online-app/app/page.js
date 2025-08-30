@@ -13,7 +13,7 @@ export default function Home() {
       <Benefits /> 
       <Customer />
       <CallToAction />
-      {/* <Footer /> */}
+      <Footer />
     </>
   )
 }
