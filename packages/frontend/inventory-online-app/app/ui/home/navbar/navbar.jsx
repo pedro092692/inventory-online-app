@@ -1,3 +1,4 @@
+'use client'
 import { Container } from '../../utils/container'
 import styles from './page.module.css'
 import { Logo } from '../../utils/logo'
@@ -5,9 +6,16 @@ import { Button } from '../../utils/button/buttons'
 import { Icon } from '../../utils/icons/icons'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 
 export function Navbar() {
-    
+    const [isLogged, setIsLogged] = useState(false)
+
+    useEffect(() => {
+        const token = document.cookie.includes('access_token')
+        setIsLogged(token)
+        console.log(document.cookie)
+    }, []) 
     return (
         <nav className={`container ${styles.navbar}`}>
             {/* company logo */}

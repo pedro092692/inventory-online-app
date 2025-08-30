@@ -69,6 +69,29 @@ class SecurityService {
             }
         }) 
     }
+
+    /**
+     * Checks whether a user is logged in based on the provided token.
+     *
+     * This method validates the given token using the internal `verityToken` method.
+     * If the token exists and is valid, it returns `true`. Otherwise, it returns `false`.
+     * Any errors during validation are passed through the internal error handler.
+     *
+     * @param {string} token - The JWT or session token to verify.
+     * @returns {Promise<boolean>} A promise that resolves to:
+     *   - `true` if the token exists and is valid
+     *   - `false` otherwise
+     */
+    isLogged(token) {
+        return this.#error.handler(['Is loogged in'], async() => {
+            // very token 
+            if (token && await this.verityToken(token)) {
+                return true
+            }
+
+            return false
+        })
+    }
 }
 
 
