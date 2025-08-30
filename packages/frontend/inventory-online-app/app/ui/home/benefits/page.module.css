@@ -1,3 +1,8 @@
+.section {
+    gap: 24px;
+    flex-direction: column;
+}
+
 .imageListContainer {
     padding: 10px;
     gap: 40px;
@@ -21,6 +26,9 @@
 
 
 @media screen and (max-width: 900px) {
+    .section {
+        padding: 40px 40px 0px 40px;
+    }
 
     .imageListContainer {
         width: 100%;

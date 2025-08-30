@@ -11,7 +11,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Benefits /> 
-      {/* <Customer /> */}
+      <Customer />
       {/* <CallToAction /> */}
       {/* <Footer /> */}
     </>

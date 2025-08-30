@@ -14,7 +14,7 @@ export function Benefits() {
 
     console.log(styles.listItem)
     return(
-        <section className={`container`} style={{gap: '24px', flexDirection: 'column'}}>
+        <section className={`container ${styles.section}`}>
             {/* text */}
             <Container 
                 direction='column'

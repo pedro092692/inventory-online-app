@@ -1,0 +1,51 @@
+.section {
+    gap: 40px;
+    align-items: start;
+
+}
+
+.mainContainer {
+    flex-direction: row;
+}
+
+.imageContainer {
+    position: relative;
+    width: 479px;
+    aspect-ratio: 1.57;
+}
+
+.textContainer {
+    width: 656px;
+}
+
+@media screen and (max-width: 1280px) {
+    .mainContainer {
+        flex-direction: column-reverse;
+    }
+
+    .imageContainer {
+        width: 100%;
+    }
+
+}
+
+@media screen and (max-width: 768px) {
+     .section {
+        padding: 40px 40px 0px 40px;
+    }
+
+    .textContainer {
+        width: 100%;
+    }
+
+    .textContainer h2{
+        text-align: center;
+        font-weight: 600;
+        font-size: 32px;
+        color: var(--color-neutralBlack)
+    }
+
+    .textContainer p{
+        text-align: justify;
+    }
+}
