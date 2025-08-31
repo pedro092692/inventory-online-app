@@ -7,15 +7,28 @@ import { Icon } from '../../utils/icons/icons'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import axios from 'axios'
+
+const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export function Navbar() {
     const [isLogged, setIsLogged] = useState(false)
-
+    
     useEffect(() => {
-        const token = document.cookie.includes('access_token')
-        setIsLogged(token)
-        console.log(document.cookie)
-    }, []) 
+        const checkLogin = async () => {
+        try {
+            await axios.post(`${NEXT_PUBLIC_API_BASE_URL}/api/security/isLogged`,
+            {},
+            { withCredentials: true }
+        )
+            setIsLogged(true)
+        }catch {
+            setIsLogged(false)
+            }
+        }
+        checkLogin()
+    }, [])
+
     return (
         <nav className={`container ${styles.navbar}`}>
             {/* company logo */}
@@ -57,9 +70,9 @@ export function Navbar() {
                 gap='16px'
                 justifyContent='end'
                 flexGrow='1'>
-                    <Link href={'/login'} className={styles.menuButton}>
-                        <Button type='secondary' showIcon={true} icon='person' size={[13.33, 13,33]} className='p2-r'>
-                            Iniciar Sesion
+                    <Link href={isLogged ? '/products' : '/login'} className={styles.menuButton}>
+                        <Button type='secondary' showIcon={true} icon={isLogged ? 'store' : 'login'} size={isLogged ? [20, 20] : [13.33, 13.33]} className='p2-r'>
+                            {isLogged ? 'Mi Negocio' : 'Iniciar Sesión'}
                         </Button>
                     </Link>
             
