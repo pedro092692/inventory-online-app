@@ -97,12 +97,13 @@ body {
   display: flex;
   flex-direction: column;
   background-color: var(--color-neutralGrey100);
+  min-height: 100dvh;
 }
 
 /* fonts */
 
 /* headings */
-h1, h2, h3, label, p{
+h1, h2, h3, label, p, nav{
   margin: 0;
 }
 
@@ -212,7 +213,6 @@ a {
 
 /* end fonts */
 
-
 /* container  */
 .container {
   display: flex;
@@ -222,6 +222,8 @@ a {
   padding: 40px;
 }
 /* end container  */
+
+
 
 /* others*/
 .shadow {

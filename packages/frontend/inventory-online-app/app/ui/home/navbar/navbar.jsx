@@ -41,7 +41,8 @@ export function Navbar() {
                 padding='10px'
                 gap='16px'
                 justifyContent='start'
-                flexGrow='1'>
+                flexGrow='1'
+                >
 
                     <NavMenu />
 
@@ -62,7 +63,7 @@ export function Navbar() {
             
             {/* moible menu */}
             <MobileMenu open={open} setOpen={setOpen}>
-                <LoginButton isLogged={isLogged} />
+                <LoginButton isLogged={isLogged} onClick={() => setOpen(false)}/>
             </MobileMenu>
         </nav>
     )

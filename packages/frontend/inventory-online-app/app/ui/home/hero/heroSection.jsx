@@ -1,5 +1,6 @@
 import styles from './page.module.css'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Container } from '../../utils/container.jsx'
 import { Button } from '../../utils/button/buttons'
 
@@ -32,11 +33,13 @@ export function Hero() {
                     <Container
                         gap='16px'
                         padding='0'
-                    >
-                        <Button 
-                            children='Empezar ahora'
-                            type='primary'
-                        />
+                    >   
+                        <Link href='/advantages'>
+                            <Button 
+                                children='Empezar ahora'
+                                type='primary'
+                            />
+                        </Link>
                         <Button 
                             children='Solicitar demo'
                             type='outline'

@@ -1,15 +1,15 @@
 .mobileMenu {
-    position: fixed;
+    position: fixed; 
     top: 0px;
     right: 0px;
     width: 75%;
     min-height: 100vh;
     background-color: var(--color-neutralGrey100);
-    padding: 24px 16px;
-    align-items: end;
-    justify-content: start;
+    padding: 24px 16px !important;
+    align-items: end !important;
+    justify-content: start !important;
     flex-direction: column;
-    gap: 16px;
+    gap: 16px !important;
     box-shadow: -10px 0px 48px -16px rgba(66, 68, 90, 1);
     z-index: 10;
 }

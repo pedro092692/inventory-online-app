@@ -6,7 +6,7 @@ import Link from 'next/link'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 
-export default function Home() {
+export default function SecurityPage() {
       const router = useRouter()
       const searchParams = useSearchParams()
       const nextUrl = searchParams.get('next') || '/'
