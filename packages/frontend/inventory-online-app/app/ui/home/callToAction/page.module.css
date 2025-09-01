@@ -15,6 +15,12 @@
 
 }
 
+@media screen and (max-width: 1200px) {
+    .imageContainer {
+        width: 768px;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .mainText {
         font-weight: 600;

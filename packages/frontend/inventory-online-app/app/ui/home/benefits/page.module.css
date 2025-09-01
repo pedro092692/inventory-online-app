@@ -32,6 +32,7 @@
 
     .imageListContainer {
         width: 100%;
+        max-width: 450px;
         flex-direction: column-reverse;
         align-items: center;
         gap: 8px;
