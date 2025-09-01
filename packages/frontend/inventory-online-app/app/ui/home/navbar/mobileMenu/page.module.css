@@ -1,0 +1,28 @@
+.mobileMenu {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    width: 75%;
+    min-height: 100vh;
+    background-color: var(--color-neutralGrey100);
+    padding: 24px 16px;
+    align-items: end;
+    justify-content: start;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: -10px 0px 48px -16px rgba(66, 68, 90, 1);
+    z-index: 10;
+}
+
+.line {
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-neutralGrey500);
+
+}
+
+@media screen and (min-width: 800px) {
+    .mobileMenu {
+        display: none;
+    }
+}

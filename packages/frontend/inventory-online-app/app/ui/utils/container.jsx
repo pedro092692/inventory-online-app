@@ -1,5 +1,6 @@
 export function Container(
-    {
+    {   
+        ref,
         children='default content',
         gap,
         width,
@@ -25,7 +26,7 @@ export function Container(
             backgroundColor: backgroundColor,
         }
     return (
-        <div className={`container ${className}`} style={styles}>
+        <div ref={ref} className={`container ${className}`} style={styles}>
             {children}
         </div>
     )
