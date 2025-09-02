@@ -62,9 +62,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={sfui.variable}>
       <body>
-        <Navbar />
         {children}
-        <Footer />
       </body>
     </html>
   );
