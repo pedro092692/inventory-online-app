@@ -8,6 +8,7 @@ import { NavMenu } from './navMenu/navMenu'
 import styles from './page.module.css'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import Link from 'next/link'
 
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
@@ -33,7 +34,9 @@ export function Navbar() {
     return (
         <nav className={`container ${styles.navbar}`}>
             {/* company logo */}
-            <Logo />
+            <Link href='/' style={{height: '18px'}}> 
+                <Logo />
+            </Link>
 
             {/* main menu */}
             <Container 

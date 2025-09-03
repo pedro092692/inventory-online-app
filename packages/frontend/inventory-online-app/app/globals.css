@@ -97,7 +97,7 @@ body {
   display: flex;
   flex-direction: column;
   background-color: var(--color-neutralGrey100);
-  min-height: 100dvh;
+  height: 100vh;
 }
 
 /* fonts */

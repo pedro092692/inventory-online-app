@@ -3,9 +3,7 @@ import styles from '../menu.module.css'
 import Image from 'next/image'
 import Link from 'next/link'
 
-
-export function SubMenu ({type = 'advantages', open=false}) {
-    const subMenu = {
+const subMenuItems = {
         advantages: {
             1: {
                 title: 'Gestión de inventario en la nube',
@@ -31,7 +29,7 @@ export function SubMenu ({type = 'advantages', open=false}) {
         functions: {
             1: {
                 title: 'Bajo Costo',
-                link: '/',
+                link: '/advantages',
                 icon: 'dollar'
             },
 
@@ -49,6 +47,8 @@ export function SubMenu ({type = 'advantages', open=false}) {
 
         }
     }
+
+export function SubMenu ({type = 'advantages', open=false}) {
     
     if (!open) return null
 
@@ -56,15 +56,15 @@ export function SubMenu ({type = 'advantages', open=false}) {
         
         <Container className={`shadow ${styles.subMenu}`}
         >
-            {Object.keys(subMenu[type]).map((key, index) => {
+            {Object.keys(subMenuItems[type]).map((key, index) => {
                 return (
-                    <Link href={subMenu[type][key].link} key={index} style={{width: '100%'}}>
+                    <Link href={subMenuItems[type][key].link} key={index} style={{width: '100%'}}>
                         <Container
                             className={styles.subMenuItem}
                             key={index}
                         >   
                             <p className='p3-b'>
-                                {subMenu[type][key].title}
+                                {subMenuItems[type][key].title}
                             </p>
                             <Image src='images/icons/arrowRight.svg'
                                 width={18}
@@ -78,3 +78,5 @@ export function SubMenu ({type = 'advantages', open=false}) {
         </Container>
     )
 }
+
+export { subMenuItems }

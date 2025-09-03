@@ -1,10 +1,15 @@
 'use client'
+import React from 'react'
 import { Container } from '../../../utils/container'
-import { useEffect, useRef } from 'react'
-import { LoginButton } from '../loginButton/loginButton'
+import { useEffect, useRef, useState } from 'react'
+import { subMenuItems } from '../navMenu/subMenu/subMenu'
+import Link from 'next/link'
 import styles from './page.module.css'
 
 export function MobileMenu({open, setOpen, children, showArrow=false}) {
+    const [showDetail, setShowDetail] = useState(false)
+    const [showDetail2, setShowDetail2] = useState(false)
+
     const menuRef = useRef(null)
     
     useEffect(() => {
@@ -35,8 +40,9 @@ export function MobileMenu({open, setOpen, children, showArrow=false}) {
                <Container
                     padding='0'
                     gap='4px'
+                    onClick={() => setShowDetail(!showDetail)}
                 >
-                    <p className='p1-r' style={{cursor:'pointer'}}>Funciones</p>
+                    <p className='p1-r' style={{cursor:'pointer', userSelect:'none'}}>Funciones</p>
                     {showArrow &&
                     <Image src='images/icons/arrowRight.svg'
                         width={18}
@@ -44,15 +50,39 @@ export function MobileMenu({open, setOpen, children, showArrow=false}) {
                         alt='arrow right'
                     />
                     }
+                    
                 </Container>
+                {/* submenu for functions */}
+                {showDetail &&
+                <Container
+                    padding='0px'
+                    alignItem='end'
+                    direction='column'
+                    gap='8px'
+                    width='45%'
+                >
+                    {Object.keys(subMenuItems['functions']).map((key, index) => {
+                        return (
+                             <React.Fragment key={index}>
+                                <Link href={subMenuItems['functions'][key].link} onClick={() => setOpen(false)}>
+                                    <p className='p3-b' style={{textAlign: 'right'}}>{subMenuItems['functions'][key].title}</p>
+                                </Link>
+                                <div className={styles.line}></div>
+                            </React.Fragment>
+                        )
+                    })}
+                </Container>
+                }
+
                 <div className={styles.line}>
 
                 </div>
                 <Container
                     padding='0'
                     gap='4px'
+                    onClick={() => setShowDetail2(!showDetail2)}
                 >
-                    <p className='p1-r' style={{cursor:'pointer'}}>Ventajas</p>
+                    <p className='p1-r' style={{cursor:'pointer', userSelect:'none'}}>Ventajas</p>
                     {showArrow &&
                     <Image src='images/icons/arrowRight.svg'
                         width={18}
@@ -61,6 +91,27 @@ export function MobileMenu({open, setOpen, children, showArrow=false}) {
                     />
                     }
                 </Container>
+                 {/* submenu for advantages */}
+                {showDetail2 &&
+                <Container
+                    padding='0px'
+                    alignItem='end'
+                    direction='column'
+                    gap='8px'
+                    width='70%'
+                >
+                    {Object.keys(subMenuItems['advantages']).map((key, index) => {
+                        return (
+                             <React.Fragment key={index}>
+                                <Link href={subMenuItems['advantages'][key].link} onClick={() => setOpen(false)}>
+                                    <p className='p3-b' style={{textAlign: 'right'}}>{subMenuItems['advantages'][key].title}</p>
+                                </Link>
+                                <div className={styles.line}></div>
+                            </React.Fragment>
+                        )
+                    })}
+                </Container>
+                }
                 <div className={styles.line}></div>
                 {children}
         </Container> 
