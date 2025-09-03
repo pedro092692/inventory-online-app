@@ -1,7 +1,6 @@
 import localFont from 'next/font/local';
 import './globals.css';
-import { Navbar } from './ui/home/navbar/navbar';
-import { Footer } from './ui/home/footer/footer';
+
 
 
 

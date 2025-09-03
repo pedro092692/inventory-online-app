@@ -2,6 +2,9 @@
 import axios from 'axios'
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Container } from '@/app/ui/utils/container'
+import { Logo } from '@/app/ui/utils/logo'
+import { Button } from '@/app/ui/utils/button/buttons'
 import Link from 'next/link'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
@@ -34,17 +37,27 @@ export default function SecurityPage() {
       }
 
   return (
-    <>
-      <h1>Bienvenido usuario ahora puede iniciar sesion</h1>
-      <div>
-        <div>
-            <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-            <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-            <button onClick={login}>Login</button>
-        </div>
+    <Container
+      direction='column'
+      backgroundColor='blue'
+      flexGrow='1'
+      padding='24px'
+    >
+      <Container
+        direction='column'
+        backgroundColor='coral'
+        gap='16px'
+      >
+        <Logo />
+        <h1 className='p1-b'>Inicia sesión en Nexastock</h1>
+        <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+        <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+        {/* <button onClick={login}>Login</button> */}
+        <Button type='secondary'>Iniciar sesión</Button>
         <Link href={'/'}>Inicio</Link>
-      </div>
-    </>
+      </Container>
+      
+    </Container>
   )
 }
 
