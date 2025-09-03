@@ -11,7 +11,10 @@ export function Container(
         justifyContent,
         flexGrow,
         backgroundColor,
-        className = ''
+        className = '',
+        onClick,
+        onMouseEnter,
+        onMouseLeave,
     }) {
 
         const styles = {
@@ -26,7 +29,11 @@ export function Container(
             backgroundColor: backgroundColor,
         }
     return (
-        <div ref={ref} className={`container ${className}`} style={styles}>
+        <div ref={ref} className={`container ${className}`} style={styles} 
+            onMouseEnter={onMouseEnter} 
+            onMouseLeave={onMouseLeave} 
+            onClick={onClick}
+        >
             {children}
         </div>
     )

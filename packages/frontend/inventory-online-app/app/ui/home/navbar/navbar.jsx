@@ -38,7 +38,8 @@ export function Navbar() {
             {/* main menu */}
             <Container 
                 className={styles.menuButton}
-                padding='10px'
+                padding='0px'
+                height={'100%'}
                 gap='16px'
                 justifyContent='start'
                 flexGrow='1'
@@ -56,7 +57,7 @@ export function Navbar() {
                 <LoginButton isLogged={isLogged} className={styles.menuButton}/>
             
                 {/* burger menu */}
-                <Icon onClick={() => setOpen(!open)} className={styles.segment}  icon='segment' color='var(--color-neutralBlack)'
+                <Icon onClick={() => setOpen(!open)} className={styles.segment} icon='segment' color='var(--color-neutralBlack)'
                     
                 />
             </Container>

@@ -1,0 +1,27 @@
+.menu {
+    position: relative;
+}
+
+.subMenu {
+    background-color: var(--color-neutralWhite);
+    position: absolute;
+    border-radius: 8px;
+    top: 48px;
+    padding: 16px;
+    width: 256px;
+    gap: 8px;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    border: 1px solid var(--color-neutralGrey100);
+    z-index: 5;
+}
+
+.subMenuItem {
+    justify-content: space-between;
+    background-color: var(--color-neutralGrey100);
+    width: 100%;
+    border-radius: 4px;
+    padding: 8px 16px;
+    gap: 8px;
+}
