@@ -10,6 +10,12 @@ export function Logo({type='fullColor'}) {
             height: 18.72
         },
 
+        fullColorLogin: {
+            src: `${path}/fullColor.svg`,
+            with: 320,
+            height: 27.23,
+        },
+
         monoColor: {
             src: `${path}/monoColor.svg`,
             with: 220,
