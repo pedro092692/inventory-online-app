@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
-const API_BASE_URL = process.env.API_BASE_URL || 'http://127.0.0.1'
+import { verifyToken } from '../utils/verifyToken';
+
+const dashboard = process.env.NEXT_PUBLIC_DASHBOARD
 
 export async function redirectIfLoggedIn(request) {
     const token = request.cookies.get('access_token')?.value
@@ -8,17 +10,13 @@ export async function redirectIfLoggedIn(request) {
     }
 
     try {
-        // verity token 
-        const res = await fetch(`${API_BASE_URL}/api/security/verify-token`, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token }),
-            credentials: 'include'
-        })
+        // verify token
+        const res = await verifyToken(token) 
 
         if(res.ok) {
-            return NextResponse.redirect(new URL('/', request.url));
+            return NextResponse.redirect(new URL(dashboard, request.url));
         }else {
+            alert('no')
             return NextResponse.next();
         }
     } catch (err) {

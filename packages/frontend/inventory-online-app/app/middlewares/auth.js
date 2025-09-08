@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
-
-const API_BASE_URL = process.env.API_BASE_URL || 'http://127.0.0.1'
+import { verifyToken } from '../utils/verifyToken'
 
 export async function verifyAuth(request) {
     const token = request.cookies.get('access_token')?.value
@@ -12,12 +11,7 @@ export async function verifyAuth(request) {
     }
 
     // verify token 
-    const res = await fetch(`${API_BASE_URL}/api/security/verify-token`, {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-        credentials: 'include'
-    })
+    const res = await verifyToken(token)
 
     if(res.ok) {
         return NextResponse.next()
