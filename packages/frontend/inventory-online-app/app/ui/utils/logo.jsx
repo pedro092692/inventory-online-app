@@ -1,43 +1,50 @@
 import Image from 'next/image'
 
-export function Logo({type='fullColor'}) {
-    const path = 'images/logo/'
+export function Logo({type='fullColor', style}) {
+    const path = '/images/logo/'
 
     const imgInfo = {
         fullColor: {
-            src: `${path}/fullColor.svg`,
+            src: `${path}fullColor.svg`,
             with: 220,
             height: 18.72
         },
 
         fullColorLogin: {
-            src: `${path}/fullColor.svg`,
+            src: `${path}fullColor.svg`,
             with: 320,
             height: 27.23,
         },
 
         monoColor: {
-            src: `${path}/monoColor.svg`,
+            src: `${path}monoColor.svg`,
             with: 220,
             height: 18.72
         },
 
         iconColor: {
-            src: `${path}/iconColor.svg`,
+            src: `${path}iconColor.svg`,
             with: 48,
             height: 48
         },
 
         iconMono: {
-            src: `${path}/iconMono.svg`,
+            src: `${path}iconMono.svg`,
             with: 48,
             height: 48
         },
 
         iconWhite: {
-            src: `${path}/iconWhite.svg`,
+            src: `${path}iconWhite.svg`,
             with: 48,
             height: 48
+        },
+
+        logoWhite: {
+            src: `${path}logoWhite.svg`,
+            height: 16.34,
+            with: 192
+            
         }
     }
     
@@ -50,6 +57,7 @@ export function Logo({type='fullColor'}) {
         alt="Logo" 
         width={imgInfo[type].with} 
         height={imgInfo[type].height } 
+        style={style}
         />
 }
 

@@ -34,7 +34,7 @@ export default function Home() {
 
   return (
     <>
-      <h1>Bienvenido a tus products</h1>
+      <h1>Productos</h1>
       <div>
         <div>
             <p >Productos </p>
