@@ -7,7 +7,7 @@ export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   
   const publicPaths = ["/login", "/register"];
-  const privatePaths = ["/dashboard", "/inventory", "/orders", "/products"]
+  const privatePaths = ["/store"]; 
 
   if(publicPaths.some((path) => pathname.startsWith(path))) {
     // If the user is logged in, redirect them to the dashboard
@@ -22,5 +22,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*', '/inventory/:path*', '/orders/:path*', '/products/:path*', '/login', '/register'],
+    matcher: ['/store/:path*', '/login', '/register'],
 }

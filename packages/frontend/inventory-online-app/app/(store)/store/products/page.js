@@ -1,6 +1,5 @@
 'use client'
 import axios from 'axios'
-import { Ultra } from 'next/font/google';
 import { useEffect, useState } from 'react';
 
 

@@ -1,6 +1,6 @@
 'use client'
 import axios from 'axios'
-import { use, useState } from 'react'
+import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Container } from '@/app/ui/utils/container'
 import { Logo } from '@/app/ui/utils/logo'
