@@ -1,0 +1,8 @@
+.iconContainer {
+    padding: 0px;
+    gap: 0px;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background: linear-gradient(143deg, var(--color-blue400) 0%, var(--color-blue800) 100%);
+}

@@ -1,6 +1,6 @@
 import { Container } from '@/app/ui/utils/container'
 import { Panel } from '../ui/dashboard/panel/panel'
-export default function Dashboard({ children}) {
+export default function Dashboard({children, }) {
     return (
         <Container
             flexGrow='1'
@@ -14,13 +14,14 @@ export default function Dashboard({ children}) {
             <Panel />
             {/* panel */}
             <Container
-                padding='24px'
+                padding='8px'
                 direction='column'
                 flexGrow='1'
                 height='100%'
                 alignItem='start'
                 justifyContent='start'
             >
+                {/* content */}
                 {children}
             </Container>
         </Container>

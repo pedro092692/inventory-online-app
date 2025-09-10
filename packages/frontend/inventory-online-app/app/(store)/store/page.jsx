@@ -1,5 +1,8 @@
-export default function Dashboard() {
+import { Title } from "@/app/ui/dashboard/title/title"
+export default function HomeStore() {
     return (
-        <h1>Welcome to Dashboard</h1>
+        <Title title="Dashboard"  />
     )
 }
+
+

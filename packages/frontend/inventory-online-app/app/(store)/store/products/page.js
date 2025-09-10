@@ -1,10 +1,10 @@
 'use client'
 import axios from 'axios'
 import { useEffect, useState } from 'react';
+import { Title } from "@/app/ui/dashboard/title/title"
 
 
-export default function Home() {
-
+export default function Products() {
     const [products, setProducts] = useState([]);
     useEffect(() => {
         // load products from the API
@@ -34,19 +34,17 @@ export default function Home() {
 
   return (
     <>
-      <h1>Productos</h1>
-      <div>
-        <div>
-            <p >Productos </p>
-            {products.map((product, index) => {
-                return (
-                    <ul key={index}>
-                        <li>{product.name} - ${product.selling_price} stock: {product.stock}</li>
-                    </ul>
-                )
-            })}
-        </div>
-      </div>
+        <Title title="Products" icon={'product'}  />
+        {products.map((product, index) => {
+            return (
+                <ul key={index}>
+                    <li>{product.name} - ${product.selling_price} stock: {product.stock}</li>
+                </ul>
+            )
+        })}
     </>
   )
 }
+
+
+
