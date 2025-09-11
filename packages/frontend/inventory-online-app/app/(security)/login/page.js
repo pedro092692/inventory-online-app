@@ -6,6 +6,7 @@ import { Container } from '@/app/ui/utils/container'
 import { Logo } from '@/app/ui/utils/logo'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Input } from '@/app/ui/form/input/input'
+import { Form } from '@/app/ui/form/form/form'
 import styles from './login.module.css'
 import Link from 'next/link'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
@@ -52,20 +53,19 @@ export default function SecurityPage() {
       >
         <Logo type='fullColorLogin'/>
         <h1 className='h2'>Inicia sesión en Nexastock</h1>
-        <Container
-          className={styles.form}
-        >
-          <Input type='email' placeHolder='Correo electrónico' onChange={(e) => setEmail(e.target.value)} style={{width: '100%'}}/>
-          <Input type='password' placeHolder='Contraseña' onChange={(e) => setPassword(e.target.value)} style={{width: '100%'}}/>
-          {error &&<p className='p3-r' style={{color: 'var(--color-accentRed400)'}}>{error} </p>}
-          <Button onClick={login} role='submit' type='secondary' style={{width: '100%'}} className='p2-b'>Iniciar sesión</Button>
-          <Link
-            href='/'
-            style={{width: '100%'}}
-          >
-            <Button type='warning' className='p2-r' style={{width: '100%'}}>Volver al inicio</Button>
-          </Link>
-        </Container>
+
+          <Form onSubmit={(e) => {e.preventDefault(); login()}}>
+            <Input type='email' placeHolder='Correo electrónico' onChange={(e) => setEmail(e.target.value)} style={{width: '100%'}}/>
+            <Input type='password' placeHolder='Contraseña' onChange={(e) => setPassword(e.target.value)} style={{width: '100%'}}/>
+            {error &&<p className='p3-r' style={{color: 'var(--color-accentRed400)'}}>{error} </p>}
+            <Button role='submit' type='secondary' style={{width: '100%'}} className='p2-b'>Iniciar sesión</Button>
+            <Link
+              href='/'
+              style={{width: '100%'}}
+            >
+              <Button type='warning' className='p2-r' style={{width: '100%'}}>Volver al inicio</Button>
+            </Link>
+          </Form>
         
       </Container>
       

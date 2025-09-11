@@ -1,0 +1,18 @@
+.form {
+    display: flex;
+    padding: 10px;
+    gap: 16px;
+    flex-grow: 1;
+    flex-direction: column;
+    width: 100%;
+    align-items: start;
+
+}
+
+@media screen and (max-width: 600px) {
+
+    .form {
+        padding: 0px;
+
+    }
+}
