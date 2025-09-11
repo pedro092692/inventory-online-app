@@ -23,7 +23,7 @@ export function Panel() {
         bills: {
             title: 'Oderdenes de compra',
             icon: 'paper',
-            link: '#'
+            link: '/store/bills'
         },
 
         cashier: {
