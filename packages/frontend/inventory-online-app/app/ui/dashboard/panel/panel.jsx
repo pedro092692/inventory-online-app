@@ -48,7 +48,7 @@ export function Panel() {
         reports: {
             title: 'Reportes',
             icon: 'report',
-            link: '#'
+            link: '/store/reports'
         },
 
         sell: {
