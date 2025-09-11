@@ -35,7 +35,7 @@ export function Panel() {
         paymentMethods: {
             title: 'Metodos de pago',
             icon: 'creditCard',
-            link: '#'
+            link: '/store/payment-methods'
 
         },
 
