@@ -42,7 +42,7 @@ export function Panel() {
         dollar: {
             title: 'Precio del dolar',
             icon: 'dollar',
-            link: '#'
+            link: '/store/currency'
         },
 
         reports: {
