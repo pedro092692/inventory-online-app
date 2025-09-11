@@ -29,7 +29,7 @@ export function Panel() {
         cashier: {
             title: 'Cajeros',
             icon: 'cashier',
-            link: '#'
+            link: '/store/cashiers'
         },
 
         paymentMethods: {
