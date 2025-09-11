@@ -10,7 +10,7 @@ export function Panel() {
         customers: {
             title: 'clientes',
             icon: 'customer',
-            link: '#'
+            link: '/store/customers'
         },
 
         products: {
