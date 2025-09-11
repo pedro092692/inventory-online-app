@@ -89,7 +89,10 @@ class TenantConnection {
      */
     async TenantConnection(tenant_id) {
         // set schema
-        const schema = `${db_user_tenant}_${tenant_id}`
+        let schema = `${db_user_tenant}_${tenant_id}`
+        if(tenant_id === 1) { // test purpose.
+            schema = 'test_schema'
+        }
 
         // create new schema for tenant if it not exist
         this.createNewShema(schema)

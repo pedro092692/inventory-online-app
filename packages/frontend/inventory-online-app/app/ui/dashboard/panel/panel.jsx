@@ -54,7 +54,7 @@ export function Panel() {
         sell: {
             title: 'Vender',
             icon: 'sell',
-            link: '#'
+            link: '/store/sell'
         }
     }
 
