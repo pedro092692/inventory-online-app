@@ -43,6 +43,9 @@ export function Icon({icon='person', color='white', size=[20, 20], className='',
         },
 
         segment: {
+            icon: <g xmlns="http://www.w3.org/2000/svg" clipPath="url(#clip0_431_94)">
+                    <path d="M18 36H42V32H18V36ZM6 12V16H42V12H6ZM18 26H42V22H18V26Z" fill={color}/>
+                  </g>
         },
 
         dollar: {
@@ -61,6 +64,24 @@ export function Icon({icon='person', color='white', size=[20, 20], className='',
                         36.96 32.9999 34.7 32.9999 30.6C32.9999 24.92 28.1399 22.98 23.5999 21.8Z" 
                         fill={color}/>
                   </g>
+        },
+
+        mail: {
+            icon: <g xmlns="http://www.w3.org/2000/svg" clipPath="url(#clip0_431_224)">
+                <path d="M40 8H8C5.8 8 4.02 9.8 4.02 12L4 36C4 38.2 5.8 40 8 
+                    40H40C42.2 40 44 38.2 44 36V12C44 9.8 42.2 8 40 8ZM40 16L24 26L8 16V12L24 22L40 
+                    12V16Z" fill={color}/>
+            </g>
+        },
+
+        key: {
+            icon:  <g xmlns="http://www.w3.org/2000/svg" clipPath="url(#clip0_431_224)">
+                        <path d="M25.3 20C23.66 15.34 19.22 12 14 12C7.38 12 2 17.38 2 
+                        24C2 30.62 7.38 36 14 36C19.22 36 23.66 32.66 25.3 
+                        28H34V36H42V28H46V20H25.3ZM14 28C11.8 28 10 26.2 10 24C10 21.8 11.8 
+                        20 14 20C16.2 20 18 21.8 18 24C18 26.2 16.2 28 14 28Z" 
+                        fill={color}/>
+                   </g>
         },
 
         plus1: {

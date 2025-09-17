@@ -15,6 +15,7 @@ export function Container(
         onClick,
         onMouseEnter,
         onMouseLeave,
+        borderRadius,
     }) {
 
         const styles = {
@@ -27,6 +28,7 @@ export function Container(
             justifyContent: justifyContent,
             flexGrow: flexGrow,
             backgroundColor: backgroundColor,
+            borderRadius: borderRadius,
         }
     return (
         <div ref={ref} className={`container ${className}`} style={styles} 
