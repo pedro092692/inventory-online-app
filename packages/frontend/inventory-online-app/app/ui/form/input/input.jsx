@@ -1,12 +1,12 @@
 import styles from './input.module.css'
 import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
-export function Input({type='text', placeHolder='default value', onChange, style, backgroundColor, showIcon=true, icon='playArrow', gap='0px'}) {
+export function Input({type='text', placeHolder='default value', onChange, style, backgroundColor, showIcon=true, icon='playArrow', gap='0px', className}) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px'}
     return (
         <Container
             padding={showIcon ? '0px 0px 0px 16px' : '0px'}
-            backgroundColor={`var(${backgroundColor})`}
+            backgroundColor={backgroundColor ?`var(${backgroundColor})` : 'var(--color-neutralGrey300)'}
             width='100%'
             gap={gap}
             borderRadius='8px'
@@ -15,7 +15,8 @@ export function Input({type='text', placeHolder='default value', onChange, style
         >
             {showIcon && <Icon icon={icon} color='black'/>}
             <input 
-                className={`p2-r ${styles.input}`}
+                // className={`p2-r ${styles.input}` + (className ? className : '')}
+                className={`p2-r ${styles.input} ${className}`}
                 type={type} 
                 placeholder={placeHolder} 
                 onChange={onChange}

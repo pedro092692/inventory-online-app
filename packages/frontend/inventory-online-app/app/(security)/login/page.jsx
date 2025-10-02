@@ -55,8 +55,8 @@ export default function SecurityPage() {
         <h1 className='h2'>Inicia sesión en Nexastock</h1>
 
           <Form onSubmit={(e) => {e.preventDefault(); login()}}>
-            <Input icon='mail' type='email' placeHolder='Correo electrónico' onChange={(e) => setEmail(e.target.value)} style={{width: '100%'}} backgroundColor='--color-neutralGrey300'/>
-            <Input icon='key' type='password' placeHolder='Contraseña' onChange={(e) => setPassword(e.target.value)} style={{width: '100%'}} backgroundColor='--color-neutralGrey300'/>
+            <Input icon='mail' type='email' placeHolder='Correo electrónico' onChange={(e) => setEmail(e.target.value)} style={{width: '100%'}} />
+            <Input icon='key' type='password' placeHolder='Contraseña' onChange={(e) => setPassword(e.target.value)} style={{width: '100%'}} />
             {error &&<p className='p3-r' style={{color: 'var(--color-accentRed400)'}}>{error} </p>}
             <Button role='submit' type='secondary' style={{width: '100%'}} className='p2-b'>Iniciar sesión</Button>
             <Link
