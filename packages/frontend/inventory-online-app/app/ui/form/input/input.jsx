@@ -1,7 +1,7 @@
 import styles from './input.module.css'
 import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
-export function Input({type='text', placeHolder='default value', onChange, style, backgroundColor, showIcon=true, icon='playArrow', gap='0px', className}) {
+export function Input({type='text', placeHolder='default value', onChange, style, backgroundColor, showIcon=true, icon='playArrow', gap='0px', className, value, name}) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px'}
     return (
         <Container
@@ -21,6 +21,8 @@ export function Input({type='text', placeHolder='default value', onChange, style
                 placeholder={placeHolder} 
                 onChange={onChange}
                 style={style_}
+                value={value}
+                name={name}
                 required
             />
         </Container>
