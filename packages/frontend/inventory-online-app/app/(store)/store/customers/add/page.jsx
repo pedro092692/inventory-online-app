@@ -14,7 +14,6 @@ export default function AddCustomer() {
     const [errors, setErrors] = useState(null)
     const [name, setName] = useState('')
     const [id_number, setId_number] = useState('')
-    const [displayPhone, setDisplayPhone] = useState('')
     const [phone, setPhone] = useState('')
 
     const addCustomer = async () => {

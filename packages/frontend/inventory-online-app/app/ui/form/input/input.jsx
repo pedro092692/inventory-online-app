@@ -4,7 +4,7 @@ import { Icon } from '@/app/ui/utils/icons/icons'
 import InputMask from 'comigo-tech-react-input-mask'
 
 export function Input({type='text', placeHolder='default value', onChange, style, backgroundColor, showIcon=true, icon='playArrow', gap='0px', className, value, name, formatPhone=null}) {
-    const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px'}
+    const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%'}
     const handlePhoneInput = (e) => {
         const raw = e.target.value.replace(/\D/g, '')
         let formatted = '+58' + raw.slice(2)
