@@ -12,8 +12,9 @@ export default function AddCustomer() {
 
     const [message, setMessage] = useState(null)
     const [errors, setErrors] = useState(null)
-    const [name, setName] = useState('pedro')
+    const [name, setName] = useState('')
     const [id_number, setId_number] = useState('')
+    const [displayPhone, setDisplayPhone] = useState('')
     const [phone, setPhone] = useState('')
 
     const addCustomer = async () => {
@@ -45,7 +46,7 @@ export default function AddCustomer() {
                 {errors?.name && <span className="field_error">{errors.name}</span>}
                 <Input className={styles.inputNumber} type="number" placeHolder="Cedula" icon="id" onChange={(e) => setId_number(e.target.value)} value={id_number} name={'id_number'}/>
                 {errors?.id_number && <span className="field_error">{errors.id_number}</span>}
-                <Input type="text" placeHolder="Telefono" icon="phone" onChange={(e) => setPhone(e.target.value)} value={phone} name={'phone'}/>
+                <Input type="phone" icon="phone" onChange={(e) => setPhone(e.target.value)} value={phone} name={'phone'} formatPhone={setPhone}/>
                 {errors?.phone && <span className="field_error">{errors.phone}</span>}
                 <Button role="submit" type="secondary">
                     Agregar cliente
