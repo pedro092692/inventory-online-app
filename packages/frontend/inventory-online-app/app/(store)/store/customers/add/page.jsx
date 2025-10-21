@@ -40,7 +40,7 @@ export default function AddCustomer() {
 
     return (
        <>
-            <Form style={{width: '50%'}} onSubmit={(e) => {e.preventDefault(); addCustomer()}}>
+            <Form className={styles.form}  onSubmit={(e) => {e.preventDefault(); addCustomer()}}>
                 <Input type="text" placeHolder="Nombre del cliente" icon="person" onChange={(e) => setName(e.target.value)} value={name} name={'name'}/>
                 {errors?.name && <span className="field_error">{errors.name}</span>}
                 <Input className={styles.inputNumber} type="number" placeHolder="Cedula" icon="id" onChange={(e) => setId_number(e.target.value)} value={id_number} name={'id_number'}/>
