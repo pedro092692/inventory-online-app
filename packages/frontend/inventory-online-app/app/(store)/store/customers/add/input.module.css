@@ -9,8 +9,9 @@
 }
 
 .form {
+  margin-top: 16px;
   width: 50%;
-  background: var(--color-neutralGrey600);
+  background: var(--color-neutralGrey500);
   flex-grow: 0;
   padding: 16px;
   border-radius: 8px;
