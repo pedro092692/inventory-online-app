@@ -8,12 +8,14 @@ const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:/
 export default function ViewCustomers() {
 
     const [customers, setCustomers ] = useState([])
+    const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
     const [offset, setOffset] = useState(0)
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
     // load customers from the API
     const fetchCustomers = async (limit, offset) => {
+            setLoading(true)
             try {
                 const response = await axios.get(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/all?limit=${limit}&offset=${offset}`, 
                     {withCredentials: true})
@@ -27,9 +29,12 @@ export default function ViewCustomers() {
                     console.log(error.response.status)
                     console.log(error.response.data.message)
                 }
+            } finally {
+                setLoading(false)
             }
         }
 
+    //load customers on component mount
     useEffect(() => {
         fetchCustomers(limit, offset)
     }, [])
@@ -43,17 +48,40 @@ export default function ViewCustomers() {
                 direction="column"
                 justifyContent="start"
                 alignItem="start"
-                backgroundColor="grey"
+                // backgroundColor="grey"
                 flexGrow="1"
                 width="100%"
-            >
-                <ul>
-                    {customers.map((customer) => (
-                        <li key={customer.id}>{customer.name}</li>
-                    ))}
-                </ul>
-                <p>Total: {total}</p>
-                <p>Page: {page} </p>
+            >   
+                {loading ? 
+                    <p>Cargando clientes...</p>
+                : customers.length === 0 ?
+                    <p>No hay clientes disponibles</p> 
+                :
+                <>
+                    <table border={'1'}>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cedula</th>
+                                <th>Telefono</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {customers.map((customer, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{customer.name}</td>
+                                        <td>{customer.id_number}</td>
+                                        <td>{customer.phone.replace('+58', '')}</td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                    <p>Total: {total}</p>
+                    <p>Page: {page} </p>
+                </>
+                }
             </Container>
         </>
     )

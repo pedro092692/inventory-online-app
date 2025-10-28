@@ -5,7 +5,7 @@ function validateFields(rule) {
         createCustomer: [
             check('id_number').isLength({ min: 6}).withMessage('El número de cédula debe tener al menos 6 dígitos'),
             check('name').isLength({ min: 3}).withMessage('El nombre debe tener al menos 3 caracteres'),
-            check('phone').isLength({ min: 7}).withMessage('El teléfono debe tener al menos 7 dígitos'),
+            check('phone').isLength({ min: 13}).withMessage('El teléfono debe tener al menos 10 dígitos'),
         ]
     }
 
