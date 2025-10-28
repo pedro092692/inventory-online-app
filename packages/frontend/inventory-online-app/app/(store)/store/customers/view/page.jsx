@@ -30,7 +30,7 @@ export default function ViewCustomers() {
     return (
         <>
             {/* view all customers */}
-            <h1>Lista de todos los clientes</h1>
+            <Route path='customers' endpoints={['default', 'view']} /> 
             <Container
                 padding="0"
                 direction="column"
