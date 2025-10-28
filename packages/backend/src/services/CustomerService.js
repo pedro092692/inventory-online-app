@@ -39,6 +39,7 @@ class CustomerService {
      */
     getAllCustomers(limit=10, offset=0) {
         return this.#error.handler(['Read All Customers'], async () => {
+            const count = await this.Customer.count()
             const customers = await this.Customer.findAll({
                 include: {
                     association: 'invoices',
@@ -49,7 +50,12 @@ class CustomerService {
                 limit: limit,
                 offset: offset
             })
-            return customers
+            return {
+                total: count,
+                customers: customers,
+                page: Math.floor(offset / limit ) + 1,
+                pageSize: limit
+            }
         })
     }
 

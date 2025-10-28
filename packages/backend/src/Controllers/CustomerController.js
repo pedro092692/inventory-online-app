@@ -29,8 +29,10 @@ class CustomerController {
      * @returns {Promise<void>} - returns the list of customers in the response
      */
     allCustomers = this.#error.handler( async(req, res) => {
-        const customers = await this.customerService.getAllCustomers()
-        res.status(200).json(customers)
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const offset = req.query.offset ? parseInt(req.query.offset) : 0
+        const {customers, total, page, pageSize} = await this.customerService.getAllCustomers(limit, offset)
+        res.status(200).json({customers, total, page, pageSize})
     })
 
     /**
