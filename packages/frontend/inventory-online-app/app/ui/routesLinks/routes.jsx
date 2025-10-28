@@ -11,6 +11,11 @@ export default function Route({path='customers', endpoints=['default', 'add']}) 
             add: {
                 href: '/store/customers/add',
                 label: 'Agregar cliente'
+            },
+
+            view: {
+                href: '/store/customers/view',
+                label: 'Todos los clientes'
             }
         }
     }
