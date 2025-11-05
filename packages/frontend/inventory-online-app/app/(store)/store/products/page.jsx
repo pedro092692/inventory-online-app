@@ -4,6 +4,7 @@ import List from '@/app/ui/list/list'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { Title } from '@/app/ui/dashboard/title/title'
+import Link from 'next/link'
 
 
 export default function Products() {
@@ -36,7 +37,8 @@ export default function Products() {
 
   return (
     <>
-        hola pedro
+        <Link href="#">Agregar un nuevo producto</Link>
+        <Link href="#">Lista de todos los productos</Link>
         {/* <Title title="Products" icon={'product'}  />
         {products.map((product, index) => {
             return (
