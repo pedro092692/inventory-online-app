@@ -1,8 +1,9 @@
+import styles from './list.module.css'
 
 export default function List({tableHead=[], tableData=[]}) {
     return (
-        <div>
-            <table>
+        <div className={styles.container}>
+            <table className={styles.table}>
                 <thead>
                     <tr>
                         {tableHead.map((head, index) => (
