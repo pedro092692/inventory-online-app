@@ -16,7 +16,6 @@ export async function redirectIfLoggedIn(request) {
         if(res.ok) {
             return NextResponse.redirect(new URL(dashboard, request.url));
         }else {
-            alert('no')
             return NextResponse.next();
         }
     } catch (err) {

@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Container } from '@/app/ui/utils/container'
+import List from '@/app/ui/list/list'
 import Route from '@/app/ui/routesLinks/routes'
 import axios from 'axios'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
@@ -39,6 +40,14 @@ export default function ViewCustomers() {
         fetchCustomers(limit, offset)
     }, [])
 
+    let data = []
+    if (customers.length > 0) {
+        data = customers.map(customer => (
+            [customer.name, customer.id_number, customer.phone.replace('+58', '')]
+        ))
+    }
+    
+
     return (
         <>
             {/* view all customers */}
@@ -57,27 +66,8 @@ export default function ViewCustomers() {
                 : customers.length === 0 ?
                     <p>No hay clientes disponibles</p> 
                 :
-                <>
-                    <table border={'1'}>
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Cedula</th>
-                                <th>Telefono</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {customers.map((customer, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>{customer.name}</td>
-                                        <td>{customer.id_number}</td>
-                                        <td>{customer.phone.replace('+58', '')}</td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
+                <>  
+                    <List tableHead={['Nombre', 'Cedula', 'Telefono']} tableData={data}   />
                     <p>Total: {total}</p>
                     <p>Page: {page} </p>
                 </>
