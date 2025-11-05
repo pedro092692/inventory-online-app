@@ -49,7 +49,8 @@ export default function ViewProducts() {
 
   return (
     <>
-        View Products
+        {/* view all customers */}
+        <Route path='products' endpoints={['default', 'view']} />
     </>
   )
 }
