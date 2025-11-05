@@ -37,8 +37,11 @@ export default function Products() {
 
   return (
     <>
+        {/* // add new product  */}
         <Link href="#">Agregar un nuevo producto</Link>
-        <Link href="#">Lista de todos los productos</Link>
+        {/* view all products */}
+        <Link href="/store/products/view">Lista de todos los productos</Link>
+
         {/* <Title title="Products" icon={'product'}  />
         {products.map((product, index) => {
             return (

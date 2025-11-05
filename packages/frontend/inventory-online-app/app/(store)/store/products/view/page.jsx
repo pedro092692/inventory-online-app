@@ -1,49 +1,55 @@
 'use client'
+import { useEffect, useState } from 'react'
 import { Container } from '@/app/ui/utils/container'
 import List from '@/app/ui/list/list'
+import Route from '@/app/ui/routesLinks/routes'
 import axios from 'axios'
-import { useEffect, useState } from 'react'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 
 export default function ViewProducts() {
-    const [products, setProducts] = useState([]);
-    useEffect(() => {
-        // load products from the API
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get('http://127.0.0.1:4000/api/products/all', {withCredentials: true})
-                if(response.data){
+    const [products, setProducts] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [limit, setLimit] = useState(10)
+    const [offset, setOffset] = useState(0)
+    const [total, setTotal]  = useState(0)
+    const [page, setPage] = useState(0) 
 
-                    setProducts(response.data);
-                }else{
-                    setProducts([]);
-                }
-
-
-            } catch (error) {
-                if (error.response) {
-                    console.log(error.response.status)
-                    console.log(error.response.data.message)
-                }
-                console.error(error)
+    
+    // load products from the API
+    const fetchProducts = async () => {
+        setLoading(true)
+        try {
+            const response = await axios.get(`${NEXT_PUBLIC_API_BASE_URL}/api/products/all`, {withCredentials: true})
+            if(response.data){
+                setProducts(response.data);
             }
+        } catch (error) {
+            if (error.response) {
+                console.log(error.response.status)
+                console.log(error.response.data.message)
+            }
+            console.error(error)
+        } finally {
+            setLoading(false)
         }
+    }
 
+    useEffect(() => {
         fetchProducts()
     }, [])
     
+    let data = []
+
+    if (products.length > 0) {
+        data = products.map(product => (
+            [product.name, product.selling_price, product.stock]
+        ))
+    }
 
   return (
     <>
-        <Title title="Products" icon={'product'}  />
-        {products.map((product, index) => {
-            return (
-                <ul key={index}>
-                    <li>{product.name} - ${product.selling_price} stock: {product.stock}</li>
-                </ul>
-            )
-        })}
+        View Products
     </>
   )
 }
