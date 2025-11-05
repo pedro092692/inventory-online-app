@@ -1,6 +1,7 @@
 .container {
     width: 100%;
     overflow-x: auto;
+    border-radius: 8px;
 }
 
 .table {
@@ -17,4 +18,8 @@
 
 .table tr:nth-child(even) {
     background-color: #f2f2f2;
+}
+
+.table .number {
+    text-align: right;
 }

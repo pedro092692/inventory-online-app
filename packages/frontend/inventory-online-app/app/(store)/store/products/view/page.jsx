@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Container } from '@/app/ui/utils/container'
+import Link from 'next/link'
 import List from '@/app/ui/list/list'
 import Route from '@/app/ui/routesLinks/routes'
 import axios from 'axios'
@@ -43,7 +44,7 @@ export default function ViewProducts() {
 
     if (products.length > 0) {
         data = products.map(product => (
-            [product.name, product.selling_price, product.stock]
+            [product.name, product.selling_price + ' $', product.stock]
         ))
     }
 
@@ -51,6 +52,28 @@ export default function ViewProducts() {
     <>
         {/* view all customers */}
         <Route path='products' endpoints={['default', 'view']} />
+        <Container
+            padding="0"
+            direction="column"
+            justifyContent="start"
+            alignItem="start"
+            // backgroundColor="grey"
+            flexGrow="1"
+            width="100%"
+        >
+            {loading ? 
+                <p>Cargando productos...</p>
+            : products.length === 0 ?
+                <p>No hay productos para mostrar, <Link href={'/store/products/add'}>Agrega un nuevo producto</Link></p>
+            :
+                <>
+                    <List tableHead={['Nombre', 'Precio', 'Stock']} tableData={data} />
+                    <p>Total: {total}</p>
+                    <p>Page: {page} </p>
+                </>
+            }
+
+        </Container>
     </>
   )
 }

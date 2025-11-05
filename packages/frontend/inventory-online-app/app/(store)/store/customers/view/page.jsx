@@ -64,7 +64,7 @@ export default function ViewCustomers() {
                 {loading ? 
                     <p>Cargando clientes...</p>
                 : customers.length === 0 ?
-                    <p>No hay clientes disponibles</p> 
+                    <p>No hay clientes disponibles.</p> 
                 :
                 <>  
                     <List tableHead={['Nombre', 'Cedula', 'Telefono']} tableData={data}   />
