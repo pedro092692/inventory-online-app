@@ -1,7 +1,9 @@
 'use client'
+import { Container } from '@/app/ui/utils/container'
+import List from '@/app/ui/list/list'
 import axios from 'axios'
-import { useEffect, useState } from 'react';
-import { Title } from "@/app/ui/dashboard/title/title"
+import { useEffect, useState } from 'react'
+import { Title } from '@/app/ui/dashboard/title/title'
 
 
 export default function Products() {
@@ -34,14 +36,15 @@ export default function Products() {
 
   return (
     <>
-        <Title title="Products" icon={'product'}  />
+        hola pedro
+        {/* <Title title="Products" icon={'product'}  />
         {products.map((product, index) => {
             return (
                 <ul key={index}>
                     <li>{product.name} - ${product.selling_price} stock: {product.stock}</li>
                 </ul>
             )
-        })}
+        })} */}
     </>
   )
 }
