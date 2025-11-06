@@ -1,7 +1,6 @@
 .container {
     width: 100%;
     overflow-x: auto;
-    border-radius: 8px;
 }
 
 .table {
@@ -10,16 +9,32 @@
 
 }
 
+.table thead {
+    background-color: var(--color-blue400);
+    color: var(--color-blue800);
+}
+
+.table thead tr th {
+    text-transform: uppercase;
+    padding: 8px;
+    border: none;
+}
+
 .table th, .table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    /* border: none; */
 }
 
 .table tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: var(--color-neutralGrey300);
 }
 
 .table .number {
     text-align: right;
+}
+
+.table .capitalize {
+    text-transform: capitalize;
 }

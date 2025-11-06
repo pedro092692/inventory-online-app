@@ -67,7 +67,7 @@ export default function ViewProducts() {
                 <p>No hay productos para mostrar, <Link href={'/store/products/add'}>Agrega un nuevo producto</Link></p>
             :
                 <>
-                    <List tableHead={['Nombre', 'Precio', 'Stock']} tableData={data} />
+                    <List tableHead={['Nombre', 'Precio', 'Stock', 'Acciones']} tableData={data} />
                     <p>Total: {total}</p>
                     <p>Page: {page} </p>
                 </>

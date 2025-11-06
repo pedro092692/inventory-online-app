@@ -67,7 +67,7 @@ export default function ViewCustomers() {
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
-                    <List tableHead={['Nombre', 'Cedula', 'Telefono']} tableData={data}   />
+                    <List tableHead={['Nombre', 'Cedula', 'Telefono', 'Acciones']} tableData={data}   />
                     <p>Total: {total}</p>
                     <p>Page: {page} </p>
                 </>
