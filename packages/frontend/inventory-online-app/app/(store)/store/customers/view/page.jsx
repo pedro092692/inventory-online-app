@@ -17,7 +17,6 @@ export default function ViewCustomers() {
     const [tableData, setTableData] = useState([])
     // load customers from the API
     const fetchCustomers = async (limit, offset) => {
-            setLoading(true)
             try {
                 const response = await axios.get(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/all?limit=${limit}&offset=${offset}`, 
                     {withCredentials: true})
@@ -39,6 +38,7 @@ export default function ViewCustomers() {
 
     //load customers on component mount
     useEffect(() => {
+        setLoading(true)
         fetchCustomers(limit, offset)
     }, [])
 
