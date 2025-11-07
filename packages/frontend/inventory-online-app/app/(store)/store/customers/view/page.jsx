@@ -14,6 +14,7 @@ export default function ViewCustomers() {
     const [offset, setOffset] = useState(0)
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
+    const [tableData, setTableData] = useState([])
     // load customers from the API
     const fetchCustomers = async (limit, offset) => {
             setLoading(true)
@@ -24,6 +25,7 @@ export default function ViewCustomers() {
                     setCustomers(response.data.customers)
                     setPage(response.data.page)
                     setTotal(response.data.total)
+                    setTableData(transformData(response.data.customers))
                 }
             } catch (error) {
                 if (error.response) {
@@ -40,13 +42,23 @@ export default function ViewCustomers() {
         fetchCustomers(limit, offset)
     }, [])
 
-    let data = []
-    if (customers.length > 0) {
-        data = customers.map(customer => (
-            [customer.name, customer.id_number, customer.phone.replace('+58', '')]
-        ))
+
+    const transformData = (customers) => {
+        let data = []
+        if (customers.length > 0) {
+            data = customers.map(customer => (
+                [customer.name, customer.id_number, customer.phone.replace('+58', '')]
+            ))
+        }
+        return data
     }
     
+    const pages = Array.from({ length: Math.ceil(total / limit) }, (_, index) => index + 1) 
+    const handlePageChange = (pageNumber) => {
+        setOffset((pageNumber - 1) * limit)
+        fetchCustomers(limit, (pageNumber - 1) * limit)
+    }
+
 
     return (
         <>
@@ -67,9 +79,22 @@ export default function ViewCustomers() {
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
-                    <List tableHead={['Nombre', 'Cedula', 'Telefono', 'Acciones']} tableData={data}   />
+                    <List tableHead={['Nombre', 'Cedula', 'Telefono', 'Acciones']} tableData={tableData}   />
                     <p>Total: {total}</p>
                     <p>Page: {page} </p>
+                    <Container
+                    padding="0">
+                        {pages.map((pageNumber, index) => {
+                            return(
+                                <p 
+                                    key={index}
+                                    onClick={() => handlePageChange(pageNumber)}
+                                >
+                                    {pageNumber}
+                                </p>
+                            )
+                        })}
+                    </Container>
                 </>
                 }
             </Container>
