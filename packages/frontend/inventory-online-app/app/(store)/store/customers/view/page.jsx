@@ -53,7 +53,27 @@ export default function ViewCustomers() {
         return data
     }
     
-    const pages = Array.from({ length: Math.ceil(total / limit) }, (_, index) => index + 1) 
+    const totalPages = Math.ceil(total / limit)
+    const currentPage = page
+    const maxVisiblePages = 9 
+   
+
+    const geVisiblePages = () => {
+        const half = Math.floor(maxVisiblePages / 2)
+        let start = Math.max(currentPage - half, 1)
+        let end = start + maxVisiblePages - 1
+
+        if (end > totalPages) {
+            end = totalPages
+            start = Math.max(end - maxVisiblePages + 1, 1)
+        }
+        
+        return Array.from({ length: end - start + 1}, (_, index) => start + index)
+    }
+
+    const visiblePages = geVisiblePages()
+    
+    
     const handlePageChange = (pageNumber) => {
         setOffset((pageNumber - 1) * limit)
         fetchCustomers(limit, (pageNumber - 1) * limit)
@@ -80,17 +100,17 @@ export default function ViewCustomers() {
                 :
                 <>  
                     <List tableHead={['Nombre', 'Cedula', 'Telefono', 'Acciones']} tableData={tableData}   />
-                    <p>Total: {total}</p>
-                    <p>Page: {page} </p>
+                    {/* <p>Total: {total}</p> */}
+                    {/* <p>Page: {page} </p> */}
                     <Container
                     padding="0">
-                        {pages.map((pageNumber, index) => {
+                        {visiblePages.map((pageNumber, index) => {
                             return(
                                 <p 
                                     key={index}
                                     onClick={() => handlePageChange(pageNumber)}
                                 >
-                                    {pageNumber}
+                                    <a href="#">{pageNumber}</a>
                                 </p>
                             )
                         })}
