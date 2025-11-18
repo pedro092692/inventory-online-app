@@ -55,20 +55,29 @@ export default function ViewCustomers() {
     
     const totalPages = Math.ceil(total / limit)
     const currentPage = page
-    const maxVisiblePages = 9 
+    const maxVisiblePages = 8 
    
 
     const geVisiblePages = () => {
-        const half = Math.floor(maxVisiblePages / 2)
-        let start = Math.max(currentPage - half, 1)
-        let end = start + maxVisiblePages - 1
+        const pages = [1]
+        let start = 2
 
-        if (end > totalPages) {
-            end = totalPages
-            start = Math.max(end - maxVisiblePages + 1, 1)
+
+        if(currentPage - 1 > 1){
+            start = currentPage
+        }
+
+        if(currentPage + 8 > totalPages){
+            start = totalPages - 7
+        }
+
+        for(let i = 0; i < maxVisiblePages; i++){
+            if(i+start >= 2){
+                pages.push(i+start)
+            }
         }
         
-        return Array.from({ length: end - start + 1}, (_, index) => start + index)
+        return pages
     }
 
     const visiblePages = geVisiblePages()
