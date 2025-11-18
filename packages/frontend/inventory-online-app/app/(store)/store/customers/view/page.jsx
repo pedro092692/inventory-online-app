@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Container } from '@/app/ui/utils/container'
+import Pagination from '@/app/ui/pagination/pagination'
 import List from '@/app/ui/list/list'
 import Route from '@/app/ui/routesLinks/routes'
 import axios from 'axios'
@@ -109,21 +110,13 @@ export default function ViewCustomers() {
                 :
                 <>  
                     <List tableHead={['Nombre', 'Cedula', 'Telefono', 'Acciones']} tableData={tableData}   />
-                    {/* <p>Total: {total}</p> */}
-                    {/* <p>Page: {page} </p> */}
-                    <Container
-                    padding="0">
-                        {visiblePages.map((pageNumber, index) => {
-                            return(
-                                <p 
-                                    key={index}
-                                    onClick={() => handlePageChange(pageNumber)}
-                                >
-                                    <a href="#">{pageNumber}</a>
-                                </p>
-                            )
-                        })}
-                    </Container>
+                    
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        maxVisiblePages={maxVisiblePages}
+                        onPageChange={handlePageChange}
+                    />
                 </>
                 }
             </Container>
