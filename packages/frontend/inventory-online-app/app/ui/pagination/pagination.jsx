@@ -1,4 +1,5 @@
 import { Container } from '@/app/ui/utils/container'
+import styles from './pagination.module.css'
 
 export default function Pagination({currentPage, totalPages, maxVisiblePages, onPageChange}) {
     const geVisiblePages = () => {
@@ -27,14 +28,17 @@ export default function Pagination({currentPage, totalPages, maxVisiblePages, on
 
     return (
         <Container
-            padding="0">
+            padding="0"
+            gap="4px"
+        >
                 {visiblePages.map((pageNumber, index) => {
                     return(
                         <p 
                             key={index}
+                            className={`${styles.page} p2-b` + (pageNumber === currentPage ? ` ${styles.active}` : '')}
                             onClick={() => onPageChange(pageNumber)}
                         >
-                            <a href="#">{pageNumber}</a>
+                            {pageNumber} 
                         </p>
                     )
                 })}

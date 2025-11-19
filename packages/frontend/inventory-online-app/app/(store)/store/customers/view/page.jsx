@@ -16,6 +16,7 @@ export default function ViewCustomers() {
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
+    
     // load customers from the API
     const fetchCustomers = async (limit, offset) => {
             try {
@@ -57,33 +58,7 @@ export default function ViewCustomers() {
     const totalPages = Math.ceil(total / limit)
     const currentPage = page
     const maxVisiblePages = 8 
-   
-
-    const geVisiblePages = () => {
-        const pages = [1]
-        let start = 2
-
-
-        if(currentPage - 1 > 1){
-            start = currentPage
-        }
-
-        if(currentPage + 8 > totalPages){
-            start = totalPages - 7
-        }
-
-        for(let i = 0; i < maxVisiblePages; i++){
-            if(i+start >= 2){
-                pages.push(i+start)
-            }
-        }
         
-        return pages
-    }
-
-    const visiblePages = geVisiblePages()
-    
-    
     const handlePageChange = (pageNumber) => {
         setOffset((pageNumber - 1) * limit)
         fetchCustomers(limit, (pageNumber - 1) * limit)
