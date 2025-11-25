@@ -1,5 +1,6 @@
 import CustomerService from '../services/CustomerService.js'
 import controllerErrorHandler from '../errors/controllerErrorHandler.js'
+import setActionRole from '../utils/roleActicon.js'
 
 class CustomerController {
     #error = new controllerErrorHandler()
@@ -32,7 +33,8 @@ class CustomerController {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const offset = req.query.offset ? parseInt(req.query.offset) : 0
         const {customers, total, page, pageSize} = await this.customerService.getAllCustomers(limit, offset)
-        res.status(200).json({customers, total, page, pageSize})
+        const actions = setActionRole(req.user.role)
+        res.status(200).json({customers, total, page, pageSize, actions})
     })
 
     /**
