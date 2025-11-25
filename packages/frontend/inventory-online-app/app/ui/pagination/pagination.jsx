@@ -1,9 +1,14 @@
 import { Container } from '@/app/ui/utils/container'
 import styles from './pagination.module.css'
+import HandlePageChange from '@/app/utils/handlePageChange'
+import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
-export default function Pagination({currentPage, totalPages, maxVisiblePages, onPageChange}) {
+export default function Pagination({currentPage, totalPages, maxVisiblePages, setOffet, limit, fetchData}) {
 
-    
+    const searchParams = useSearchParams()
+    const router = useRouter()
+    const params = new URLSearchParams(searchParams.toString())
     const geVisiblePages = () => {
         const pages = [1]
         let start = 2
@@ -28,6 +33,12 @@ export default function Pagination({currentPage, totalPages, maxVisiblePages, on
 
     const visiblePages = geVisiblePages()
 
+    const changePage = (pageNumber) => {
+        HandlePageChange(pageNumber, setOffet, limit, fetchData)
+        params.set('page', pageNumber)
+        router.replace(`?${params.toString(pageNumber)}`)
+    }
+
     return (
         <Container
             padding="0"
@@ -38,7 +49,7 @@ export default function Pagination({currentPage, totalPages, maxVisiblePages, on
                         <p 
                             key={index}
                             className={`${styles.page} p2-b` + (pageNumber === currentPage ? ` ${styles.active}` : '')}
-                            onClick={() => onPageChange(pageNumber)}
+                            onClick={() => changePage(pageNumber)}
                         >
                             {pageNumber} 
                         </p>

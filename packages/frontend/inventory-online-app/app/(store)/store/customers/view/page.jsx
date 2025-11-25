@@ -1,8 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Container } from '@/app/ui/utils/container'
-import { useSearchParams } from 'next/navigation'
-import { useRouter } from 'next/navigation'
 import Pagination from '@/app/ui/pagination/pagination'
 import List from '@/app/ui/list/list'
 import Route from '@/app/ui/routesLinks/routes'
@@ -12,9 +10,6 @@ const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:/
 
 export default function ViewCustomers() {
     
-    const searchParams = useSearchParams()
-    const router = useRouter()
-    const params = new URLSearchParams(searchParams.toString())
     const [customers, setCustomers ] = useState([])
     const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
@@ -22,6 +17,7 @@ export default function ViewCustomers() {
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
+    
     
     // load customers from the API
     const fetchCustomers = async (limit, offset) => {
@@ -64,14 +60,6 @@ export default function ViewCustomers() {
     const totalPages = Math.ceil(total / limit)
     const currentPage = page
     const maxVisiblePages = 8 
-        
-    const handlePageChange = (pageNumber) => {
-        setOffset((pageNumber - 1) * limit)
-        fetchCustomers(limit, (pageNumber - 1) * limit)
-        params.set('page', pageNumber)
-        router.replace(`?${params.toString(page)}`)
-    }
-
 
     return (
         <>
@@ -97,7 +85,9 @@ export default function ViewCustomers() {
                         currentPage={currentPage}
                         totalPages={totalPages}
                         maxVisiblePages={maxVisiblePages}
-                        onPageChange={handlePageChange}
+                        setOffet={setOffset}
+                        limit={limit}
+                        fetchData={fetchCustomers}
                     />
                 </>
                 }
