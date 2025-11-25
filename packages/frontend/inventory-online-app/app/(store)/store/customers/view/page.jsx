@@ -1,18 +1,24 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Container } from '@/app/ui/utils/container'
+import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Pagination from '@/app/ui/pagination/pagination'
 import List from '@/app/ui/list/list'
 import Route from '@/app/ui/routesLinks/routes'
 import axios from 'axios'
+import { SearchParamsContext } from 'next/dist/shared/lib/hooks-client-context.shared-runtime'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function ViewCustomers() {
-
+    
+    const searchParams = useSearchParams()
+    const router = useRouter()
+    const params = new URLSearchParams(searchParams.toString())
     const [customers, setCustomers ] = useState([])
     const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
-    const [offset, setOffset] = useState(0)
+    const [offset, setOffset] = useState(searchParams.get('page') ? (parseInt( searchParams.get('page')) - 1) * 10 : 0)
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
@@ -62,6 +68,8 @@ export default function ViewCustomers() {
     const handlePageChange = (pageNumber) => {
         setOffset((pageNumber - 1) * limit)
         fetchCustomers(limit, (pageNumber - 1) * limit)
+        params.set('page', pageNumber)
+        router.replace(`?${params.toString(page)}`)
     }
 
 
@@ -74,7 +82,6 @@ export default function ViewCustomers() {
                 direction="column"
                 justifyContent="start"
                 alignItem="start"
-                // backgroundColor="grey"
                 flexGrow="1"
                 width="100%"
             >   
