@@ -7,7 +7,7 @@ import Pagination from '@/app/ui/pagination/pagination'
 import List from '@/app/ui/list/list'
 import Route from '@/app/ui/routesLinks/routes'
 import axios from 'axios'
-import { SearchParamsContext } from 'next/dist/shared/lib/hooks-client-context.shared-runtime'
+import GetPageParam from '@/app/utils/getPageParam'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function ViewCustomers() {
@@ -18,7 +18,7 @@ export default function ViewCustomers() {
     const [customers, setCustomers ] = useState([])
     const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
-    const [offset, setOffset] = useState(searchParams.get('page') ? (parseInt( searchParams.get('page')) - 1) * 10 : 0)
+    const [offset, setOffset] = useState(GetPageParam() * limit)
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])

@@ -2,6 +2,8 @@ import { Container } from '@/app/ui/utils/container'
 import styles from './pagination.module.css'
 
 export default function Pagination({currentPage, totalPages, maxVisiblePages, onPageChange}) {
+
+    
     const geVisiblePages = () => {
         const pages = [1]
         let start = 2
