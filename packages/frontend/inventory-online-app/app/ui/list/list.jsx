@@ -1,6 +1,17 @@
 import styles from './list.module.css'
 
-export default function List({tableHead=[], tableData=[]}) {
+export default function List({tableHead=[], tableData=[], actions}) {
+    const getActions = (actions) => {
+        const options = {
+            1: 'Ver',
+            2: 'Ver | Editar',
+            3: 'Ver | Editar | Eliminar'
+        }
+        return options[actions.length - 1] || 'Ver'
+    }
+
+    const avalibleActions = getActions(actions)
+
     return (
         <div className={`${styles.container} shadow-sm`}>
             <table className={`${styles.table} p3-b`}>
@@ -18,7 +29,7 @@ export default function List({tableHead=[], tableData=[]}) {
                                 <td key={idx} className={parseFloat(item) ? styles.number : styles.capitalize}>{item}</td>
                             ))}
                             <td style={{textAlign: 'center'}}>
-                                ver | editar | eliminar
+                                {avalibleActions}
                             </td>
                         </tr>
                     ))}

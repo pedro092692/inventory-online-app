@@ -17,6 +17,7 @@ export default function ViewCustomers() {
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
+    const [actions, setActions] = useState([])
     
     
     // load customers from the API
@@ -29,6 +30,7 @@ export default function ViewCustomers() {
                     setPage(response.data.page)
                     setTotal(response.data.total)
                     setTableData(transformData(response.data.customers))
+                    setActions(response.data.actions)
                 }
             } catch (error) {
                 if (error.response) {
@@ -79,7 +81,10 @@ export default function ViewCustomers() {
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
-                    <List tableHead={['Nombre', 'Cedula', 'Telefono', 'Acciones']} tableData={tableData}   />
+                    <List tableHead={['Nombre', 'Cedula', 'Telefono', 'Acciones']} 
+                          tableData={tableData}  
+                          actions={actions}
+                          />
                     
                     <Pagination
                         currentPage={currentPage}
