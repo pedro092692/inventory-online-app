@@ -1,4 +1,5 @@
 import styles from './list.module.css'
+import Link from 'next/link'
 
 export default function List({tableHead=[], tableData=[], actions}) {
     const getActions = (actions) => {
@@ -25,11 +26,19 @@ export default function List({tableHead=[], tableData=[], actions}) {
                 <tbody>
                     {tableData.map((data, index) => (
                         <tr key={index}>
-                            {data.map((item, idx) => (
-                                <td key={idx} className={parseFloat(item) ? styles.number : styles.capitalize}>{item}</td>
-                            ))}
+                            {data.map((item, idx) => {
+                                if (idx != 3) {
+                                    return (
+                                        <td key={idx} className={parseFloat(item) ? styles.number : styles.capitalize}>{item}</td>
+                                    )
+                                    }
+                                }
+                            )}
                             <td style={{textAlign: 'center'}}>
-                                {avalibleActions}
+                                {/* {avalibleActions} */}
+                                <Link href={`/store/customers/view/detail/${data[3]}`} className="link">
+                                    ver
+                                </Link>
                             </td>
                         </tr>
                     ))}

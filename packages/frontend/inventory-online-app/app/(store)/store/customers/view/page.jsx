@@ -53,7 +53,7 @@ export default function ViewCustomers() {
         let data = []
         if (customers.length > 0) {
             data = customers.map(customer => (
-                [customer.name, customer.id_number, customer.phone.replace('+58', '')]
+                [customer.name, customer.id_number, customer.phone.replace('+58', ''), customer.id]
             ))
         }
         return data
