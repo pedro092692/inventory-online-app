@@ -10,7 +10,6 @@ export default function List({tableHead=[], tableData=[], actions}) {
         }
         return options[actions.length - 1] || 'Ver'
     }
-
     const avalibleActions = getActions(actions)
 
     return (
@@ -24,24 +23,22 @@ export default function List({tableHead=[], tableData=[], actions}) {
                     </tr>
                 </thead>
                 <tbody>
-                    {tableData.map((data, index) => (
-                        <tr key={index}>
-                            {data.map((item, idx) => {
-                                if (idx != 3) {
-                                    return (
-                                        <td key={idx} className={parseFloat(item) ? styles.number : styles.capitalize}>{item}</td>
-                                    )
-                                    }
-                                }
-                            )}
-                            <td style={{textAlign: 'center'}}>
-                                {/* {avalibleActions} */}
-                                <Link href={`/store/customers/view/detail/${data[3]}`} className="link">
-                                    ver
-                                </Link>
-                            </td>
-                        </tr>
-                    ))}
+                   {
+                        tableData.map((row, rowIndex) => {
+                            return (
+                                <tr key={rowIndex}>
+                                    <td>{row.name}</td>
+                                    <td>{row.id_number}</td>
+                                    <td>{row.phone}</td>
+                                    <td>
+                                        {/* user detail */}
+                                        <Link href={`/store/customers/view/detail/${row.id}`}>Ver</Link>
+                                    </td>
+                                </tr>
+                            )
+                        }) 
+                   }
+                   
                 </tbody>
             </table>
         </div>
