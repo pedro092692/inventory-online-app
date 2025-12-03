@@ -4,6 +4,7 @@ import GetParam from '@/app/utils/getParam'
 import { useEffect, useState } from 'react'
 import { Form } from '@/app/ui/form/form/form'
 import { Input } from '@/app/ui/form/input/input'
+import Route from '@/app/ui/routesLinks/routes'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function CustomerDetail() {
@@ -20,6 +21,7 @@ export default function CustomerDetail() {
     
     return (
         <>
+        <Route path='customers' endpoints={['default', 'view', 'detail']} /> 
         <Form className={'shadow'}>
             <Input type="text" icon="person" value={`${customer?.name}`} name={'name'} readOnly={true}/>
             <Input type="text" icon="id" value={`${customer?.id_number}`} name={'id_number'} readOnly={true}/>

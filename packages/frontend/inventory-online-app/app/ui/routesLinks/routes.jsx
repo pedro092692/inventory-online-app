@@ -15,7 +15,12 @@ export default function Route({path='customers', endpoints=['default', 'add']}) 
             view: {
                 href: '/store/customers/view',
                 label: 'Todos los clientes'
-            }
+            },
+
+            detail: {
+                href: '/store/customers/view/detail/[id]',
+                label: 'Detalle del cliente'
+            },
         },
 
         products: {
