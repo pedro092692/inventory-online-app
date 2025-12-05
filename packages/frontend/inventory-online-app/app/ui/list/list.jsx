@@ -12,7 +12,7 @@ export default function List({tableHead=[], tableData=[], actions}) {
         }
         return options[actions.length - 1] || 'Ver'
     }
-
+    console.log('tableData', tableData[0])
     return (
         <div className={`${styles.container} shadow-sm`}>
             <table className={`${styles.table} p3-b`}>
@@ -25,19 +25,31 @@ export default function List({tableHead=[], tableData=[], actions}) {
                 </thead>
                 <tbody>
                    {
-                        tableData.map((row, rowIndex) => {
+                        tableData.map((data, index) => {
                             return (
-                                <tr key={rowIndex}>
-                                    <td>{row.name}</td>
-                                    <td>{row.id_number}</td>
-                                    <td>{row.phone}</td>
-                                    <td>
-                                        {/* user detail */}
-                                        <Link href={`/store/customers/view/detail/${row.id}?page=${page}`}>Ver</Link>
-                                    </td>
+                                <tr key={index}>
+                                    {
+                                        Object.keys(data).map((key, idx) => {
+                                            if (key !== 'id') {
+                                                return (
+                                                    <td key={idx} data-label={key}>
+                                                        {data[key]}
+                                                    </td>
+                                                )
+                                            }
+                                            
+                                            if (key === 'id') {
+                                                return (
+                                                    <td key={idx} data-label={'actions'}>
+                                                        <Link href={`/store/customers/view/detail/${data[key]}?page=${page}`}>Ver</Link>
+                                                    </td>
+                                                )
+                                            }
+                                        })
+                                    }
                                 </tr>
                             )
-                        }) 
+                        })
                    }
                    
                 </tbody>
