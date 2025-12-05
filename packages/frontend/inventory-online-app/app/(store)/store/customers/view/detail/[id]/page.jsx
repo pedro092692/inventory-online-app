@@ -5,11 +5,14 @@ import { useEffect, useState } from 'react'
 import { Form } from '@/app/ui/form/form/form'
 import { Input } from '@/app/ui/form/input/input'
 import Route from '@/app/ui/routesLinks/routes'
+import { useSearchParams } from 'next/navigation'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function CustomerDetail() {
     const [customer, setCustomer] = useState(null)
     const [id, setId] = useState(GetParam('id'))
+    const page = useSearchParams()?.get('page') || 1
+
     const data = async () => {
         const constumer = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`, 'GET')
         setCustomer(constumer)
@@ -21,7 +24,7 @@ export default function CustomerDetail() {
     
     return (
         <>
-        <Route path='customers' endpoints={['default', 'view', 'detail']} /> 
+        <Route path='customers' endpoints={['default', 'view', 'detail']} customPage={true} page={page}/> 
         <Form className={'shadow'}>
             <Input type="text" icon="person" value={`${customer?.name}`} name={'name'} readOnly={true}/>
             <Input type="text" icon="id" value={`${customer?.id_number}`} name={'id_number'} readOnly={true}/>

@@ -1,7 +1,9 @@
 import styles from './list.module.css'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
 export default function List({tableHead=[], tableData=[], actions}) {
+    const page = useSearchParams().get('page') || 1
     const getActions = (actions) => {
         const options = {
             1: 'Ver',
@@ -10,7 +12,6 @@ export default function List({tableHead=[], tableData=[], actions}) {
         }
         return options[actions.length - 1] || 'Ver'
     }
-    const avalibleActions = getActions(actions)
 
     return (
         <div className={`${styles.container} shadow-sm`}>
@@ -18,7 +19,7 @@ export default function List({tableHead=[], tableData=[], actions}) {
                 <thead>
                     <tr>
                         {tableHead.map((head, index) => (
-                            <th key={index}>{head}</th>
+                            <th key={index} scope="col">{head}</th>
                         ))}
                     </tr>
                 </thead>
@@ -32,7 +33,7 @@ export default function List({tableHead=[], tableData=[], actions}) {
                                     <td>{row.phone}</td>
                                     <td>
                                         {/* user detail */}
-                                        <Link href={`/store/customers/view/detail/${row.id}`}>Ver</Link>
+                                        <Link href={`/store/customers/view/detail/${row.id}?page=${page}`}>Ver</Link>
                                     </td>
                                 </tr>
                             )
