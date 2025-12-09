@@ -29,9 +29,6 @@ export default function List({tableHead=[], tableData=[], actions, showActions=t
                             )
                             
                         })}
-                        {/* {tableHead.map((head, index) => (
-                            <th key={index} scope="col">{head}</th>
-                        ))} */}
                     </tr>
                 </thead>
                 <tbody>

@@ -10,14 +10,28 @@ const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:/
 
 export default function CustomerDetail() {
     const [customer, setCustomer] = useState(null)
+    const [loading, setLoading] = useState(true)
     const [id, setId] = useState(GetParam('id'))
     const page = useSearchParams()?.get('page') || 1
 
     const data = async () => {
-        const constumer = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`, 'GET')
-        setCustomer(constumer)
+        try {
+            const constumer = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`, 'GET')
+            if (constumer) {
+                setCustomer(constumer)
+            }
+        }catch (error) {
+            if (error.response) {
+                    console.log(error.response.status)
+                    console.log(error.response.data.message)
+            }
+        }finally {
+            setLoading(false)
+        }
+        
     }
     useEffect(() => {
+        setLoading(true)
         data()
     }, [])
 
@@ -25,11 +39,15 @@ export default function CustomerDetail() {
     return (
         <>
         <Route path='customers' endpoints={['default', 'view', 'detail']} customPage={true} page={page}/> 
-        <Form className={'shadow'}>
-            <Input type="text" icon="person" value={`${customer?.name}`} name={'name'} readOnly={true}/>
-            <Input type="text" icon="id" value={`${customer?.id_number}`} name={'id_number'} readOnly={true}/>
-            <Input type="text" icon="phone" value={`${customer?.phone}`} name={'cellphone'} readOnly={true}/>        
-        </Form>
+        {
+            loading ? <p>Cargando...</p>
+            :
+            <Form className={'shadow'}>
+                <Input type="text" icon="person" value={`${customer?.name}`} name={'name'} readOnly={true}/>
+                <Input type="text" icon="id" value={`${customer?.id_number}`} name={'id_number'} readOnly={true}/>
+                <Input type="text" icon="phone" value={`${customer?.phone}`} name={'cellphone'} readOnly={true}/>        
+            </Form>
+        }
         </>
     )
 }
