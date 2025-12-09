@@ -1,0 +1,18 @@
+.inputNumber::-webkit-inner-spin-button,
+.inputNumber::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.inputNumber {
+  -moz-appearance: textfield;
+}
+
+.form {
+  margin-top: 16px;
+  width: 50%;
+  background: var(--color-neutralGrey500);
+  flex-grow: 0;
+  padding: 16px;
+  border-radius: 8px;
+}

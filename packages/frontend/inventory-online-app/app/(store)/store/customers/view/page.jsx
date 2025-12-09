@@ -96,7 +96,7 @@ export default function ViewCustomers() {
                     } 
                           tableData={tableData}  
                           actions={actions}
-                          />
+                    />
                     
                     <Pagination
                         currentPage={currentPage}
