@@ -11,7 +11,7 @@
   "dependencies": {
     "comigo-tech-react-input-mask": "^3.0.0-alpha.3",
     "next": "^15.4.8",
-    "react": "^19.1.2",
+    "react": "^19.2.1",
     "react-dom": "^19.1.2"
   },
   "devDependencies": {
