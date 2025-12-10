@@ -2,7 +2,7 @@ import styles from './list.module.css'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
-export default function List({tableHead=[], tableData=[], actions, showActions=true}) {
+export default function List({tableHead=[], tableData=[], actions, showActions=true, CustomStyles}) {
     const page = useSearchParams().get('page') || 1
     
     const getActions = (actions) => {
@@ -13,9 +13,8 @@ export default function List({tableHead=[], tableData=[], actions, showActions=t
         }
         return options[actions.length - 1] || 'Ver'
     }
-    console.log(tableHead)
     return (
-        <div className={`${styles.container} shadow-sm`}>
+        <div className={`${styles.container} shadow-sm`} style={CustomStyles}>
             <table className={`${styles.table} p3-b`}>
                 <thead>
                     <tr>

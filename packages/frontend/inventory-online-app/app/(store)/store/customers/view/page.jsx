@@ -96,6 +96,7 @@ export default function ViewCustomers() {
                     } 
                           tableData={tableData}  
                           actions={actions}
+                          showActions={true}
                     />
                     
                     <Pagination

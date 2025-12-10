@@ -14,6 +14,7 @@ export default function CustomerDetail() {
     const [customer, setCustomer] = useState(null)
     const [loading, setLoading] = useState(true)
     const [id, setId] = useState(GetParam('id'))
+    const [tableData, setTableData] = useState([])
     const page = useSearchParams()?.get('page') || 1
 
     const data = async () => {
@@ -21,7 +22,7 @@ export default function CustomerDetail() {
             const constumer = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`, 'GET')
             if (constumer) {
                 setCustomer(constumer)
-                console.log(constumer)
+                setTableData(transformData(constumer))
             }
         }catch (error) {
             if (error.response) {
@@ -33,12 +34,28 @@ export default function CustomerDetail() {
         }
         
     }
+
     useEffect(() => {
         setLoading(true)
         data()
     }, [])
 
-    
+    const transformData = (customer) => {
+        let data = []
+        if (customer.invoices.length > 0) {
+            data = customer.invoices.map(invoice => (
+                {
+                    bill_id: invoice.id,
+                    total: `$ ${invoice.total}`,
+                    status: invoice.status == 'paid' ? 'Pagado' : 'Pendiente',
+                    id: invoice.id
+                }
+            ))
+        }
+        return data
+    }
+
+     
     return (
         <>
         <Route path='customers' endpoints={['default', 'view', 'detail']} customPage={true} page={page}/> 
@@ -62,9 +79,10 @@ export default function CustomerDetail() {
                         'actions': 'Acciones'
                         }
                     } 
-                        tableData={[]}  
+                        tableData={tableData}  
                         actions={[]}
                         showActions={false}
+                        CustomStyles={{marginTop: '15px'}}
                     />
                     :
                     <p>El cliente no tiene facturas</p>
