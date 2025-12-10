@@ -6,6 +6,7 @@
 
 .inputNumber {
   -moz-appearance: textfield;
+   appearance: textfield;
 }
 
 .form {
