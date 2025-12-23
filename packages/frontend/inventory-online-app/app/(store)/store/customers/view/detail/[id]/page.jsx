@@ -71,19 +71,22 @@ export default function CustomerDetail() {
 
                 {
                     customer.invoices.length > 0 ?
-                    <List tableHead={
-                        {
-                        'bill_id': 'N° Recibo',
-                        'total': 'Total',
-                        'status': 'Estado',
-                        'actions': 'Acciones'
-                        }
-                    } 
-                        tableData={tableData}  
-                        actions={[]}
-                        showActions={false}
-                        CustomStyles={{marginTop: '15px'}}
-                    />
+                    <>
+                        <p style={{marginTop: '15px'}} className='p1-r'>Facturas De: {`${customer?.name}`}</p>
+                        <List tableHead={
+                            {
+                            'bill_id': 'N° Recibo',
+                            'total': 'Total',
+                            'status': 'Estado',
+                            'actions': 'Acciones'
+                            }
+                        } 
+                            tableData={tableData}  
+                            actions={[]}
+                            showActions={false}
+                            CustomStyles={{height: '317px'}}
+                        />
+                    </>
                     :
                     <p>El cliente no tiene facturas</p>
                 }
