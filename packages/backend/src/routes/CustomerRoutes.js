@@ -19,7 +19,7 @@ class CustomerRoutes {
     initializeRoutes() {
         this.router.get('/', (req, res) => res.send('Customers Routes'))
         this.router.get('/all', (req, res) => new CustomerController(req.Customer).allCustomers(req, res))
-        this.router.get('/:id', (req, res) => new CustomerController(req.Customer).getCustomerById(req, res))
+        this.router.get('/:id', (req, res) => new CustomerController(req.Customer, req.Invoice).getCustomerById(req, res))
         this.router.post('/',  validateFields('createCustomer'), (req, res) => new CustomerController(req.Customer).createCustomer(req, res))
         this.router.patch('/:id', (req, res) => new CustomerController(req.Customer).updateCustomer(req, res))
         this.router.delete('/', (req, res) => new CustomerController(req.Customer).deleteCustomer(req, res))
@@ -38,11 +38,12 @@ class CustomerRoutes {
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {Customer} = req.tenantModels
-        if(!Customer) {
-            return res.status(400).json({ message: 'Customer model is required' })
+        const {Customer, Invoice} = req.tenantModels
+        if(!Customer || !Invoice) {
+            return res.status(400).json({ message: 'Customer and Invoice models are required' })
         }
         req.Customer = Customer
+        req.Invoice = Invoice
         next()
     }
 }

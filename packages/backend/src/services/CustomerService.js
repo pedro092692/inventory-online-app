@@ -6,8 +6,9 @@ class CustomerService {
     // instance of error handler 
     #error = new ServiceErrorHandler()
     
-    constructor(model) {
+    constructor(model, invoiceModel=null) {
         this.Customer = model
+        this.Invoice = invoiceModel
         this.#error
     }
 
@@ -80,8 +81,14 @@ class CustomerService {
                     }
                 ],
             })
-            if(!customer) {
+            if (!customer) {
                 throw new NotFoundError()
+            }
+            if (customer.invoices.length > 0){
+                    const totalInvoices = await this.Invoice.count({
+                    where: { customer_id: id }
+                })
+                console.log('Total Invoices:', totalInvoices);
             }
             return customer
         })

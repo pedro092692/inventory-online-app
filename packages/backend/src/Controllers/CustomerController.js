@@ -4,8 +4,8 @@ import setActionRole from '../utils/roleActicon.js'
 
 class CustomerController {
     #error = new controllerErrorHandler()
-    constructor(model) {
-        this.customerService = new CustomerService(model)
+    constructor(model, invoiceModel=null) {
+        this.customerService = new CustomerService(model, invoiceModel)
         this.#error
     }
 
