@@ -15,6 +15,9 @@ export default function CustomerDetail() {
     const [loading, setLoading] = useState(true)
     const [id, setId] = useState(GetParam('id'))
     const [tableData, setTableData] = useState([])
+    const [invoiceLimit, setInvoiceLimit] = useState(8)
+    const [offsetInvoices, setOffsetInvoices] = useState(0)
+    const [invoicePage, setInvoicePage] = useState(1)
     const page = useSearchParams()?.get('page') || 1
 
     const data = async () => {

@@ -1,7 +1,7 @@
 import { useSearchParams } from 'next/navigation'
 
-export default function GetPageParam() {
+export default function GetPageParam(param) {
     const searchParam = useSearchParams()
-    const page = searchParam.get('page') ? parseInt(searchParam.get('page')) : 0
+    const page = searchParam.get(param) ? parseInt(searchParam.get('page')) : 0
     return page - 1 >= 0 ? page - 1 : 0
 }

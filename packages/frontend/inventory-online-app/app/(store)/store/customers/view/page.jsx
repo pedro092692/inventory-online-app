@@ -13,7 +13,7 @@ export default function ViewCustomers() {
     const [customers, setCustomers ] = useState([])
     const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
-    const [offset, setOffset] = useState(GetPageParam() * limit)
+    const [offset, setOffset] = useState(GetPageParam('page') * limit)
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
@@ -106,6 +106,7 @@ export default function ViewCustomers() {
                         setOffet={setOffset}
                         limit={limit}
                         fetchData={fetchCustomers}
+                        param={'page'}
                     />
                 </>
                 }
