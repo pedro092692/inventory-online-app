@@ -45,8 +45,10 @@ class CustomerController {
      * @returns {Promise<void>} - returns the customer details in the response
      */
     getCustomerById = this.#error.handler( async(req, res) => {
+        const limitInvoices = req.query.limitInvoices ? parseInt(req.query.limitInvoices) : 8
+        const offsetInvoices = req.query.offsetInvoices ? parseInt(req.query.offsetInvoices) : 0
         const { id } = req.params
-        const {info, totalInvoices, pageInvoices, pageSizeInvoices} = await this.customerService.getCustomerById(id)
+        const {info, totalInvoices, pageInvoices, pageSizeInvoices} = await this.customerService.getCustomerById(id, limitInvoices, offsetInvoices)
         res.status(200).json({info, totalInvoices, pageInvoices, pageSizeInvoices})
     })
 

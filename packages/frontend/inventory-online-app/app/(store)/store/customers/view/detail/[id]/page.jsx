@@ -8,6 +8,8 @@ import Route from '@/app/ui/routesLinks/routes'
 import { useSearchParams } from 'next/navigation'
 import styles from './input.module.css'
 import List from '@/app/ui/list/list'
+import Pagination from '@/app/ui/pagination/pagination'
+import GetPageParam from '@/app/utils/getPageParam'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function CustomerDetail() {
@@ -16,15 +18,19 @@ export default function CustomerDetail() {
     const [id, setId] = useState(GetParam('id'))
     const [tableData, setTableData] = useState([])
     const [invoiceLimit, setInvoiceLimit] = useState(8)
-    const [offsetInvoices, setOffsetInvoices] = useState(0)
+    const [offsetInvoices, setOffsetInvoices] = useState(GetPageParam('invoice_page') * invoiceLimit)
     const [invoicePage, setInvoicePage] = useState(1)
+    const [totalInvoices, setTotalInvoices] = useState(0)
     const page = useSearchParams()?.get('page') || 1
 
-    const data = async () => {
+    const fetchCustomerInfo = async (invoiceLimit, offsetInvoices) => {
         try {
-            const customer = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`, 'GET')
+            const customer = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}?limitInvoices=${invoiceLimit}
+                &offsetInvoices=${offsetInvoices}`, 'GET')
             if (customer) {
                 setCustomer(customer.info)
+                setTotalInvoices(customer.totalInvoices)
+                setInvoicePage(customer.pageInvoices)
                 setTableData(transformData(customer.info))
             }
         }catch (error) {
@@ -40,7 +46,7 @@ export default function CustomerDetail() {
 
     useEffect(() => {
         setLoading(true)
-        data()
+        fetchCustomerInfo(invoiceLimit, offsetInvoices)
     }, [])
 
     const transformData = (customer) => {
@@ -57,6 +63,10 @@ export default function CustomerDetail() {
         }
         return data
     }
+
+    const totalPages = Math.ceil(totalInvoices / invoiceLimit)
+    const currentPage = invoicePage
+    const maxVisiblePages = 8
 
      
     return (
@@ -89,9 +99,19 @@ export default function CustomerDetail() {
                             showActions={false}
                             CustomStyles={{height: '317px'}}
                         />
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            maxVisiblePages={maxVisiblePages}
+                            setOffet={setOffsetInvoices}
+                            limit={invoiceLimit}
+                            fetchData={fetchCustomerInfo}
+                            param={'invoice_page'}
+                        />
+
                     </>
                     :
-                    <p>El cliente no tiene facturas</p>
+                    <p style={{marginTop: '15px'}}>El cliente no tiene facturas</p>
                 }
             </>
         }
