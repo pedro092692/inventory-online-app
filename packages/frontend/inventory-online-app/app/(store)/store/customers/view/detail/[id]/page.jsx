@@ -19,10 +19,10 @@ export default function CustomerDetail() {
 
     const data = async () => {
         try {
-            const constumer = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`, 'GET')
-            if (constumer) {
-                setCustomer(constumer)
-                setTableData(transformData(constumer))
+            const customer = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`, 'GET')
+            if (customer) {
+                setCustomer(customer.info)
+                setTableData(transformData(customer.info))
             }
         }catch (error) {
             if (error.response) {
@@ -50,7 +50,7 @@ export default function CustomerDetail() {
                     status: invoice.status == 'paid' ? 'Pagado' : 'Pendiente',
                     id: invoice.id
                 }
-            ))
+            ))   
         }
         return data
     }

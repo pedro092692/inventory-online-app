@@ -69,6 +69,7 @@ class CustomerService {
      */
     getCustomerById(id, limitInvoices=8, offsetInvoices=0) {
         return this.#error.handler(['Read Customer', id, 'User'], async () => {
+            let totalInvoices = 0
             const customer = await this.Customer.findByPk(id, {
                 include: [
                     {
@@ -85,12 +86,17 @@ class CustomerService {
                 throw new NotFoundError()
             }
             if (customer.invoices.length > 0){
-                    const totalInvoices = await this.Invoice.count({
+                    totalInvoices = await this.Invoice.count({
                     where: { customer_id: id }
                 })
                 console.log('Total Invoices:', totalInvoices);
             }
-            return customer
+            return {
+                info: customer,
+                totalInvoices: totalInvoices,
+                pageInvoices: Math.floor(offsetInvoices / limitInvoices ) + 1,
+                pageSizeInvoices: limitInvoices
+            }
         })
     }
 

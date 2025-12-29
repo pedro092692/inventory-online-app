@@ -46,8 +46,8 @@ class CustomerController {
      */
     getCustomerById = this.#error.handler( async(req, res) => {
         const { id } = req.params
-        const customer = await this.customerService.getCustomerById(id)
-        res.status(200).json(customer)
+        const {info, totalInvoices, pageInvoices, pageSizeInvoices} = await this.customerService.getCustomerById(id)
+        res.status(200).json({info, totalInvoices, pageInvoices, pageSizeInvoices})
     })
 
     /**
