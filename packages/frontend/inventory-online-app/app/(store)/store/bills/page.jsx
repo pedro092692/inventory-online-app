@@ -3,7 +3,7 @@ import { Title } from "@/app/ui/dashboard/title/title"
 export default function Bills() {
     return (
         <>
-            <Title title="Ordener de compra" icon='paper'/>
+            <Title title="Ordenes de compra" icon='paper'/>
         </>
     )
 }
