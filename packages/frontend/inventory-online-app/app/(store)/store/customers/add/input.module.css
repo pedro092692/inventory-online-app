@@ -6,14 +6,14 @@
 
 .inputNumber {
   -moz-appearance: textfield;
-   appearance: textfield;
+  appearance: textfield;
 }
 
 .form {
   margin-top: 16px;
-  width: 50%;
+  width: 50% !important;
   background: var(--color-neutralGrey500);
-  flex-grow: 0;
+  flex-grow: 0 !important;
   padding: 16px;
   border-radius: 8px;
 }

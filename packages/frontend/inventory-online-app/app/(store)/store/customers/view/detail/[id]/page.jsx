@@ -76,7 +76,7 @@ export default function CustomerDetail() {
             loading ? <p>Cargando...</p>
             :
             <>
-                <Form className={`${styles.form} shadow`}>
+                <Form className={`${styles.formview} shadow`}>
                     <Input type="text" icon="person" value={`${customer?.name}`} name={'name'} readOnly={true}/>
                     <Input type="text" icon="id" value={`${customer?.id_number}`} name={'id_number'} readOnly={true}/>
                     <Input type="text" icon="phone" value={`${customer?.phone}`} name={'cellphone'} readOnly={true}/>        
