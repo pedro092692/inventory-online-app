@@ -87,7 +87,7 @@ export default function ViewCustomers() {
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
-                    <Search />
+                    <Search placeHolder={'Buscar cliente por Nombre, Cédula'}/>
                     <List tableHead={
                         {
                         'nombre': 'Nombre',

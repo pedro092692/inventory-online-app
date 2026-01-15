@@ -53,6 +53,21 @@ class CustomerController {
     })
 
     /**
+     * Searches for customers based on a query string.
+     * @param {Object} req - request object containing the search query and pagination parameters
+     * @param {Object} res - response object to send the search results
+     * @throws {ServiceError} - throws an error if the search operation fails
+     * @returns {Promise<void>} - returns the search results in the response
+     */
+    searchCustomers = this.#error.handler( async(req, res) => {
+        const { query } = req.query
+        const limitResults = req.query.limitResults ? parseInt(req.query.limitResults) : 8
+        const offsetResults = req.query.offsetResults ? parseInt(req.query.offsetResults) : 0
+        const { customers, total, page, pageSize } = await this.customerService.searchCustomers(query, limitResults, offsetResults)
+        res.status(200).json( { customers, total, page, pageSize } )
+    })
+
+    /**
      * Updates a customer by their ID.
      * @param {Object} req - request object containing the customer ID and updates in the body
      * @param {Object} res - response object to send the updated customer
