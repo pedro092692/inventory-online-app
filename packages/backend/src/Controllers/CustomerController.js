@@ -60,7 +60,7 @@ class CustomerController {
      * @returns {Promise<void>} - returns the search results in the response
      */
     searchCustomers = this.#error.handler( async(req, res) => {
-        const { query } = req.query
+        const { query } = req.query.data || ''
         const limitResults = req.query.limitResults ? parseInt(req.query.limitResults) : 8
         const offsetResults = req.query.offsetResults ? parseInt(req.query.offsetResults) : 0
         const { customers, total, page, pageSize } = await this.customerService.searchCustomers(query, limitResults, offsetResults)

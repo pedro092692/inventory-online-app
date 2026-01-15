@@ -101,6 +101,37 @@ class CustomerService {
     }
 
     /**
+     * Searches for customers by name.
+     * @param {string} query - The name to search for.
+     * @param {number} [limitResults=8] - The maximum number of results to return.
+     * @param {number} [offsetResults=0] - The number of results to skip.
+     * @return {Promise<Object>} - A promise that resolves to an object containing search results and pagination info.
+     * @throws {ServiceError} - If an error occurs during the search.
+     */
+    searchCustomers(query, limitResults=8, offsetResults=0) {
+        return this.#error.handler['Search Customers', query], async () => {
+            const results = await this.Customer.findAndCountAll({
+                where: {
+                    name: query
+                },
+                include: {
+                    association: 'invoices',
+                    attributes: ['id', 'date', 'total'],
+                },
+                order: [['id', 'DESC'], ['invoices', 'id', 'DESC']],
+                limit: limitResults,
+                offset: offsetResults
+            })
+            return {
+                total: results.count,
+                customers: results.rows,
+                page: Math.floor(offsetResults / limitResults ) + 1,
+                pageSize: limitResults
+            }
+        }
+    }
+
+    /**
      * Updates a customer by their ID with the provided updates.
      * @param {number} customerId - The ID of the customer to update.
      * @param {Object} updates - The updates to apply to the customer.
