@@ -1,5 +1,6 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
+import { Op } from 'sequelize'
 
 class CustomerService {
 
@@ -24,7 +25,7 @@ class CustomerService {
         return this.#error.handler(['Cretae Customer'], async() => {
             const newCustomer = await this.Customer.create({
                 id_number: id_number,
-                name: name, 
+                name: name.toLowerCase(),
                 phone: phone
             })
             return newCustomer
@@ -68,7 +69,7 @@ class CustomerService {
      * @throws {ServiceError} - If an error occurs during customer retrieval.
      */
     getCustomerById(id, limitInvoices=8, offsetInvoices=0) {
-        return this.#error.handler(['Read Customer', id, 'User'], async () => {
+        return this.#error.handler(['Read Customer', id, 'Customer'], async () => {
             let totalInvoices = 0
             const customer = await this.Customer.findByPk(id, {
                 include: [
@@ -109,10 +110,13 @@ class CustomerService {
      * @throws {ServiceError} - If an error occurs during the search.
      */
     searchCustomers(query, limitResults=8, offsetResults=0) {
-        return this.#error.handler['Search Customers', query], async () => {
+        return this.#error.handler(['Search Customers', query, 'Customer'], async () => {
             const results = await this.Customer.findAndCountAll({
                 where: {
-                    name: query
+                    [Op.or]: [
+                        { name: {[Op.substring]: query.toLowerCase() } },
+                        { id_number: {[Op.eq]: !isNaN(query) ? parseInt(query) : null} }
+                    ]
                 },
                 include: {
                     association: 'invoices',
@@ -123,12 +127,12 @@ class CustomerService {
                 offset: offsetResults
             })
             return {
-                total: results.count,
                 customers: results.rows,
+                total: results.count,
                 page: Math.floor(offsetResults / limitResults ) + 1,
                 pageSize: limitResults
             }
-        }
+        })
     }
 
     /**
