@@ -5,7 +5,13 @@ import styles from './search.module.css'
 export default function Search () {
     return (
         <Form className={styles.form}>
-            <Input type="search" name="search" placeHolder="Buscar..." icon="search" />
+            <Input  type="search" 
+                    name="search" 
+                    placeHolder="Buscar por Nombre o N° de cédula" 
+                    icon="search" 
+                    className={styles.input}
+                    autoFocus={true}
+            />
         </Form>
     )
 }

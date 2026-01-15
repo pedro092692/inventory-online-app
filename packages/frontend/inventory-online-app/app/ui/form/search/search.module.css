@@ -1,4 +1,8 @@
 .form {
-    padding: 0px;
-    flex-grow: 0;
+    padding: 0px !important;
+    flex-grow: 0 !important;
+}
+
+.input {
+    text-transform: capitalize;
 }

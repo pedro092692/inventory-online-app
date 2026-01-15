@@ -17,7 +17,9 @@ export function Input({
         name, 
         formatPhone=null, 
         readOnly=false,
-        autocomplete='off'
+        autocomplete='off',
+        autoFocus=false
+
     }) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%'}
     const handlePhoneInput = (e) => {
@@ -48,6 +50,7 @@ export function Input({
                     required
                     readOnly={readOnly}
                     autoComplete={autocomplete}
+                    autoFocus={autoFocus}
                 />
         :
                 <InputMask
