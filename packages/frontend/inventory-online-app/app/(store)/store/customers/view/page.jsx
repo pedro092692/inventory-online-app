@@ -6,6 +6,7 @@ import List from '@/app/ui/list/list'
 import Route from '@/app/ui/routesLinks/routes'
 import axios from 'axios'
 import GetPageParam from '@/app/utils/getPageParam'
+import Search from '@/app/ui/form/search/search'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function ViewCustomers() {
@@ -86,6 +87,7 @@ export default function ViewCustomers() {
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
+                    <Search />
                     <List tableHead={
                         {
                         'nombre': 'Nombre',

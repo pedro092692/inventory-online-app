@@ -3,7 +3,22 @@ import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import InputMask from 'comigo-tech-react-input-mask'
 
-export function Input({type='text', placeHolder='default value', onChange, style, backgroundColor, showIcon=true, icon='playArrow', gap='0px', className, value, name, formatPhone=null, readOnly=false}) {
+export function Input({
+        type='text', 
+        placeHolder='default value', 
+        onChange, 
+        style, 
+        backgroundColor, 
+        showIcon=true, 
+        icon='playArrow', 
+        gap='0px', 
+        className, 
+        value, 
+        name, 
+        formatPhone=null, 
+        readOnly=false,
+        autocomplete='off'
+    }) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%'}
     const handlePhoneInput = (e) => {
         const raw = e.target.value.replace(/\D/g, '')
@@ -18,7 +33,6 @@ export function Input({type='text', placeHolder='default value', onChange, style
             gap={gap}
             borderRadius='8px'
             justifyContent='start'
-            
         >
             {showIcon && <Icon icon={icon} color='black'/>}
             {type != 'phone'? 
@@ -33,6 +47,7 @@ export function Input({type='text', placeHolder='default value', onChange, style
                     name={name}
                     required
                     readOnly={readOnly}
+                    autoComplete={autocomplete}
                 />
         :
                 <InputMask
@@ -42,8 +57,7 @@ export function Input({type='text', placeHolder='default value', onChange, style
                     mask={'+58 9999-999-99-99'}
                     value={value}
                     onChange={handlePhoneInput}
-                    readOnly={readOnly}
-                    
+                    readOnly={readOnly}  
                 />
         }
         </Container>
