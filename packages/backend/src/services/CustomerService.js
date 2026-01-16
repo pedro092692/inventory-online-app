@@ -109,7 +109,7 @@ class CustomerService {
      * @return {Promise<Object>} - A promise that resolves to an object containing search results and pagination info.
      * @throws {ServiceError} - If an error occurs during the search.
      */
-    searchCustomers(query, limitResults=8, offsetResults=0) {
+    searchCustomers(query, limitResults=10, offsetResults=0) {
         return this.#error.handler(['Search Customers', query, 'Customer'], async () => {
             const results = await this.Customer.findAndCountAll({
                 where: {
@@ -123,6 +123,7 @@ class CustomerService {
                     attributes: ['id', 'date', 'total'],
                 },
                 order: [['id', 'DESC'], ['invoices', 'id', 'DESC']],
+                distinct: true,
                 limit: limitResults,
                 offset: offsetResults
             })

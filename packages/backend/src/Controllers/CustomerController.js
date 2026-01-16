@@ -61,7 +61,7 @@ class CustomerController {
      */
     searchCustomers = this.#error.handler( async(req, res) => {
         const { data } = req.query
-        const limitResults = req.query.limitResults ? parseInt(req.query.limitResults) : 8
+        const limitResults = req.query.limitResults ? parseInt(req.query.limitResults) : 10
         const offsetResults = req.query.offsetResults ? parseInt(req.query.offsetResults) : 0
         const { customers, total, page, pageSize } = await this.customerService.searchCustomers(data, limitResults, offsetResults)
         res.status(200).json( { customers, total, page, pageSize } )
