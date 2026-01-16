@@ -15,6 +15,7 @@ export default function ViewCustomers() {
     const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
     const [offset, setOffset] = useState(GetPageParam('page') * limit)
+    const [dataSearch, setDataSearch] = useState(false)
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
@@ -39,6 +40,34 @@ export default function ViewCustomers() {
                     console.log(error.response.data.message)
                 }
             } finally {
+                setLoading(false)
+            }
+        }
+
+    // search customers by name or id_number from the API
+    const searchCustomers = async (query) => {
+            if (!query) {
+                fetchCustomers(10, 0)
+                return
+            }
+            try {
+                const response = await axios.get(
+                    `${NEXT_PUBLIC_API_BASE_URL}/api/customers/search?data=${query}&limitResults=${limit}&offsetResults=${offset}`, 
+                    {withCredentials: true}
+                )
+                if (response.data) {
+                    setCustomers(response.data.customers)
+                    setPage(response.data.page)
+                    setTotal(response.data.total)
+                    setTableData(transformData(response.data.customers))
+                    setDataSearch(true)
+                }
+            }catch (error) {
+                if (error.response) {
+                    console.log(error.response.status)
+                    console.log(error.response.data.message)
+                }
+            }finally {
                 setLoading(false)
             }
         }
@@ -87,7 +116,7 @@ export default function ViewCustomers() {
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
-                    <Search placeHolder={'Buscar cliente por Nombre, Cédula'}/>
+                    <Search placeHolder={'Buscar cliente por Nombre, Cédula'} searchFn={searchCustomers} limit={limit} offset={offset}/>
                     <List tableHead={
                         {
                         'nombre': 'Nombre',
@@ -107,7 +136,7 @@ export default function ViewCustomers() {
                         maxVisiblePages={maxVisiblePages}
                         setOffet={setOffset}
                         limit={limit}
-                        fetchData={fetchCustomers}
+                        fetchData={ dataSearch ? searchCustomers: fetchCustomers}
                         param={'page'}
                     />
                 </>
