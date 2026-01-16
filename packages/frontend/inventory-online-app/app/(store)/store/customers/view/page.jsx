@@ -112,7 +112,7 @@ export default function ViewCustomers() {
             >   
                 {loading ? 
                     <p>Cargando clientes...</p>
-                : customers.length === 0 ?
+                : customers.length === 0 && !dataSearch ?
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
