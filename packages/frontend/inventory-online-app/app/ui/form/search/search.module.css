@@ -5,4 +5,5 @@
 
 .input {
     text-transform: capitalize;
+    padding-right: 8px !important;; 
 }
