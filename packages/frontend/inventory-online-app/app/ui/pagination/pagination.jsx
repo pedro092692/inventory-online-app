@@ -4,7 +4,7 @@ import HandlePageChange from '@/app/utils/handlePageChange'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
 
-export default function Pagination({currentPage, totalPages, maxVisiblePages, setOffet, limit, fetchData, param}) {
+export default function Pagination({currentPage, totalPages, maxVisiblePages, setOffet, limit, fetchData, param, searchTerm=null}) {
 
     const searchParams = useSearchParams()
     const router = useRouter()
@@ -34,7 +34,7 @@ export default function Pagination({currentPage, totalPages, maxVisiblePages, se
     const visiblePages = geVisiblePages()
 
     const changePage = (pageNumber) => {
-        HandlePageChange(pageNumber, setOffet, limit, fetchData)
+        HandlePageChange(pageNumber, setOffet, limit, fetchData, searchTerm)
         params.set(param, pageNumber)
         router.replace(`?${params.toString(pageNumber)}`)
     }

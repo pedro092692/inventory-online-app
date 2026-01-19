@@ -20,6 +20,7 @@ export default function ViewCustomers() {
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
     const [actions, setActions] = useState([])
+    const [searchQuery, setSearchQuery] = useState(null)
     
     
     // load customers from the API
@@ -45,9 +46,11 @@ export default function ViewCustomers() {
         }
 
     // search customers by name or id_number from the API
-    const searchCustomers = async (query) => {
+    const searchCustomers = async (query, limit, offset) => {
             if (!query) {
                 fetchCustomers(10, 0)
+                setDataSearch(false)
+                setSearchQuery(null)
                 return
             }
             try {
@@ -61,6 +64,7 @@ export default function ViewCustomers() {
                     setTotal(response.data.total)
                     setTableData(transformData(response.data.customers))
                     setDataSearch(true)
+                    setSearchQuery(query)
                 }
             }catch (error) {
                 if (error.response) {
@@ -116,7 +120,7 @@ export default function ViewCustomers() {
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
-                    <Search placeHolder={'Buscar cliente por Nombre, Cédula'} searchFn={searchCustomers} limit={limit} offset={offset}/>
+                    <Search placeHolder={'Buscar cliente por Nombre, Cédula'} searchFn={searchCustomers} limit={limit} offset={offset} setOffset={setOffset}/>
                     <List tableHead={
                         {
                         'nombre': 'Nombre',
@@ -136,7 +140,8 @@ export default function ViewCustomers() {
                         maxVisiblePages={maxVisiblePages}
                         setOffet={setOffset}
                         limit={limit}
-                        fetchData={ dataSearch ? searchCustomers: fetchCustomers}
+                        fetchData={ dataSearch ? searchCustomers : fetchCustomers}
+                        searchTerm={ dataSearch ? searchQuery : null}
                         param={'page'}
                     />
                 </>
