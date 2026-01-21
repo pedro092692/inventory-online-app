@@ -4,12 +4,15 @@ import { Input } from '@/app/ui/form/input/input'
 import styles from './search.module.css'
 import { useDebouncedCallback } from 'use-debounce'
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
+import GetPageParam from '@/app/utils/getPageParam'
+import { useState } from 'react'
 
-export default function Search ({ placeHolder="Buscar...", searchFn, limit=10, offset=0, setOffset }) {
+export default function Search ({ placeHolder="Buscar...", searchFn, limit=10, offset=0, setOffset, value='' }) {
 
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const { replace } = useRouter()
+    const [searchTerm, setSearchTerm] = useState(value ? value : '')
 
     const handleSearch = useDebouncedCallback((term) => {
         const params = new URLSearchParams(searchParams)
@@ -34,8 +37,9 @@ export default function Search ({ placeHolder="Buscar...", searchFn, limit=10, o
                     icon="search" 
                     className={styles.input}
                     autoFocus={true}
-                    onChange={(e) => handleSearch(e.target.value)}
+                    onChange={(e) => { setSearchTerm(e.target.value); handleSearch(e.target.value)}}
                     defaultValue={searchParams.get('search')?.toString()}
+                    value={searchTerm}
             />
         </Form>
     )

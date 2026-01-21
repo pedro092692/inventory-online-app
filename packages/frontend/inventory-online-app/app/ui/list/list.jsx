@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 
 export default function List({tableHead=[], tableData=[], actions, showActions=true, CustomStyles}) {
     const page = useSearchParams().get('page') || 1
+    const search = useSearchParams().get('search') || ''
     
     const getActions = (actions) => {
         const options = {
@@ -48,7 +49,7 @@ export default function List({tableHead=[], tableData=[], actions, showActions=t
                                             if (key === 'id' && showActions) {
                                                 return (
                                                     <td key={idx} data-label={'actions'}>
-                                                        <Link href={`/store/customers/view/detail/${data[key]}?page=${page}`}>Ver</Link>
+                                                        <Link href={`/store/customers/view/detail/${data[key]}?page=${page}${search ? `&search=${search}` : ''}`}>Ver</Link>
                                                     </td>
                                                 )
                                             }

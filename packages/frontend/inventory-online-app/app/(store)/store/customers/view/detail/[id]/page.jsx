@@ -22,6 +22,7 @@ export default function CustomerDetail() {
     const [invoicePage, setInvoicePage] = useState(1)
     const [totalInvoices, setTotalInvoices] = useState(0)
     const page = useSearchParams()?.get('page') || 1
+    const search = useSearchParams()?.get('search') || ''
 
     const fetchCustomerInfo = async (invoiceLimit, offsetInvoices) => {
         try {
@@ -71,7 +72,7 @@ export default function CustomerDetail() {
      
     return (
         <>
-        <Route path='customers' endpoints={['default', 'view', 'detail']} customPage={true} page={page}/> 
+        <Route path='customers' endpoints={['default', 'view', 'detail']} customPage={true} page={page} search={search}/> 
         {
             loading ? <p>Cargando...</p>
             :

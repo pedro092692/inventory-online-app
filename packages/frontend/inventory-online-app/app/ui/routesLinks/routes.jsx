@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Container } from '../utils/container'
 
-export default function Route({path='customers', endpoints=['default', 'add'], customPage=false, page=null}) {
+export default function Route({path='customers', endpoints=['default', 'add'], customPage=false, page=null, search=''}) {
     const routes = {
         customers: {
             default: {
@@ -13,7 +13,7 @@ export default function Route({path='customers', endpoints=['default', 'add'], c
                 label: 'Agregar cliente'
             },
             view: {
-                href: customPage ? `/store/customers/view?page=${page}` : '/store/customers/view',
+                href: customPage ? `/store/customers/view?page=${page}${search ? `&search=${search}`: ''}` : '/store/customers/view',
                 label: 'Todos los clientes'
             },
 

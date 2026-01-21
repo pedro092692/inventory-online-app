@@ -20,7 +20,7 @@ export default function ViewCustomers() {
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
     const [actions, setActions] = useState([])
-    const [searchQuery, setSearchQuery] = useState(null)
+    const [searchQuery, setSearchQuery] = useState(GetPageParam('search'))
     
     
     // load customers from the API
@@ -79,6 +79,10 @@ export default function ViewCustomers() {
     //load customers on component mount
     useEffect(() => {
         setLoading(true)
+        if (searchQuery) {
+            searchCustomers(searchQuery, limit, offset)
+            return
+        }
         fetchCustomers(limit, offset)
     }, [])
 
@@ -102,6 +106,7 @@ export default function ViewCustomers() {
     const currentPage = page
     const maxVisiblePages = 8 
 
+
     return (
         <>
             {/* view all customers */}
@@ -120,7 +125,13 @@ export default function ViewCustomers() {
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
-                    <Search placeHolder={'Buscar cliente por Nombre, Cédula'} searchFn={searchCustomers} limit={limit} offset={offset} setOffset={setOffset}/>
+                    <Search placeHolder={'Buscar cliente por Nombre, Cédula'}
+                        value={searchQuery}
+                        searchFn={searchCustomers} 
+                        limit={limit} 
+                        offset={offset} 
+                        setOffset={setOffset}
+                    />
                     <List tableHead={
                         {
                         'nombre': 'Nombre',
