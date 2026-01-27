@@ -65,11 +65,9 @@ class SecurityController {
             token = req.cookies.access_token
         }
         const data = await this.security.verityToken(token)
-
         if(!data) {
             return res.status(401).json({message: 'Invalid token'})
         }
-
         res.status(200).json({data})
     }) 
 

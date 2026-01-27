@@ -12,7 +12,6 @@ export async function verifyAuth(request) {
 
     // verify token 
     const res = await verifyToken(token)
-
     if(res.ok) {
         return NextResponse.next()
     }

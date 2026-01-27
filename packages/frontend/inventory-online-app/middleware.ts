@@ -4,9 +4,8 @@ import { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-  
-  const publicPaths = ['/login'];
-  const privatePaths = ['/store']; 
+  const publicPaths = ['/login']
+  const privatePaths = ['/store']
 
   if(publicPaths.some((path) => pathname.startsWith(path))) {
     // If the user is logged in, redirect them to the dashboard

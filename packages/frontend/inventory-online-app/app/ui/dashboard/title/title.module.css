@@ -1,7 +1,7 @@
 .titleContainer {
     padding: 16px 8px;
     background-color: var(--color-neutralGrey300);
-    justify-content: start;
+    justify-content: space-between;
     align-items: center;
     gap: 8px;
     width: 100%;
