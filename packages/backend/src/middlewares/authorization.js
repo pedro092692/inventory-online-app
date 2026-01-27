@@ -31,6 +31,10 @@ class AuthorizationMiddleware {
     getUserPermission = (userRole) => {
         return this.permissions[userRole] || []
     }
+    
+    getUserRole = (userRole) => {
+        return Object.keys(ROLES).find(key => ROLES[key] === userRole) || null
+    }
 
     
     authorize = (requiredPermission) => {
@@ -60,4 +64,6 @@ class AuthorizationMiddleware {
 
 const authorization = new AuthorizationMiddleware().authorize
 const getUserPermission = new AuthorizationMiddleware().getUserPermission
-export { authorization, getUserPermission }
+const getUserRole = new AuthorizationMiddleware().getUserRole
+
+export { authorization, getUserPermission, getUserRole }
