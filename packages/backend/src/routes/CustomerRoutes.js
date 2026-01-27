@@ -3,6 +3,7 @@ import CustomerController from '../Controllers/CustomerController.js'
 import { authenticated } from '../middlewares/authMiddleware.js'
 import { validateFields } from '../validators/fieldValidator.js'
 import { authorization } from '../middlewares/authorization.js'
+import { PERMISSIONS } from '../constants/roles.js'
 
 
 class CustomerRoutes {
@@ -19,8 +20,8 @@ class CustomerRoutes {
      */
     initializeRoutes() {
         this.router.get('/', (req, res) => res.send('Customers Routes'))
-        this.router.get('/all', authorization('read'), (req, res) => new CustomerController(req.Customer).allCustomers(req, res))
-        this.router.get('/search', (req, res) => new CustomerController(req.Customer).searchCustomers(req, res)) 
+        this.router.get('/all', authorization(PERMISSIONS.READ), (req, res) => new CustomerController(req.Customer).allCustomers(req, res))
+        this.router.get('/search', authorization(PERMISSIONS.READ), (req, res) => new CustomerController(req.Customer).searchCustomers(req, res)) 
         this.router.get('/:id', (req, res) => new CustomerController(req.Customer, req.Invoice).getCustomerById(req, res))
         this.router.post('/',  validateFields('createCustomer'), (req, res) => new CustomerController(req.Customer).createCustomer(req, res))
         this.router.patch('/:id', (req, res) => new CustomerController(req.Customer).updateCustomer(req, res))
