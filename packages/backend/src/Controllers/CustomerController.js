@@ -1,5 +1,6 @@
 import CustomerService from '../services/CustomerService.js'
 import controllerErrorHandler from '../errors/controllerErrorHandler.js'
+import { getUserRole } from '../middlewares/authorization.js'
 
 class CustomerController {
     #error = new controllerErrorHandler()
@@ -31,8 +32,9 @@ class CustomerController {
     allCustomers = this.#error.handler( async(req, res) => {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const offset = req.query.offset ? parseInt(req.query.offset) : 0
+        const role = getUserRole(req.user.role)
         const {customers, total, page, pageSize} = await this.customerService.getAllCustomers(limit, offset)
-        res.status(200).json({customers, total, page, pageSize})
+        res.status(200).json({customers, total, page, pageSize, role})
     })
 
     /**
