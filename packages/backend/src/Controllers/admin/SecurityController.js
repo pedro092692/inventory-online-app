@@ -90,6 +90,16 @@ class SecurityController {
         }
         res.status(200).json({message: 'logged in'})
     })
+
+    getCurrentUser = this.#error.handler( async(req, res) => {
+        const token = req.cookies.access_token
+        if(!token) {
+            return res.status(401).json({message: 'not logged in'})
+        }
+        
+        const currentUser = await this.security.verityToken(token, true)
+        res.status(200).json(currentUser)
+    })
 }
 
 export default SecurityController

@@ -22,7 +22,6 @@ export default function ViewCustomers() {
     const [role, setRole] = useState(null)
     const [searchQuery, setSearchQuery] = useState(GetPageParam('search'))
     
-    
     // load customers from the API
     const fetchCustomers = async (limit, offset) => {
             try {
