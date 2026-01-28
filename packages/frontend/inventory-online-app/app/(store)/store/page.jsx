@@ -1,8 +1,7 @@
 import { Title } from '@/app/ui/dashboard/title/title'
-export default async function HomeStore() {
-
+export default function HomeStore() {
     return (
-        <Title title='Dashboard'  />
+        <Title title='Dashboard' />
     )
 }
 

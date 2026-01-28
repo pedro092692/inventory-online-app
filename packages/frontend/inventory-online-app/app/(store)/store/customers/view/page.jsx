@@ -19,7 +19,7 @@ export default function ViewCustomers() {
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
-    const [actions, setActions] = useState([])
+    const [role, setRole] = useState(null)
     const [searchQuery, setSearchQuery] = useState(GetPageParam('search'))
     
     
@@ -33,7 +33,7 @@ export default function ViewCustomers() {
                     setPage(response.data.page)
                     setTotal(response.data.total)
                     setTableData(transformData(response.data.customers))
-                    setActions(response.data.actions)
+                    setRole(response.data.role)
                 }
             } catch (error) {
                 if (error.response) {
@@ -44,7 +44,6 @@ export default function ViewCustomers() {
                 setLoading(false)
             }
         }
-
     // search customers by name or id_number from the API
     const searchCustomers = async (query, limit, offset) => {
             if (!query) {
@@ -139,9 +138,8 @@ export default function ViewCustomers() {
                         'teléfono': 'Teléfono',
                         'actions': 'Acciones'
                         }
-                    } 
+                    }     role={role}
                           tableData={tableData}  
-                          actions={actions}
                           showActions={true}
                     />
                     

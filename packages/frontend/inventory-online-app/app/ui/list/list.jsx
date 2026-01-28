@@ -2,17 +2,17 @@ import styles from './list.module.css'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
-export default function List({tableHead=[], tableData=[], actions, showActions=true, CustomStyles}) {
+export default function List({tableHead=[], tableData=[], role=null, showActions=true, CustomStyles}) {
     const page = useSearchParams().get('page') || 1
     const search = useSearchParams().get('search') || ''
-    
-    const getActions = (actions) => {
+
+    const getActions = (role) => {
         const options = {
-            1: 'Ver',
-            2: 'Ver | Editar',
-            3: 'Ver | Editar | Eliminar'
+            USER: 'Ver',
+            OWNER: 'Ver | Editar',
+            ADMIN: 'Ver | Editar | Eliminar'
         }
-        return options[actions.length - 1] || 'Ver'
+        return options[role] || 'Ver'
     }
     return (
         <div className={`${styles.container} shadow-sm`} style={CustomStyles}>
@@ -49,7 +49,9 @@ export default function List({tableHead=[], tableData=[], actions, showActions=t
                                             if (key === 'id' && showActions) {
                                                 return (
                                                     <td key={idx} data-label={'actions'}>
-                                                        <Link href={`/store/customers/view/detail/${data[key]}?page=${page}${search ? `&search=${search}` : ''}`}>Ver</Link>
+                                                        <Link href={`/store/customers/view/detail/${data[key]}?page=${page}${search ? `&search=${search}` : ''}`}>
+                                                            {getActions(role)}
+                                                        </Link>
                                                     </td>
                                                 )
                                             }

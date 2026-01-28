@@ -1,8 +1,10 @@
 import { Container } from '@/app/ui/utils/container'
 import { IconSection } from '@/app/ui/utils/iconSection/iconSection'
 import styles from './title.module.css'
+import { getCurrentUser } from '@/app/utils/getCurrentUser'
 
-export async function Title({ title, icon, showUserInfo = false, userInfo = null }) {
+export async function Title({ title, icon, showUserInfo = true}) {
+    const userInfo = await getCurrentUser()
     return (
         <Container
             className={`shadow ${styles.titleContainer}`}

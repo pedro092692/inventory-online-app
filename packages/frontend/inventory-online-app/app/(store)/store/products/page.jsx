@@ -1,9 +1,7 @@
 'use client'
 import { Container } from '@/app/ui/utils/container'
-import List from '@/app/ui/list/list'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
-import { Title } from '@/app/ui/dashboard/title/title'
 import Link from 'next/link'
 
 
