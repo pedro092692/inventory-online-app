@@ -15,9 +15,7 @@ export default function AddCustomer() {
     const [id_number, setId_number] = useState('')
     const [phone, setPhone] = useState('')
 
-    useEffect(() => {
-        checkRole()
-    }, [])
+   
     return (
        <>   
             <Route path='customers' endpoints={['default', 'add']} /> 

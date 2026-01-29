@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { verifyToken } from '../utils/verifyToken';
+import { verifyToken } from '../utils/verifyToken'
 
 const dashboard = process.env.NEXT_PUBLIC_DASHBOARD
 
