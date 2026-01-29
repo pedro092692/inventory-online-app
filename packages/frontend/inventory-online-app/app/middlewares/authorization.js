@@ -11,15 +11,20 @@ class AuthorizationMiddleWare {
     checkAuthorization = async (request) => {
         const token = request.cookies.get('access_token')?.value 
         if (!token) {
-            return NextResponse.next()
+            const redirectUrl = new URL('/login', request.url)
+            redirectUrl.searchParams.set('next', new URL(request.url).pathname)
+            return NextResponse.redirect(redirectUrl)
         }
 
         try{
-            // very token 
+            // verify token 
             const res = await this.verifyToken(token, true)
+
             
             if (![1,2,3].includes(res.data.role)){
-                return NextResponse.redirect(new URL('/store/customers', request.url))
+                return NextResponse.redirect(new URL('/store', request.url))
+                // return new NextResponse('Forbidden', { status: 403 })
+
             }else{
                 return NextResponse.next()
             }

@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react'
 
 export default function AddCustomer() {
     
-
     const [message, setMessage] = useState(null)
     const [errors, setErrors] = useState(null)
     const [name, setName] = useState('')

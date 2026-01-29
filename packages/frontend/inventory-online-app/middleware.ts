@@ -13,8 +13,9 @@ export function middleware(request: NextRequest) {
     // If the user is logged in, redirect them to the dashboard
     return redirectIfLoggedIn(request)
   }
-  
+
   if(authorizePaths.some((path) => pathname.startsWith(path))) {
+    console.log('hila')
     return checkAuthorization(request)
   }
 
@@ -22,8 +23,9 @@ export function middleware(request: NextRequest) {
     return verifyAuth(request)
   }
 
+  
 }
 
 export const config = {
-    matcher: ['/store/:path*', '/login'],
+    matcher: ['/store/customers/edit/:path*', '/store/:path*', '/login'],
 }
