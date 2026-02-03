@@ -1,6 +1,7 @@
 import UserService from '../../services/admin/UserService.js'
 import ControllerErrorHandler from '../../errors/controllerErrorHandler.js'
 import SecurityService from '../../services/admin/SecurityService.js'
+import { getUserPermission } from '../../middlewares/authorization.js'
 
 
 class SecurityController {
@@ -10,6 +11,7 @@ class SecurityController {
     constructor() {
         this.user = new UserService()
         this.security = new SecurityService()
+        this.getUserPermission = getUserPermission
         this.#error
     }
 
@@ -98,7 +100,14 @@ class SecurityController {
         }
         
         const currentUser = await this.security.verityToken(token, true)
-        res.status(200).json(currentUser)
+        const userPermission = this.getUserPermission(currentUser.role)
+        currentUser.permissions = userPermission
+        const user = { 
+            email: currentUser.email, 
+            permissions: currentUser.permissions, 
+            role: currentUser.role 
+        }
+        res.status(200).json(user)
     })
 }
 
