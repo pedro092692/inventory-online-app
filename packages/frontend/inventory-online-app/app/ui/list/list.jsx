@@ -1,6 +1,8 @@
 import styles from './list.module.css'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import Actions from '@/app/ui/actions/actions'
+
 
 export default function List({tableHead=[], tableData=[], role=null, showActions=true, CustomStyles}) {
     const page = useSearchParams().get('page') || 1
@@ -49,9 +51,10 @@ export default function List({tableHead=[], tableData=[], role=null, showActions
                                             if (key === 'id' && showActions) {
                                                 return (
                                                     <td key={idx} data-label={'actions'}>
-                                                        <Link href={`/store/customers/view/detail/${data[key]}?page=${page}${search ? `&search=${search}` : ''}`}>
+                                                        {/* <Link href={`/store/customers/view/detail/${data[key]}?page=${page}${search ? `&search=${search}` : ''}`}>
                                                             {getActions(role)}
-                                                        </Link>
+                                                        </Link> */}
+                                                        <Actions />
                                                     </td>
                                                 )
                                             }
