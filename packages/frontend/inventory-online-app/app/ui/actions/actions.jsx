@@ -1,38 +1,23 @@
 'use client'
-import { getUser } from '@/app/utils/getUser'
 import { useState, useEffect } from 'react'
 import { Container } from '@/app/ui/utils/container'
 import Link from 'next/link'
 
-export default function Actions () {
-    const [currentUser, setCurrentUser] = useState({permissions: []})
-
-    const getCurrentUser = async () => {
-        const user = await getUser()
-        return user
-    }
-    
-    useEffect(() => {
-        const fetchUser = async () => {
-            const user = await getCurrentUser()
-            setCurrentUser(user)
-        }
-        fetchUser()
-    }, [])
-    
-    const view = (href='/') => {
+export default function Actions ({currentUser={permissions:[]}, urlPath='customers', id=1, params=''}) {
+    const path = '/store'
+    const view = (href=`${path}/${urlPath}/view/detail/${id}${params?params:''}`) => {
         return (
             <Link href={href}>Ver</Link>
         )
     }
 
-    const edit = (href='/') => {
+    const edit = (href=`${path}/${urlPath}/edit/${id}`) => {
         return (
             <Link href={href}>Editar</Link>
         )
     }
 
-    const remove = (href='/') => {
+    const remove = (href=`${path}/${urlPath}/delete/${id}`) => {
         return (
             <Link href={href}>Eliminar</Link>
         )

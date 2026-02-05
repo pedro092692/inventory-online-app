@@ -7,6 +7,7 @@ import Route from '@/app/ui/routesLinks/routes'
 import axios from 'axios'
 import GetPageParam from '@/app/utils/getPageParam'
 import Search from '@/app/ui/form/search/search'
+import { getUser } from '@/app/utils/getUser'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function ViewCustomers() {
@@ -14,13 +15,14 @@ export default function ViewCustomers() {
     const [customers, setCustomers ] = useState([])
     const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
-    const [offset, setOffset] = useState(GetPageParam('page') * limit)
+    const [offset, setOffset] = useState(GetPageParam('page') * limit )
     const [dataSearch, setDataSearch] = useState(false)
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
     const [role, setRole] = useState(null)
-    const [searchQuery, setSearchQuery] = useState(GetPageParam('search'))
+    const [searchQuery, setSearchQuery] = useState(GetPageParam('search') || '')
+    const [currentUser, setCurrentUser] = useState({permissions: []})
     
     // load customers from the API
     const fetchCustomers = async (limit, offset) => {
@@ -46,7 +48,7 @@ export default function ViewCustomers() {
     // search customers by name or id_number from the API
     const searchCustomers = async (query, limit, offset) => {
             if (!query) {
-                fetchCustomers(10, 0)
+                fetchCustomers(limit, 0)
                 setDataSearch(false)
                 setSearchQuery(null)
                 return
@@ -73,10 +75,16 @@ export default function ViewCustomers() {
                 setLoading(false)
             }
         }
-
+    
+    const currentUserInfo = async () => {
+        const user = await getUser()
+        setCurrentUser(user)
+    }
+    
     //load customers on component mount
     useEffect(() => {
         setLoading(true)
+        currentUserInfo()
         if (searchQuery) {
             searchCustomers(searchQuery, limit, offset)
             return
@@ -103,7 +111,6 @@ export default function ViewCustomers() {
     const totalPages = Math.ceil(total / limit)
     const currentPage = page
     const maxVisiblePages = 8 
-
 
     return (
         <>
@@ -140,13 +147,14 @@ export default function ViewCustomers() {
                     }     role={role}
                           tableData={tableData}  
                           showActions={true}
+                          currentUser={currentUser}
                     />
                     
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
                         maxVisiblePages={maxVisiblePages}
-                        setOffet={setOffset}
+                        setOffset={setOffset}
                         limit={limit}
                         fetchData={ dataSearch ? searchCustomers : fetchCustomers}
                         searchTerm={ dataSearch ? searchQuery : null}

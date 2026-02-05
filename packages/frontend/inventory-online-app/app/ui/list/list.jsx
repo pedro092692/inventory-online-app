@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import Actions from '@/app/ui/actions/actions'
 
 
-export default function List({tableHead=[], tableData=[], role=null, showActions=true, CustomStyles}) {
+export default function List({tableHead=[], tableData=[], role=null, showActions=true, CustomStyles, currentUser={permissions: []}}) {
     const page = useSearchParams().get('page') || 1
     const search = useSearchParams().get('search') || ''
 
@@ -54,7 +54,12 @@ export default function List({tableHead=[], tableData=[], role=null, showActions
                                                         {/* <Link href={`/store/customers/view/detail/${data[key]}?page=${page}${search ? `&search=${search}` : ''}`}>
                                                             {getActions(role)}
                                                         </Link> */}
-                                                        <Actions />
+                                                        <Actions 
+                                                            currentUser={currentUser}
+                                                            urlPath={'customers'}
+                                                            id={data[key]}
+                                                            params={`?page=${page}${search ? `&search=${search}` : ''}`}
+                                                        />
                                                     </td>
                                                 )
                                             }
