@@ -15,7 +15,6 @@ export function middleware(request: NextRequest) {
   }
 
   if(authorizePaths.some((path) => pathname.startsWith(path))) {
-    console.log('hila')
     return checkAuthorization(request)
   }
 

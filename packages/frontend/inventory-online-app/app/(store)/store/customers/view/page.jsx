@@ -76,23 +76,13 @@ export default function ViewCustomers() {
             }
         }
     
+    // get current user info
     const currentUserInfo = async () => {
         const user = await getUser()
         setCurrentUser(user)
     }
-    
-    //load customers on component mount
-    useEffect(() => {
-        setLoading(true)
-        currentUserInfo()
-        if (searchQuery) {
-            searchCustomers(searchQuery, limit, offset)
-            return
-        }
-        fetchCustomers(limit, offset)
-    }, [])
 
-
+    // transform data 
     const transformData = (customers) => {
         let data = []
         if (customers.length > 0) {
@@ -108,6 +98,18 @@ export default function ViewCustomers() {
         return data
     }
     
+    //load customers on component mount
+    useEffect(() => {
+        setLoading(true)
+        currentUserInfo()
+        if (searchQuery) {
+            searchCustomers(searchQuery, limit, offset)
+            return
+        }
+        fetchCustomers(limit, offset)
+    }, [])
+
+
     const totalPages = Math.ceil(total / limit)
     const currentPage = page
     const maxVisiblePages = 8 

@@ -104,7 +104,7 @@ export default function CustomerDetail() {
                             currentPage={currentPage}
                             totalPages={totalPages}
                             maxVisiblePages={maxVisiblePages}
-                            setOffet={setOffsetInvoices}
+                            setOffset={setOffsetInvoices}
                             limit={invoiceLimit}
                             fetchData={fetchCustomerInfo}
                             param={'invoice_page'}
