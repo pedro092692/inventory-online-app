@@ -21,6 +21,11 @@ export default function Route({path='customers', endpoints=['default', 'add'], c
                 href: '/store/customers/view/detail/[id]',
                 label: 'Detalle del cliente'
             },
+
+            edit: {
+                href: '/store/customers/edit/[id]',
+                label: 'Editar cliente'
+            }
         },
 
         products: {

@@ -4,6 +4,7 @@ import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
 import Route from '@/app/ui/routesLinks/routes'
 import styles from './input.module.css'
+import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 
 export default function AddCustomer() {
@@ -13,11 +14,13 @@ export default function AddCustomer() {
     const [name, setName] = useState('')
     const [id_number, setId_number] = useState('')
     const [phone, setPhone] = useState('')
+    const search = useSearchParams()?.get('search') || ''
+    const page = useSearchParams()?.get('page') || 1
 
    
     return (
-       <>   
-            <Route path='customers' endpoints={['default', 'add']} /> 
+       <>  
+            <Route path='customers' endpoints={['default', 'view', 'edit']} customPage={true} page={page} search={search}/> 
             <Form className={`${styles.form} shadow`}>
                 <Input type="text" placeHolder="Nombre del cliente" icon="person" onChange={(e) => setName(e.target.value)} value={name} name={'name'}/>
                 {errors?.name && <span className="field_error">{errors.name}</span>}

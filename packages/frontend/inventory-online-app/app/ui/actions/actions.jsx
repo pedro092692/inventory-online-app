@@ -23,7 +23,7 @@ export default function Actions ({currentUser={permissions:[]}, urlPath='custome
         )
     }
 
-    const edit = (href=`${path}/${urlPath}/edit/${id}`) => {
+    const edit = (href=`${path}/${urlPath}/edit/${id}${params?params:''}`) => {
         return (
             <Link href={href}>
                 <Button 
