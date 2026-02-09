@@ -147,7 +147,7 @@ class CustomerService {
     updateCustomer(customerId, updates) {
         return this.#error.handler(['Update Customer', customerId, 'Customer'], async() => {
             const customer = await this.getCustomerById(customerId)
-            const updatedCustomer = await customer.update(updates)
+            const updatedCustomer = await customer.info.update(updates)
             return updatedCustomer
         })
     }
