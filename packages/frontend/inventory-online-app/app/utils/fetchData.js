@@ -9,10 +9,16 @@ export default async function getData(url, method) {
         })
         return response.data
     } catch (error) {
-        console.log(error)
         if(error.response) {
-            console.log(error.response.status)
-            console.log(error.response.data.message)
+            throw {
+                status: error.response.status,
+                message: error.response.data?.message || 'Something went wrong'
+            }
+        }
+
+        throw {
+            status: 500,
+            message: 'Something went wrong'
         }
     }
 
