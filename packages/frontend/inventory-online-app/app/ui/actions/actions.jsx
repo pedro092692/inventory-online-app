@@ -1,12 +1,24 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Container } from '@/app/ui/utils/container'
-import { Icon } from '@/app/ui/utils/icons/icons'
+import { Alert } from '@/app/ui/utils/alert/alert'
 import { Button } from '@/app/ui/utils/button/buttons'
 import Link from 'next/link'
 
 export default function Actions ({currentUser={permissions:[]}, urlPath='customers', id=1, params='', showView=true, showEdit=true, showDelete=true}) {
     const path = '/store'
+    const [showAlert, setShowAlert] = useState(false)
+
+
+    const handleDelete  = () => {
+        
+        setShowAlert(true)
+        console.log('delete item..')
+        setTimeout(() => {
+            setShowAlert(false)
+        }, 3500)
+    }
+
     const view = (href=`${path}/${urlPath}/view/detail/${id}${params?params:''}`) => {
         if (showView){
             return (
@@ -46,7 +58,10 @@ export default function Actions ({currentUser={permissions:[]}, urlPath='custome
     const remove = (href=`${path}/${urlPath}/delete/${id}`) => {
         if (showDelete){
             return (
-                <Link href={href}>
+                <Link 
+                    href={'#'}
+                    onClick={(e) => {e.preventDefault(); handleDelete()} }
+                >
                     <Button 
                         children={false}
                         showIcon={true}
@@ -71,6 +86,7 @@ export default function Actions ({currentUser={permissions:[]}, urlPath='custome
                 {view()}
                 {edit()}
                 {remove()}
+                <Alert showContainer={showAlert}/>
             </Container>
             )
 
@@ -78,17 +94,23 @@ export default function Actions ({currentUser={permissions:[]}, urlPath='custome
 
     if (currentUser.permissions.includes('edit')) {
         return (
-            <>
+            <Container 
+                padding={'0px'}
+                gap={'20px'}
+            >
                 {view()}
                 {edit()}
-            </>
+            </Container>
         )
     }
 
     return (
-        <>
+        <Container 
+            padding={'0px'}
+            gap={'20px'}
+        >
             {view()}
-        </>
+        </Container>
     )
 
 

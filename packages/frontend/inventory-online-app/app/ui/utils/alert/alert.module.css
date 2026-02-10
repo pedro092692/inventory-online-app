@@ -1,0 +1,33 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    position: absolute; 
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background-color: rgba(48, 48, 48, 0);
+    opacity: 0;
+    pointer-events: none;
+    transition: 
+        all 0.4s ease-in-out;
+
+}
+
+.container.active{ 
+    background-color: rgba(48, 48, 48, 0.45);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+
+.alert {
+    background-color: white;
+    width: 480px;
+    height: 250px;
+    border-radius: 8px;
+    margin-top: -250px;
+}
