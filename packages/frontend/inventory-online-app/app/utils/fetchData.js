@@ -1,10 +1,11 @@
 import axios from 'axios'
 
-export default async function getData(url, method) { 
+export default async function getData(url, method, body=null,) { 
     try {
         const response = await axios({
             url: url,
             method: method,
+            data: body,
             withCredentials: true
         })
         return response.data

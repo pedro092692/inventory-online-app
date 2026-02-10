@@ -90,7 +90,6 @@ class CustomerService {
                     totalInvoices = await this.Invoice.count({
                     where: { customer_id: id }
                 })
-                console.log('Total Invoices:', totalInvoices);
             }
             return {
                 info: customer,

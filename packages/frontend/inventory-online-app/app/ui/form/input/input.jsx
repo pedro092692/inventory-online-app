@@ -18,13 +18,15 @@ export function Input({
         formatPhone=null, 
         readOnly=false,
         autocomplete='off',
-        autoFocus=false
+        autoFocus=false,
+        setField=null
 
     }) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%'}
-    const handlePhoneInput = (e) => {
+    const handlePhoneInput = (e,) => {
         const raw = e.target.value.replace(/\D/g, '')
         let formatted = '+58' + raw.slice(2)
+        setField && setField(prev => ({...prev, phone: {isEdited: true}}))
         formatPhone(formatted)
     }
     return (
