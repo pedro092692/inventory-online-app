@@ -19,10 +19,11 @@ export function Input({
         readOnly=false,
         autocomplete='off',
         autoFocus=false,
-        setField=null
+        setField=null,
+        capitalize=false
 
     }) {
-    const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%'}
+    const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%', textTransform: capitalize ? 'capitalize' : 'none'}
     const handlePhoneInput = (e,) => {
         const raw = e.target.value.replace(/\D/g, '')
         let formatted = '+58' + raw.slice(2)

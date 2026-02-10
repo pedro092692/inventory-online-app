@@ -63,7 +63,7 @@ export default function AddCustomer() {
             }
             const response = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`, 'PATCH', 
                 {
-                    name, 
+                    name: name.toLowerCase(), 
                     id_number, 
                     phone
                 },
@@ -95,7 +95,7 @@ export default function AddCustomer() {
        <>  
             <Route path='customers' endpoints={['default', 'view', 'edit']} customPage={true} page={page} search={search}/> 
             <Form className={`${styles.form} shadow`} onSubmit={(e) => {e.preventDefault(); editCustomer()}}>
-                <Input type="text" placeHolder="Nombre del cliente" icon="person" onChange={(e) => {setName(e.target.value); setField({...field, name:{isEdited: true} })}} value={loading ? 'Cargando...' : name} name={'name'}/>
+                <Input type="text" placeHolder="Nombre del cliente" icon="person" onChange={(e) => {setName(e.target.value); setField({...field, name:{isEdited: true} })}} value={loading ? 'Cargando...' : name} name={'name'} capitalize={true}/>
                 {errors?.name && <span className="field_error">{errors.name}</span>}
                 <Input className={styles.inputNumber} type="number" placeHolder={loading ? 'Cargando...' : "Cedula"} icon="id" onChange={(e) => {setId_number(e.target.value); setField({...field, id_number:{isEdited: true}})}} value={id_number} name={'id_number'}/>
                 {errors?.id_number && <span className="field_error">{errors.id_number}</span>}

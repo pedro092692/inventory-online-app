@@ -42,7 +42,7 @@ export default function AddCustomer() {
        <>   
             <Route path='customers' endpoints={['default', 'add']} /> 
             <Form className={`${styles.form} shadow`}  onSubmit={(e) => {e.preventDefault(); addCustomer()}}>
-                <Input type="text" placeHolder="Nombre del cliente" icon="person" onChange={(e) => setName(e.target.value)} value={name} name={'name'}/>
+                <Input type="text" placeHolder="Nombre del cliente" icon="person" onChange={(e) => setName(e.target.value)} value={name} name={'name'} capitalize={true}/>
                 {errors?.name && <span className="field_error">{errors.name}</span>}
                 <Input className={styles.inputNumber} type="number" placeHolder="Cedula" icon="id" onChange={(e) => setId_number(e.target.value)} value={id_number} name={'id_number'}/>
                 {errors?.id_number && <span className="field_error">{errors.id_number}</span>}

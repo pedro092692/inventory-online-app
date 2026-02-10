@@ -34,8 +34,8 @@ export default function List({tableHead=[], tableData=[], role=null, showActions
                                         Object.keys(data).map((key, idx) => {
                                             if (key !== 'id') {
                                                 return (
-                                                    <td key={idx} data-label={key}>
-                                                        {data[key]}
+                                                    <td key={idx} data-label={key} style={key === 'name' ? { textTransform: 'capitalize' } : {}}>
+                                                        {data[key]} 
                                                     </td>
                                                 )
                                             }
