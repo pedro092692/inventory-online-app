@@ -62,7 +62,11 @@ export default function AddCustomer() {
                 return body
             }
             const response = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`, 'PATCH', 
-                data(),
+                {
+                    name, 
+                    id_number, 
+                    phone
+                },
                     
             )
             
@@ -74,8 +78,11 @@ export default function AddCustomer() {
 
 
         }catch (error) {
-            console.log('Error al editar cliente')
-            setErrors('Hubo un error al editar el cliente')
+            if (error.status == 400 &&  error.message) {
+                setErrors(error.message) 
+            }else {
+                setErrors('Hubo un error al agregar el cliente')
+            }
         }
     }
     
