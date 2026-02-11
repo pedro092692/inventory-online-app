@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { Container } from '@/app/ui/utils/container'
 import { Modal } from '@/app/ui/utils/alert/modal'
 import { Button } from '@/app/ui/utils/button/buttons'
+import ActionDelete from '@/app/ui/utils/delete/delete'
 import Link from 'next/link'
 
 export default function Actions ({currentUser={permissions:[]}, urlPath='customers', id=1, params='', showView=true, showEdit=true, showDelete=true}) {
@@ -90,7 +91,12 @@ export default function Actions ({currentUser={permissions:[]}, urlPath='custome
                     showIcon={true}
                     icon='trash'
                     iconColor='var(--color-accentRed400)'
+                
+                >
+                    <ActionDelete 
+                        onClose={setShowAlert}
                     />
+                </Modal>
             </Container>
             )
 
