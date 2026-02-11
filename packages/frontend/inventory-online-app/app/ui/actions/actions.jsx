@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Container } from '@/app/ui/utils/container'
-import { Alert } from '@/app/ui/utils/alert/alert'
+import { Modal } from '@/app/ui/utils/alert/modal'
 import { Button } from '@/app/ui/utils/button/buttons'
 import Link from 'next/link'
 
@@ -14,9 +14,6 @@ export default function Actions ({currentUser={permissions:[]}, urlPath='custome
         
         setShowAlert(true)
         console.log('delete item..')
-        setTimeout(() => {
-            setShowAlert(false)
-        }, 3500)
     }
 
     const view = (href=`${path}/${urlPath}/view/detail/${id}${params?params:''}`) => {
@@ -86,7 +83,14 @@ export default function Actions ({currentUser={permissions:[]}, urlPath='custome
                 {view()}
                 {edit()}
                 {remove()}
-                <Alert showContainer={showAlert}/>
+                <Modal 
+                    show={showAlert} 
+                    onClose={setShowAlert} 
+                    title='¿Estas Seguro De Eliminar Este Cliente?'
+                    showIcon={true}
+                    icon='trash'
+                    iconColor='var(--color-accentRed400)'
+                    />
             </Container>
             )
 

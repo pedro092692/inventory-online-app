@@ -30,7 +30,7 @@ export function MobileMenu({open, setOpen, children, showArrow=false}) {
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [open, setOpen])
 
-     if (!open) return null
+    if (!open) return null
 
     return (
         <Container 
