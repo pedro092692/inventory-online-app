@@ -6,15 +6,24 @@ import { Button } from '@/app/ui/utils/button/buttons'
 import ActionDelete from '@/app/ui/utils/delete/delete'
 import Link from 'next/link'
 
-export default function Actions ({currentUser={permissions:[]}, urlPath='customers', id=1, params='', showView=true, showEdit=true, showDelete=true}) {
+export default function Actions (
+    {
+        currentUser={permissions:[]}, 
+        urlPath='customers', 
+        id=1, 
+        params='', 
+        showView=true, 
+        showEdit=true, 
+        showDelete=true,
+        variableName='id',
+        setTableData=null
+    }) {
     const path = '/store'
     const [showAlert, setShowAlert] = useState(false)
 
 
     const handleDelete  = () => {
-        
         setShowAlert(true)
-        console.log('delete item..')
     }
 
     const view = (href=`${path}/${urlPath}/view/detail/${id}${params?params:''}`) => {
@@ -95,6 +104,12 @@ export default function Actions ({currentUser={permissions:[]}, urlPath='custome
                 >
                     <ActionDelete 
                         onClose={setShowAlert}
+                        variableName={variableName}
+                        urlPath={urlPath}
+                        id={id}
+                        setTableData={setTableData}
+                        show={showAlert}
+                        
                     />
                 </Modal>
             </Container>

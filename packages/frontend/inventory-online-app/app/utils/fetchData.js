@@ -13,10 +13,9 @@ export default async function getData(url, method, body=null,) {
         if(error.response) {
             throw {
                 status: error.response.status,
-                message: error.response.data?.errors || 'Something went wrong'
+                message: error.response.data?.errors || error.response.data || 'Something went wrong'
             }
         }
-
         throw {
             status: 500,
             message: 'Something went wrong'

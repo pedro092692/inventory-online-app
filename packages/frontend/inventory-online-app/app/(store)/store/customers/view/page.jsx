@@ -150,6 +150,8 @@ export default function ViewCustomers() {
                           tableData={tableData}  
                           showActions={true}
                           currentUser={currentUser}
+                          variableName={'customerId'}
+                          setTableData={setTableData}
                     />
                     
                     <Pagination
