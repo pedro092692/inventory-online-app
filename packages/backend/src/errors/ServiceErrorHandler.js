@@ -31,7 +31,7 @@ class ServiceErrorHandler {
         console.error(error)
         // console.error(error)
         if(error instanceof ValidationError) { 
-            throw new ValidationError(`Faile ${kwargs[0]} errors: ${error.message}`)
+            throw new ValidationError(`${error.message}`)
         }
 
         if(error instanceof NotFoundError) {

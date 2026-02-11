@@ -25,7 +25,7 @@ class CustomerRoutes {
         this.router.get('/:id', (req, res) => new CustomerController(req.Customer, req.Invoice).getCustomerById(req, res))
         this.router.post('/',  validateFields('createCustomer'), (req, res) => new CustomerController(req.Customer).createCustomer(req, res))
         this.router.patch('/:id', authorization(PERMISSIONS.UPDATE), validateFields('createCustomer'), (req, res) => new CustomerController(req.Customer, req.Invoice).updateCustomer(req, res))
-        this.router.delete('/', validateFields('deleteCustomer'), authorization(PERMISSIONS.DELETE), (req, res) => new CustomerController(req.Customer).deleteCustomer(req, res))
+        this.router.delete('/', validateFields('deleteCustomer'), authorization(PERMISSIONS.DELETE), (req, res) => new CustomerController(req.Customer, req.Invoice).deleteCustomer(req, res))
     }
     
     /**

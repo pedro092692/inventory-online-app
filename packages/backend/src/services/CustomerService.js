@@ -1,6 +1,6 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
-import { Op } from 'sequelize'
+import { Op, ValidationError } from 'sequelize'
 
 class CustomerService {
 
@@ -161,8 +161,13 @@ class CustomerService {
     deleteCustomer(customerId) {
         return this.#error.handler(['Delete Customer', customerId, 'Customer'], async() => {
             const customer = await this.getCustomerById(customerId)
+            
+            if (customer.info.invoices.length > 0) {
+                throw new ValidationError('No se puede eliminar a un cliente con facturas asociadas')
+            }
+            
             // delete customer
-            await customer.destroy()
+            await customer.info.destroy()
             return 1
         })
     }

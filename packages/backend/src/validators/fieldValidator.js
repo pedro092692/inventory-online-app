@@ -9,7 +9,7 @@ function validateFields(rule) {
         ],
 
         deleteCustomer: [
-            check('id').isInt().withMessage('El id del cliente debe ser un número entero')
+            check('customerId').isInt().withMessage('El id del cliente debe ser un número entero')
         ]
     }
 
