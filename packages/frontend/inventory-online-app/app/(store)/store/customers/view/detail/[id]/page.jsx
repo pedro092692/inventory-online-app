@@ -7,6 +7,7 @@ import { Input } from '@/app/ui/form/input/input'
 import Route from '@/app/ui/routesLinks/routes'
 import { useSearchParams } from 'next/navigation'
 import styles from './input.module.css'
+import Search from '@/app/ui/form/search/search'
 import List from '@/app/ui/list/list'
 import Pagination from '@/app/ui/pagination/pagination'
 import GetPageParam from '@/app/utils/getPageParam'
@@ -21,6 +22,7 @@ export default function CustomerDetail() {
     const [offsetInvoices, setOffsetInvoices] = useState(GetPageParam('invoice_page') * invoiceLimit)
     const [invoicePage, setInvoicePage] = useState(1)
     const [totalInvoices, setTotalInvoices] = useState(0)
+    const [searchBillNumber, setSearchBillNumber] = useState('')
     const page = useSearchParams()?.get('page') || 1
     const search = useSearchParams()?.get('search') || ''
 
@@ -45,6 +47,8 @@ export default function CustomerDetail() {
         
     }
 
+    
+
     useEffect(() => {
         setLoading(true)
         fetchCustomerInfo(invoiceLimit, offsetInvoices)
@@ -58,6 +62,7 @@ export default function CustomerDetail() {
                     bill_id: invoice.id,
                     total: `$ ${invoice.total}`,
                     status: invoice.status == 'paid' ? 'Pagado' : 'Pendiente',
+                    data: new Date(invoice.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }), 
                     id: invoice.id
                 }
             ))   
@@ -87,12 +92,20 @@ export default function CustomerDetail() {
                     customer.invoices.length > 0 ?
                     <>
                         <p style={{marginTop: '15px'}} className='p1-r'>Facturas De: {`${customer?.name}`}</p>
+                        <Search 
+                            placeHolder={'Buscar N° de Recibo...'}
+                            inputMode={'numeric'}
+                            value={searchBillNumber}
+
+ 
+                        />
                         <List tableHead={
                             {
                             'bill_id': 'N° Recibo',
                             'total': 'Total',
                             'status': 'Estado',
-                            'actions': 'Acciones'
+                            'date': 'Fecha',
+                            'actions': 'Acciones',
                             }
                         } 
                             tableData={tableData}  
