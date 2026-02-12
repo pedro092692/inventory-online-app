@@ -47,11 +47,20 @@ export function Modal({
                 alignItem={'center'}
                 className={`${styles.alert} shadow`}
                 onClick={(e) => e.stopPropagation()}
-                pading={'8px 16px'}
+                padding={'8px 16px'}
+                gap={'0px'}
+
             > 
-                {showIcon && <Icon icon={icon} color={iconColor} size={[48, 48]}/>}
-                <h2>{title}</h2>
-                <div>
+                <div
+                    className={styles.header}
+                >
+                    {showIcon && <Icon icon={icon} color={iconColor} size={[56, 56]}/>}
+                    <h3>{title}</h3>
+                </div>
+                <div
+                    id='content'
+                    className={styles.content}
+                >
                     {children}
                 </div>
             </Container>

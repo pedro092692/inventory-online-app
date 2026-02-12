@@ -241,5 +241,10 @@ a {
   margin-top: 4px;
 }
 
+.success_message {
+  color: var(--color-blue700);
+  font-size: 14px;
+}
+
 /* end others */
  

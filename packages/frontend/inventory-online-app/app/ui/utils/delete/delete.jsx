@@ -13,7 +13,7 @@ export default function ActionDelete(
         variableName='id', 
         sucessMessage='Recurso eliminado exitosamente',
         setTableData=null,
-        show=false
+        show=false,
     }) {
     const [message, setMessage] = useState(null)
     const [errors, setErrors] = useState(null)
@@ -35,17 +35,19 @@ export default function ActionDelete(
     }
 
     const handleDelete = async () => {
-        const response = await deleteResource(urlPath, {[variableName]: id})
-        if (response === 1){
-            setMessage(sucessMessage)
-            setErrors('')
-            setTableData && setTableData(prev => prev.filter(item => item.id !== id))
-            setTimeout(() => {
-                onClose(false)
-            }, 1000)
-        }else{
-            setErrors(response)
-            setMessage('')
+        if(!errors){
+            const response = await deleteResource(urlPath, {[variableName]: id})
+            if (response === 1){
+                setMessage(sucessMessage)
+                setErrors('')
+                setTableData && setTableData(prev => prev.filter(item => item.id !== id))
+                setTimeout(() => {
+                    onClose(false)
+                }, 1000)
+            }else{
+                setErrors(response)
+                setMessage('')
+            }
         }
     }
     
@@ -54,11 +56,14 @@ export default function ActionDelete(
     return (
         <Container 
             direction={'column'}
-            padding={'8px'}
+            padding={'0px'}
+            height={'100%'}
+            width={'100%'}
+            justifyContent={'start'}
         > 
             <p>Esta acción no se puede deshacer.</p>
             <Container
-                padding={'16px'}
+                padding={'12px'}
             >
                 <Button
                     type={'secondary'}
@@ -73,8 +78,8 @@ export default function ActionDelete(
                     Cancelar
                 </Button>
             </Container>
-            <p className='p2-r'>{message}</p>
-            <p className='p2-r'>{errors}</p>
+            <p className='p2-b success_message'>{message}</p>
+            <p className='p2-b field_error'>{errors}</p>
         </Container>
         
     )

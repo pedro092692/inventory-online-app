@@ -18,7 +18,8 @@ export default function Actions (
         variableName='id',
         setTableData=null
     }) {
-    const path = '/store'
+    
+    const basePath = '/store'
     const [showAlert, setShowAlert] = useState(false)
 
 
@@ -26,7 +27,7 @@ export default function Actions (
         setShowAlert(true)
     }
 
-    const view = (href=`${path}/${urlPath}/view/detail/${id}${params?params:''}`) => {
+    const view = (href=`${basePath}/${urlPath}/view/detail/${id}${params?params:''}`) => {
         if (showView){
             return (
                 <Link href={href}>
@@ -44,7 +45,7 @@ export default function Actions (
         }
     }
 
-    const edit = (href=`${path}/${urlPath}/edit/${id}${params?params:''}`) => {
+    const edit = (href=`${basePath}/${urlPath}/edit/${id}${params?params:''}`) => {
         if (showEdit){
             return (
                 <Link href={href}>
@@ -62,7 +63,7 @@ export default function Actions (
         }
     }
 
-    const remove = (href=`${path}/${urlPath}/delete/${id}`) => {
+    const remove = (href=`${basePath}/${urlPath}/delete/${id}`) => {
         if (showDelete){
             return (
                 <Link 
