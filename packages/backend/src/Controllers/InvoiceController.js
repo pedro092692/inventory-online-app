@@ -100,6 +100,7 @@ class InvoiceController {
     searchInvoicesbyId = this.#error.handler( async(req, res) => {
         const { query } = req.query
         const { customer_id } = req.query
+        console.log('customer_id', customer_id)
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const offset = req.query.offset ? parseInt(req.query.offset) : 0
         const { invoices, total, page, pageSize } = await this.invoiceService.searchInvoicesById(query, customer_id ? parseInt(customer_id) : null, limit, offset)

@@ -4,7 +4,7 @@ import ProductService from './ProductService.js'
 import DollarValueService from './DollarValueService.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import verifyDetails from '../utils/VerifiyDetails.js'
-import { Op } from 'sequelize'
+import { Op, cast, where, col } from 'sequelize'
 
 class InvoiceService {
     
@@ -273,16 +273,19 @@ class InvoiceService {
      */
     searchInvoicesById(query, customerId=null, limit=10, offset=0){
         return this.#error.handler(['Search Invoices', query, 'Invoice'], async () => {
+        if (!query) {
+            throw new Error('Search query is required')
+        }
+        const castId = cast(col('id'), 'VARCHAR')
+        const idSearchCondition = where(castId, { [Op.like]: `%${query}%` })
         const whereClause = customerId 
             ? {
                 [Op.and]: [
                     { customer_id: customerId },
-                    { id: { [Op.like]: `%${query}%` } }
+                    idSearchCondition
                 ]
               }
-            : {
-                id: { [Op.like]: `%${query}%` }
-              };
+            : idSearchCondition
 
         const result = await this.Invoice.findAndCountAll({
             where: whereClause,
