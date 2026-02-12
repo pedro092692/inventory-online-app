@@ -18,6 +18,7 @@ class InvoiceRoutes {
         this.router.get('/all', (req, res) => new InvoiceController(req.Invoice).allInvoices(req, res))
         this.router.get('/day', (req, res) => new InvoiceController(req.Invoice).dayInvoices(req, res))
         this.router.get('/:id', (req, res) => new InvoiceController(req.Invoice, null, null, req.Dollar).getInvoice(req, res))
+        this.router.get('/search', (req, res) => new InvoiceController(req.Invoice).searchInvoicesbyId(req, res))
         this.router.get('/send-whatsapp/:id', (req, res) => new InvoiceController(req.Invoice, null, null, req.Dollar).sendWhatsappInvoice(req, res))
         this.router.post('/', (req, res) => new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).createInvoice(req, res))
         this.router.patch('/:id', (req, res) => new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).updateInvoice(req, res))

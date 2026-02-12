@@ -97,7 +97,7 @@ class InvoiceController {
      * @param {Object} res - Express response object.
      * @returns {Promise<void>} Sends a JSON response with invoices, total count, current page, and pageSize.
      */
-    serchInvoicesbyId = this.#error.handler( async(req, res) => {
+    searchInvoicesbyId = this.#error.handler( async(req, res) => {
         const { query } = req.query
         const { customer_id } = req.query
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
