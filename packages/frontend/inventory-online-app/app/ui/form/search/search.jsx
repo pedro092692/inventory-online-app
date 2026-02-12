@@ -14,7 +14,8 @@ export default function Search ({
     offset=0, 
     setOffset=null, 
     value='', 
-    inputMode=null
+    inputMode=null,
+    setURLParam=true
 }) {
 
     const searchParams = useSearchParams()
@@ -37,10 +38,10 @@ export default function Search ({
     const handleSearch = useDebouncedCallback((term) => {
         if (!searchFn) return
         const params = new URLSearchParams(searchParams)
-        params.set('page', '1')
+        {setURLParam && params.set('page', '1')}
         setOffset(0)
         if (term) {
-            params.set('search', term)
+            {setURLParam && params.set('search', term)}
             searchFn(term, limit, 0)
         }else {
             params.delete('search')

@@ -47,17 +47,43 @@ export default function CustomerDetail() {
         
     }
 
-    
+    const searchInvoicesByBillNumber = async (billNumber, limit, offset) => {
+        if (!billNumber || isNaN(billNumber)) {
+            fetchCustomerInfo(invoiceLimit, offsetInvoices)
+            setSearchBillNumber(null)
+            return
+        }
+
+        try {
+            const response = await fetchData(
+                `${NEXT_PUBLIC_API_BASE_URL}/api/invoices/search/?query=${billNumber}&customer_id=${id}&limit=${limit}&offset=${offset}`, 
+                'GET')
+            if (response) {
+                setTableData(transformData({invoices: response.invoices}))
+                setTotalInvoices(response.total)
+                setInvoicePage(response.page)
+                setSearchBillNumber(billNumber)
+            }
+
+        }catch (error) {
+            console.log('hola')
+            if (error.response) {
+                console.log(error.response.status)
+                console.log(error.response.data.message)
+            }
+        }
+        
+    }
 
     useEffect(() => {
         setLoading(true)
         fetchCustomerInfo(invoiceLimit, offsetInvoices)
     }, [])
 
-    const transformData = (customer) => {
+    const transformData = (invoices) => {
         let data = []
-        if (customer.invoices.length > 0) {
-            data = customer.invoices.map(invoice => (
+        if (invoices.invoices.length > 0) {
+            data = invoices.invoices.map(invoice => (
                 {
                     bill_id: invoice.id,
                     total: `$ ${invoice.total}`,
@@ -96,8 +122,11 @@ export default function CustomerDetail() {
                             placeHolder={'Buscar N° de Recibo...'}
                             inputMode={'numeric'}
                             value={searchBillNumber}
-
- 
+                            searchFn={searchInvoicesByBillNumber}
+                            limit={invoiceLimit}
+                            offset={offsetInvoices}
+                            setOffset={setOffsetInvoices}
+                            setURLParam={false}
                         />
                         <List tableHead={
                             {
@@ -119,8 +148,9 @@ export default function CustomerDetail() {
                             maxVisiblePages={maxVisiblePages}
                             setOffset={setOffsetInvoices}
                             limit={invoiceLimit}
-                            fetchData={fetchCustomerInfo}
                             param={'invoice_page'}
+                            fetchData={searchBillNumber ? searchInvoicesByBillNumber : fetchCustomerInfo}
+                            searchTerm={searchBillNumber}
                         />
 
                     </>
