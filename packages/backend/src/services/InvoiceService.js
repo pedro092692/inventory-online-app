@@ -4,7 +4,7 @@ import ProductService from './ProductService.js'
 import DollarValueService from './DollarValueService.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import verifyDetails from '../utils/VerifiyDetails.js'
-import { Op, or } from 'sequelize'
+import { Op } from 'sequelize'
 
 class InvoiceService {
     

@@ -86,7 +86,35 @@ class InvoiceController {
         res.status(200).json(invoice)
     })
 
+    /**
+     * Handle HTTP request to search for invoices by ID.
+     * * @param {Object} req - Express request object.
+     * @param {Object} req.query - Query parameters from the URL.
+     * @param {string} req.query.query - The search term for the invoice ID.
+     * @param {string|number} [req.query.customer_id] - Optional customer ID to filter results.
+     * @param {string} [req.query.limit] - Max number of records to return (parsed to int).
+     * @param {string} [req.query.offset] - Number of records to skip (parsed to int).
+     * @param {Object} res - Express response object.
+     * @returns {Promise<void>} Sends a JSON response with invoices, total count, current page, and pageSize.
+     */
+    serchInvoicesbyId = this.#error.handler( async(req, res) => {
+        const { query } = req.query
+        const { customer_id } = req.query
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const offset = req.query.offset ? parseInt(req.query.offset) : 0
+        const { invoices, total, page, pageSize } = await this.invoiceService.searchInvoicesById(query, customer_id ? parseInt(customer_id) : null, limit, offset)
+        res.status(200).json({ invoices, total, page, pageSize })
+    })
 
+    /**
+     * Handle HTTP request to generate a WhatsApp share link for a specific invoice.
+     * * @param {Object} req - Express request object.
+     * @param {Object} req.params - URL path parameters.
+     * @param {string|number} req.params.id - The unique identifier of the invoice to be shared.
+     * @param {Object} res - Express response object.
+     * @returns {Promise<void>} Sends a JSON response containing the generated WhatsApp URL.
+     * @throws {NotFoundError} If the invoice ID does not exist in the database.
+     */
     sendWhatsappInvoice = this.#error.handler( async(req, res) => {
         const { id } = req.params
         // get invoice information 
