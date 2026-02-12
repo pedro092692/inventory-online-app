@@ -4,7 +4,7 @@ import ProductService from './ProductService.js'
 import DollarValueService from './DollarValueService.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import verifyDetails from '../utils/VerifiyDetails.js'
-import { Op } from 'sequelize'
+import { Op, or } from 'sequelize'
 
 class InvoiceService {
     
@@ -259,6 +259,44 @@ class InvoiceService {
             
 
             return invoice
+        })
+    }
+
+    /**
+     * Search for invoices by ID with support for customer filtering and pagination.
+     * * @param {string|number} query - The search term (Invoice ID or partial match).
+     * @param {number|null} [customerId=null] - Optional customer ID to narrow down the search.
+     * @param {number} [limit=10] - Number of records to return per page.
+     * @param {number} [offset=0] - Number of records to skip (for pagination).
+     * @returns {Promise<{invoices: Object[], total: number, page: number, pageSize: number}>} 
+     * A promise that resolves to an object containing the list of invoices, total record count, current page, and page size.
+     */
+    searchInvoicesById(query, customerId=null, limit=10, offset=0){
+        return this.#error.handler(['Search Invoices', query, 'Invoice'], async () => {
+        const whereClause = customerId 
+            ? {
+                [Op.and]: [
+                    { customer_id: customerId },
+                    { id: { [Op.like]: `%${query}%` } }
+                ]
+              }
+            : {
+                id: { [Op.like]: `%${query}%` }
+              };
+
+        const result = await this.Invoice.findAndCountAll({
+            where: whereClause,
+            attributes: ['id', 'total', 'status', 'date'],
+            limit: limit,   
+            offset: offset  
+        });
+
+        return {
+            invoices: result.rows,
+            total: result.count,
+            page: Math.floor(offset / limit) + 1,
+            pageSize: limit
+            }
         })
     }
 
