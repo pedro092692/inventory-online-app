@@ -107,6 +107,8 @@ export default function CustomerDetail() {
         {
             loading ? <p>Cargando...</p>
             :
+            customer == null ? <p>Cliente no encontrado</p>
+            :
             <>
                 <Form className={`${styles.formview} shadow`}>
                     <Input type="text" icon="person" value={`${customer?.name}`} name={'name'} readOnly={true}/>
@@ -114,7 +116,7 @@ export default function CustomerDetail() {
                     <Input type="text" icon="phone" value={`${customer?.phone}`} name={'cellphone'} readOnly={true}/>        
                 </Form>
 
-                {
+                {   
                     customer.invoices.length > 0 ?
                     <>
                         <p style={{marginTop: '15px'}} className='p1-r'>Facturas De: {`${customer?.name}`}</p>
