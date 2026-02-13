@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import { Container } from '@/app/ui/utils/container'
 import Link from 'next/link'
 import List from '@/app/ui/list/list'
+import GetPageParam from '@/app/utils/getPageParam'
+import fetchData from '@/app/utils/fetchData'
 import Route from '@/app/ui/routesLinks/routes'
 import axios from 'axios'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
@@ -12,26 +14,27 @@ export default function ViewProducts() {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
-    const [offset, setOffset] = useState(0)
+    const [offset, setOffset] = useState(GetPageParam('page') * limit)
     const [total, setTotal]  = useState(0)
     const [page, setPage] = useState(0) 
+    const [dateTable, seDateTable] = useState([])
 
     
     // load products from the API
     const fetchProducts = async () => {
-        setLoading(true)
         try {
-            const response = await axios.get(`${NEXT_PUBLIC_API_BASE_URL}/api/products/all`, {withCredentials: true})
-            if(response.data){
-                setProducts(response.data);
+            const products = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/products/all?limit=${limit}&offset=${offset}`, 'GET')
+            if (products) {
+                console.log(products)
             }
-        } catch (error) {
-            if (error.response) {
+
+        }catch (error){
+            console.log(error)
+            if(error.response){
                 console.log(error.response.status)
                 console.log(error.response.data.message)
             }
-            console.error(error)
-        } finally {
+        }finally {
             setLoading(false)
         }
     }
@@ -40,13 +43,7 @@ export default function ViewProducts() {
         fetchProducts()
     }, [])
     
-    let data = []
-
-    if (products.length > 0) {
-        data = products.map(product => (
-            [product.name, product.selling_price + ' $', product.stock]
-        ))
-    }
+  
 
   return (
     <>

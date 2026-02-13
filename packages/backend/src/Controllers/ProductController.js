@@ -31,8 +31,11 @@ class ProductController{
      * @returns {Promise<void>} - returns the list of products in the response
      */
     allProducts = this.#error.handler( async(req, res) => {
-        const products = await this.ProductService.getAllProducts()
-        res.status(200).json(products)
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const offset = req.query.offset ? parseInt(req.query.offset) : 0
+        const role = []
+        const {products, total, page, pageSize} = await this.ProductService.getAllProducts(limit, offset)
+        res.status(200).json({products, total, page, pageSize, role})
     })
 
     /**

@@ -44,11 +44,17 @@ class ProductService{
      */
     getAllProducts(limit=10, offset=0) {
         return this.#error.handler(['Read All Products'], async () => {
+            const count = await this.Product.count()
             const products = await this.Product.findAll({
                 limit: limit,
                 offset: offset
             })
-            return products
+            return {
+                total: count,
+                products: products,
+                page: Math.floor(offset / limit ) + 1,
+                pageSize: limit
+            }
         })    
     }
     
