@@ -17,7 +17,7 @@ export default function ViewProducts() {
     const [offset, setOffset] = useState(GetPageParam('page') * limit)
     const [total, setTotal]  = useState(0)
     const [page, setPage] = useState(0) 
-    const [dateTable, seDateTable] = useState([])
+    const [dataTable, setDataTable] = useState([])
 
     
     // load products from the API
@@ -26,6 +26,10 @@ export default function ViewProducts() {
             const products = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/products/all?limit=${limit}&offset=${offset}`, 'GET')
             if (products) {
                 console.log(products)
+                setProducts(products.products)
+                setPage(products.page)
+                setTotal(products.total)
+                setDataTable(transformData(products.products))
             }
 
         }catch (error){
@@ -37,6 +41,23 @@ export default function ViewProducts() {
         }finally {
             setLoading(false)
         }
+    }
+
+    const transformData = (products) => {
+        let data = []
+        if (products.length > 0) {
+            data = products.map(product => (
+                {
+                    name: product.name,
+                    barcode: product.barcode,
+                    purchase_price: product.purchase_price,
+                    selling_price: product.selling_price,
+                    stock: product.stock,
+                    id: product.id
+                }
+            ))
+        }
+        return data
     }
 
     useEffect(() => {
@@ -64,9 +85,21 @@ export default function ViewProducts() {
                 <p>No hay productos para mostrar, <Link href={'/store/products/add'}>Agrega un nuevo producto</Link></p>
             :
                 <>
-                    <List tableHead={['Nombre', 'Precio', 'Stock', 'Acciones']} tableData={data} />
-                    <p>Total: {total}</p>
-                    <p>Page: {page} </p>
+                    <List 
+                        tableHead={
+                            {
+                                'nombre': 'Nombre',
+                                'barcode': 'Código De Barras',
+                                'purchase_price': 'Precio De Compra',
+                                'selling_price': 'Precio De Venta',
+                                'stock': 'Stock',
+                                'actions': 'Acciones'
+                            }
+                        } 
+                        tableData={dataTable} 
+                        showActions={true}
+                        />
+                        
                 </>
             }
 
