@@ -7,7 +7,6 @@ import Actions from '@/app/ui/actions/actions'
 export default function List({
         tableHead=[], 
         tableData=[], 
-        role=null, 
         showActions=true, 
         CustomStyles, 
         currentUser={permissions: []},

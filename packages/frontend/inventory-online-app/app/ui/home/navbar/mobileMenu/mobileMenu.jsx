@@ -22,7 +22,7 @@ export function MobileMenu({open, setOpen, children, showArrow=false}) {
 
     useEffect(() => {
         function handleClickOutside(event) {
-            if (open && menuRef.current && menuRef.current.contains(event.target)) {  
+            if (open && menuRef.current && !menuRef.current.contains(event.target)) {  
                 setOpen(false)
             }
         }

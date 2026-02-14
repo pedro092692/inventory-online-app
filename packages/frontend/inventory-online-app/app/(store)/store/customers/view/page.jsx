@@ -146,7 +146,7 @@ export default function ViewCustomers() {
                         'teléfono': 'Teléfono',
                         'actions': 'Acciones'
                         }
-                    }     role={role}
+                    }     
                           tableData={tableData}  
                           showActions={true}
                           currentUser={currentUser}
