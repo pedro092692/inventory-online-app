@@ -16,9 +16,7 @@ export default function ViewCustomers() {
     const [customers, setCustomers ] = useState([])
     const [limit, setLimit] = useState(10)
     const [offset, setOffset] = useState(GetQueryParam('page', 'pagination') * limit )
-    const [total, setTotal] = useState(0)
     const [dataSearch, setDataSearch] = useState(false)
-    const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
     const [searchQuery, setSearchQuery] = useState(GetQueryParam('search') || '')
     const [currentUser, setCurrentUser] = useState({permissions: []})
@@ -33,8 +31,6 @@ export default function ViewCustomers() {
                 const customers = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/all?limit=${limit}&offset=${offset}`)
                 if (customers) {
                     setCustomers(customers.customers)
-                    setPage(customers.page)
-                    setTotal(customers.total)
                     setTableData(transformData(customers.customers))
                     updatePagination(customers.total, limit, customers.page)
                 }
@@ -56,16 +52,14 @@ export default function ViewCustomers() {
                 return
             }
             try {
-                const searchResults = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/search?query=${query}&limit=${limit}&offset=${offset}`)
-
-                if (searchResults) {
+                const searchResults = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/search?data=${query}&limitResults=${limit}&offsetResults=${offset}`, 'GET')
+        
+                if(searchResults) {
                     setCustomers(searchResults.customers)
-                    setPage(searchResults.page)
-                    setTotal(searchResults.total)
                     setTableData(transformData(searchResults.customers))
                     setDataSearch(true)
                     setSearchQuery(query)
-                    updatePagination(response.data.total, limit, response.data.page)
+                    updatePagination(searchResults.total, limit, searchResults.page)
                 }
             }catch (error) {
                 if (error.response) {
