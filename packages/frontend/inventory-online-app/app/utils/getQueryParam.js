@@ -6,7 +6,7 @@ export default function GetQueryParam(param, type='string') {
     
     if (type == 'pagination') {
         result = searchParam.get(param) ? parseInt(searchParam.get(param)) : 0
-        return result - 1 >= 0 ? result  -1 : 0
+        return result - 1 <=0 ? 0 : result - 1
     }
     
     result = searchParam.get(param) ? searchParam.get(param) : null

@@ -36,8 +36,12 @@ export default function ViewCustomers() {
             } catch (error) {
                 if (error.response) {
                     console.log(error.response.status)
-                    console.log(error.response.data.message)
+                    console.log(error.response.message)
+                }else{
+                    console.log(error.status)
+                    console.log(error.message)
                 }
+                
             } finally {
                 setLoading(false)
             }

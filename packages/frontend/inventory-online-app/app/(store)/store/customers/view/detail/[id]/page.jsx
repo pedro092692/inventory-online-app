@@ -23,7 +23,7 @@ export default function CustomerDetail() {
     const [totalInvoices, setTotalInvoices] = useState(0)
     const [searchBillNumber, setSearchBillNumber] = useState('')
     const [tableData, setTableData] = useState([])
-    const page = GetQueryParam('page', 'pagination') || 1
+    const page = GetQueryParam('page') || 1
     const search = GetQueryParam('search') || ''
     
 

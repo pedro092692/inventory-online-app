@@ -11,9 +11,11 @@ export default async function getData(url, method, body=null,) {
         return response.data
     } catch (error) {
         if(error.response) {
-            throw {
-                status: error.response.status,
-                message: error.response.data?.errors || error.response.data || 'Something went wrong'
+            if (error.response.status != 500){
+                throw {
+                    status: error.response.status,
+                    message: error.response.data?.errors || error.response.data || 'Something went wrong'
+                }
             }
         }
         throw {
