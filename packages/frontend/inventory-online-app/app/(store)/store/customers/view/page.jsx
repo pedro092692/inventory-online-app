@@ -97,8 +97,6 @@ export default function ViewCustomers() {
         setCurrentPage(currentPage)
         
     }
-
-
     
     //load customers on component mount
     useEffect(() => {
@@ -122,7 +120,8 @@ export default function ViewCustomers() {
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
-                    <Search placeHolder={'Buscar cliente por Nombre, Cédula'}
+                    <Search 
+                        placeHolder={'Buscar cliente por Nombre, Cédula'}
                         searchFn={searchCustomers} 
                         value={searchQuery}
                         limit={limit} 

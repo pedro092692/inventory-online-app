@@ -10,6 +10,7 @@ import Search from '@/app/ui/form/search/search'
 import List from '@/app/ui/list/list'
 import Pagination from '@/app/ui/pagination/pagination'
 import GetQueryParam from '@/app/utils/getQueryParam'
+import { Container } from '@/app/ui/utils/container'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function CustomerDetail() {
@@ -118,7 +119,7 @@ export default function CustomerDetail() {
 
                 {   
                     customer.invoices.length > 0 ?
-                    <>
+                    <Container listContiner={true}>
                         <p style={{marginTop: '15px'}} className='p1-r'>Facturas De: {`${customer?.name}`}</p>
                         <Search 
                             placeHolder={'Buscar N° de Recibo...'}
@@ -155,7 +156,7 @@ export default function CustomerDetail() {
                             searchTerm={searchBillNumber}
                         />
 
-                    </>
+                    </Container>
                     :
                     <p style={{marginTop: '15px'}}>El cliente no tiene facturas</p>
                 }
