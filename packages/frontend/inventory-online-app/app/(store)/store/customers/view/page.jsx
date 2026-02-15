@@ -27,13 +27,12 @@ export default function ViewCustomers() {
     // load customers from the API
     const fetchCustomers = async (limit, offset) => {
             try {
-                const response = await axios.get(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/all?limit=${limit}&offset=${offset}`, 
-                    {withCredentials: true})
-                if (response.data) {
-                    setCustomers(response.data.customers)
-                    setPage(response.data.page)
-                    setTotal(response.data.total)
-                    setTableData(transformData(response.data.customers))
+                const customers = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/all?limit=${limit}&offset=${offset}`)
+                if (customers) {
+                    setCustomers(customers.customers)
+                    setPage(customers.page)
+                    setTotal(customers.total)
+                    setTableData(transformData(customers.customers))
                 }
             } catch (error) {
                 if (error.response) {
