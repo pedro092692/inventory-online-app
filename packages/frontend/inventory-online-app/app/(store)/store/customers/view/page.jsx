@@ -23,6 +23,9 @@ export default function ViewCustomers() {
     const [searchQuery, setSearchQuery] = useState(GetQueryParam('search') || '')
     const [currentUser, setCurrentUser] = useState({permissions: []})
     const [loading, setLoading] = useState(true)
+    const [totalPages, setTotalPages] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [maxVisiblePages, setMaxVisiblePages] = useState(8)
     
     // load customers from the API
     const fetchCustomers = async (limit, offset) => {
@@ -33,6 +36,7 @@ export default function ViewCustomers() {
                     setPage(customers.page)
                     setTotal(customers.total)
                     setTableData(transformData(customers.customers))
+                    updatePagination(customers.total, limit, customers.page)
                 }
             } catch (error) {
                 if (error.response) {
@@ -52,17 +56,16 @@ export default function ViewCustomers() {
                 return
             }
             try {
-                const response = await axios.get(
-                    `${NEXT_PUBLIC_API_BASE_URL}/api/customers/search?data=${query}&limitResults=${limit}&offsetResults=${offset}`, 
-                    {withCredentials: true}
-                )
-                if (response.data) {
-                    setCustomers(response.data.customers)
-                    setPage(response.data.page)
-                    setTotal(response.data.total)
-                    setTableData(transformData(response.data.customers))
+                const searchResults = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/search?query=${query}&limit=${limit}&offset=${offset}`)
+
+                if (searchResults) {
+                    setCustomers(searchResults.customers)
+                    setPage(searchResults.page)
+                    setTotal(searchResults.total)
+                    setTableData(transformData(searchResults.customers))
                     setDataSearch(true)
                     setSearchQuery(query)
+                    updatePagination(response.data.total, limit, response.data.page)
                 }
             }catch (error) {
                 if (error.response) {
@@ -95,6 +98,14 @@ export default function ViewCustomers() {
         }
         return data
     }
+
+    const updatePagination = (total, limit, currentPage) => {
+        setTotalPages(Math.ceil(total / limit))
+        setCurrentPage(currentPage)
+        
+    }
+
+
     
     //load customers on component mount
     useEffect(() => {
@@ -106,11 +117,6 @@ export default function ViewCustomers() {
         }
         fetchCustomers(limit, offset)
     }, [])
-
-
-    const totalPages = Math.ceil(total / limit)
-    const currentPage = page
-    const maxVisiblePages = 8 
 
     return (
         <>
@@ -131,8 +137,8 @@ export default function ViewCustomers() {
                 :
                 <>  
                     <Search placeHolder={'Buscar cliente por Nombre, Cédula'}
-                        value={searchQuery}
                         searchFn={searchCustomers} 
+                        value={searchQuery}
                         limit={limit} 
                         offset={offset} 
                         setOffset={setOffset}
