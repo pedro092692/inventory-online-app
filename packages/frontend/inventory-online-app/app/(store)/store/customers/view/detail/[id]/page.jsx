@@ -5,26 +5,26 @@ import { useEffect, useState } from 'react'
 import { Form } from '@/app/ui/form/form/form'
 import { Input } from '@/app/ui/form/input/input'
 import Route from '@/app/ui/routesLinks/routes'
-import { useSearchParams } from 'next/navigation'
 import styles from './input.module.css'
 import Search from '@/app/ui/form/search/search'
 import List from '@/app/ui/list/list'
 import Pagination from '@/app/ui/pagination/pagination'
-import GetPageParam from '@/app/utils/getPageParam'
+import GetQueryParam from '@/app/utils/getQueryParam'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function CustomerDetail() {
     const [customer, setCustomer] = useState(null)
     const [loading, setLoading] = useState(true)
     const [id, setId] = useState(GetParam('id'))
-    const [tableData, setTableData] = useState([])
     const [invoiceLimit, setInvoiceLimit] = useState(8)
-    const [offsetInvoices, setOffsetInvoices] = useState(GetPageParam('invoice_page') * invoiceLimit)
+    const [offsetInvoices, setOffsetInvoices] = useState(GetQueryParam('invoice_page', 'pagination') * invoiceLimit)
     const [invoicePage, setInvoicePage] = useState(1)
     const [totalInvoices, setTotalInvoices] = useState(0)
     const [searchBillNumber, setSearchBillNumber] = useState('')
-    const page = useSearchParams()?.get('page') || 1
-    const search = useSearchParams()?.get('search') || ''
+    const [tableData, setTableData] = useState([])
+    const page = GetQueryParam('page', 'pagination') || 1
+    const search = GetQueryParam('search') || ''
+    
 
     const fetchCustomerInfo = async (invoiceLimit, offsetInvoices) => {
         try {
@@ -161,7 +161,6 @@ export default function CustomerDetail() {
                 }
             </>
         }
-        
         </>
     )
 }

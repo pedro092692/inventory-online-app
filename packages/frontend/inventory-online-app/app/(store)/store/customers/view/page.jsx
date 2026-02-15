@@ -5,7 +5,7 @@ import Pagination from '@/app/ui/pagination/pagination'
 import List from '@/app/ui/list/list'
 import Route from '@/app/ui/routesLinks/routes'
 import axios from 'axios'
-import GetPageParam from '@/app/utils/getPageParam'
+import GetQueryParam from '@/app/utils/getQueryParam'
 import Search from '@/app/ui/form/search/search'
 import fetchData from '@/app/utils/fetchData'
 import { getUser } from '@/app/utils/getUser'
@@ -15,12 +15,12 @@ export default function ViewCustomers() {
     
     const [customers, setCustomers ] = useState([])
     const [limit, setLimit] = useState(10)
-    const [offset, setOffset] = useState(GetPageParam('page') * limit )
-    const [dataSearch, setDataSearch] = useState(false)
+    const [offset, setOffset] = useState(GetQueryParam('page', 'pagination') * limit )
     const [total, setTotal] = useState(0)
+    const [dataSearch, setDataSearch] = useState(false)
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
-    const [searchQuery, setSearchQuery] = useState(GetPageParam('search') || '')
+    const [searchQuery, setSearchQuery] = useState(GetQueryParam('search') || '')
     const [currentUser, setCurrentUser] = useState({permissions: []})
     const [loading, setLoading] = useState(true)
     

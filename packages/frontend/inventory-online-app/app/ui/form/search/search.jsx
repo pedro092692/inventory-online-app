@@ -4,7 +4,7 @@ import { Input } from '@/app/ui/form/input/input'
 import styles from './search.module.css'
 import { useDebouncedCallback } from 'use-debounce'
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
-import GetPageParam from '@/app/utils/getPageParam'
+import GetPageParam from '@/app/utils/getQueryParam'
 import { useState } from 'react'
 
 export default function Search ({ 
