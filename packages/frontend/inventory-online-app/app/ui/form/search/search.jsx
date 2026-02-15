@@ -12,7 +12,7 @@ export default function Search ({
     limit=10, 
     offset=0, 
     setOffset=null, 
-    value='', 
+    queryValueParam='', 
     inputMode=null,
     setURLParam=true
 }) {
@@ -20,7 +20,7 @@ export default function Search ({
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const { replace } = useRouter()
-    const [searchTerm, setSearchTerm] = useState(value ? value : '')
+    const [searchTerm, setSearchTerm] = useState(queryValueParam ? queryValueParam : '')
 
     const handleInputChange = (e) => {
         if (inputMode === 'numeric') {

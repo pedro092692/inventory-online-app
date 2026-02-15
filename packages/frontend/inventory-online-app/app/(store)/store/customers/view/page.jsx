@@ -123,7 +123,7 @@ export default function ViewCustomers() {
                     <Search 
                         placeHolder={'Buscar cliente por Nombre, Cédula'}
                         searchFn={searchCustomers} 
-                        value={searchQuery}
+                        queryValueParam={searchQuery}
                         limit={limit} 
                         offset={offset} 
                         setOffset={setOffset}
