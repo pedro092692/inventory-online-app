@@ -224,6 +224,15 @@ a {
 /* end container  */
 
 
+.container-list {
+  padding: 0px;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  flex-grow: 1;
+  width: 100%;
+}
+
 
 /* others*/
 .shadow {

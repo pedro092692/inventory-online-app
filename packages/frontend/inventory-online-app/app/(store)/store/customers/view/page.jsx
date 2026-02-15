@@ -115,14 +115,7 @@ export default function ViewCustomers() {
         <>
             {/* view all customers */}
             <Route path='customers' endpoints={['default', 'view']} /> 
-            <Container
-                padding="0"
-                direction="column"
-                justifyContent="start"
-                alignItem="start"
-                flexGrow="1"
-                width="100%"
-            >   
+            <Container listContiner={true}>   
                 {loading ? 
                     <p>Cargando clientes...</p>
                 : customers.length === 0 && !dataSearch ?

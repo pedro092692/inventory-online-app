@@ -16,6 +16,7 @@ export function Container(
         onMouseEnter,
         onMouseLeave,
         borderRadius,
+        listContiner=false
     }) {
 
         const styles = {
@@ -31,7 +32,7 @@ export function Container(
             borderRadius: borderRadius,
         }
     return (
-        <div ref={ref} className={`container ${className}`} style={styles} 
+        <div ref={ref} className={`container ${className} ${listContiner ? 'container-list' : ''}`} style={styles} 
             onMouseEnter={onMouseEnter} 
             onMouseLeave={onMouseLeave} 
             onClick={onClick}
