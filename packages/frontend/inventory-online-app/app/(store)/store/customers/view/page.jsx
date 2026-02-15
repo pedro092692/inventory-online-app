@@ -7,22 +7,22 @@ import Route from '@/app/ui/routesLinks/routes'
 import axios from 'axios'
 import GetPageParam from '@/app/utils/getPageParam'
 import Search from '@/app/ui/form/search/search'
+import fetchData from '@/app/utils/fetchData'
 import { getUser } from '@/app/utils/getUser'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function ViewCustomers() {
     
     const [customers, setCustomers ] = useState([])
-    const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
     const [offset, setOffset] = useState(GetPageParam('page') * limit )
     const [dataSearch, setDataSearch] = useState(false)
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
     const [tableData, setTableData] = useState([])
-    const [role, setRole] = useState(null)
     const [searchQuery, setSearchQuery] = useState(GetPageParam('search') || '')
     const [currentUser, setCurrentUser] = useState({permissions: []})
+    const [loading, setLoading] = useState(true)
     
     // load customers from the API
     const fetchCustomers = async (limit, offset) => {
@@ -34,7 +34,6 @@ export default function ViewCustomers() {
                     setPage(response.data.page)
                     setTotal(response.data.total)
                     setTableData(transformData(response.data.customers))
-                    setRole(response.data.role)
                 }
             } catch (error) {
                 if (error.response) {
