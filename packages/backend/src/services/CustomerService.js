@@ -39,16 +39,19 @@ class CustomerService {
      * @return {Promise<Array>} - A promise that resolves to an array of customer objects with their invoices.
      * @throws {ServiceError} - If an error occurs during customer retrieval.
      */
-    getAllCustomers(limit=10, offset=0) {
+    getAllCustomers(limit=10, offset=0, includeInvoices=false) {
+        const invoiceAssociation = {}
+        if (includeInvoices) {
+            invoiceAssociation.association = 'invoices'
+            invoiceAssociation.attributes = ['id', 'date', 'total']
+            invoiceAssociation.order = [['id', 'DESC'], ['invoices', 'id', 'DESC']]
+        }
+        console.log(invoiceAssociation)
         return this.#error.handler(['Read All Customers'], async () => {
             const count = await this.Customer.count()
             const customers = await this.Customer.findAll({
-                include: {
-                    association: 'invoices',
-                    attributes: ['id', 'date', 'total'],
-                },
-                order: [['id', 'DESC'], ['invoices', 'id', 'DESC']],
-
+                include: includeInvoices ? [invoiceAssociation] : [],
+                order: includeInvoices ? invoiceAssociation.order : [['id', 'DESC']],
                 limit: limit,
                 offset: offset
             })
