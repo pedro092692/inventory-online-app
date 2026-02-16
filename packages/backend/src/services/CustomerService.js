@@ -46,7 +46,6 @@ class CustomerService {
             invoiceAssociation.attributes = ['id', 'date', 'total']
             invoiceAssociation.order = [['id', 'DESC'], ['invoices', 'id', 'DESC']]
         }
-        console.log(invoiceAssociation)
         return this.#error.handler(['Read All Customers'], async () => {
             const count = await this.Customer.count()
             const customers = await this.Customer.findAll({

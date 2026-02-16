@@ -1,5 +1,6 @@
 import { ValidationError } from 'sequelize'
 import { NotFoundError } from './NofoundError.js'
+import process from 'process'
 
 class ServiceErrorHandler {
 
@@ -28,7 +29,6 @@ class ServiceErrorHandler {
      * @throws {Error} A generic error for any other type of error.
      */
     serviceError(kwargs, error) {
-        console.error(error)
         // console.error(error)
         if(error instanceof ValidationError) { 
             throw new ValidationError(`${error.message}`)
@@ -37,8 +37,12 @@ class ServiceErrorHandler {
         if(error instanceof NotFoundError) {
             throw new NotFoundError(`${kwargs[2]} with ID ${kwargs[1]} not found`)
         }
-
-        throw new Error(`Error in: ${error.message}`)
+        
+        if (process.env.NODE_ENV === 'development') {
+            throw new Error(`Error in: ${error.message}`)
+        }else{
+            throw new Error('Something went wrong')
+        }
     }
 }
 
