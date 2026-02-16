@@ -6,6 +6,7 @@ import List from '@/app/ui/list/list'
 import Route from '@/app/ui/routesLinks/routes'
 import GetQueryParam from '@/app/utils/getQueryParam'
 import Search from '@/app/ui/form/search/search'
+import { errorHandler } from '@/app/errors/fetchDataErrorHandler'
 import fetchData from '@/app/utils/fetchData'
 import { getUser } from '@/app/utils/getUser'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
@@ -26,26 +27,16 @@ export default function ViewCustomers() {
     
     // load customers from the API
     const fetchCustomers = async (limit, offset) => {
-            try {
-                const customers = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/all?limit=${limit}&offset=${offset}`)
-                if (customers) {
-                    setCustomers(customers.customers)
-                    setTableData(transformData(customers.customers))
-                    updatePagination(customers.total, limit, customers.page)
-                }
-            } catch (error) {
-                if (error.response) {
-                    console.log(error.response.status)
-                    console.log(error.response.message)
-                }else{
-                    console.log(error.status)
-                    console.log(error.message)
-                }
-                
-            } finally {
-                setLoading(false)
+        return await errorHandler( async () => {
+            const url = `${NEXT_PUBLIC_API_BASE_URL}/api/customers/all?limit=${limit}&offset=${offset}`
+            const data = await fetchData(url, 'GET')
+            if (data) {
+                    setCustomers(data.customers)
+                    setTableData(transformData(data.customers))
+                    updatePagination(data.total, limit, data.page)
             }
-        }
+        }, setLoading)
+    }
     // search customers by name or id_number from the API
     const searchCustomers = async (query, limit, offset) => {
             if (!query) {
