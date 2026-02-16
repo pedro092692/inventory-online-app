@@ -12,34 +12,41 @@ import { getUser } from '@/app/utils/getUser'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function ViewCustomers() {
-    
-    const [dataSearch, setDataSearch] = useState(false)
+
+    const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
     const [offset, setOffset] = useState(GetQueryParam('page', 'pagination') * limit )
     const [tableData, setTableData] = useState([])
+    const [isSearchActive, setIsSearchActive] = useState(false)
     const [searchQuery, setSearchQuery] = useState(GetQueryParam('search') || '')
     const [currentUser, setCurrentUser] = useState({permissions: []})
-    const [loading, setLoading] = useState(true)
     const [totalPages, setTotalPages] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
     const [maxVisiblePages, setMaxVisiblePages] = useState(8)
     
     // load customers from the API
     const fetchCustomers = async (limit, offset, query = null) => {
-        let url = `${NEXT_PUBLIC_API_BASE_URL}/api/customers/all?limit=${limit}&offset=${offset}`
+        const enpoint = query ? '/api/customers/search' : '/api/customers/all'
+        const params = new URLSearchParams()
         if (query){
-            url = `${NEXT_PUBLIC_API_BASE_URL}/api/customers/search?data=${query}&limitResults=${limit}&offsetResults=${offset}`
+            params.append('data', query)
+            params.append('limitResults', limit)
+            params.append('offsetResults', offset)
         }else{
-            setDataSearch(false)
+            params.append('limit', limit)
+            params.append('offset', offset)
+        
+            setIsSearchActive(false)
             setSearchQuery(null)
         }
+        const url = `${NEXT_PUBLIC_API_BASE_URL}${enpoint}?${params.toString()}`
         return await errorHandler( async () => {
             const data = await fetchData(url, 'GET')
             if (data) {
                     setTableData(transformData(data.customers))
                     updatePagination(data.total, limit, data.page)
                     if (query) {
-                        setDataSearch(true)
+                        setIsSearchActive(true)
                         setSearchQuery(query)
                     }
             }   
@@ -92,7 +99,7 @@ export default function ViewCustomers() {
             <Container listContiner={true}>   
                 {loading ? 
                     <p>Cargando clientes...</p>
-                : tableData.length === 0 && !dataSearch ?
+                : tableData.length === 0 && !isSearchActive ?
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
@@ -125,8 +132,8 @@ export default function ViewCustomers() {
                         maxVisiblePages={maxVisiblePages}
                         setOffset={setOffset}
                         limit={limit}
-                        fetchData={ fetchCustomers}
-                        searchTerm={ dataSearch ? searchQuery : null}
+                        fetchDataFn={ fetchCustomers}
+                        searchTerm={ isSearchActive ? searchQuery : null}
                         param={'page'}
                     />
                 </>

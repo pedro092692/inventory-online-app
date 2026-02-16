@@ -1,9 +1,9 @@
-export default async function HandlePageChange(currentPage, setOffset, limit, fetchData, searchTerm=null) {
+export default async function HandlePageChange(currentPage, setOffset, limit, fetchDataFn, searchTerm=null) {
     setOffset((currentPage - 1) * limit)
     if (!searchTerm) {
-        await fetchData(limit, (currentPage - 1) * limit)
+        await fetchDataFn(limit, (currentPage - 1) * limit)
     }else {
-        await fetchData(limit, (currentPage - 1) * limit, searchTerm)
+        await fetchDataFn(limit, (currentPage - 1) * limit, searchTerm)
     
     }
 }
