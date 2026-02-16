@@ -3,7 +3,7 @@ export default async function HandlePageChange(currentPage, setOffset, limit, fe
     if (!searchTerm) {
         await fetchData(limit, (currentPage - 1) * limit)
     }else {
-        await fetchData(searchTerm, limit, (currentPage - 1) * limit)
+        await fetchData(limit, (currentPage - 1) * limit, searchTerm)
     
     }
 }

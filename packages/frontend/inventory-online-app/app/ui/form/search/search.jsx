@@ -41,10 +41,10 @@ export default function Search ({
         setOffset(0)
         if (term) {
             {setURLParam && params.set('search', term)}
-            searchFn(term, limit, 0)
+            searchFn(limit, 0, term)
         }else {
             params.delete('search')
-            searchFn(term, limit, offset)
+            searchFn(limit, offset, term)
         }
 
         replace(`${pathname}?${params.toString()}`)

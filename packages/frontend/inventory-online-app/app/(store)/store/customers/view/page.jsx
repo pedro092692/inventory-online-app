@@ -13,10 +13,9 @@ const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:/
 
 export default function ViewCustomers() {
     
-    const [customers, setCustomers ] = useState([])
+    const [dataSearch, setDataSearch] = useState(false)
     const [limit, setLimit] = useState(10)
     const [offset, setOffset] = useState(GetQueryParam('page', 'pagination') * limit )
-    const [dataSearch, setDataSearch] = useState(false)
     const [tableData, setTableData] = useState([])
     const [searchQuery, setSearchQuery] = useState(GetQueryParam('search') || '')
     const [currentUser, setCurrentUser] = useState({permissions: []})
@@ -26,45 +25,27 @@ export default function ViewCustomers() {
     const [maxVisiblePages, setMaxVisiblePages] = useState(8)
     
     // load customers from the API
-    const fetchCustomers = async (limit, offset) => {
+    const fetchCustomers = async (limit, offset, query = null) => {
+        let url = `${NEXT_PUBLIC_API_BASE_URL}/api/customers/all?limit=${limit}&offset=${offset}`
+        if (query){
+            url = `${NEXT_PUBLIC_API_BASE_URL}/api/customers/search?data=${query}&limitResults=${limit}&offsetResults=${offset}`
+        }else{
+            setDataSearch(false)
+            setSearchQuery(null)
+        }
         return await errorHandler( async () => {
-            const url = `${NEXT_PUBLIC_API_BASE_URL}/api/customers/all?limit=${limit}&offset=${offset}`
             const data = await fetchData(url, 'GET')
             if (data) {
-                    setCustomers(data.customers)
                     setTableData(transformData(data.customers))
                     updatePagination(data.total, limit, data.page)
-            }
+                    if (query) {
+                        setDataSearch(true)
+                        setSearchQuery(query)
+                    }
+            }   
         }, setLoading)
     }
-    // search customers by name or id_number from the API
-    const searchCustomers = async (query, limit, offset) => {
-            if (!query) {
-                fetchCustomers(limit, 0)
-                setDataSearch(false)
-                setSearchQuery(null)
-                return
-            }
-            try {
-                const searchResults = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/search?data=${query}&limitResults=${limit}&offsetResults=${offset}`, 'GET')
-        
-                if(searchResults) {
-                    setCustomers(searchResults.customers)
-                    setTableData(transformData(searchResults.customers))
-                    setDataSearch(true)
-                    setSearchQuery(query)
-                    updatePagination(searchResults.total, limit, searchResults.page)
-                }
-            }catch (error) {
-                if (error.response) {
-                    console.log(error.response.status)
-                    console.log(error.response.data.message)
-                }
-            }finally {
-                setLoading(false)
-            }
-        }
-    
+   
     // get current user info
     const currentUserInfo = async () => {
         const user = await getUser()
@@ -98,7 +79,7 @@ export default function ViewCustomers() {
         setLoading(true)
         currentUserInfo()
         if (searchQuery) {
-            searchCustomers(searchQuery, limit, offset)
+            fetchCustomers(limit, offset, searchQuery)
             return
         }
         fetchCustomers(limit, offset)
@@ -111,13 +92,13 @@ export default function ViewCustomers() {
             <Container listContiner={true}>   
                 {loading ? 
                     <p>Cargando clientes...</p>
-                : customers.length === 0 && !dataSearch ?
+                : tableData.length === 0 && !dataSearch ?
                     <p>No hay clientes disponibles.</p> 
                 :
                 <>  
                     <Search 
                         placeHolder={'Buscar cliente por Nombre, Cédula'}
-                        searchFn={searchCustomers} 
+                        searchFn={fetchCustomers} 
                         queryValueParam={searchQuery}
                         limit={limit} 
                         offset={offset} 
@@ -144,7 +125,7 @@ export default function ViewCustomers() {
                         maxVisiblePages={maxVisiblePages}
                         setOffset={setOffset}
                         limit={limit}
-                        fetchData={ dataSearch ? searchCustomers : fetchCustomers}
+                        fetchData={ fetchCustomers}
                         searchTerm={ dataSearch ? searchQuery : null}
                         param={'page'}
                     />
