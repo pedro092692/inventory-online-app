@@ -5,7 +5,8 @@ import { Button } from '@/app/ui/utils/button/buttons'
 import Route from '@/app/ui/routesLinks/routes'
 import styles from './input.module.css'
 import { useState } from 'react'
-import axios from 'axios'
+import { errorHandler } from '@/app/errors/fetchDataErrorHandler'
+import fetchData from '@/app/utils/fetchData'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function AddCustomer() {
@@ -17,26 +18,26 @@ export default function AddCustomer() {
     const [phone, setPhone] = useState('')
 
     const addCustomer = async () => {
-        if (!name || !id_number || !phone) {
-            return
-        }
+        if( !name, !id_number, !phone) return
 
-        try {
-            const response = await axios.post(`${NEXT_PUBLIC_API_BASE_URL}/api/customers`, { name, id_number, phone }, { withCredentials: true })
-            setMessage('Cliente agregado con exito')
+        const url = `${NEXT_PUBLIC_API_BASE_URL}/api/customers` 
+
+        return await errorHandler( async () => {
             setErrors(null)
-            setName('')
-            setPhone('')
-            setId_number('')
-            // reset errors form
-        }catch (error) {
-            if (error.status == 400 &&  error.response.data.errors) {
-                setErrors(error.response.data.errors) 
-            }else {
-                setErrors('Hubo un error al agregar el cliente')
+            const data = await fetchData(url, 'POST', {name, id_number, phone})
+            if (data) {
+                setMessage('Cliente agregado con éxito')
+                setName('')
+                setId_number('')
+                setPhone('')
+                setTimeout(() => {
+                    setMessage(null)
+                }, 2000)
             }
-        }
+        }, null, setErrors, 'Hubo un error al agregar el cliente')
+
     }
+
 
     return (
        <>   
