@@ -10,6 +10,7 @@ import styles from './input.module.css'
 import Search from '@/app/ui/form/search/search'
 import List from '@/app/ui/list/list'
 import Pagination from '@/app/ui/pagination/pagination'
+import { updatePagination } from '@/app/utils/updatePagination'
 import GetQueryParam from '@/app/utils/getQueryParam'
 import { Container } from '@/app/ui/utils/container'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
@@ -22,56 +23,50 @@ export default function CustomerDetail() {
     const [offsetInvoices, setOffsetInvoices] = useState(GetQueryParam('invoice_page', 'pagination') * invoiceLimit)
     const [invoicePage, setInvoicePage] = useState(1)
     const [totalInvoices, setTotalInvoices] = useState(0)
-    const [searchBillNumber, setSearchBillNumber] = useState('')
+    const [maxVisiblePages, setMaxVisiblePages] = useState(8)
+    const [query, setQuery] = useState('')
     const [tableData, setTableData] = useState([])
     const page = GetQueryParam('page') || 1
     const search = GetQueryParam('search') || ''
     
 
     const customerInfo = async (invoiceLimit, offsetInvoices) => {
-        const url = `${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`
+        const endpoint = `/api/customers/${id}`
         const params = new URLSearchParams()
         params.append('limitInvoices', invoiceLimit)
         params.append('offsetInvoices', offsetInvoices)
+        const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}?${params.toString()}`
         return await errorHandler( async () => {
-            const data = await fetchData(`${url}?${params.toString()}`, 'GET')
+            const data = await fetchData(url, 'GET')
             if (data) {
                 setCustomer(data.customer)
-                setTotalInvoices(data.totalInvoices)
-                setInvoicePage(data.pageInvoices)
                 setTableData(transformData(data.customer.invoices))
+                updatePagination(setTotalInvoices, setInvoicePage, data.totalInvoices, invoiceLimit, data.pageInvoices)
             }
         }, setLoading)
-
-        
     }
 
-    const searchInvoicesByBillNumber = async (billNumber, limit, offset) => {
-        if (!billNumber || isNaN(billNumber)) {
+    const searchInvoices = async (limit, offset, query = null) => {
+        if (!query || isNaN(query)) {
+            setQuery(null)
             customerInfo(invoiceLimit, offsetInvoices)
-            setSearchBillNumber(null)
             return
         }
-
-        try {
-            const response = await fetchData(
-                `${NEXT_PUBLIC_API_BASE_URL}/api/invoices/search/?query=${billNumber}&customer_id=${id}&limit=${limit}&offset=${offset}`, 
-                'GET')
-            if (response) {
-                setTableData(transformData({invoices: response.invoices}))
-                setTotalInvoices(response.total)
-                setInvoicePage(response.page)
-                setSearchBillNumber(billNumber)
+        const params = new URLSearchParams()
+        const endpoint = `${NEXT_PUBLIC_API_BASE_URL}/api/invoices/search/`
+        params.append('query', query)
+        params.append('customer_id', id)
+        params.append('limit', limit)
+        params.append('offset', offset)
+        const url = `${endpoint}?${params.toString()}`
+        return await errorHandler( async () => {
+            const data = await fetchData(url, 'GET')
+            if (data) {
+                setTableData(transformData(data.invoices))
+                setQuery(query)
+                updatePagination(setTotalInvoices, setInvoicePage, data.total, invoiceLimit, data.page)
             }
-
-        }catch (error) {
-            console.log('hola')
-            if (error.response) {
-                console.log(error.response.status)
-                console.log(error.response.data.message)
-            }
-        }
-        
+        }, setLoading)      
     }
 
     useEffect(() => {
@@ -95,11 +90,6 @@ export default function CustomerDetail() {
         return data
     }
 
-    const totalPages = Math.ceil(totalInvoices / invoiceLimit)
-    const currentPage = invoicePage
-    const maxVisiblePages = 8
-
-     
     return (
         <>
         <Route path='customers' endpoints={['default', 'view', 'detail']} customPage={true} page={page} search={search}/> 
@@ -122,8 +112,8 @@ export default function CustomerDetail() {
                         <Search 
                             placeHolder={'Buscar N° de Recibo...'}
                             inputMode={'numeric'}
-                            value={searchBillNumber}
-                            searchFn={searchInvoicesByBillNumber}
+                            value={query}
+                            searchFn={searchInvoices}
                             limit={invoiceLimit}
                             offset={offsetInvoices}
                             setOffset={setOffsetInvoices}
@@ -144,14 +134,14 @@ export default function CustomerDetail() {
                             CustomStyles={{height: '317px'}}
                         />
                         <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
+                            currentPage={invoicePage}
+                            totalPages={totalInvoices}
                             maxVisiblePages={maxVisiblePages}
                             setOffset={setOffsetInvoices}
                             limit={invoiceLimit}
                             param={'invoice_page'}
-                            fetchData={searchBillNumber ? searchInvoicesByBillNumber : customerInfo}
-                            searchTerm={searchBillNumber}
+                            fetchDataFn={query ? searchInvoices : customerInfo}
+                            searchTerm={query}
                         />
 
                     </Container>

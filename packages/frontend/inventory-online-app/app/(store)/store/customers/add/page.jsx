@@ -20,8 +20,8 @@ export default function AddCustomer() {
     const addCustomer = async () => {
         if( !name, !id_number, !phone) return
 
-        const url = `${NEXT_PUBLIC_API_BASE_URL}/api/customers` 
-
+        const endpoint = '/api/customers'
+        const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}`
         return await errorHandler( async () => {
             setErrors(null)
             const data = await fetchData(url, 'POST', {name, id_number, phone})
