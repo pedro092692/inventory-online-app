@@ -1,5 +1,6 @@
 'use client'
 import fetchData from '@/app/utils/fetchData'
+import { errorHandler } from '@/app/errors/fetchDataErrorHandler'
 import GetParam from '@/app/utils/getParam'
 import { useEffect, useState } from 'react'
 import { Form } from '@/app/ui/form/form/form'
@@ -27,30 +28,27 @@ export default function CustomerDetail() {
     const search = GetQueryParam('search') || ''
     
 
-    const fetchCustomerInfo = async (invoiceLimit, offsetInvoices) => {
-        try {
-            const customer = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}?limitInvoices=${invoiceLimit}
-                &offsetInvoices=${offsetInvoices}`, 'GET')
-            if (customer) {
-                setCustomer(customer.info)
-                setTotalInvoices(customer.totalInvoices)
-                setInvoicePage(customer.pageInvoices)
-                setTableData(transformData(customer.info))
+    const customerInfo = async (invoiceLimit, offsetInvoices) => {
+        const url = `${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`
+        const params = new URLSearchParams()
+        params.append('limitInvoices', invoiceLimit)
+        params.append('offsetInvoices', offsetInvoices)
+        return await errorHandler( async () => {
+            const data = await fetchData(`${url}?${params.toString()}`, 'GET')
+            if (data) {
+                setCustomer(data.customer)
+                setTotalInvoices(data.totalInvoices)
+                setInvoicePage(data.pageInvoices)
+                setTableData(transformData(data.customer.invoices))
             }
-        }catch (error) {
-            if (error.response) {
-                    console.log(error.response.status)
-                    console.log(error.response.data.message)
-            }
-        }finally {
-            setLoading(false)
-        }
+        }, setLoading)
+
         
     }
 
     const searchInvoicesByBillNumber = async (billNumber, limit, offset) => {
         if (!billNumber || isNaN(billNumber)) {
-            fetchCustomerInfo(invoiceLimit, offsetInvoices)
+            customerInfo(invoiceLimit, offsetInvoices)
             setSearchBillNumber(null)
             return
         }
@@ -78,13 +76,13 @@ export default function CustomerDetail() {
 
     useEffect(() => {
         setLoading(true)
-        fetchCustomerInfo(invoiceLimit, offsetInvoices)
+        customerInfo(invoiceLimit, offsetInvoices)
     }, [])
 
     const transformData = (invoices) => {
         let data = []
-        if (invoices.invoices.length > 0) {
-            data = invoices.invoices.map(invoice => (
+        if (invoices.length > 0) {
+            data = invoices.map(invoice => (
                 {
                     bill_id: invoice.id,
                     total: `$ ${invoice.total}`,
@@ -152,7 +150,7 @@ export default function CustomerDetail() {
                             setOffset={setOffsetInvoices}
                             limit={invoiceLimit}
                             param={'invoice_page'}
-                            fetchData={searchBillNumber ? searchInvoicesByBillNumber : fetchCustomerInfo}
+                            fetchData={searchBillNumber ? searchInvoicesByBillNumber : customerInfo}
                             searchTerm={searchBillNumber}
                         />
 

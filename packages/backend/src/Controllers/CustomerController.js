@@ -48,8 +48,8 @@ class CustomerController {
         const limitInvoices = req.query.limitInvoices ? parseInt(req.query.limitInvoices) : 8
         const offsetInvoices = req.query.offsetInvoices ? parseInt(req.query.offsetInvoices) : 0
         const { id } = req.params
-        const {info, totalInvoices, pageInvoices, pageSizeInvoices} = await this.customerService.getCustomerById(id, limitInvoices, offsetInvoices)
-        res.status(200).json({info, totalInvoices, pageInvoices, pageSizeInvoices})
+        const {customer, totalInvoices, pageInvoices, pageSizeInvoices} = await this.customerService.getCustomerById(id, limitInvoices, offsetInvoices)
+        res.status(200).json({customer, totalInvoices, pageInvoices, pageSizeInvoices})
     })
 
     /**

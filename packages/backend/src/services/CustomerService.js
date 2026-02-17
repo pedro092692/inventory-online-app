@@ -94,7 +94,7 @@ class CustomerService {
                 })
             }
             return {
-                info: customer,
+                customer: customer,
                 totalInvoices: totalInvoices,
                 pageInvoices: Math.floor(offsetInvoices / limitInvoices ) + 1,
                 pageSizeInvoices: limitInvoices
