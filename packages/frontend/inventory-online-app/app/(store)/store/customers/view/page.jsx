@@ -7,6 +7,7 @@ import Route from '@/app/ui/routesLinks/routes'
 import GetQueryParam from '@/app/utils/getQueryParam'
 import Search from '@/app/ui/form/search/search'
 import { errorHandler } from '@/app/errors/fetchDataErrorHandler'
+import { updatePagination } from '@/app/utils/updatePagination'
 import fetchData from '@/app/utils/fetchData'
 import { getUser } from '@/app/utils/getUser'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
@@ -44,7 +45,7 @@ export default function ViewCustomers() {
             const data = await fetchData(url, 'GET')
             if (data) {
                     setTableData(transformData(data.customers))
-                    updatePagination(data.total, limit, data.page)
+                    updatePagination(setTotalPages, setCurrentPage, data.total, limit, data.page)
                     if (query) {
                         setIsSearchActive(true)
                         setSearchQuery(query)
@@ -75,11 +76,6 @@ export default function ViewCustomers() {
         return data
     }
 
-    const updatePagination = (total, limit, currentPage) => {
-        setTotalPages(Math.ceil(total / limit))
-        setCurrentPage(currentPage)
-        
-    }
     
     //load customers on component mount
     useEffect(() => {
