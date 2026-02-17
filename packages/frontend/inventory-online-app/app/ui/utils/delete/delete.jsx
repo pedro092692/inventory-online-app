@@ -10,23 +10,23 @@ export default function ActionDelete(
         urlPath='', 
         id=null, 
         params=null, 
-        variableName='id', 
+        deletionID='id', 
         sucessMessage='Recurso eliminado exitosamente',
         setTableData=null,
-        show=false,
+        isVisible=false,
     }) {
     const [message, setMessage] = useState(null)
     const [errors, setErrors] = useState(null)
 
     useEffect(() => {
-        if (!show) {
+        if (!isVisible) {
             const timer = setTimeout(() => {
                 setMessage(null)
                 setErrors(null)
             }, 400)
             return () => clearTimeout(timer)
         }
-    }, [show])
+    }, [isVisible])
 
     const handleCancel = () => {
         onClose(false)
@@ -36,7 +36,7 @@ export default function ActionDelete(
 
     const handleDelete = async () => {
         if(!errors){
-            const response = await deleteResource(urlPath, {[variableName]: id})
+            const response = await deleteResource(urlPath, {[deletionID]: id})
             if (response === 1){
                 setMessage(sucessMessage)
                 setErrors('')

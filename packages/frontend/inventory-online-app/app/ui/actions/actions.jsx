@@ -8,14 +8,14 @@ import Link from 'next/link'
 
 export default function Actions (
     {
-        currentUser={permissions:[]}, 
-        urlPath='customers', 
+        userPermission={permissions:[]}, 
+        urlPath='', 
         id=1, 
         params='', 
         showView=true, 
         showEdit=true, 
         showDelete=true,
-        variableName='id',
+        deletionID='id',
         setTableData=null
     }) {
     
@@ -84,7 +84,7 @@ export default function Actions (
         }
     }
 
-    if (currentUser.permissions.includes('delete')) {
+    if (userPermission.includes('delete')) {
         
         return (
             <Container 
@@ -105,7 +105,7 @@ export default function Actions (
                 >
                     <ActionDelete 
                         onClose={setShowAlert}
-                        variableName={variableName}
+                        deletionID={deletionID}
                         urlPath={urlPath}
                         id={id}
                         setTableData={setTableData}

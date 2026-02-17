@@ -162,14 +162,13 @@ class CustomerService {
      */
     deleteCustomer(customerId) {
         return this.#error.handler(['Delete Customer', customerId, 'Customer'], async() => {
-            const customer = await this.getCustomerById(customerId)
-            
-            if (customer.info.invoices.length > 0) {
+            const data = await this.getCustomerById(customerId)
+            if (data.customer.invoices.length > 0) {
                 throw new ValidationError('No se puede eliminar a un cliente con facturas asociadas')
             }
             
             // delete customer
-            await customer.info.destroy()
+            await data.customer.destroy()
             return 1
         })
     }

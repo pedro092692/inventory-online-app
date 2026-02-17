@@ -20,7 +20,7 @@ export default function ViewCustomers() {
     const [tableData, setTableData] = useState([])
     const [isSearchActive, setIsSearchActive] = useState(false)
     const [searchQuery, setSearchQuery] = useState(GetQueryParam('search') || '')
-    const [currentUser, setCurrentUser] = useState({permissions: []})
+    const [userPermission, setUserPermission] = useState({permissions: []})
     const [totalPages, setTotalPages] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
     const [maxVisiblePages, setMaxVisiblePages] = useState(8)
@@ -57,7 +57,7 @@ export default function ViewCustomers() {
     // get current user info
     const currentUserInfo = async () => {
         const user = await getUser()
-        setCurrentUser(user)
+        setUserPermission(user.permissions)
     }
 
     // transform data 
@@ -117,8 +117,8 @@ export default function ViewCustomers() {
                     }     
                           tableData={tableData}  
                           showActions={true}
-                          currentUser={currentUser}
-                          variableName={'customerId'}
+                          userPermission={userPermission}
+                          deletionID={'customerId'}
                           setTableData={setTableData}
                     />
                     

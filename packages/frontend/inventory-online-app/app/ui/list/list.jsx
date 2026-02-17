@@ -9,8 +9,8 @@ export default function List({
         tableData=[], 
         showActions=true, 
         CustomStyles, 
-        currentUser={permissions: []},
-        variableName='id',
+        userPermission={permissions: []},
+        deletionID='id',
         setTableData=null
     }) {
     const page = useSearchParams().get('page') || 1
@@ -52,11 +52,11 @@ export default function List({
                                                 return (
                                                     <td key={idx} data-label={'actions'}>
                                                         <Actions 
-                                                            currentUser={currentUser}
+                                                            userPermission={userPermission}
                                                             urlPath={'customers'}
                                                             id={data[key]}
                                                             params={`?page=${page}${search ? `&search=${search}` : ''}`}
-                                                            variableName={variableName}
+                                                            deletionID={deletionID}
                                                             setTableData={setTableData}
                                                         />
                                                     </td>
