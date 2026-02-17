@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import GetParam from '@/app/utils/getParam'
 import fetchData from '@/app/utils/fetchData'
+import { errorHandler } from '@/app/errors/fetchDataErrorHandler'
 
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
@@ -20,75 +21,54 @@ export default function AddCustomer() {
     const [message, setMessage] = useState('')
     const [notFound, setNotFound] = useState('')
     const [loading, setLoading] = useState(true)
-    const [limitInvoices, setLimitInvoices] = useState(0)
-    const [offsetInvoices, setOffsetInvoices] = useState(0)
     const [field, setField] = useState({name: {isEdited: false,}, id_number: {isEdited: false}, phone: {isEdited: false}})
     const search = useSearchParams()?.get('search') || ''
     const page = useSearchParams()?.get('page') || 1
     const [id, setId] = useState(GetParam('id') || '')
     
     // get customer info
-    const fetchCustomerInfo = async () => {
-        try {  
-            const customer = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}
-                ?limitInvoices=${limitInvoices}?offsetInvoices=${offsetInvoices}`, 'GET')
-            if (customer) {
-                setId_number(customer.info.id_number)
-                setName(customer.info.name)
-                setPhone(customer.info.phone)
-                
-            }
-        }catch (error){
-            if (error.status === 404){
-                setNotFound('Cliente no encontrado')
-            }
-        }finally {
-           setLoading(false)
-        }
-    }    
+    const customerInfo = async () => {
+        const endpoint = `/api/customers/${id}`
+        const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}`
+        return await errorHandler( async () => {
+            const data = await fetchData(url, 'GET')
+            if (data){
+                setName(data.customer.name)
+                setId_number(data.customer.id_number)
+                setPhone(data.customer.phone)
+            } 
+        }, setLoading, setNotFound, 'Cliente no encontrado')
+    }
 
     // edit customer info
     const editCustomer = async () => {
         if (!field.name.isEdited && !field.id_number.isEdited && !field.phone.isEdited) {
             return
         }
-
-        try {
-            const data = () => {
-                const body = {}
-                if (field.name.isEdited) body.name = name
-                if (field.id_number.isEdited) body.id_number = id_number
-                if (field.phone.isEdited) body.phone = phone
-                return body
-            }
-            const response = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/${id}`, 'PATCH', 
+       
+        
+        const endpoint = `/api/customers/${id}`
+        const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}`
+        
+        return await errorHandler( async () => {
+            const response = await  fetchData(url, 'PATCH', 
                 {
-                    name: name.toLowerCase(), 
-                    id_number, 
+                    name,
+                    id_number,
                     phone
-                },
-                    
+                }
             )
-            
             if (response) {
-                setMessage('Cliente editado con exito')
+                setMessage('Cliente Editado con éxito')
                 setErrors(null)
                 setField({name: {isEdited: false}, id_number: {isEdited: false}, phone: {isEdited: false}})
             }
-
-
-        }catch (error) {
-            if (error.status == 400 &&  error.message) {
-                setErrors(error.message) 
-            }else {
-                setErrors('Hubo un error al agregar el cliente')
-            }
-        }
+        }, null, setErrors, 'Error al editar el cliente')
     }
     
 
     useEffect(() => {
-        fetchCustomerInfo()
+        customerInfo()
     }, [])
     
     return (

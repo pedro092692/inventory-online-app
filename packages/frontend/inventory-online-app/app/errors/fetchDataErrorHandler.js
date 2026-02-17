@@ -14,7 +14,7 @@ const errorHandler = async (fn, setLoading = null, setErrorMsg = null, msg = '')
 
         if (setErrorMsg) {
             if (status === 404) {
-                setErrorMsg('Recurso no encontrado')
+                setErrorMsg(msg || 'Recurso no encontrado')
             }else if (status === 400){
                 setErrorMsg(message)
             }else {
