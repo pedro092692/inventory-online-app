@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { Container } from '@/app/ui/utils/container'
 import { Modal } from '@/app/ui/utils/alert/modal'
 import { Button } from '@/app/ui/utils/button/buttons'
@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 export default function Actions (
     {
-        userPermission={permissions:[]}, 
+        userPermission=[], 
         urlPath='', 
         id=1, 
         params='', 
@@ -118,7 +118,7 @@ export default function Actions (
 
     }
 
-    if (currentUser.permissions.includes('edit')) {
+    if (userPermission.includes('edit')) {
         return (
             <Container 
                 padding={'0px'}

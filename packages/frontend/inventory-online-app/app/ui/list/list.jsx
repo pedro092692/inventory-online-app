@@ -9,7 +9,7 @@ export default function List({
         tableData=[], 
         showActions=true, 
         CustomStyles, 
-        userPermission={permissions: []},
+        userPermission=[],
         deletionID='id',
         setTableData=null
     }) {

@@ -1,12 +1,14 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { Container } from '@/app/ui/utils/container'
+import Pagination from '@/app/ui/pagination/pagination'
 import Link from 'next/link'
 import List from '@/app/ui/list/list'
 import GetPageParam from '@/app/utils/getQueryParam'
 import fetchData from '@/app/utils/fetchData'
+import { errorHandler } from '@/app/errors/fetchDataErrorHandler'
+import { updatePagination } from '@/app/utils/updatePagination'
 import Route from '@/app/ui/routesLinks/routes'
-import axios from 'axios'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 
@@ -14,33 +16,28 @@ export default function ViewProducts() {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
-    const [offset, setOffset] = useState(GetPageParam('page') * limit)
-    const [total, setTotal]  = useState(0)
-    const [page, setPage] = useState(0) 
+    const [offset, setOffset] = useState(GetPageParam('page', 'pagination') * limit)
+    const [maxVisiblePages, setMaxVisiblePages] = useState(8)
+    const [totalPages, setTotalPages] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1)
     const [dataTable, setDataTable] = useState([])
 
     
     // load products from the API
-    const fetchProducts = async () => {
-        try {
-            const products = await fetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/products/all?limit=${limit}&offset=${offset}`, 'GET')
-            if (products) {
-                console.log(products)
-                setProducts(products.products)
-                setPage(products.page)
-                setTotal(products.total)
-                setDataTable(transformData(products.products))
+    const fetchProducts = async (limit, offset) => {
+        const enpoint = '/api/products/all'
+        const params = new URLSearchParams()
+        params.append('limit', limit)
+        params.append('offset', offset)
+        const url = `${NEXT_PUBLIC_API_BASE_URL}${enpoint}?${params.toString()}`
+        return await errorHandler( async () => {
+            const data = await fetchData(url, 'GET')
+            if (data) {
+                setProducts(data.products)
+                setDataTable(transformData(data.products))
+                updatePagination(setTotalPages, setCurrentPage, data.total, limit, data.page)
             }
-
-        }catch (error){
-            console.log(error)
-            if(error.response){
-                console.log(error.response.status)
-                console.log(error.response.data.message)
-            }
-        }finally {
-            setLoading(false)
-        }
+        }, setLoading)
     }
 
     const transformData = (products) => {
@@ -61,7 +58,8 @@ export default function ViewProducts() {
     }
 
     useEffect(() => {
-        fetchProducts()
+        setLoading(true)
+        fetchProducts(limit, offset)
     }, [])
     
   
@@ -98,6 +96,16 @@ export default function ViewProducts() {
                         } 
                         tableData={dataTable} 
                         showActions={true}
+                        />
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            maxVisiblePages={maxVisiblePages}
+                            setOffset={setOffset}
+                            limit={limit}
+                            fetchDataFn={ fetchProducts }
+                            searchTerm={fetchProducts}
+                            param={'page'}
                         />
                         
                 </>

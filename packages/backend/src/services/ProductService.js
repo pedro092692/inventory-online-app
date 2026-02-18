@@ -50,8 +50,8 @@ class ProductService{
                 offset: offset
             })
             return {
-                total: count,
                 products: products,
+                total: count,
                 page: Math.floor(offset / limit ) + 1,
                 pageSize: limit
             }
