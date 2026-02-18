@@ -11,7 +11,8 @@ export default function List({
         CustomStyles, 
         userPermission=[],
         deletionID='id',
-        setTableData=null
+        setTableData=null,
+        urlPath=''
     }) {
     const page = useSearchParams().get('page') || 1
     const search = useSearchParams().get('search') || ''
@@ -53,7 +54,7 @@ export default function List({
                                                     <td key={idx} data-label={'actions'}>
                                                         <Actions 
                                                             userPermission={userPermission}
-                                                            urlPath={'customers'}
+                                                            urlPath={urlPath}
                                                             id={data[key]}
                                                             params={`?page=${page}${search ? `&search=${search}` : ''}`}
                                                             deletionID={deletionID}

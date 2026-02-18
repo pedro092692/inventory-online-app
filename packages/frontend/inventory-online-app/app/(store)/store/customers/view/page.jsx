@@ -120,6 +120,7 @@ export default function ViewCustomers() {
                           userPermission={userPermission}
                           deletionID={'customerId'}
                           setTableData={setTableData}
+                          urlPath={'customers'}
                     />
                     
                     <Pagination
