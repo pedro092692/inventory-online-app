@@ -52,6 +52,21 @@ class ProductController{
     })
 
     /**
+     * Searches for product based on a query string.
+     * @param {Object} req - request object containing the search query and pagination parameters
+     * @param {Object} res - response object to send the search results
+     * @throws {ServiceError} - throws an error if the search operation fails
+     * @returns {Promise<void>} - returns the search results in the response
+     */
+    searchProducts = this.#error.handler( async(req, res) => {
+        const { data } = req.query
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const offset = req.query.offset ? parseInt(req.query.offset) : 0
+        const { products, total, page, pageSize } = await this.ProductService.searchProducts(data, limit, offset)
+        res.status(200).json( { products, total, page, pageSize } )
+    })
+
+    /**
      * Updates a product by its ID.
      * @param {Object} req - request object containing the product ID in the params ID and updates in the body
      * @param {Object} res - response object to send the updated product

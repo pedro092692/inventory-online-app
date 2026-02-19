@@ -1,6 +1,7 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import DollarValueService from './DollarValueService.js'
+import { Op } from 'sequelize'
 
 class ProductService{
     // instance of error handler
@@ -88,6 +89,36 @@ class ProductService{
             }
             
             return product
+        })
+    }
+
+    /**
+     * Searches for product by name and barcode.
+     * @param {string} query - The name or barcode to search for.
+     * @param {number} [limit=10] - The maximum number of results to return.
+     * @param {number} [offset=0] - The number of results to skip.
+     * @return {Promise<Object>} - A promise that resolves to an object containing search results and pagination info.
+     * @throws {ServiceError} - If an error occurs during the search.
+     */
+    searchProducts(query, limit = 10, offset = 0) {
+        return this.#error.handler(['Search Products', query, 'Product'], async () => {
+            const results = await this.Product.findAndCountAll({
+                where: {
+                    [Op.or]: [
+                        { name: {[Op.substring]: query.toLowerCase()} },
+                        { barcode: {[Op.substring]: query.toLowerCase()} }
+                    ]
+                },
+                order: [['id', 'DESC']],
+                limit: limit,
+                offset: offset
+            })
+            return {
+                products: results.rows,
+                total: results.count,
+                page: Math.floor(offset / limit ) + 1,
+                pageSize: limit
+            }
         })
     }
 
