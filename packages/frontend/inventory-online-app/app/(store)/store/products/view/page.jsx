@@ -5,7 +5,9 @@ import Pagination from '@/app/ui/pagination/pagination'
 import Link from 'next/link'
 import List from '@/app/ui/list/list'
 import GetPageParam from '@/app/utils/getQueryParam'
+import GetQueryParam from '@/app/utils/getQueryParam'
 import fetchData from '@/app/utils/fetchData'
+import Search from '@/app/ui/form/search/search'
 import { errorHandler } from '@/app/errors/fetchDataErrorHandler'
 import { updatePagination } from '@/app/utils/updatePagination'
 import Route from '@/app/ui/routesLinks/routes'
@@ -13,29 +15,40 @@ const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:/
 
 
 export default function ViewProducts() {
-    const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
     const [offset, setOffset] = useState(GetPageParam('page', 'pagination') * limit)
     const [maxVisiblePages, setMaxVisiblePages] = useState(8)
     const [totalPages, setTotalPages] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
-    const [dataTable, setDataTable] = useState([])
+    const [tableData, setTableData] = useState([])
+    const [isSearchActive, setIsSearchActive] = useState(false)
+    const [searchQuery, setSearchQuery] = useState(GetQueryParam('search') || '')
 
     
     // load products from the API
-    const fetchProducts = async (limit, offset) => {
-        const enpoint = '/api/products/all'
+    const fetchProducts = async (limit, offset, query = null) => {
+        const enpoint = query ? '/api/products/search' : '/api/products/all'
         const params = new URLSearchParams()
+        if (query) {
+            params.append('data', query)
+        }else{
+            setIsSearchActive(false)
+            setSearchQuery(null)
+        }
         params.append('limit', limit)
         params.append('offset', offset)
         const url = `${NEXT_PUBLIC_API_BASE_URL}${enpoint}?${params.toString()}`
+        
         return await errorHandler( async () => {
             const data = await fetchData(url, 'GET')
             if (data) {
-                setProducts(data.products)
-                setDataTable(transformData(data.products))
+                setTableData(transformData(data.products))
                 updatePagination(setTotalPages, setCurrentPage, data.total, limit, data.page)
+                if (query) {
+                    setIsSearchActive(true)
+                    setSearchQuery(query)
+                }
             }
         }, setLoading)
     }
@@ -59,6 +72,10 @@ export default function ViewProducts() {
 
     useEffect(() => {
         setLoading(true)
+        if (searchQuery) {
+            fetchProducts(limit, offset, searchQuery)
+            return
+        }
         fetchProducts(limit, offset)
     }, [])
     
@@ -79,10 +96,18 @@ export default function ViewProducts() {
         >
             {loading ? 
                 <p>Cargando productos...</p>
-            : products.length === 0 ?
+            :  tableData.length === 0 && !isSearchActive ?
                 <p>No hay productos para mostrar, <Link href={'/store/products/add'}>Agrega un nuevo producto</Link></p>
             :
                 <>
+                    <Search 
+                        placeHolder={'Buscar producto por Nombre, Código De Barras'}
+                        searchFn={fetchProducts} 
+                        queryValueParam={searchQuery}
+                        limit={limit} 
+                        offset={offset} 
+                        setOffset={setOffset}
+                    />
                     <List 
                         tableHead={
                             {
@@ -94,7 +119,7 @@ export default function ViewProducts() {
                                 'actions': 'Acciones'
                             }
                         } 
-                        tableData={dataTable} 
+                        tableData={tableData} 
                         showActions={true}
                         />
                         <Pagination
@@ -104,7 +129,7 @@ export default function ViewProducts() {
                             setOffset={setOffset}
                             limit={limit}
                             fetchDataFn={ fetchProducts }
-                            searchTerm={fetchProducts}
+                            searchTerm={ isSearchActive ? searchQuery : null}
                             param={'page'}
                         />
                         
