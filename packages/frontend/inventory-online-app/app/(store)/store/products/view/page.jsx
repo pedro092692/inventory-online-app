@@ -10,6 +10,7 @@ import fetchData from '@/app/utils/fetchData'
 import Search from '@/app/ui/form/search/search'
 import { errorHandler } from '@/app/errors/fetchDataErrorHandler'
 import { updatePagination } from '@/app/utils/updatePagination'
+import { getUser } from '@/app/utils/getUser'
 import Route from '@/app/ui/routesLinks/routes'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
@@ -24,6 +25,7 @@ export default function ViewProducts() {
     const [tableData, setTableData] = useState([])
     const [isSearchActive, setIsSearchActive] = useState(false)
     const [searchQuery, setSearchQuery] = useState(GetQueryParam('search') || '')
+    const [userPermission, setUserPermission] = useState({permissions: []})
 
     
     // load products from the API
@@ -70,8 +72,15 @@ export default function ViewProducts() {
         return data
     }
 
+    // get current user info
+    const currentUserInfo = async () => {
+        const user = await getUser()
+        setUserPermission(user.permissions)
+    }
+
     useEffect(() => {
         setLoading(true)
+        currentUserInfo()
         if (searchQuery) {
             fetchProducts(limit, offset, searchQuery)
             return
@@ -113,7 +122,7 @@ export default function ViewProducts() {
                             {
                                 'nombre': 'Nombre',
                                 'barcode': 'Código De Barras',
-                                'purchase_price': 'Precio De Compra',
+                                'purchase_price': 'Precio de compra',
                                 'selling_price': 'Precio De Venta',
                                 'stock': 'Stock',
                                 'actions': 'Acciones'

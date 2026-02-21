@@ -43,10 +43,16 @@ class ProductService{
      * @returns {Promise<Array>} - returns an array of products
      * @throws {ServiceError} - throws an error if the products could not be retrieved
      */
-    getAllProducts(limit=10, offset=0) {
+    getAllProducts(limit = 10, offset = 0, includePurchasePrice = false) {
+        let attributes  = ['id', 'barcode', 'name', 'selling_price','stock']
+        if (includePurchasePrice) {
+            attributes.push('purchase_price')
+        }
+
         return this.#error.handler(['Read All Products'], async () => {
             const count = await this.Product.count()
             const products = await this.Product.findAll({
+                attributes: attributes,
                 limit: limit,
                 offset: offset
             })
@@ -100,7 +106,11 @@ class ProductService{
      * @return {Promise<Object>} - A promise that resolves to an object containing search results and pagination info.
      * @throws {ServiceError} - If an error occurs during the search.
      */
-    searchProducts(query, limit = 10, offset = 0) {
+    searchProducts(query, limit = 10, offset = 0, includePurchasePrice = true) {
+        let attributes  = ['id', 'barcode', 'name', 'selling_price','stock']
+        if (includePurchasePrice) {
+            attributes.push('purchase_price')
+        }
         return this.#error.handler(['Search Products', query, 'Product'], async () => {
             const results = await this.Product.findAndCountAll({
                 where: {
@@ -109,6 +119,7 @@ class ProductService{
                         { barcode: {[Op.substring]: query.toLowerCase()} }
                     ]
                 },
+                attributes: attributes,
                 order: [['id', 'DESC']],
                 limit: limit,
                 offset: offset

@@ -1,5 +1,6 @@
-import ProductService from '../services/ProductService.js';
-import ControllerErrorHandler from '../errors/controllerErrorHandler.js';
+import ProductService from '../services/ProductService.js'
+import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
+import { getUserRole } from '../middlewares/authorization.js'
 
 class ProductController{
     // error controller new instace 
@@ -31,10 +32,11 @@ class ProductController{
      * @returns {Promise<void>} - returns the list of products in the response
      */
     allProducts = this.#error.handler( async(req, res) => {
+        let includePurchasePrice = this.includePurchasePrice(req)
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const offset = req.query.offset ? parseInt(req.query.offset) : 0
         const role = []
-        const {products, total, page, pageSize} = await this.ProductService.getAllProducts(limit, offset)
+        const {products, total, page, pageSize} = await this.ProductService.getAllProducts(limit, offset, includePurchasePrice)
         res.status(200).json({products, total, page, pageSize, role})
     })
 
@@ -59,10 +61,11 @@ class ProductController{
      * @returns {Promise<void>} - returns the search results in the response
      */
     searchProducts = this.#error.handler( async(req, res) => {
+        let includePurchasePrice = this.includePurchasePrice(req)
         const { data } = req.query
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const offset = req.query.offset ? parseInt(req.query.offset) : 0
-        const { products, total, page, pageSize } = await this.ProductService.searchProducts(data, limit, offset)
+        const { products, total, page, pageSize } = await this.ProductService.searchProducts(data, limit, offset, includePurchasePrice)
         res.status(200).json( { products, total, page, pageSize } )
     })
 
@@ -93,6 +96,15 @@ class ProductController{
         await this.ProductService.deleteProduct(productId)
         res.status(204).json({})
     })
+
+    includePurchasePrice(req) {
+        const userRole = getUserRole(req.user.role)
+        let includePurchasePrice = false
+        if (['ADMIN', 'STORE_OWNER', 'MANAGER'].includes(userRole)) {
+            includePurchasePrice = true
+        }
+        return includePurchasePrice
+    }
 
     
 }
