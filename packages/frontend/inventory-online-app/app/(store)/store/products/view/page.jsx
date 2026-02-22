@@ -26,10 +26,20 @@ export default function ViewProducts() {
     const [isSearchActive, setIsSearchActive] = useState(false)
     const [searchQuery, setSearchQuery] = useState(GetQueryParam('search') || '')
     const [userPermission, setUserPermission] = useState({permissions: []})
+    const [tableHead, setTableHead] = useState({
+        nombre: 'Nombre',
+        barcode: 'Código De Barras',
+        purchase_price: 'Precio de compra',
+        selling_price: 'Precio De Venta',
+        stock: 'Stock',
+        actions: 'Acciones'
+    })
 
     
     // load products from the API
     const fetchProducts = async (limit, offset, query = null) => {
+        // load user permission 
+        const userPermission = await currentUserInfo(true)
         const enpoint = query ? '/api/products/search' : '/api/products/all'
         const params = new URLSearchParams()
         if (query) {
@@ -45,7 +55,7 @@ export default function ViewProducts() {
         return await errorHandler( async () => {
             const data = await fetchData(url, 'GET')
             if (data) {
-                setTableData(transformData(data.products))
+                setTableData(transformData(data.products, userPermission.includes('update') ? true : false))
                 updatePagination(setTotalPages, setCurrentPage, data.total, limit, data.page)
                 if (query) {
                     setIsSearchActive(true)
@@ -55,7 +65,7 @@ export default function ViewProducts() {
         }, setLoading)
     }
 
-    const transformData = (products) => {
+    const transformData = (products, inclucePurchasePrice = false) => {
         let data = []
         if (products.length > 0) {
             data = products.map(product => (
@@ -68,14 +78,24 @@ export default function ViewProducts() {
                     id: product.id
                 }
             ))
+            
+            if (!inclucePurchasePrice){
+                data.map((item) => {
+                    delete item.purchase_price
+                })
+                delete tableHead.purchase_price
+            }
+            
         }
         return data
     }
 
     // get current user info
-    const currentUserInfo = async () => {
+    const currentUserInfo = async (returnData = false) => {
         const user = await getUser()
         setUserPermission(user.permissions)
+        return returnData ? user.permissions : null
+        
     }
 
     useEffect(() => {
@@ -88,8 +108,6 @@ export default function ViewProducts() {
         fetchProducts(limit, offset)
     }, [])
     
-  
-
   return (
     <>
         {/* view all customers */}
@@ -118,19 +136,11 @@ export default function ViewProducts() {
                         setOffset={setOffset}
                     />
                     <List 
-                        tableHead={
-                            {
-                                'nombre': 'Nombre',
-                                'barcode': 'Código De Barras',
-                                'purchase_price': 'Precio de compra',
-                                'selling_price': 'Precio De Venta',
-                                'stock': 'Stock',
-                                'actions': 'Acciones'
-                            }
-                        } 
+                        tableHead={tableHead} 
                         tableData={tableData} 
                         showActions={true}
-                        />
+                        userPermission={userPermission}
+                    />
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}
