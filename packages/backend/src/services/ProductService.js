@@ -56,8 +56,11 @@ class ProductService{
                 limit: limit,
                 offset: offset
             })
+            
+            const productsSellingPriceBs = await this.setSellingPriceBs(products)
+            
             return {
-                products: products,
+                products: productsSellingPriceBs,
                 total: count,
                 page: Math.floor(offset / limit ) + 1,
                 pageSize: limit
@@ -124,8 +127,11 @@ class ProductService{
                 limit: limit,
                 offset: offset
             })
+
+            // add selleing bs price
+            const productsSellingPriceBs = await this.setSellingPriceBs(results.rows)
             return {
-                products: results.rows,
+                products: productsSellingPriceBs,
                 total: results.count,
                 page: Math.floor(offset / limit ) + 1,
                 pageSize: limit
@@ -245,6 +251,18 @@ class ProductService{
             )
             
         })
+    }
+
+
+    async setSellingPriceBs(products = null) {
+        //add reference price to products 
+        const dollarValue = await this.dollarValue.getLastValue()
+        products.forEach((product) => {
+            product.dataValues.reference_selling_price = 
+                (parseFloat(product.selling_price) * parseFloat(dollarValue.value ? dollarValue.value : 1)).toFixed(2)
+        })
+
+        return products
     }
 
 

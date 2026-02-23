@@ -8,11 +8,14 @@ export default function List({
         tableHead=[], 
         tableData=[], 
         showActions=true, 
-        CustomStyles, 
+        CustomStyles,
         userPermission=[],
         deletionID='id',
         setTableData=null,
-        urlPath=''
+        urlPath='',
+        showView=true, 
+        showEdit=true, 
+        showDelete=true,
     }) {
     const page = useSearchParams().get('page') || 1
     const search = useSearchParams().get('search') || ''
@@ -43,7 +46,8 @@ export default function List({
                                         Object.keys(data).map((key, idx) => {
                                             if (key !== 'id') {
                                                 return (
-                                                    <td key={idx} data-label={key} style={key === 'name' ? { textTransform: 'capitalize' } : {}}>
+                                                    <td key={idx} data-label={key} 
+                                                        style={key === 'name' ? { textTransform: 'capitalize' } : {}}>
                                                         {data[key]} 
                                                     </td>
                                                 )
@@ -59,6 +63,9 @@ export default function List({
                                                             params={`?page=${page}${search ? `&search=${search}` : ''}`}
                                                             deletionID={deletionID}
                                                             setTableData={setTableData}
+                                                            showView={showView}
+                                                            showEdit={showEdit}
+                                                            showDelete={showDelete}
                                                         />
                                                     </td>
                                                 )

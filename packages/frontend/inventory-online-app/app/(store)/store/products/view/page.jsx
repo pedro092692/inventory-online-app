@@ -12,6 +12,7 @@ import { errorHandler } from '@/app/errors/fetchDataErrorHandler'
 import { updatePagination } from '@/app/utils/updatePagination'
 import { getUser } from '@/app/utils/getUser'
 import Route from '@/app/ui/routesLinks/routes'
+
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 
@@ -29,8 +30,9 @@ export default function ViewProducts() {
     const [tableHead, setTableHead] = useState({
         nombre: 'Nombre',
         barcode: 'Código De Barras',
-        purchase_price: 'Precio de compra',
-        selling_price: 'Precio De Venta',
+        purchase_price: 'Precio de compra $',
+        selling_price: 'Precio De Venta $',
+        selling_price_bs: 'Precio De Venta Bs',
         stock: 'Stock',
         actions: 'Acciones'
     })
@@ -72,8 +74,9 @@ export default function ViewProducts() {
                 {
                     name: product.name,
                     barcode: product.barcode,
-                    purchase_price: product.purchase_price,
-                    selling_price: product.selling_price,
+                    purchase_price: `${product.purchase_price} $`,
+                    selling_price: `${product.selling_price} $`,
+                    selling_price_bs: `${product.reference_selling_price} Bs`,
                     stock: product.stock,
                     id: product.id
                 }
@@ -138,8 +141,9 @@ export default function ViewProducts() {
                     <List 
                         tableHead={tableHead} 
                         tableData={tableData} 
-                        showActions={true}
+                        showActions={ userPermission.includes('update') ? true : false }
                         userPermission={userPermission}
+                        showView={false}
                     />
                         <Pagination
                             currentPage={currentPage}

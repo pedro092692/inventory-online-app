@@ -15,8 +15,8 @@ class ProductRoutes {
      */
     initializeRoutes() {
         this.router.get('/', (req, res) => res.send('Product routes'))
-        this.router.get('/all', (req, res) => new ProductController(req.Product).allProducts(req, res))
-        this.router.get('/search', (req, res) => new ProductController(req.Product).searchProducts(req, res))
+        this.router.get('/all', (req, res) => new ProductController(req.Product, req.Dollar).allProducts(req, res))
+        this.router.get('/search', (req, res) => new ProductController(req.Product, req.Dollar).searchProducts(req, res))
         this.router.get('/:id', (req, res) => new ProductController(req.Product, req.Dollar).getProduct(req, res))
         this.router.post('/', (req, res) => new ProductController(req.Product).createProduct(req, res))
         this.router.patch('/:id', (req, res) => new ProductController(req.Product).updateProduct(req, res))
