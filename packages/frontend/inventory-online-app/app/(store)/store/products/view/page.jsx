@@ -12,6 +12,7 @@ import { errorHandler } from '@/app/errors/fetchDataErrorHandler'
 import { updatePagination } from '@/app/utils/updatePagination'
 import { getUser } from '@/app/utils/getUser'
 import Route from '@/app/ui/routesLinks/routes'
+import styles from './page.module.css'
 
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
@@ -142,6 +143,7 @@ export default function ViewProducts() {
                         tableHead={tableHead} 
                         tableData={tableData} 
                         showActions={ userPermission.includes('update') ? true : false }
+                        customClass={styles.table}
                         userPermission={userPermission}
                         showView={false}
                     />

@@ -1,0 +1,6 @@
+.table td[data-label="purchase_price"],
+.table td[data-label="selling_price"],
+.table td[data-label="stock"],
+.table td[data-label="selling_price_bs"] {
+    text-align: right;
+}

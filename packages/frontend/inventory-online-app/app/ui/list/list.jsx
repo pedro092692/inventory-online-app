@@ -8,7 +8,8 @@ export default function List({
         tableHead=[], 
         tableData=[], 
         showActions=true, 
-        CustomStyles,
+        CustomStyles={},
+        customClass='',
         userPermission=[],
         deletionID='id',
         setTableData=null,
@@ -21,7 +22,7 @@ export default function List({
     const search = useSearchParams().get('search') || ''
 
     return (
-        <div className={`${styles.container} shadow-sm`} style={CustomStyles}>
+        <div className={`${styles.container} shadow-sm ${customClass}`} style={CustomStyles}>
             <table className={`${styles.table} p3-b`}>
                 <thead>
                     <tr>

@@ -97,7 +97,7 @@ export default function Actions (
                 <Modal 
                     show={showAlert} 
                     onClose={setShowAlert} 
-                    title='¿Estas Seguro De Eliminar Este Cliente?'
+                    title='¿Estas Seguro De Eliminar Este Elemento?'
                     showIcon={true}
                     icon='trash'
                     iconColor='var(--color-accentRed400)'
