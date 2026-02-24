@@ -10,6 +10,7 @@ import { errorHandler } from '@/app/errors/fetchDataErrorHandler'
 import { updatePagination } from '@/app/utils/updatePagination'
 import fetchData from '@/app/utils/fetchData'
 import { getUser } from '@/app/utils/getUser'
+import styles from './list.module.css'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function ViewCustomers() {
@@ -67,8 +68,10 @@ export default function ViewCustomers() {
             data = customers.map(customer => (
                 {
                     name: customer.name,
-                    id_number: customer.id_number,
-                    phone: customer.phone.replace('+58', ''),
+                    id_number: new Intl.NumberFormat('es-Ve').format(customer.id_number),
+                    phone: customer.phone.startsWith('+5804') ? 
+                        `${customer.phone.slice(3 ,7)}-${customer.phone.slice(7, 10)}-${customer.phone.slice(10, 12)}-${customer.phone.slice(12)}` 
+                            : customer.phone,
                     id: customer.id,
                 }
             ))
@@ -121,6 +124,7 @@ export default function ViewCustomers() {
                           deletionID={'customerId'}
                           setTableData={setTableData}
                           urlPath={'customers'}
+                          customClass={styles.table}
                     />
                     
                     <Pagination
