@@ -13,7 +13,7 @@
   margin-top: 16px;
   width: 50%;
   background: var(--color-neutralGrey500);
-  flex-grow: 0 !important;
   padding: 16px;
+  width: 50% !important;
   border-radius: 8px;
 }
