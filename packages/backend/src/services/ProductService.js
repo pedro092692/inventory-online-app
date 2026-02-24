@@ -253,7 +253,14 @@ class ProductService{
         })
     }
 
-
+    /**
+     * Calculates and sets the reference selling price in Bolivars (Bs) for a list of products
+     * based on the most recent dollar exchange rate.
+     *
+     * @param {Array<Object>|null} [products=null] - An array of product objects to process. 
+     * Expected to have 'selling_price' and a 'dataValues' property.
+     * @returns {Promise<Array<Object>|null>} The updated array of products with 'reference_selling_price' added.
+     */
     async setSellingPriceBs(products = null) {
         //add reference price to products 
         const dollarValue = await this.dollarValue.getLastValue()
