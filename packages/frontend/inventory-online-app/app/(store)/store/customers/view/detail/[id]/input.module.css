@@ -17,3 +17,9 @@
   width: 50% !important;
   border-radius: 8px;
 }
+
+.table td[data-label="bill_id"],
+.table td[data-label="total"],
+.table td[data-label="date"]{
+    text-align: right;
+}

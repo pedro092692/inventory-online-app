@@ -82,7 +82,7 @@ export default function CustomerDetail() {
                     bill_id: invoice.id,
                     total: `$ ${invoice.total}`,
                     status: invoice.status == 'paid' ? 'Pagado' : 'Pendiente',
-                    data: new Date(invoice.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }), 
+                    date: new Date(invoice.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }), 
                     id: invoice.id
                 }
             ))   
@@ -132,6 +132,7 @@ export default function CustomerDetail() {
                             actions={[]}
                             showActions={false}
                             CustomStyles={{height: '317px'}}
+                            customClass={styles.table}
                         />
                         <Pagination
                             currentPage={invoicePage}
