@@ -119,11 +119,7 @@ class CustomerService {
                         { id_number: {[Op.eq]: !isNaN(query) ? parseInt(query) : null} }
                     ]
                 },
-                include: {
-                    association: 'invoices',
-                    attributes: ['id', 'date', 'total'],
-                },
-                order: [['id', 'DESC'], ['invoices', 'id', 'DESC']],
+                order: [['id', 'DESC']],
                 distinct: true,
                 limit: limitResults,
                 offset: offsetResults
