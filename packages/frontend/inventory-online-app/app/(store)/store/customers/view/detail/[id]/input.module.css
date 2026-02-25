@@ -11,10 +11,10 @@
 
 .formview {
   margin-top: 16px;
-  width: 50%;
   background: var(--color-neutralGrey500);
   padding: 16px;
   width: 50% !important;
+flex-grow: 0 !important;
   border-radius: 8px;
 }
 

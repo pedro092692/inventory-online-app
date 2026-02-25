@@ -3,7 +3,7 @@ import { Container } from '@/app/ui/utils/container'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-
+import ViewProducts from '@/app/ui/products/all/allProducts'
 
 export default function Products() {
   return (
@@ -11,7 +11,8 @@ export default function Products() {
         {/* // add new product  */}
         <Link href="#">Agregar un nuevo producto</Link>
         {/* view all products */}
-        <Link href="/store/products/view">Lista de todos los productos</Link>
+        {/* <Link href="/store/products/view">Lista de todos los productos</Link> */}
+        <ViewProducts />
     </>
   )
 }

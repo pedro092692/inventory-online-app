@@ -1,0 +1,4 @@
+.table td[data-label="id_number"],
+.table td[data-label="phone"]{
+    text-align: right;
+}

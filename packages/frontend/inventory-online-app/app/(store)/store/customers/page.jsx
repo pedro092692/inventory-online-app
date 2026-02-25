@@ -1,12 +1,14 @@
 import Link from "next/link"
+import ViewCustomers from "@/app/ui/customers/all/allCustomer"
+
 
 export default function Customer({children}) {
     return (
        <>
-        {/* // add new customer  */}
-        <Link href="/store/customers/add">Agregar nuevo cliente</Link>
-        {/* view all customers */}
-        <Link href="/store/customers/view">Lista de todos los clientes</Link>
+            {/* // add new customer  */}
+            <Link href="/store/customers/add">Agregar nuevo cliente</Link>
+            <ViewCustomers />
        </>
+       
     )
 }
