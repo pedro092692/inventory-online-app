@@ -7,13 +7,17 @@ import ViewProducts from '@/app/ui/products/all/allProducts'
 
 export default function Products() {
   return (
-    <>
+    <Container
+        direction={'column'}
+        alignItem={'start'}
+        padding='0px'
+        width='100%'
+    >
         {/* // add new product  */}
         <Link href="#">Agregar un nuevo producto</Link>
         {/* view all products */}
-        {/* <Link href="/store/products/view">Lista de todos los productos</Link> */}
         <ViewProducts />
-    </>
+    </Container>
   )
 }
 

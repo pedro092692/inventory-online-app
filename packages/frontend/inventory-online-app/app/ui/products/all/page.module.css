@@ -4,3 +4,8 @@
 .table td[data-label="selling_price_bs"] {
     text-align: right;
 }
+
+
+.table tr:hover{
+    background-color: #EEE1C4 !important;
+}

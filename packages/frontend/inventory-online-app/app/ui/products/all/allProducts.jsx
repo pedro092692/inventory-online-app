@@ -115,7 +115,7 @@ export default function ViewProducts() {
   return (
     <>
         {/* view all customers */}
-        <Route path='products' endpoints={['default', 'view']} />
+        {/* <Route path='products' endpoints={['default', 'view']} /> */}
         <Container
             padding="0"
             direction="column"

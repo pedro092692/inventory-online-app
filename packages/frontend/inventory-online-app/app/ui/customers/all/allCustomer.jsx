@@ -94,7 +94,7 @@ export default function ViewCustomers() {
     return (
         <>
             {/* view all customers */}
-            <Route path='customers' endpoints={['default', 'view']} /> 
+            {/* <Route path='customers' endpoints={['default', 'view']} />  */}
             <Container listContiner={true}>   
                 {loading ? 
                     <p>Cargando clientes...</p>
