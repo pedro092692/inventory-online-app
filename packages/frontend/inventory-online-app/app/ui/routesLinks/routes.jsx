@@ -37,6 +37,11 @@ export default function Route({path='customers', endpoints=['default', 'add'], c
                 href: '/store/products/view',
                 label: 'Todos los productos'
             },
+            edit: {
+                href: '/store/products/edit/[id]',
+                label: 'Editar producto'
+
+            }
         }
     }
     

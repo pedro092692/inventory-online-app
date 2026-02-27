@@ -146,6 +146,7 @@ export default function ViewProducts() {
                         customClass={styles.table}
                         userPermission={userPermission}
                         showView={false}
+                        urlPath='products'
                     />
                         <Pagination
                             currentPage={currentPage}
