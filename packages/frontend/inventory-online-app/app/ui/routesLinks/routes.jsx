@@ -5,7 +5,7 @@ export default function Route({path='customers', endpoints=['default', 'add'], c
     const routes = {
         customers: {
             default: {
-                href: '/store/customers',
+                href: customPage ? `/store/customers?page=${page}${search ? `&search=${search}`: ''}` : '/store/customers',
                 label: 'Clientes'
             },
             add: {
@@ -30,7 +30,7 @@ export default function Route({path='customers', endpoints=['default', 'add'], c
 
         products: {
             default: {
-                href: '/store/products',
+                href: customPage ? `/store/products?page=${page}${search ? `&search=${search}`: ''}` : '/store/products',
                 label: 'Productos'
             },
             view: {

@@ -73,7 +73,7 @@ export default function AddCustomer() {
     
     return (
        <>  
-            <Route path='customers' endpoints={['default', 'view', 'edit']} customPage={true} page={page} search={search}/> 
+            <Route path='customers' endpoints={['default', 'edit']} customPage={true} page={page} search={search}/> 
             <Form className={`${styles.form} shadow`} onSubmit={(e) => {e.preventDefault(); editCustomer()}}>
                 <Input type="text" placeHolder="Nombre del cliente" icon="person" onChange={(e) => {setName(e.target.value); setField({...field, name:{isEdited: true} })}} value={loading ? 'Cargando...' : name} name={'name'} capitalize={true}/>
                 {errors?.name && <span className="field_error">{errors.name}</span>}
@@ -84,7 +84,7 @@ export default function AddCustomer() {
                 <Button role="submit" type="secondary">
                     Editar cliente
                 </Button>
-                {typeof errors === 'string' && <span className="field_error">{errors}</span>}
+                {/* {typeof errors === 'string' && <span className="field_error">{errors}</span>} */}
                 {message && <span style={{color: 'green', marginTop: '8px'}}>{message}</span>}
                 {notFound && <span style={{color: 'red'}}>{notFound}</span>}
             </Form>
