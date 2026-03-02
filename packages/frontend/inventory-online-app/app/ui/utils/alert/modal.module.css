@@ -56,6 +56,6 @@
     padding-top: 8px;
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
 }
