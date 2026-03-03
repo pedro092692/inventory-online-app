@@ -43,6 +43,39 @@ export default function EditProduct() {
         }, setLoading, setNotFound, 'Producto no encontrado')
     }
 
+    //edit product 
+    const editProduct = async () => {
+        if (!field.name.isEdited && !field.barcode.isEdited && 
+            !field.purchase_price.isEdited && !field.selling_price.isEdited && 
+            !field.stock.isEdited
+            ) {
+            return
+        }
+
+        const endpoint = `/api/products/${id}`
+        const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}`
+
+        return await errorHandler( async () => {
+            const response = await  fetchData(url, 'PATCH', 
+                {
+                    name: name.toLowerCase(),
+                    barcode,
+                    purchase_price,
+                    selling_price,
+                    stock
+                }
+            )
+            if (response) {
+                setMessage('Producto Editado con éxito')
+                setErrors(null)
+                setField({name: {isEdited: false}, barcode: {isEdited: false}, 
+                            purchase_price: {isEdited: false}, selling_price: {isEdited: false}, 
+                            stock: {isEdited: false}})
+            }
+        }, null, setErrors, 'Error al editar el producto')
+
+    }
+
     useEffect(() => {
         productInfo()
     }, [])
@@ -50,7 +83,7 @@ export default function EditProduct() {
     return (
         <>
             <Route path='products' endpoints={['default', 'edit']} customPage={true} page={page} search={search}/> 
-            <Form className={'form-edit'} onSubmit={(e) => {e.preventDefault();}} style={{padding: "16px"}}>
+            <Form className={'form-edit'} onSubmit={(e) => {e.preventDefault(); editProduct();}} style={{padding: "16px"}}>
                 
                 
                 <label>Nombre del producto</label>
