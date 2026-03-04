@@ -1,6 +1,6 @@
 'use client'
 import axios from 'axios'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Container } from '@/app/ui/utils/container'
 import { Logo } from '@/app/ui/utils/logo'
@@ -13,8 +13,8 @@ const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:/
 const dashboard = process.env.NEXT_PUBLIC_DASHBOARD
 
 
-export default function SecurityPage() {
-      const router = useRouter()
+function Login() {
+  const router = useRouter()
       const searchParams = useSearchParams()
       const nextUrl = searchParams.get('next') || dashboard
 
@@ -71,5 +71,13 @@ export default function SecurityPage() {
       
     </Container>
   )
+}
+
+export default function SecurityPage() {
+     return (
+        <Suspense fallback={<p>Cargando Login...</p>}>
+          <Login/>
+        </Suspense>
+     ) 
 }
 

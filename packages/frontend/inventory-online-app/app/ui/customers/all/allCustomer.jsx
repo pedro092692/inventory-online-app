@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { Container } from '@/app/ui/utils/container'
 import Pagination from '@/app/ui/pagination/pagination'
 import List from '@/app/ui/list/list'
@@ -13,7 +13,7 @@ import { getUser } from '@/app/utils/getUser'
 import styles from './list.module.css'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
-export default function ViewCustomers() {
+function Customers() {
 
     const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
@@ -97,7 +97,7 @@ export default function ViewCustomers() {
             {/* <Route path='customers' endpoints={['default', 'view']} />  */}
             <Container listContiner={true}>   
                 {loading ? 
-                    <p>Cargando clientes...</p>
+                    <p>Cargando clientes...</p> 
                 : tableData.length === 0 && !isSearchActive ?
                     <p>No hay clientes disponibles.</p> 
                 :
@@ -141,5 +141,13 @@ export default function ViewCustomers() {
                 }
             </Container>
         </>
+    )
+}
+
+export default function ViewCustomers() {
+    return (
+        <Suspense fallback={<p>Cargando...</p>}> 
+            <Customers/>
+        </Suspense>
     )
 }
