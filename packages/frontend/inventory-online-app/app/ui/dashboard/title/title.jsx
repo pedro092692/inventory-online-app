@@ -15,7 +15,7 @@ export async function Title({ title, icon, showUserInfo = true}) {
                 <IconSection icon={icon} />
                 <h1 className='h3'>{title}</h1>
             </Container>
-            { showUserInfo && userInfo &&<p className='p2-r'>{userInfo.email}</p> }
+            { showUserInfo && userInfo &&<p className={`p2-r ${styles.username}`}>{userInfo.email}</p> }
         </Container>
     )
 }

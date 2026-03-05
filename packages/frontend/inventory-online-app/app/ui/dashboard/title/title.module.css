@@ -8,3 +8,7 @@
     height: 64px;
     border-radius: 8px;
 }
+
+.username {
+    cursor: default;
+}
