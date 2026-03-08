@@ -121,6 +121,9 @@ export default function EditProduct() {
 
                 {/* success message */}
                 {message && <span style={{color: 'green', marginTop: '8px'}}>{message}</span>}
+
+                {/* others erros */}
+                {typeof errors === 'string' && <span className="field_error">{errors}</span>}
             </Form>
         </>
     )
