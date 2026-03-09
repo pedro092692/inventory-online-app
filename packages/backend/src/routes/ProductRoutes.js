@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import ProductController from '../Controllers/ProductController.js'
 import { authenticated } from '../middlewares/authMiddleware.js'
+import { validateFields } from '../validators/fieldValidator.js'
 import { authorization } from '../middlewares/authorization.js'
 import { PERMISSIONS } from '../constants/roles.js'
 
@@ -20,8 +21,8 @@ class ProductRoutes {
         this.router.get('/all', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).allProducts(req, res))
         this.router.get('/search', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).searchProducts(req, res))
         this.router.get('/:id', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).getProduct(req, res))
-        this.router.post('/', (req, res) => new ProductController(req.Product).createProduct(req, res))
-        this.router.patch('/:id', authorization(PERMISSIONS.UPDATE), (req, res) => new ProductController(req.Product).updateProduct(req, res))
+        this.router.post('/', validateFields('createProduct'), (req, res) => new ProductController(req.Product).createProduct(req, res))
+        this.router.patch('/:id', authorization(PERMISSIONS.UPDATE), validateFields('createProduct'), (req, res) => new ProductController(req.Product).updateProduct(req, res))
         this.router.delete('/', (req, res) => new ProductController(req.Product).deleteProduct(req, res))
     }
 
