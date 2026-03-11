@@ -77,7 +77,8 @@ export default function ViewProducts() {
                     barcode: product.barcode,
                     purchase_price: `${product.purchase_price} $`,
                     selling_price: `${product.selling_price} $`,
-                    selling_price_bs: `${product.reference_selling_price} Bs`,
+                    selling_price_bs: 
+                        new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(product.reference_selling_price),
                     stock: product.stock,
                     id: product.id
                 }

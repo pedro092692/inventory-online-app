@@ -53,6 +53,7 @@ class ProductService{
             const count = await this.Product.count()
             const products = await this.Product.findAll({
                 attributes: attributes,
+                order: [['name', 'ASC']],
                 limit: limit,
                 offset: offset
             })
