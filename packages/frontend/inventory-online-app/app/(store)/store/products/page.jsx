@@ -14,7 +14,7 @@ export default function Products() {
         width='100%'
     >
         {/* // add new product  */}
-        <Link href="#">Agregar un nuevo producto</Link>
+        <Link href="/store/products/add">Agregar un nuevo producto</Link>
         {/* view all products */}
         <ViewProducts />
     </Container>

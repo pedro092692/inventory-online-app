@@ -33,6 +33,10 @@ export default function Route({path='customers', endpoints=['default', 'add'], c
                 href: customPage ? `/store/products?page=${page}${search ? `&search=${search}`: ''}` : '/store/products',
                 label: 'Productos'
             },
+            add: {
+                href: '/store/products/add',
+                label: 'Agregar producto'
+            },
             view: {
                 href: '/store/products/view',
                 label: 'Todos los productos'
