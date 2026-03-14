@@ -19,7 +19,6 @@ export default async function Customers({ limit = 10, offset = 0, query = null }
 
     const response = await FetchDataTest(url, 'GET')
     const customers = response.customers
-
     return (
         <ul>
             {customers.map(customer => (
@@ -30,4 +29,6 @@ export default async function Customers({ limit = 10, offset = 0, query = null }
         </ul>
     )
 } 
+
+
 
