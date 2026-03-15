@@ -46,7 +46,8 @@ export default function AddProduct() {
             <Form className={`${styles.form} shadow`}  onSubmit={(e) => {e.preventDefault(); addProduct();}}>
                 <Input type="text" placeHolder="Nombre del producto" icon="product" 
                    onChange={(e) => setName(e.target.value)} value={name} name={'name'} capitalize={true}/>
-            
+                <Input type="text" placeHolder="Código de barras" icon="barcode" 
+                   onChange={(e) => setBarcode(e.target.value)} value={barcode} name={'barcode'}/>
 
             </Form>
         </>
