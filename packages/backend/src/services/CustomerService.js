@@ -134,6 +134,33 @@ class CustomerService {
     }
 
     /**
+     * Calculates the total number of pages for customer results based on a search query and limit.
+     * * @param {string} [query=''] - The search term to filter customers by name or ID number.
+     * @param {number} [limit=10] - The number of records to display per page.
+     * @returns {Promise<number>} A promise that resolves to the total number of calculated pages.
+     * @throws Will be handled by the internal error handler.
+     */
+    totalPages(query = '',  limit = 10) {
+        return this.#error.handler(['Total pages', query, 'Customer'], async () => {
+            if (!query) {
+                const count = await this.Customer.count()
+                return Math.ceil(count / limit)
+            }
+
+            const results = await this.Customer.findAndCountAll({
+                where: {
+                    [Op.or]: [
+                        { name: {[Op.substring]: query.toLowerCase() } },
+                        { id_number: {[Op.eq]: !isNaN(query) ? parseInt(query) : null} }
+                    ]
+                }
+            })
+            return Math.ceil(results.count / limit)
+
+        })
+    }
+
+    /**
      * Updates a customer by their ID with the provided updates.
      * @param {number} customerId - The ID of the customer to update.
      * @param {Object} updates - The updates to apply to the customer.
