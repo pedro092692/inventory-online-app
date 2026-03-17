@@ -20,6 +20,7 @@ class ProductRoutes {
         this.router.get('/', (req, res) => res.send('Product routes'))
         this.router.get('/all', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).allProducts(req, res))
         this.router.get('/search', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).searchProducts(req, res))
+        this.router.get('/total-pages', (req, res) => new CustomerController(req.Customer).totalPages(req, res))
         this.router.get('/:id', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).getProduct(req, res))
         this.router.post('/', validateFields('createProduct'), (req, res) => new ProductController(req.Product).createProduct(req, res))
         this.router.patch('/:id', authorization(PERMISSIONS.UPDATE), validateFields('createProduct'), (req, res) => new ProductController(req.Product).updateProduct(req, res))
