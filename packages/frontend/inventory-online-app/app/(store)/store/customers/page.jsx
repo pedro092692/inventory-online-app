@@ -2,7 +2,10 @@ import { Container } from "@/app/ui/utils/container"
 import Route from '@/app/ui/routesLinks/routes'
 
 export default async function Customer({searchParams}) {
-    // await new Promise (resolve => setTimeout(resolve, 1000))
+    await new Promise (resolve => setTimeout(resolve, 1000))
+    const params = await searchParams
+
+
     return (
         <Container
             direction={'column'}

@@ -7,7 +7,6 @@ export default async function FetchDataTest(url, method, body = null) {
     if (!token) {
         return null
     }
-
     
     const response = await fetch(url, {
         method: method,
