@@ -1,5 +1,6 @@
 import { Container } from "@/app/ui/utils/container"
 import Route from '@/app/ui/routesLinks/routes'
+import Search from "@/app/ui/form/search/search"
 
 export default async function Customer({searchParams}) {
     await new Promise (resolve => setTimeout(resolve, 1000))
@@ -15,6 +16,7 @@ export default async function Customer({searchParams}) {
         >
         
             <Route path='customers' endpoints={['add', 'default']} /> 
+            <Search />
         </Container>
        
     )

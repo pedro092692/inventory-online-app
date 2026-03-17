@@ -1,14 +1,20 @@
+'use client'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { Container } from '@/app/ui/utils/container'
 import styles from './pagination.module.css'
-import HandlePageChange from '@/app/utils/handlePageChange'
-import { useSearchParams } from 'next/navigation'
-import { useRouter } from 'next/navigation'
-
-export default function Pagination({currentPage, totalPages, maxVisiblePages, setOffset, limit, fetchDataFn, param, searchTerm=null}) {
-
+import Link from 'next/link'
+export default function Pagination({totalPages, maxVisiblePages = 8}) {
+    
+    const pathname = usePathname()
     const searchParams = useSearchParams()
-    const router = useRouter()
-    const params = new URLSearchParams(searchParams.toString())
+    const currentPage = Number(searchParams.get('page')) || 1
+
+    const createPageURL = (page) => {
+        const params = new URLSearchParams(searchParams)
+        params.set('page', page.toString())
+        return `${pathname}?${params.toString()}`
+    }
+    
     const geVisiblePages = () => {
         const pages = [1]
         let start = 2
@@ -18,8 +24,8 @@ export default function Pagination({currentPage, totalPages, maxVisiblePages, se
             start = currentPage
         }
 
-        if(currentPage + 8 > totalPages){
-            start = totalPages - 7
+        if(currentPage + maxVisiblePages > totalPages){
+            start = totalPages - (maxVisiblePages - 1)
         }
 
         for(let i = 0; i < maxVisiblePages; i++){
@@ -33,28 +39,21 @@ export default function Pagination({currentPage, totalPages, maxVisiblePages, se
 
     const visiblePages = geVisiblePages()
 
-    const changePage = (pageNumber) => {
-        HandlePageChange(pageNumber, setOffset, limit, fetchDataFn, searchTerm)
-        params.set(param, pageNumber)
-        router.replace(`?${params.toString(pageNumber)}`)
-    }
-
     return (
         <Container
             padding="0"
             gap="4px"
         >
-                {visiblePages.map((pageNumber, index) => {
-                    return(
-                        <p 
-                            key={index}
-                            className={`${styles.page} p2-b` + (pageNumber === currentPage ? ` ${styles.active}` : '')}
-                            onClick={() => changePage(pageNumber)}
-                        >
-                            {pageNumber} 
-                        </p>
-                    )
-                })}
+            {visiblePages.map((pageNumber, index) => {
+                return(
+                    <Link href={createPageURL(pageNumber)} 
+                        key={index}
+                        className={`${styles.page} p2-b` + (pageNumber === currentPage ? ` ${styles.active}` : '')}
+                    >
+                        {pageNumber} 
+                    </Link>
+                )
+            })}
         </Container>
     )
 }
