@@ -39,7 +39,8 @@ class CustomerService {
      * @return {Promise<Array>} - A promise that resolves to an array of customer objects with their invoices.
      * @throws {ServiceError} - If an error occurs during customer retrieval.
      */
-    getAllCustomers(limit=10, offset=0, includeInvoices=false) {
+    getAllCustomers(limit=10, page=1, includeInvoices=false,) {
+        const offset = (page - 1) * limit
         const invoiceAssociation = {}
         if (includeInvoices) {
             invoiceAssociation.association = 'invoices'
@@ -47,18 +48,15 @@ class CustomerService {
             invoiceAssociation.order = [['id', 'DESC'], ['invoices', 'id', 'DESC']]
         }
         return this.#error.handler(['Read All Customers'], async () => {
-            const count = await this.Customer.count()
-            const customers = await this.Customer.findAll({
+
+            const customers = await this.Customer.findAndCountAll({
                 include: includeInvoices ? [invoiceAssociation] : [],
                 order: includeInvoices ? invoiceAssociation.order : [['id', 'DESC']],
                 limit: limit,
                 offset: offset
             })
             return {
-                total: count,
-                customers: customers,
-                page: Math.floor(offset / limit ) + 1,
-                pageSize: limit
+                customers: customers.rows,
             }
         })
     }
@@ -110,7 +108,8 @@ class CustomerService {
      * @return {Promise<Object>} - A promise that resolves to an object containing search results and pagination info.
      * @throws {ServiceError} - If an error occurs during the search.
      */
-    searchCustomers(query, limitResults=10, offsetResults=0) {
+    searchCustomers(query, page=1, limitResults=10,) {
+        const offsetResults = (page - 1) * limitResults
         return this.#error.handler(['Search Customers', query, 'Customer'], async () => {
             const results = await this.Customer.findAndCountAll({
                 where: {
@@ -126,9 +125,6 @@ class CustomerService {
             })
             return {
                 customers: results.rows,
-                total: results.count,
-                page: Math.floor(offsetResults / limitResults ) + 1,
-                pageSize: limitResults
             }
         })
     }
