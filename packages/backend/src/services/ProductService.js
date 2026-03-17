@@ -43,14 +43,14 @@ class ProductService{
      * @returns {Promise<Array>} - returns an array of products
      * @throws {ServiceError} - throws an error if the products could not be retrieved
      */
-    getAllProducts(limit = 10, offset = 0, includePurchasePrice = false) {
+    getAllProducts(limit = 10, page = 1, includePurchasePrice = false) {
+        const offset = (page - 1) * limit
         let attributes  = ['id', 'barcode', 'name', 'selling_price','stock']
         if (includePurchasePrice) {
             attributes.push('purchase_price')
         }
 
         return this.#error.handler(['Read All Products'], async () => {
-            const count = await this.Product.count()
             const products = await this.Product.findAll({
                 attributes: attributes,
                 order: [['name', 'ASC']],
@@ -62,9 +62,6 @@ class ProductService{
             
             return {
                 products: productsSellingPriceBs,
-                total: count,
-                page: Math.floor(offset / limit ) + 1,
-                pageSize: limit
             }
         })    
     }
