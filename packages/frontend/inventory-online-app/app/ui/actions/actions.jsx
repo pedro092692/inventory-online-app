@@ -25,8 +25,6 @@ export default function Actions (
         return `${basePath}/${enpoint}/${id}?${params.toString()}`
     }
 
-
-
     const handleDelete  = () => {
         setShowAlert(true)
     }

@@ -1,7 +1,7 @@
 import styles from './list.module.css'
 import Actions from '@/app/ui/actions/actions'
 
-export default function ListTest({
+export default function List({
         tableHead=[], 
         tableData=[], 
         userPermissions=[],

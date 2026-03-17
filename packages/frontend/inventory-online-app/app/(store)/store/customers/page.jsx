@@ -3,10 +3,12 @@ import Route from '@/app/ui/routesLinks/routes'
 import Search from "@/app/ui/form/search/search"
 import Pagination from "@/app/ui/pagination/pagination"
 import FetchData from "@/app/utils/fetch"
+import { Suspense } from "react" 
+import ListSkeleton from "@/app/ui/skeleton/listSkeleton"
+import Customers from "./_components/customers"
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default async function Customer({searchParams}) {
-    await new Promise (resolve => setTimeout(resolve, 1000))
     const params = await searchParams
     const query = params?.data || null
     const currentPage = Number(params?.page) || 1
@@ -23,7 +25,10 @@ export default async function Customer({searchParams}) {
         
             <Route path='customers' endpoints={['add', 'default']} /> 
             <Search />
-            <Pagination totalPages={3} />
+            <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={4} />}>
+                <Customers page={currentPage} query={query} />
+            </Suspense>
+            <Pagination totalPages={totalPages.total} />
         </Container>
        
     )
