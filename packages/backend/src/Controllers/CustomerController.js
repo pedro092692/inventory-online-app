@@ -63,7 +63,7 @@ class CustomerController {
         const { data } = req.query
         const limitResults = req.query.limitResults ? parseInt(req.query.limitResults) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
-         const userPermissions = this.userPermissions(req)
+        const userPermissions = this.userPermissions(req)
         const { customers } = await this.customerService.searchCustomers(data, page, limitResults)
         res.status(200).json( { customers, permissions: userPermissions } )
     })
@@ -128,3 +128,5 @@ class CustomerController {
 }
 
 export default CustomerController
+const userPermissions = new CustomerController().userPermissions
+export { userPermissions }

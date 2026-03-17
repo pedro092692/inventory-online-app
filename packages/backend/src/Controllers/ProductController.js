@@ -1,6 +1,7 @@
 import ProductService from '../services/ProductService.js'
 import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
 import { getUserRole } from '../middlewares/authorization.js'
+import { userPermissions } from './CustomerController.js'
 
 class ProductController{
     // error controller new instace 
@@ -61,12 +62,13 @@ class ProductController{
      * @returns {Promise<void>} - returns the search results in the response
      */
     searchProducts = this.#error.handler( async(req, res) => {
-        let includePurchasePrice = this.includePurchasePrice(req)
+        const includePurchasePrice = this.includePurchasePrice(req)
         const { data } = req.query
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
-        const offset = req.query.offset ? parseInt(req.query.offset) : 0
-        const { products, total, page, pageSize } = await this.ProductService.searchProducts(data, limit, offset, includePurchasePrice)
-        res.status(200).json( { products, total, page, pageSize } )
+        const page = req.query.page ? parseInt(req.query.page) : 1
+        const permissions = userPermissions(req)
+        const { products } = await this.ProductService.searchProducts(data, limit, offset, includePurchasePrice)
+        res.status(200).json( { products, permissions } )
     })
 
     /**
