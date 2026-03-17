@@ -71,7 +71,7 @@ export default function Route({path='customers', endpoints=['default', 'add'], c
                         <p style={{cursor: 'default', color: 'var(--color-neutralGrey800)'}}>{routes[path][endpiont].label}</p>
                         
                     }
-                        {index < endpoints.length -1 && '-'}
+                        {index < endpoints.length -1 && '/'}
                     </Container>
                         
                 )
