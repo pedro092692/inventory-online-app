@@ -110,7 +110,8 @@ class ProductService{
      * @return {Promise<Object>} - A promise that resolves to an object containing search results and pagination info.
      * @throws {ServiceError} - If an error occurs during the search.
      */
-    searchProducts(query, limit = 10, offset = 0, includePurchasePrice = true) {
+    searchProducts(query, page = 1, limit = 10, includePurchasePrice = true) {
+        const offset = (page - 1) * limit
         let attributes  = ['id', 'barcode', 'name', 'selling_price','stock']
         if (includePurchasePrice) {
             attributes.push('purchase_price')
@@ -133,9 +134,6 @@ class ProductService{
             const productsSellingPriceBs = await this.setSellingPriceBs(results.rows)
             return {
                 products: productsSellingPriceBs,
-                total: results.count,
-                page: Math.floor(offset / limit ) + 1,
-                pageSize: limit
             }
         })
     }
