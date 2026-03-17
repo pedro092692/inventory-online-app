@@ -1,26 +1,16 @@
 import styles from './list.module.css'
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 import Actions from '@/app/ui/actions/actions'
 
-
-export default function List({
+export default function ListTest({
         tableHead=[], 
         tableData=[], 
-        showActions=true, 
+        userPermissions=[],
+        endpoint='',
+        deleteKey = '',
+        showActions=false, 
         CustomStyles={},
         customClass='',
-        userPermission=[],
-        deletionID='id',
-        setTableData=null,
-        urlPath='',
-        showView=true, 
-        showEdit=true, 
-        showDelete=true,
     }) {
-    const page = useSearchParams().get('page') || 1
-    const search = useSearchParams().get('search') || ''
-
     return (
         <div className={`${styles.container} shadow-sm ${customClass}`} style={CustomStyles}>
             <table className={`${styles.table} p3-b`}>
@@ -57,16 +47,11 @@ export default function List({
                                             if (key === 'id' && showActions) {
                                                 return (
                                                     <td key={idx} data-label={'actions'}>
-                                                        <Actions 
-                                                            userPermission={userPermission}
-                                                            urlPath={urlPath}
-                                                            id={data[key]}
-                                                            params={`?page=${page}${search ? `&search=${search}` : ''}`}
-                                                            deletionID={deletionID}
-                                                            setTableData={setTableData}
-                                                            showView={showView}
-                                                            showEdit={showEdit}
-                                                            showDelete={showDelete}
+                                                        <Actions
+                                                            userPermissions={userPermissions}
+                                                            endpoint={endpoint}
+                                                            resourceId={data[key]}
+                                                            deleteKey={deleteKey}
                                                         />
                                                     </td>
                                                 )
