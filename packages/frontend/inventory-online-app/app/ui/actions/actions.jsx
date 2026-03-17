@@ -1,36 +1,40 @@
 'use client'
-import { useState, useEffect, use } from 'react'
 import { Container } from '@/app/ui/utils/container'
 import { Modal } from '@/app/ui/utils/alert/modal'
 import { Button } from '@/app/ui/utils/button/buttons'
-import ActionDelete from '@/app/ui/utils/delete/delete'
+import ActionDelete from '@/app/ui/utils/delete/delete.test'
+import { useSearchParams} from 'next/navigation'
+import { useState } from 'react'
 import Link from 'next/link'
 
 export default function Actions (
     {
-        userPermission=[], 
-        urlPath='', 
-        id=1, 
-        params='', 
+        userPermissions=[], 
+        resourceId = null,
+        endpoint = '',
+        deleteKey = '',
         showView=true, 
         showEdit=true, 
         showDelete=true,
-        deletionID='id',
-        setTableData=null
     }) {
-    
-    const basePath = '/store'
+    const searchParams = useSearchParams()
     const [showAlert, setShowAlert] = useState(false)
+    const createURL = (enpoint, id) => {
+        const params = new URLSearchParams(searchParams)
+        const basePath = `/store/${endpoint}`
+        return `${basePath}/${enpoint}/${id}?${params.toString()}`
+    }
+
 
 
     const handleDelete  = () => {
         setShowAlert(true)
     }
 
-    const view = (href=`${basePath}/${urlPath}/view/detail/${id}${params?params:''}`) => {
+    const view = () => {
         if (showView){
             return (
-                <Link href={href}>
+                <Link href={createURL('view/detail', resourceId)}>
                     <Button 
                         children={false}
                         showIcon={true}
@@ -45,10 +49,10 @@ export default function Actions (
         }
     }
 
-    const edit = (href=`${basePath}/${urlPath}/edit/${id}${params?params:''}`) => {
+    const edit = () => {
         if (showEdit){
             return (
-                <Link href={href}>
+                <Link href={createURL('edit', resourceId)}>
                     <Button 
                         children={false}
                         showIcon={true}
@@ -63,7 +67,7 @@ export default function Actions (
         }
     }
 
-    const remove = (href=`${basePath}/${urlPath}/delete/${id}`) => {
+    const remove = () => {
         if (showDelete){
             return (
                 <Link 
@@ -84,8 +88,7 @@ export default function Actions (
         }
     }
 
-    if (userPermission.includes('delete')) {
-        
+    if (userPermissions.includes('delete')) {
         return (
             <Container 
                 padding={'0px'}
@@ -105,12 +108,9 @@ export default function Actions (
                 >
                     <ActionDelete 
                         onClose={setShowAlert}
-                        deletionID={deletionID}
-                        urlPath={urlPath}
-                        id={id}
-                        setTableData={setTableData}
-                        show={showAlert}
-                        
+                        endpoint={endpoint}
+                        id={resourceId}
+                        deleteKey={deleteKey}
                     />
                 </Modal>
             </Container>
@@ -118,7 +118,7 @@ export default function Actions (
 
     }
 
-    if (userPermission.includes('edit')) {
+    if (userPermissions.includes('update')) {
         return (
             <Container 
                 padding={'0px'}
