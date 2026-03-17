@@ -92,7 +92,7 @@ export default function CustomerDetail() {
 
     return (
         <>
-        <Route path='customers' endpoints={['default', 'view', 'detail']} customPage={true} page={page} search={search}/> 
+        <Route path='customers' endpoints={['default', 'detail']} customPage={true} page={page} search={search}/> 
         {
             loading ? <p>Cargando...</p>
             :

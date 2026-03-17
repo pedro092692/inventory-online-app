@@ -32,7 +32,7 @@ export default function Actions (
     const view = () => {
         if (showView){
             return (
-                <Link href={createURL('view/detail', resourceId)}>
+                <Link href={createURL('detail', resourceId)}>
                     <Button 
                         children={false}
                         showIcon={true}

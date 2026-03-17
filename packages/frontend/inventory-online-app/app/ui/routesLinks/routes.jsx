@@ -12,13 +12,9 @@ export default function Route({path='customers', endpoints=['default', 'add'], c
                 href: '/store/customers/add',
                 label: 'Agregar cliente'
             },
-            view: {
-                href: customPage ? `/store/customers/view?page=${page}${search ? `&search=${search}`: ''}` : '/store/customers/view',
-                label: 'Todos los clientes'
-            },
 
             detail: {
-                href: '/store/customers/view/detail/[id]',
+                href: '/store/customers/detail/[id]',
                 label: 'Detalle del cliente'
             },
 
