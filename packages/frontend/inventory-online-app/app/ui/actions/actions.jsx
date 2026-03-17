@@ -2,7 +2,7 @@
 import { Container } from '@/app/ui/utils/container'
 import { Modal } from '@/app/ui/utils/alert/modal'
 import { Button } from '@/app/ui/utils/button/buttons'
-import ActionDelete from '@/app/ui/utils/delete/delete.test'
+import ActionDelete from '@/app/ui/utils/delete/delete'
 import { useSearchParams} from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'

@@ -1,22 +1,26 @@
+'use client'
 import { Container } from '@/app/ui/utils/container'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { deleteResource } from '@/app/utils/deleteResource'
-import { useState, useEffect, use } from 'react'
-
+import { useState, useEffect } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 
 export default function ActionDelete(
     {
+        id=null,
+        deleteKey = '',
         onClose=null, 
-        urlPath='', 
-        id=null, 
-        params=null, 
-        deletionID='id', 
-        sucessMessage='Recurso eliminado exitosamente',
-        setTableData=null,
+        endpoint='',
         isVisible=false,
+        sucessMessage='Recurso eliminado exitosamente',
     }) {
+        
     const [message, setMessage] = useState(null)
     const [errors, setErrors] = useState(null)
+
+    const { replace } = useRouter()
+    const pathname = usePathname()
+
 
     useEffect(() => {
         if (!isVisible) {
@@ -36,14 +40,14 @@ export default function ActionDelete(
 
     const handleDelete = async () => {
         if(!errors){
-            const response = await deleteResource(urlPath, {[deletionID]: id})
+            const response = await deleteResource(endpoint, {[deleteKey]: id})
             if (response === 1){
                 setMessage(sucessMessage)
                 setErrors('')
-                setTableData && setTableData(prev => prev.filter(item => item.id !== id))
+                replace(pathname)
                 setTimeout(() => {
                     onClose(false)
-                }, 1000)
+                }, 800)
             }else{
                 setErrors(response)
                 setMessage('')
