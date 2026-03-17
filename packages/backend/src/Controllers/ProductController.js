@@ -35,10 +35,10 @@ class ProductController{
     allProducts = this.#error.handler( async(req, res) => {
         let includePurchasePrice = this.includePurchasePrice(req)
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
-        const offset = req.query.offset ? parseInt(req.query.offset) : 0
-        const role = []
-        const {products, total, page, pageSize} = await this.ProductService.getAllProducts(limit, offset, includePurchasePrice)
-        res.status(200).json({products, total, page, pageSize, role})
+        const page = req.query.page ? parseInt(req.query.page) : 1
+        const permissions = userPermissions(req)
+        const {products} = await this.ProductService.getAllProducts(limit, page, includePurchasePrice)
+        res.status(200).json({products, permissions: permissions})
     })
 
     /**
@@ -67,7 +67,7 @@ class ProductController{
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
         const permissions = userPermissions(req)
-        const { products } = await this.ProductService.searchProducts(data, limit, offset, includePurchasePrice)
+        const { products } = await this.ProductService.searchProducts(data, page, limit, includePurchasePrice)
         res.status(200).json( { products, permissions } )
     })
 
