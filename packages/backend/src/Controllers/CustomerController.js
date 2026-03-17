@@ -1,6 +1,6 @@
 import CustomerService from '../services/CustomerService.js'
 import controllerErrorHandler from '../errors/controllerErrorHandler.js'
-import { getUserRole } from '../middlewares/authorization.js'
+import { getUserRole, getUserPermission } from '../middlewares/authorization.js'
 
 class CustomerController {
     #error = new controllerErrorHandler()
@@ -31,10 +31,10 @@ class CustomerController {
      */
     allCustomers = this.#error.handler( async(req, res) => {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
-        const offset = req.query.offset ? parseInt(req.query.offset) : 0
-        const role = getUserRole(req.user.role)
-        const {customers, total, page, pageSize} = await this.customerService.getAllCustomers(limit, offset)
-        res.status(200).json({customers, total, page, pageSize, role})
+        const page = req.query.page ? parseInt(req.query.page) : 1
+        const userPermissions = this.userPermissions(req)
+        const {customers} = await this.customerService.getAllCustomers(limit, page)
+        res.status(200).json({customers, permissions: userPermissions})
     })
 
     /**
@@ -62,9 +62,27 @@ class CustomerController {
     searchCustomers = this.#error.handler( async(req, res) => {
         const { data } = req.query
         const limitResults = req.query.limitResults ? parseInt(req.query.limitResults) : 10
-        const offsetResults = req.query.offsetResults ? parseInt(req.query.offsetResults) : 0
-        const { customers, total, page, pageSize } = await this.customerService.searchCustomers(data, limitResults, offsetResults)
-        res.status(200).json( { customers, total, page, pageSize } )
+        const page = req.query.page ? parseInt(req.query.page) : 1
+         const userPermissions = this.userPermissions(req)
+        const { customers } = await this.customerService.searchCustomers(data, page, limitResults)
+        res.status(200).json( { customers, permissions: userPermissions } )
+    })
+
+    /**
+     * Retrieve the total number of pages for the customers list.
+     * * @async
+     * @param {import('express').Request} req - Express request object.
+     * @param {Object} req.query - Query parameters.
+     * @param {string} [req.query.limit] - Max number of items per page (defaults to 10).
+     * @param {string} [req.query.data] - Search term to filter results.
+     * @param {import('express').Response} res - Express response object.
+     * @returns {Promise<void>} Sends a JSON response with the total page count.
+     */
+    totalPages = this.#error.handler( async(req, res) => {
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const { data } = req.query || ''
+        const total = await this.customerService.totalPages(data, limit)
+        res.status(200).json({total})
     })
 
     /**
@@ -94,6 +112,19 @@ class CustomerController {
         await this.customerService.deleteCustomer(customerId)
         res.status(204).json({})
     })
+
+    
+    /**
+    * Retrieves the permissions associated with the user's role based on the request.
+    * @param {Object} req - The object of the request.
+    * @param {Object} req.user - The authenticated user's credentials.
+    * @param {string} req.user.role - The user's role (e.g., 'admin', 'editor', 'guest').
+    * @returns {Array<string>} A list of strings with the permissions allowed for the role.
+    */
+    userPermissions(req) {
+         const userPermissions = getUserPermission(req.user.role)
+         return userPermissions
+    }
 }
 
 export default CustomerController
