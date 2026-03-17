@@ -13,6 +13,7 @@ import Pagination from '@/app/ui/pagination/pagination'
 import { updatePagination } from '@/app/utils/updatePagination'
 import GetQueryParam from '@/app/utils/getQueryParam'
 import { Container } from '@/app/ui/utils/container'
+import { useSearchParams } from 'next/navigation'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default function CustomerDetail() {
@@ -28,7 +29,6 @@ export default function CustomerDetail() {
     const [tableData, setTableData] = useState([])
     const page = GetQueryParam('page') || 1
     const search = GetQueryParam('search') || ''
-    
 
     const customerInfo = async (invoiceLimit, offsetInvoices) => {
         const endpoint = `/api/customers/${id}`
@@ -92,7 +92,7 @@ export default function CustomerDetail() {
 
     return (
         <>
-        <Route path='customers' endpoints={['default', 'detail']} customPage={true} page={page} search={search}/> 
+        <Route path='customers' endpoints={['default', 'detail']} /> 
         {
             loading ? <p>Cargando...</p>
             :

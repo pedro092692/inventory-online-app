@@ -3,7 +3,7 @@ import { Form } from '@/app/ui/form/form/form'
 import { Input } from '@/app/ui/form/input/input'
 import styles from './search.module.css'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 
 export default function Search ({ 
@@ -14,8 +14,12 @@ export default function Search ({
     const { replace} = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
-    let query = searchParams.get('data') || ''
+    const query = searchParams.get('data') || ''
     const [value, setValue] = useState(query)
+    
+    useEffect(() => {
+        setValue(query)
+    }, [query])
 
     const handleInputChange = (e) => {
         const value = e.target.value

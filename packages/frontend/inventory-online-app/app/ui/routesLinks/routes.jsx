@@ -1,44 +1,46 @@
+'use client'
 import Link from 'next/link'
 import { Container } from '../utils/container'
+import { useSearchParams } from 'next/navigation'
 
-export default function Route({path='customers', endpoints=['default', 'add'], customPage=false, page=null, search=''}) {
+export default function Route({path='customers', endpoints=['default', 'add'] }) {
+    const endpoint = `/store/${path}`
+    const params = useSearchParams()
+    
+
     const routes = {
         customers: {
             default: {
-                href: customPage ? `/store/customers?page=${page}${search ? `&search=${search}`: ''}` : '/store/customers',
+                href: `${endpoint}?${params.toString()}`,
                 label: 'Clientes'
             },
             add: {
-                href: '/store/customers/add',
+                href: `${endpoint}/add`,
                 label: 'Agregar cliente'
             },
 
             detail: {
-                href: '/store/customers/detail/[id]',
+                href: `${endpoint}/detail/[id]`,
                 label: 'Detalle del cliente'
             },
 
             edit: {
-                href: '/store/customers/edit/[id]',
+                href: `${endpoint}/edit/[id]`,
                 label: 'Editar cliente'
             }
         },
 
         products: {
             default: {
-                href: customPage ? `/store/products?page=${page}${search ? `&search=${search}`: ''}` : '/store/products',
+                href: `${endpoint}?${params.toString()}`,
                 label: 'Productos'
             },
             add: {
-                href: '/store/products/add',
+                href: `${endpoint}/add`,
                 label: 'Agregar producto'
             },
-            view: {
-                href: '/store/products/view',
-                label: 'Todos los productos'
-            },
             edit: {
-                href: '/store/products/edit/[id]',
+                href: `${endpoint}/edit/[id]`,
                 label: 'Editar producto'
 
             }
