@@ -105,9 +105,53 @@ export default function CustomerDetail() {
                     <Input type="text" icon="phone" value={`${customer?.phone}`} name={'cellphone'} readOnly={true}/>        
                 </Form>
 
-                
+                {   
+                    customer.invoices.length > 0 ?
+                    <Container listContiner={true}>
+                        <p style={{marginTop: '15px'}} className='p1-r'>Facturas De: {`${customer?.name}`}</p>
+                        <Search 
+                            placeHolder={'Buscar N° de Recibo...'}
+                            inputMode={'numeric'}
+                            value={query}
+                            searchFn={searchInvoices}
+                            limit={invoiceLimit}
+                            offset={offsetInvoices}
+                            setOffset={setOffsetInvoices}
+                            setURLParam={false}
+                        />
+                        <List tableHead={
+                            {
+                            'bill_id': 'N° Recibo',
+                            'total': 'Total',
+                            'status': 'Estado',
+                            'date': 'Fecha',
+                            'actions': 'Acciones',
+                            }
+                        } 
+                            tableData={tableData}  
+                            actions={[]}
+                            showActions={false}
+                            CustomStyles={{height: '317px'}}
+                            customClass={styles.table}
+                        />
+                        <Pagination
+                            currentPage={invoicePage}
+                            totalPages={totalInvoices}
+                            maxVisiblePages={maxVisiblePages}
+                            setOffset={setOffsetInvoices}
+                            limit={invoiceLimit}
+                            param={'invoice_page'}
+                            fetchDataFn={query ? searchInvoices : customerInfo}
+                            searchTerm={query}
+                        />
+
+                    </Container>
+                    :
+                    <p style={{marginTop: '15px'}}>El cliente no tiene facturas</p>
+                }
             </>
         }
         </>
     )
 }
+
