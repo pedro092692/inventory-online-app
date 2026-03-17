@@ -141,6 +141,34 @@ class ProductService{
     }
 
     /**
+     * Calculates the total number of pages for products results based on a search query and limit.
+     * * @param {string} [query=''] - The search term to filter products by name or barcode.
+     * @param {number} [limit=10] - The number of records to display per page.
+     * @returns {Promise<number>} A promise that resolves to the total number of calculated pages.
+     * @throws Will be handled by the internal error handler.
+     */
+    totalPages(query = '',  limit = 10) {
+        return this.#error.handler(['Total pages', query, 'Customer'], async () => {
+            if (!query) {
+                const count = await this.Product.count()
+                return Math.ceil(count / limit)
+            }
+
+            const results = await this.Product.findAndCountAll({
+                where: {
+                    [Op.or]: [
+                        { name: {[Op.substring]: query.toLowerCase()} },
+                        { barcode: {[Op.substring]: query.toLowerCase()} }
+                    ]
+                }
+            })
+            
+            return Math.ceil(results.count / limit)
+
+        })
+    }
+
+    /**
      * Updates a product by its ID.
      * @param {Number} productId - id of the product to update
      * @param {Object} updates - object containing the updates to be made
