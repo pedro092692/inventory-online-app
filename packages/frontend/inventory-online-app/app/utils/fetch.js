@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
 
-export default async function FetchDataTest(url, method, body = null) {
+export default async function FetchData(url, method, body = null) {
     const cookieStore = await cookies()
     const token = cookieStore.get('access_token')?.value
     // await new Promise (resolve => setTimeout(resolve, 100))
