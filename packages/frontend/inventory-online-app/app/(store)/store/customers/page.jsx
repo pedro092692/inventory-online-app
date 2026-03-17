@@ -1,7 +1,8 @@
 import { Container } from "@/app/ui/utils/container"
 import Route from '@/app/ui/routesLinks/routes'
 
-export default async function Customer({children}) {
+export default async function Customer({searchParams}) {
+    // await new Promise (resolve => setTimeout(resolve, 1000))
     return (
         <Container
             direction={'column'}
