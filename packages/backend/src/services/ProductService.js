@@ -143,7 +143,7 @@ class ProductService{
      * @throws Will be handled by the internal error handler.
      */
     totalPages(query = '',  limit = 10) {
-        return this.#error.handler(['Total pages', query, 'Customer'], async () => {
+        return this.#error.handler(['Total pages', query, 'Product'], async () => {
             if (!query) {
                 const count = await this.Product.count()
                 return Math.ceil(count / limit)

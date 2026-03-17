@@ -1,25 +1,23 @@
-'use client'
-import { Container } from '@/app/ui/utils/container'
-import axios from 'axios'
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import ViewProducts from '@/app/ui/products/all/allProducts'
+import { Container } from "@/app/ui/utils/container"
+import Route from '@/app/ui/routesLinks/routes'
+import Search from "@/app/ui/form/search/search"
+import Pagination from "@/app/ui/pagination/pagination"
+import FetchData from "@/app/utils/fetch"
+import { Suspense } from "react" 
+import ListSkeleton from "@/app/ui/skeleton/listSkeleton"
+// import Products from "./_components/products"
+const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
-export default function Products() {
+export default async function Product({searchParams}) {
+  const params = await searchParams
+  const query = params?.data || null
+  const currentPage = Number(params?.page) || 1
+  const totalPages = await FetchData(`${NEXT_PUBLIC_API_BASE_URL}/api/products/total-pages${query ? `?data=${query}` : '' }`, 'GET')
+
+
   return (
-    <Container
-        direction={'column'}
-        alignItem={'start'}
-        padding='0px'
-        width='100%'
-    >
-        {/* // add new product  */}
-        <Link href="/store/products/add">Agregar un nuevo producto</Link>
-        {/* view all products */}
-        <ViewProducts />
-    </Container>
+    <p>hola</p>
   )
 }
-
 
 
