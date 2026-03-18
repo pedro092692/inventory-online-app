@@ -24,7 +24,9 @@ export default async function Customer({searchParams}) {
         >
         
             <Route path='customers' endpoints={['add', 'default']} /> 
-            <Search />
+            <Search 
+                placeHolder="Buscar cliente por Nombre, Cédula"
+            />
             <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={4} />}>
                 <Customers page={currentPage} query={query} />
             </Suspense>

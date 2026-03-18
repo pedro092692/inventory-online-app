@@ -78,7 +78,7 @@ export default function ViewProducts() {
                     purchase_price: `${product.purchase_price} $`,
                     selling_price: `${product.selling_price} $`,
                     selling_price_bs: 
-                        new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(product.reference_selling_price),
+                    new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(product.reference_selling_price),
                     stock: product.stock,
                     id: product.id
                 }

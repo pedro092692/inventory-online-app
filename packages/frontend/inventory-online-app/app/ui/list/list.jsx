@@ -10,6 +10,9 @@ export default function List({
         showActions=false, 
         CustomStyles={},
         customClass='',
+        showView=true,
+        showEdit=true,
+        showDelete=true,
     }) {
     return (
         <div className={`${styles.container} shadow-sm ${customClass}`} style={CustomStyles}>
@@ -52,6 +55,9 @@ export default function List({
                                                             endpoint={endpoint}
                                                             resourceId={data[key]}
                                                             deleteKey={deleteKey}
+                                                            showView={showView}
+                                                            showEdit={showEdit}
+                                                            showDelete={showDelete}
                                                         />
                                                     </td>
                                                 )
