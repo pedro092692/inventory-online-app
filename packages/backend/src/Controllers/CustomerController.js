@@ -86,6 +86,23 @@ class CustomerController {
     })
 
     /**
+     * Retrieve the total number of pages of invoices the select customer.
+     * * @async
+     * @param {import('express').Request} req - Express request object.
+     * @param {Object} req.query - Query parameters.
+     * @param {string} [req.query.limit] - Max number of items per page (defaults to 8).
+     * @param {string} [req.query.id] - The customer id to filter results.
+     * @param {import('express').Response} res - Express response object.
+     * @returns {Promise<void>} Sends a JSON response with the total page count.
+     */
+    getTotalCustomerInvoices = this.#error.handler( async(req, res) => {
+        const { id } = req.query.id || null
+        const limit = req.query.limit ? parseInt(req.query.limit) : 8
+        const total = await this.customerService.getTotalCustoemerInvoices(id, limit)
+        res.status(200).json({total})
+    })
+
+    /**
      * Updates a customer by their ID.
      * @param {Object} req - request object containing the customer ID and updates in the body
      * @param {Object} res - response object to send the updated customer
