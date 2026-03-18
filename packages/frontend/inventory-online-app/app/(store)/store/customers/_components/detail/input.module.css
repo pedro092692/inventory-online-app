@@ -1,0 +1,29 @@
+.inputNumber::-webkit-inner-spin-button,
+.inputNumber::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.inputNumber {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.inputReadOnly{
+  cursor: auto;
+}
+
+.formview {
+  margin-top: 16px;
+  background: var(--color-neutralGrey500);
+  padding: 16px;
+  width: 50% !important;
+  flex-grow: 0 !important;
+  border-radius: 8px;
+}
+
+.table td[data-label="bill_id"],
+.table td[data-label="total"],
+.table td[data-label="date"]{
+    text-align: right;
+}

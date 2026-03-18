@@ -1,3 +1,4 @@
+'use client'
 import styles from './input.module.css'
 import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'

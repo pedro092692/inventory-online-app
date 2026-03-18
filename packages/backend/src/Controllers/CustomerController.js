@@ -96,7 +96,7 @@ class CustomerController {
      * @returns {Promise<void>} Sends a JSON response with the total page count.
      */
     getTotalCustomerInvoices = this.#error.handler( async(req, res) => {
-        const { id } = req.query.id || null
+        const id  = req.query.id ? parseInt(req.query.id) : null
         const limit = req.query.limit ? parseInt(req.query.limit) : 8
         const total = await this.customerService.getTotalCustoemerInvoices(id, limit)
         res.status(200).json({total})
