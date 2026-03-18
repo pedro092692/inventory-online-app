@@ -71,7 +71,6 @@ class CustomerService {
     getCustomerById(id, pageInvoices=1, limitInvoices=8) {
         const offsetInvoices = (pageInvoices - 1) * limitInvoices
         return this.#error.handler(['Read Customer', id, 'Customer'], async () => {
-            let totalInvoices = 0
             const customer = await this.Customer.findByPk(id, {
                 include: [
                     {
@@ -91,6 +90,22 @@ class CustomerService {
             return {
                 customer: customer
             }
+        })
+    }
+
+    /**
+     * Retrieves the total count of invoices associated with a specific customer.
+     * @param {string|number} id - The unique identifier of the customer.
+     * @returns {Promise<number>} A promise that resolves to the total number of invoices.
+     * @throws {Error} If the database query fails, handled by the internal error handler.
+     */
+    getTotalCustoemerInvoices(id) {
+        return this.#error.handler(['Read Customer Tootal Invoices', id, 'Customer'], async () => {
+            const totalInvoices = await this.Invoice.count({
+                where: { customer_id: id }
+            })
+
+            return totalInvoices
         })
     }
 
