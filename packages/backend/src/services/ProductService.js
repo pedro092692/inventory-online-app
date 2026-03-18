@@ -1,7 +1,7 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import DollarValueService from './DollarValueService.js'
-import { Op } from 'sequelize'
+import { Op, ValidationError} from 'sequelize'
 
 class ProductService{
     // instance of error handler
@@ -82,7 +82,6 @@ class ProductService{
             
             // add reference selling price to product 
             if(priceReference){
-                
                 // get the last dollar value
                 const dollarValue = await this.dollarValue.getLastValue()
 
@@ -191,6 +190,10 @@ class ProductService{
     deleteProduct(productId) {
         return this.#error.handler(['Delete Product', productId, 'Product'], async() => {
             const product = await this.getProduct(productId, false)
+            const productInvoices = await product.getInvoices()
+            if (productInvoices.length > 0) {
+                throw new ValidationError('No se puede eliminar un producto con facturas asociadas')
+            }
             // delete product
             await product.destroy()
             return 1
