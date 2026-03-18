@@ -68,7 +68,8 @@ class CustomerService {
      * @throws {NotFoundError} - If the customer is not found.
      * @throws {ServiceError} - If an error occurs during customer retrieval.
      */
-    getCustomerById(id, limitInvoices=8, offsetInvoices=0) {
+    getCustomerById(id, pageInvoices=1, limitInvoices=8) {
+        const offsetInvoices = (pageInvoices - 1) * limitInvoices
         return this.#error.handler(['Read Customer', id, 'Customer'], async () => {
             let totalInvoices = 0
             const customer = await this.Customer.findByPk(id, {
@@ -86,16 +87,9 @@ class CustomerService {
             if (!customer) {
                 throw new NotFoundError()
             }
-            if (customer.invoices.length > 0){
-                    totalInvoices = await this.Invoice.count({
-                    where: { customer_id: id }
-                })
-            }
+            
             return {
-                customer: customer,
-                totalInvoices: totalInvoices,
-                pageInvoices: Math.floor(offsetInvoices / limitInvoices ) + 1,
-                pageSizeInvoices: limitInvoices
+                customer: customer
             }
         })
     }
