@@ -1,4 +1,4 @@
-import ListSkeleton from "@/app/ui/skeleton/listSkeleton"
+import ListSkeleton from "@/app/ui/skeleton/list/listSkeleton"
 import Route from '@/app/ui/routesLinks/routes'
 import Search from "@/app/ui/form/search/search"
 

@@ -10,7 +10,7 @@ const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:/
 
 export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuery = null, totalInvoicePages = 0}) {
 
-    
+    await new Promise (resolve => setTimeout(resolve, 1000))
     const fetch = withErrorHandler(FetchData, 'hubo un error inesperado')
    
     const endpoint = `/api/customers/${id}`

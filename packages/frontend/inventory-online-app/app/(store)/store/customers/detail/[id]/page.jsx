@@ -4,6 +4,7 @@ import CustomerInfo from '@/app/(store)/store/customers/_components/detail/detai
 import { Suspense } from 'react'
 import FetchData from '@/app/utils/fetch'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
+import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default async function CustomerDetail({ params, searchParams }) {
@@ -24,7 +25,7 @@ export default async function CustomerDetail({ params, searchParams }) {
         >
             <Route path='customers' endpoints={['default', 'detail']} queryString={queryString}/> 
 
-            <Suspense fallback={<p>Cargando...</p>}>
+            <Suspense fallback={<FormSkeleton nFields={3}/>}>
                 <CustomerInfo 
                     id={id} 
                     page={invoicePage}

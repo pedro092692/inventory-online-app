@@ -4,7 +4,7 @@ import Search from "@/app/ui/form/search/search"
 import Pagination from "@/app/ui/pagination/pagination"
 import FetchData from "@/app/utils/fetch"
 import { Suspense } from "react" 
-import ListSkeleton from "@/app/ui/skeleton/listSkeleton"
+import ListSkeleton from "@/app/ui/skeleton/list/listSkeleton"
 import Products from "./_components/products"
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
