@@ -2,14 +2,16 @@ import Link from 'next/link'
 import { Container } from '../utils/container'
 
 
-export default function Route({path='customers', endpoints=['default', 'add'] }) {
+export default function Route({path='customers', endpoints=['default', 'add'], queryString='' }) {
     const endpoint = `/store/${path}`
-    
+    const withParams = (url) => {
+        return queryString ? `${url}?${queryString}` : url
+    }
 
     const routes = {
         customers: {
             default: {
-                href: `${endpoint}`,
+                href: withParams(endpoint),
                 label: 'Clientes'
             },
             add: {
@@ -30,7 +32,7 @@ export default function Route({path='customers', endpoints=['default', 'add'] })
 
         products: {
             default: {
-                href: `${endpoint}`,
+                href: withParams(endpoint),
                 label: 'Productos'
             },
             add: {
