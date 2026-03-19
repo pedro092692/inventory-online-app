@@ -25,7 +25,7 @@ export default async function CustomerDetail({ params, searchParams }) {
         >
             <Route path='customers' endpoints={['default', 'detail']} queryString={queryString}/> 
 
-            <Suspense fallback={<FormSkeleton nFields={3}/>}>
+            <Suspense key={id} fallback={<FormSkeleton nFields={3}/>}>
                 <CustomerInfo 
                     id={id} 
                     page={invoicePage}

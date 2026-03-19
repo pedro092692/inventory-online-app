@@ -1,7 +1,8 @@
 import FetchData from '@/app/utils/fetch'
 import { withErrorHandler } from '@/app/errors/withErrorHandler'
 import CustomerDetailForm from '@/app/(store)/store/customers/_components/detail/formDetail'
-import CustomerInvoices from '@/app/(store)/store/customers/_components/invoices/invoices'
+import CustomerInvoicesWrapper from '@/app/(store)/store/customers/_components/detail/customerInvoices'
+import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
 import Search from '@/app/ui/form/search/search'
 import Pagination from '@/app/ui/pagination/pagination'
 import { Suspense } from 'react'
@@ -9,10 +10,9 @@ const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:/
 
 
 export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuery = null, totalInvoicePages = 0}) {
-
-    await new Promise (resolve => setTimeout(resolve, 1000))
+    
     const fetch = withErrorHandler(FetchData, 'hubo un error inesperado')
-   
+
     const endpoint = `/api/customers/${id}`
     const params = new URLSearchParams()
     params.append('limitInvoices', limit)
@@ -24,20 +24,7 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
     const response = await fetch(url, 'GET')
     const {data, error} = response
     const customer = data?.customer || null
-    let invoices = customer?.invoices || []
-    let searchIsActive = false
     
-   if (invoiceQuery) {
-        const endpoint = `${NEXT_PUBLIC_API_BASE_URL}/api/invoices/search`
-        const url = `${endpoint}?invoice=${invoiceQuery}&customer_id=${id}&limit=${limit}&invoice_page=${page}`
-
-        const res = await fetch(url, 'GET')
-
-        invoices = res.data?.invoices || []
-        totalInvoicePages = res.data?.totalPages || 1
-        searchIsActive = true
-
-    }
 
     return (
         <>
@@ -51,7 +38,19 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
                         paramName="invoice"
                         page_param="invoice_page"
                     />
-                    <CustomerInvoices invoices={invoices} searchIsActive={searchIsActive} />
+                    <Suspense
+                        key={invoiceQuery + page}
+                        fallback={<ListSkeleton nRows={4} nTitle={6} customStyles={{height: '317px'}}/>}
+                    >
+                        <CustomerInvoicesWrapper 
+                            id={id} 
+                            page={page} 
+                            invoiceQuery={invoiceQuery} 
+                            limit={limit}
+                        />
+                    </Suspense>
+                   
+                    
                     <Pagination totalPages={totalInvoicePages} paramName={'invoice_page'} />
                 </>
                 

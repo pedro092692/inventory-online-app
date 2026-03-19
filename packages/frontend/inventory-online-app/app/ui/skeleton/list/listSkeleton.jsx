@@ -1,9 +1,10 @@
 import styles from './list.module.css'
 import { Container } from '@/app/ui/utils/container'
-export default function ListSkeleton({nTitle = 5, nRows = 8}) {
+export default function ListSkeleton({nTitle = 5, nRows = 8, 
+                customStyles={} }) {
     
     return (
-        <div className={`${styles.container} shadow-sm`} >
+        <div className={`${styles.container} shadow-sm`} style={customStyles}>
             <Container
                 direction='column'
                 alignItem='start'
