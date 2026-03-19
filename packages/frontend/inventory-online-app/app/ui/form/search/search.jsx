@@ -8,13 +8,16 @@ import { useDebouncedCallback } from 'use-debounce'
 
 export default function Search ({ 
     placeHolder="Buscar...", 
+    paramName="data",
     inputMode=null,
+    page_param='page'
+
 }) {
 
     const { replace} = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
-    const query = searchParams.get('data') || ''
+    const query = searchParams.get(paramName) || ''
     const [value, setValue] = useState(query)
     
     useEffect(() => {
@@ -37,12 +40,12 @@ export default function Search ({
     }
 
       const handleSearch = useDebouncedCallback((term) => {
-        const params = new URLSearchParams(searchParams)
-        params.set('page', '1')
+        const params = new URLSearchParams(searchParams.toString())
+        params.set(page_param, '1')
         if (term) {
-            params.set('data', term)
+            params.set(paramName, term)
         }else {
-            params.delete('data')
+            params.delete(paramName)
         }
         replace(`${pathname}?${params.toString()}`)
     }, 300)
@@ -57,7 +60,6 @@ export default function Search ({
                     className={styles.input}
                     autoFocus={true}
                     onChange={(e) => handleInputChange(e)}
-                    defaultValue={query}
                     value={value}
                     inputMode={inputMode}
             />

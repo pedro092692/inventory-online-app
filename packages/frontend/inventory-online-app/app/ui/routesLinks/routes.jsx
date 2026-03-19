@@ -1,17 +1,15 @@
-'use client'
 import Link from 'next/link'
 import { Container } from '../utils/container'
-import { useSearchParams } from 'next/navigation'
+
 
 export default function Route({path='customers', endpoints=['default', 'add'] }) {
     const endpoint = `/store/${path}`
-    const params = useSearchParams()
     
 
     const routes = {
         customers: {
             default: {
-                href: `${endpoint}?${params.toString()}`,
+                href: `${endpoint}`,
                 label: 'Clientes'
             },
             add: {
@@ -32,7 +30,7 @@ export default function Route({path='customers', endpoints=['default', 'add'] })
 
         products: {
             default: {
-                href: `${endpoint}?${params.toString()}`,
+                href: `${endpoint}`,
                 label: 'Productos'
             },
             add: {

@@ -271,7 +271,8 @@ class InvoiceService {
      * @returns {Promise<{invoices: Object[], total: number, page: number, pageSize: number}>} 
      * A promise that resolves to an object containing the list of invoices, total record count, current page, and page size.
      */
-    searchInvoicesById(query, customerId=null, limit=10, offset=0){
+    searchInvoicesById(query, customerId=null, page = 1, limit=10,){
+        const offset = (page - 1) * limit;
         return this.#error.handler(['Search Invoices', query, 'Invoice'], async () => {
         if (!query) {
             throw new Error('Search query is required')
@@ -296,9 +297,7 @@ class InvoiceService {
 
         return {
             invoices: result.rows,
-            total: result.count,
-            page: Math.floor(offset / limit) + 1,
-            pageSize: limit
+            totalPages: Math.ceil(result.count / limit),
             }
         })
     }

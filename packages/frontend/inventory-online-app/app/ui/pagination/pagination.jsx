@@ -3,15 +3,15 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { Container } from '@/app/ui/utils/container'
 import styles from './pagination.module.css'
 import Link from 'next/link'
-export default function Pagination({totalPages, maxVisiblePages = 8}) {
+export default function Pagination({totalPages, paramName = 'page', maxVisiblePages = 8}) {
     
     const pathname = usePathname()
     const searchParams = useSearchParams()
-    const currentPage = Number(searchParams.get('page')) || 1
+    const currentPage = Number(searchParams.get(paramName)) || 1
 
     const createPageURL = (page) => {
         const params = new URLSearchParams(searchParams)
-        params.set('page', page.toString())
+        params.set(paramName, page.toString())
         return `${pathname}?${params.toString()}`
     }
     

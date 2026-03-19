@@ -98,12 +98,16 @@ class InvoiceController {
      * @returns {Promise<void>} Sends a JSON response with invoices, total count, current page, and pageSize.
      */
     searchInvoicesbyId = this.#error.handler( async(req, res) => {
-        const { query } = req.query
-        const { customer_id } = req.query
-        const limit = req.query.limit ? parseInt(req.query.limit) : 10
-        const offset = req.query.offset ? parseInt(req.query.offset) : 0
-        const { invoices, total, page, pageSize } = await this.invoiceService.searchInvoicesById(query, customer_id ? parseInt(customer_id) : null, limit, offset)
-        res.status(200).json({ invoices, total, page, pageSize })
+        const invoice = req.query.invoice ? req.query.invoice : null
+        const customer_id  = req.query.customer_id ? req.query.customer_id : null
+        if (invoice){
+            const limit = req.query.limit ? parseInt(req.query.limit) : 8
+            const invoice_page = req.query.invoice_page ? parseInt(req.query.invoice_page) : 1
+            const { invoices, totalPages } = await this.invoiceService.searchInvoicesById(invoice, customer_id, invoice_page, limit)
+            res.status(200).json({ invoices, totalPages })
+            return
+        }
+        res.status(200).json({'message': 'No invoices found'})
     })
 
     /**
