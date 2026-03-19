@@ -1,6 +1,5 @@
 import List from '@/app/ui/list/list'
-import FetchData from '@/app/utils/fetch'
-import { withErrorHandler } from '@/app/errors/withErrorHandler'
+import styles from '@/app/(store)/store/customers/detail/[id]/input.module.css'
 
 export default function CustomerInvoices({ invoices, searchIsActive = false}) {
     const tableHead = {
@@ -30,7 +29,13 @@ export default function CustomerInvoices({ invoices, searchIsActive = false}) {
     return (
         <>
             {customerInvoices.length > 0 || searchIsActive ? 
-                <List tableHead={tableHead} tableData={customerInvoices} showActions={false} />
+                <List 
+                    tableHead={tableHead} 
+                    tableData={customerInvoices} 
+                    showActions={false} 
+                    CustomStyles={{height: '317px'}}
+                    customClass={styles.table}
+                />
                 :
                 <p>El cliente no tiene facturas</p>
             }

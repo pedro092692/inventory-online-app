@@ -44,6 +44,7 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
             <CustomerDetailForm customer={customer}/>
             {totalInvoicePages > 0 ?
                 <>
+                    <p style={{marginTop: '15px'}} className='p1-r'>Facturas De: {`${customer?.name}`}</p>
                     <Search 
                         placeHolder="Buscar N° de Recibo..."
                         inputMode="number"
@@ -55,7 +56,7 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
                 </>
                 
                 : 
-                <p>El cliente no tiene facturas</p>
+                <p className='p1-b' style={{marginTop: '15px'}}>El cliente no tiene facturas</p>
             
             }
         </>
