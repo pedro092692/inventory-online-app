@@ -85,7 +85,7 @@ class ProductController{
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const { data } = req.query || ''
         const total = await this.ProductService.totalPages(data, limit)
-        res.status(200).json({total})
+        res.status(500).json({total})
     })
 
     /**
