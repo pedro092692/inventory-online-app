@@ -14,6 +14,7 @@ async function deleteResource(endpoint, body) {
         if (error.status === 400 && (error.message.error)) { 
             return error.message.error
         }
+        return 'Something went wrong'
     }   
 }
 
