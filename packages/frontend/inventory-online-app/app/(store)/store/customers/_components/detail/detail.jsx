@@ -11,7 +11,7 @@ const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:/
 
 export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuery = null, totalInvoicePages = 0}) {
     
-    const fetch = withErrorHandler(FetchData, 'hubo un error inesperado')
+    const fetch = withErrorHandler(FetchData, 'hubo un error inesperado al cargar el cliente')
 
     const endpoint = `/api/customers/${id}`
     const params = new URLSearchParams()
@@ -25,38 +25,47 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
     const {data, error} = response
     const customer = data?.customer || null
     
-
     return (
-        <>
-            <CustomerDetailForm customer={customer}/>
-            {totalInvoicePages > 0 ?
-                <>
-                    <p style={{marginTop: '15px'}} className='p1-r'>Facturas De: {`${customer?.name}`}</p>
-                    <Search 
-                        placeHolder="Buscar N° de Recibo..."
-                        inputMode="number"
-                        paramName="invoice"
-                        page_param="invoice_page"
-                    />
-                    <Suspense
-                        key={invoiceQuery + page}
-                        fallback={<ListSkeleton nRows={4} nTitle={6} customStyles={{height: '317px'}}/>}
-                    >
-                        <CustomerInvoicesWrapper 
-                            id={id} 
-                            page={page} 
-                            invoiceQuery={invoiceQuery} 
-                            limit={limit}
-                        />
-                    </Suspense>
-                   
-                    
-                    <Pagination totalPages={totalInvoicePages} paramName={'invoice_page'} />
-                </>
-                
+        <>  
+            {
+                error ? 
+                (    
+                    <p className='p2-r errorMsg'>{error}</p>
+                ) 
                 : 
-                <p className='p1-b' style={{marginTop: '15px'}}>El cliente no tiene facturas</p>
-            
+                <>
+                    <CustomerDetailForm customer={customer}/>
+                
+                    {totalInvoicePages > 0 ?
+                        <>
+                            <p style={{marginTop: '15px'}} className='p1-r'>Facturas De: {`${customer?.name}`}</p>
+                            <Search 
+                                placeHolder="Buscar N° de Recibo..."
+                                inputMode="number"
+                                paramName="invoice"
+                                page_param="invoice_page"
+                            />
+                            <Suspense
+                                key={invoiceQuery + page}
+                                fallback={<ListSkeleton nRows={4} nTitle={6} customStyles={{height: '317px'}}/>}
+                            >
+                                <CustomerInvoicesWrapper 
+                                    id={id} 
+                                    page={page} 
+                                    invoiceQuery={invoiceQuery} 
+                                    limit={limit}
+                                />
+                            </Suspense>
+                        
+                            
+                            <Pagination totalPages={totalInvoicePages} paramName={'invoice_page'} />
+                        </>
+                        
+                        : 
+                        <p className='p1-b' style={{marginTop: '15px'}}>El cliente no tiene facturas</p>
+                    
+                    }
+                </>
             }
         </>
     )
