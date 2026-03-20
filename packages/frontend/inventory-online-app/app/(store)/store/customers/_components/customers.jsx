@@ -51,7 +51,7 @@ export default async function Customers({ limit = 10, page = 1, query = null}){
     if (error) {
         return (
             <div>
-                <p>{error}</p>
+                <p className='p2-r errorMsg'>{error}</p>
             </div>
         )
     }
