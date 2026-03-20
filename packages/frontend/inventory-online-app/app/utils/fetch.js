@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-
+import { withErrorHandler } from '@/app/errors/withErrorHandler'
 export default async function FetchData(url, method, body = null) {
     const cookieStore = await cookies()
     const token = cookieStore.get('access_token')?.value

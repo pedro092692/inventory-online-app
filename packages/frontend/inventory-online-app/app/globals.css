@@ -233,6 +233,12 @@ a {
   width: 100%;
 }
 
+/*Error message*/
+.errorMsg {
+  color: var(--color-accentRed400);
+}
+
+/*end Error message*/
 
 /* others*/
 .shadow {
