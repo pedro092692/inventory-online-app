@@ -10,7 +10,7 @@ const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:/
 
 
 export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuery = null, totalInvoicePages = 0}) {
-    
+    let totalPages = totalInvoicePages
     const fetch = withErrorHandler(FetchData, 'hubo un error inesperado al cargar el cliente')
 
     const endpoint = `/api/customers/${id}`
@@ -24,6 +24,14 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
     const response = await fetch(url, 'GET')
     const {data, error} = response
     const customer = data?.customer || null
+    
+    if (invoiceQuery) {
+        const endpoint = `/api/invoices/search?invoice=${invoiceQuery}&customer_id=${id}&limit=${limit}&invoice_page=${page}`
+        const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}`
+        const res = await fetch(url, 'GET')
+        const {data, error} = res
+        totalPages = data?.totalPages || 1
+    }
     
     return (
         <>  
@@ -58,7 +66,7 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
                             </Suspense>
                         
                             
-                            <Pagination totalPages={totalInvoicePages} paramName={'invoice_page'} />
+                            <Pagination totalPages={totalPages} paramName={'invoice_page'} />
                         </>
                         
                         : 

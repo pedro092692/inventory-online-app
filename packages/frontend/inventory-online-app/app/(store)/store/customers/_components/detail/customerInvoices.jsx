@@ -8,14 +8,16 @@ export default async function CustomerInvoicesWrapper({id, page, invoiceQuery, l
     const endpoint = invoiceQuery
     ? `/api/invoices/search?invoice=${invoiceQuery}&customer_id=${id}&limit=${limit}&invoice_page=${page}`
     : `/api/customers/${id}?limitInvoices=${limit}&pageInvoices=${page}` 
-
+    
     const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}`
-    const fetch = withErrorHandler(FetchData, 'hubo un error inesperado')
-
+    const fetch = withErrorHandler(FetchData, 'hubo un error inesperado al cargar las facturas del cliente')
+ 
     const response = await fetch(url, 'GET')
     const {data, error} = response
-    let invoices = data?.customer?.invoices || []
-
+    let invoices = data?.customer?.invoices || data?.invoices ||[]
+    if (error) {
+        return <p className='p2-r errorMsg'>{error}</p>
+    }
     return <CustomerInvoices invoices={invoices} searchIsActive={invoiceQuery ? true : false} />
 
 }
