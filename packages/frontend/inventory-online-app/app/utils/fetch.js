@@ -24,8 +24,12 @@ export default async function FetchData(url, method, body = null) {
             throw new Error('Something went wrong')
         }
 
+        if (response.status === 404) {
+            throw new Error('Not found')
+        }
+    
         return {
-            errors: data?.errors || data?.message || 'Something went wrong'
+            errors: data?.errors || data?.message || data?.error ||  'Something went wrong'
         }
     }
     

@@ -4,7 +4,26 @@ import { withErrorHandler } from '@/app/errors/withErrorHandler'
 import { revalidatePath } from 'next/cache'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
-export default async function editCustomer(id, prevState, formData) {
+export default async function editCustomer(id, prevState, formData) {    
+    const checkChanges = (prevState, formData) => {
+        for (const key in prevState['inputs']) {
+            if (prevState['inputs'][key].toString() !== formData.get(key)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    const changes = checkChanges(prevState, formData)
+    
+    if (!changes) {
+        return {
+            message: null,
+            errors: {},
+            inputs: prevState.inputs
+        }
+    }
+
     const endpoint = `/api/customers/${id}`
     const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}`
     
@@ -16,6 +35,7 @@ export default async function editCustomer(id, prevState, formData) {
     })
     
     const {data, error} = response
+    console.log(data)
     if (data?.errors){
         return {
             message: null,
@@ -33,6 +53,6 @@ export default async function editCustomer(id, prevState, formData) {
     revalidatePath(`/store/customers/${id}`)
     return {
         message: 'Ok',
-        errors: {}
+        errors: {},
     }
 }

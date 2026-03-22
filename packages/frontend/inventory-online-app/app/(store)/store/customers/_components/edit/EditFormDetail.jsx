@@ -7,28 +7,30 @@ import editCustomer from '@/app/lib/actions/customers/edit'
 import { useActionState, useState } from 'react'
 
 export default function CustomerDetailForm({customer}) {
-    const customerOriginalData = { 
+    const originalValues = {
         name: customer?.name,
         id_number: customer?.id_number,
-        phone: customer?.phone
+        cellphone: customer?.phone
     }
-
-    const initialState = {message: null, errors: {}}
-   
+    const initialState = {message: null, inputs: originalValues, errors: {}}
     const updateCustomer = editCustomer.bind(null, customer.id)
     const [state, formAction] = useActionState(updateCustomer, initialState)
-    console.log(state)
     return (
         <>
             {customer &&
                 <Form className={`${styles.formview} shadow`} action={formAction}>
-                    <Input type="text" icon="person" defaultValue={state.inputs?.name ?? customer?.name} name={'name'} placeHolder='Nombre' />
+                    <Input type="text" icon="person" defaultValue={state.inputs?.name ?? customer?.name} name={'name'} 
+                        placeHolder='Nombre' 
+                        />
                     {state?.errors?.name && <span className="field_error">{state?.errors?.name}</span>}
-                    <Input type="number" icon="id" defaultValue={`${customer?.id_number}`} name={'id_number'} />
+                    
+                    <Input type="number" icon="id" defaultValue={state.inputs?.id_number ?? customer?.id_number} name={'id_number'} />
                     {state?.errors?.id_number && <span className="field_error">{state?.errors?.id_number}</span>}
-                    <Input type="text" icon="phone" defaultValue={`${customer?.phone}`} name={'cellphone'} />
+                    
+                    <Input type="phone" icon="phone" defaultValue={state.inputs?.phone ?? customer?.phone} name={'cellphone'} formatPhone={state.inputs?.phone ?? customer?.phone} />
                     {state?.errors?.phone && <span className="field_error">{state?.errors?.phone}</span>}
-                    <Button role="submit" type="secondary" >
+                    
+                    <Button role="submit" type="secondary">
                         Editar cliente
                     </Button>
                 </Form>

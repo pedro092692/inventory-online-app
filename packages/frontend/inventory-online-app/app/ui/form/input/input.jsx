@@ -67,9 +67,10 @@ export function Input({
                     style={style_}
                     placeholder={'Teléfonos'}
                     mask={'+58 9999-999-99-99'}
-                    value={value}
+                    defaultValue={value ?? defaultValue ?? ""}
                     onChange={handlePhoneInput}
                     readOnly={readOnly}  
+                    name={name}
                 />
         }
         </Container>

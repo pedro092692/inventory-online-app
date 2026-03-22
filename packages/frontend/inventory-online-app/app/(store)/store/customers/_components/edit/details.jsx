@@ -8,9 +8,10 @@ export default async function EditDetails({id}) {
     await new Promise(resolve => setTimeout(resolve, 1000))
     const endpoint = `/api/customers/${id}`
     const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}?limitInvoices=0`
-    const fetch = withErrorHandler(FetchData, 'Hubo un error inesperado intententa nuevamenate')
+    const fetch = withErrorHandler(FetchData, 'Hubo un error inesperado intententa nuevamente')
     const response = await fetch(url, 'GET')
     const {data, error} = response
+ 
     const customer = data?.customer || null
 
     if (error) {

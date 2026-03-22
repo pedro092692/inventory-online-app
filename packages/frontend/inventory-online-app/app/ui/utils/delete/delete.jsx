@@ -34,8 +34,8 @@ export default function ActionDelete(
 
     const handleCancel = () => {
         onClose(false)
-        setErrors('')
-        setMessage('')
+        setMessage(null)
+        setErrors(null)
     }
 
     const handleDelete = async () => {
@@ -43,14 +43,14 @@ export default function ActionDelete(
             const response = await deleteResource(endpoint, {[deleteKey]: id})
             if (response === 1){
                 setMessage(sucessMessage)
-                setErrors('')
+                setErrors(null)
                 replace(pathname)
                 setTimeout(() => {
-                    onClose(false)
+                    handleCancel()
                 }, 800)
             }else{
                 setErrors(response)
-                setMessage('')
+                setMessage(null)
             }
         }
     }
