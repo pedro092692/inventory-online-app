@@ -23,9 +23,12 @@ export default async function FetchData(url, method, body = null) {
         if (response.status === 500){
             throw new Error('Something went wrong')
         }
-        throw new Error(data?.error || `Error: ${response.status}`)
-    }
 
+        return {
+            errors: data?.errors || data?.message || 'Something went wrong'
+        }
+    }
+    
     return data
 
 }
