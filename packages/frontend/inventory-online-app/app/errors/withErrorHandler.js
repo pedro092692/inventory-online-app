@@ -1,3 +1,5 @@
+import { NotfoundError } from '@/app/errors/NotFoundError'
+
 export function withErrorHandler(fn, errorMgs=null) {
     return async function(...args) {
         try {

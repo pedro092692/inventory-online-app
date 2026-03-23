@@ -4,26 +4,12 @@ import { withErrorHandler } from '@/app/errors/withErrorHandler'
 import { revalidatePath } from 'next/cache'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
-export default async function editCustomer(id, prevState, formData) {    
-    const checkChanges = (prevState, formData) => {
-        for (const key in prevState['inputs']) {
-            if (prevState['inputs'][key].toString() !== formData.get(key)) {
-                return true
-            }
-        }
-        return false
+export default async function editCustomer(id, prevState, formData) { 
+    const inputs = {
+        name: formData.get('name'),
+        id_number: formData.get('id_number'),
+        phone: formData.get('cellphone')
     }
-
-    const changes = checkChanges(prevState, formData)
-    
-    if (!changes) {
-        return {
-            message: null,
-            errors: {},
-            inputs: prevState.inputs
-        }
-    }
-
     const endpoint = `/api/customers/${id}`
     const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}`
     
@@ -35,24 +21,26 @@ export default async function editCustomer(id, prevState, formData) {
     })
     
     const {data, error} = response
-    console.log(data)
+
     if (data?.errors){
         return {
             message: null,
             errors: data.errors,
-            inputs: {
-                name: formData.get('name'),
-                id_number: formData.get('id_number'),
-                phone: formData.get('cellphone')
-            }
+            inputs: inputs
         }
     }
     
-    
+    if (error) {
+        return {
+            message: null,
+            errors: {error:'Hubo un error inesperado intenta nuevamente'},
+            inputs: inputs
+        }
+    }
     
     revalidatePath(`/store/customers/${id}`)
     return {
-        message: 'Ok',
+        message: 'Cliente editado con éxito',
         errors: {},
     }
 }

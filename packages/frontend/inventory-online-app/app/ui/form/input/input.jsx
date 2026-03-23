@@ -15,12 +15,10 @@ export function Input({
         gap='0px', 
         className, 
         value, 
-        name, 
-        formatPhone=null, 
+        name,  
         readOnly=false,
         autocomplete='off',
         autoFocus=false,
-        setField=null,
         capitalize=false,
         inputMode=null,
         defaultValue=null
@@ -28,13 +26,6 @@ export function Input({
     }) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%', textTransform: capitalize ? 'capitalize' : 'none'}
   
-
-    const handlePhoneInput = (e,) => {
-        const raw = e.target.value.replace(/\D/g, '')
-        let formatted = '+58' + raw.slice(2)
-        setField && setField(prev => ({...prev, phone: {isEdited: true}}))
-        formatPhone(formatted)
-    }
     return (
         <Container
             padding={showIcon ? '0px 0px 0px 16px' : '0px'}
@@ -65,10 +56,10 @@ export function Input({
                 <InputMask
                     className={`p2-r ${styles.input} ${className}`}
                     style={style_}
-                    placeholder={'Teléfonos'}
+                    placeholder={'Teléfono'}
                     mask={'+58 9999-999-99-99'}
-                    defaultValue={value ?? defaultValue ?? ""}
-                    onChange={handlePhoneInput}
+                    onChange={onChange}
+                    value={value ?? ""}
                     readOnly={readOnly}  
                     name={name}
                 />

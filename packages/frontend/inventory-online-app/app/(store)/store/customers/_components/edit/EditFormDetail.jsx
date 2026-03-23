@@ -4,7 +4,8 @@ import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
 import styles from '@/app/(store)/store/customers/_components/detail/input.module.css'
 import editCustomer from '@/app/lib/actions/customers/edit'
-import { useActionState, useState } from 'react'
+import { OvalLoader } from '@/app/ui/loader/spinner'
+import { useActionState, useState, useEffect } from 'react'
 
 export default function CustomerDetailForm({customer}) {
     const originalValues = {
@@ -14,27 +15,70 @@ export default function CustomerDetailForm({customer}) {
     }
     const initialState = {message: null, inputs: originalValues, errors: {}}
     const updateCustomer = editCustomer.bind(null, customer.id)
-    const [state, formAction] = useActionState(updateCustomer, initialState)
+    const [state, formAction, isPending] = useActionState(updateCustomer, initialState)
+    const [field, setField] = useState({name: {isEdited: false,}, id_number: {isEdited: false}, phone: {isEdited: false}})
+    const [phoneValue, setPhoneValue] = useState(state.inputs?.phone ?? customer?.phone)
+    
+    const hasChanges = 
+                field.name.isEdited ||
+                field.id_number.isEdited ||
+                field.phone.isEdited
+    
+    
+    const handleSubmit = (formData) => {
+        if(!hasChanges) return 
+        const formattedPhone = formData.get('cellphone') || ''
+        const cleaned = '+' +  formattedPhone.replace(/\D/g, '')
+        formData.set('cellphone', cleaned)
+
+        return formAction(formData)
+
+    }
+
+    useEffect(() => {
+        const success = state?.message
+        if (success) {
+            setField({
+                name: {isEdited: false},
+                id_number: {isEdited: false},
+                phone: {isEdited: false}
+            })
+        }
+    }, [state]) 
+
     return (
         <>
             {customer &&
-                <Form className={`${styles.formview} shadow`} action={formAction}>
-                    <Input type="text" icon="person" defaultValue={state.inputs?.name ?? customer?.name} name={'name'} 
+                <Form className={`${styles.formview} shadow`} action={handleSubmit}  >
+                    <Input type="text" icon="person" defaultValue={state.inputs?.name ?? customer?.name} name={'name'}
+                        onChange={() => setField({...field, name: {isEdited: true}})}
                         placeHolder='Nombre' 
                         />
                     {state?.errors?.name && <span className="field_error">{state?.errors?.name}</span>}
                     
-                    <Input type="number" icon="id" defaultValue={state.inputs?.id_number ?? customer?.id_number} name={'id_number'} />
+                    <Input type="number" icon="id" defaultValue={state.inputs?.id_number ?? customer?.id_number} name={'id_number'} 
+                        onChange={() => setField({...field, id_number: {isEdited: true}})}
+                    />
                     {state?.errors?.id_number && <span className="field_error">{state?.errors?.id_number}</span>}
                     
-                    <Input type="phone" icon="phone" defaultValue={state.inputs?.phone ?? customer?.phone} name={'cellphone'} formatPhone={state.inputs?.phone ?? customer?.phone} />
+                    <Input type="phone" icon="phone" value={phoneValue} name={'cellphone'} 
+                        onChange={(e) => { setPhoneValue(e.target.value) 
+                                           setField({...field, phone: {isEdited: true}}) 
+                        }}
+                    />
+                    
                     {state?.errors?.phone && <span className="field_error">{state?.errors?.phone}</span>}
                     
-                    <Button role="submit" type="secondary">
-                        Editar cliente
+                    {state?.errors?.error && <span className="field_error">{state?.errors?.error}</span>}
+
+                    {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
+                    
+                    <Button role="submit" type="secondary" disabled={isPending} style={{cursor: hasChanges ? 'pointer': 'auto'}}>
+                         {isPending && <OvalLoader/>}   
+                         {isPending ? 'Guardando...' : 'Editar Cliente'} 
                     </Button>
                 </Form>
             }
         </>
-    )
+    )  
 }

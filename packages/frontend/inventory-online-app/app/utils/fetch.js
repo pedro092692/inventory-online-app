@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { withErrorHandler } from '@/app/errors/withErrorHandler'
+import { NotfoundError } from '@/app/errors/NotFoundError'
 export default async function FetchData(url, method, body = null) {
     const cookieStore = await cookies()
     const token = cookieStore.get('access_token')?.value
@@ -25,7 +25,7 @@ export default async function FetchData(url, method, body = null) {
         }
 
         if (response.status === 404) {
-            throw new Error('Not found')
+            throw new NotfoundError()
         }
     
         return {
