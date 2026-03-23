@@ -18,7 +18,6 @@ export default async function Product({searchParams}) {
   const {data, error} = response 
   const totalPages = data?.total || 1
 
-
      return (
           <Container
               direction={'column'}
