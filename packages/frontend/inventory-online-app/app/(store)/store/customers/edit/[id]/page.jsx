@@ -1,5 +1,3 @@
-import FetchData from '@/app/utils/fetch'
-import { withErrorHandler } from '@/app/errors/withErrorHandler'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
 import Route from '@/app/ui/routesLinks/routes'
 import CustomerInfo from '@/app/(store)/store/customers/_components/edit/details'

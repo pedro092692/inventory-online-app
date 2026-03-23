@@ -51,6 +51,7 @@ export default function CustomerDetailForm({customer}) {
             {customer &&
                 <Form className={`${styles.formview} shadow`} action={handleSubmit}  >
                     <Input type="text" icon="person" defaultValue={state.inputs?.name ?? customer?.name} name={'name'}
+                        capitalize={true}
                         onChange={() => setField({...field, name: {isEdited: true}})}
                         placeHolder='Nombre' 
                         />
