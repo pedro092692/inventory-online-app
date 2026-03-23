@@ -19,7 +19,6 @@ export default async function CustomerDetail({ params, searchParams }) {
     const {data, error} = response
     const totalInvoicePages = data?.total || 0
 
-    
     return (
         <Container
             direction={'column'}
