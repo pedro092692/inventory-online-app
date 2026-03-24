@@ -13,6 +13,8 @@ export default function List({
         showView=true,
         showEdit=true,
         showDelete=true,
+        queryString=''
+
     }) {
     return (
         <div className={`${styles.container} shadow-sm ${customClass}`} style={CustomStyles}>
