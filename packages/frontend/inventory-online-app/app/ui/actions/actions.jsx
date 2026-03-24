@@ -3,6 +3,7 @@
 import { Container } from '@/app/ui/utils/container'
 import { Button } from '@/app/ui/utils/button/buttons'
 import DeleteModal from '@/app/ui/actions/delete'
+import { useState } from 'react'
 import Link from 'next/link'
 
 export default function Actions({
@@ -16,13 +17,15 @@ export default function Actions({
         queryString=''
     }){
     
+    const [showModal, setShowModal] = useState(false)
+    const canEdit = userPermissions.includes('update')
+    const canDelete = userPermissions.includes('delete')
     const createURL = (action, id) => {
         const path = `/store/${endpoint}`
         const url = `${path}/${action}/${id}${queryString ? `?${queryString}` : ''}`
         return url
     }
 
-    
     const view = () => {
         if (showView){
             return (
@@ -64,7 +67,7 @@ export default function Actions({
             return (
                 <Link 
                     href={'#'}
-                    onClick={(e) => {e.preventDefault();} }
+                    onClick={(e) => {e.preventDefault(); setShowModal(true)} }
                 >
                     <Button 
                         children={false}
@@ -80,32 +83,6 @@ export default function Actions({
         }
     }
 
-     if (userPermissions.includes('delete')) {
-            return (
-                <Container 
-                    padding={'0px'}
-                    gap={'20px'}
-                >
-                    {view()}
-                    {edit()}
-                    {remove()}
-                    <DeleteModal />
-                </Container>
-                )
-    
-        }
-    
-    if (userPermissions.includes('update')) {
-        return (
-            <Container 
-                padding={'0px'}
-                gap={'20px'}
-            >
-                {view()}
-                {edit()}
-            </Container>
-        )
-    }
 
     return (
         <Container 
@@ -113,6 +90,9 @@ export default function Actions({
             gap={'20px'}
         >
             {view()}
+            {canEdit && edit()}
+            {canDelete && remove()}
+            {canDelete && <DeleteModal show={showModal} onClose={setShowModal}/>}
         </Container>
     )
 }
