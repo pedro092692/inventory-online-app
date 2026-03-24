@@ -1,11 +1,14 @@
-
 'use client'
 import { Container } from '@/app/ui/utils/container'
+import { Modal } from '@/app/ui/utils/alert/modal'
 import { Button } from '@/app/ui/utils/button/buttons'
-import DeleteModal from '@/app/ui/actions/delete'
+import ActionDelete from '@/app/ui/utils/delete/delete'
+import { useSearchParams} from 'next/navigation'
+import { useState } from 'react'
 import Link from 'next/link'
 
-export default function Actions({
+export default function Actions (
+    {
         userPermissions=[], 
         resourceId = null,
         endpoint = '',
@@ -13,16 +16,19 @@ export default function Actions({
         showView=true, 
         showEdit=true, 
         showDelete=true,
-        queryString=''
-    }){
-    
-    const createURL = (action, id) => {
-        const path = `/store/${endpoint}`
-        const url = `${path}/${action}/${id}${queryString ? `?${queryString}` : ''}`
-        return url
+    }) {
+    const searchParams = useSearchParams()
+    const [showAlert, setShowAlert] = useState(false)
+    const createURL = (enpoint, id) => {
+        const params = new URLSearchParams(searchParams)
+        const basePath = `/store/${endpoint}`
+        return `${basePath}/${enpoint}/${id}?${params.toString()}`
     }
 
-    
+    const handleDelete  = () => {
+        setShowAlert(true)
+    }
+
     const view = () => {
         if (showView){
             return (
@@ -64,7 +70,7 @@ export default function Actions({
             return (
                 <Link 
                     href={'#'}
-                    onClick={(e) => {e.preventDefault();} }
+                    onClick={(e) => {e.preventDefault(); handleDelete()} }
                 >
                     <Button 
                         children={false}
@@ -80,21 +86,36 @@ export default function Actions({
         }
     }
 
-     if (userPermissions.includes('delete')) {
-            return (
-                <Container 
-                    padding={'0px'}
-                    gap={'20px'}
+    if (userPermissions.includes('delete')) {
+        return (
+            <Container 
+                padding={'0px'}
+                gap={'20px'}
+            >
+                {view()}
+                {edit()}
+                {remove()}
+                <Modal 
+                    show={showAlert} 
+                    onClose={setShowAlert} 
+                    title='¿Estas Seguro De Eliminar Este Elemento?'
+                    showIcon={true}
+                    icon='trash'
+                    iconColor='var(--color-accentRed400)'
+                
                 >
-                    {view()}
-                    {edit()}
-                    {remove()}
-                    <DeleteModal />
-                </Container>
-                )
-    
-        }
-    
+                    <ActionDelete 
+                        onClose={setShowAlert}
+                        endpoint={endpoint}
+                        id={resourceId}
+                        deleteKey={deleteKey}
+                    />
+                </Modal>
+            </Container>
+            )
+
+    }
+
     if (userPermissions.includes('update')) {
         return (
             <Container 
@@ -115,4 +136,7 @@ export default function Actions({
             {view()}
         </Container>
     )
+
+
+
 }
