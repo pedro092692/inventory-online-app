@@ -51,7 +51,7 @@ class ProductController{
     getProduct = this.#error.handler( async(req, res) => {
         const { id } = req.params
         const product = await this.ProductService.getProduct(id)
-        res.status(200).json(product)
+        res.status(200).json({product})
     })
 
     /**
