@@ -1,8 +1,15 @@
 import { Modal } from '@/app/ui/utils/alert/modal'
 import { Container } from '@/app/ui/utils/container'
 import { Button } from '@/app/ui/utils/button/buttons'
+import { Form } from '@/app/ui/form/form/form'
+import styles from './delete.module.css'
+
 
 export default function DeleteModal({title = '¿Estas Seguro De Eliminar Este Elemento?', show = true, onClose = null}) {
+    
+    const handleCancel = () => {
+        onClose(false)
+    }
     
     return(
         <Modal 
@@ -24,16 +31,20 @@ export default function DeleteModal({title = '¿Estas Seguro De Eliminar Este El
                 <Container
                     padding={'12px'}
                 >
-                    <Button
-                        type={'secondary'}
-                    >
-                        Si, eliminar
-                    </Button>
-                    <Button
-                        type={'danger'}
-                    >
-                        Cancelar
-                    </Button>
+                    <Form className={styles.form}>
+                        <Button
+                            role="submit"
+                            type={'secondary'}
+                        >
+                            Si, eliminar
+                        </Button>
+                        <Button
+                            type={'danger'}
+                            onClick={handleCancel}
+                        >
+                            Cancelar
+                        </Button>
+                    </Form>
                 </Container>
                 <p className='p2-b success_message'></p>
                 <p className='p2-b field_error'></p>
