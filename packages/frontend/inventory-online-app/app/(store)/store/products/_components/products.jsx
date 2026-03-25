@@ -3,7 +3,7 @@ import { withErrorHandler } from '@/app/errors/withErrorHandler'
 import List from '@/app/ui/list/list'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
-export default async function Customers({ limit = 10, page = 1, query = null}){
+export default async function Customers({ limit = 10, page = 1, query = null, queryString = null}){
     const enpoint = query ? '/api/products/search' : '/api/products/all'
     const params = new URLSearchParams()
     const rawParams = params.toString()
@@ -79,8 +79,11 @@ export default async function Customers({ limit = 10, page = 1, query = null}){
             params={rawParams}
             endpoint='products'
             userPermissions={userPermissions}
+            queryString={queryString}
             deleteKey={'productId'}
+            deleteMsg='Producto eliminado con éxito'
             showView={false}
+            
         />
     )
 }
