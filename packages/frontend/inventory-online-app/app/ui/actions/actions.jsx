@@ -3,27 +3,39 @@
 import { Container } from '@/app/ui/utils/container'
 import { Button } from '@/app/ui/utils/button/buttons'
 import DeleteModal from '@/app/ui/actions/delete'
-import { useState } from 'react'
+import { use, useState } from 'react'
 import Link from 'next/link'
 
 export default function Actions({
         userPermissions=[], 
         resourceId = null,
-        endpoint = '',
         deleteKey = '',
+        endpoint = '',
         showView=true, 
         showEdit=true, 
         showDelete=true,
-        queryString=''
+        queryString='',
+        deleteMsg='Elemento eliminado con éxito'
     }){
     
     const [showModal, setShowModal] = useState(false)
+    const [isMounted, setIsMounted] = useState(false)
     const canEdit = userPermissions.includes('update')
     const canDelete = userPermissions.includes('delete')
     const createURL = (action, id) => {
         const path = `/store/${endpoint}`
         const url = `${path}/${action}/${id}${queryString ? `?${queryString}` : ''}`
         return url
+    }
+
+    const openModal = () => {
+        setIsMounted(true)
+        setTimeout(() => setShowModal(true), 70)
+    }
+
+    const closeModal = () => {
+        setShowModal(false)
+        setTimeout(() => setIsMounted(false), 170)
     }
 
     const view = () => {
@@ -67,7 +79,7 @@ export default function Actions({
             return (
                 <Link 
                     href={'#'}
-                    onClick={(e) => {e.preventDefault(); setShowModal(true)} }
+                    onClick={(e) => {e.preventDefault(); openModal()} }
                 >
                     <Button 
                         children={false}
@@ -91,7 +103,14 @@ export default function Actions({
             {view()}
             {canEdit && edit()}
             {canDelete && remove()}
-            {canDelete && <DeleteModal show={showModal} onClose={setShowModal}/>}
+            {canDelete && isMounted && <DeleteModal 
+                                       show={showModal} 
+                                       onClose={closeModal} 
+                                       id={resourceId}
+                                       path={endpoint}
+                                       deleteKey={deleteKey}
+                                       deleteMsg={deleteMsg}
+                                       />}
         </Container>
     )
 }

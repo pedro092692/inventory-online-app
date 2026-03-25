@@ -13,7 +13,8 @@ export default function List({
         showView=true,
         showEdit=true,
         showDelete=true,
-        queryString=''
+        queryString='',
+        deleteMsg='Elemento eliminado con éxito'
 
     }) {
     return (
@@ -60,6 +61,8 @@ export default function List({
                                                             showView={showView}
                                                             showEdit={showEdit}
                                                             showDelete={showDelete}
+                                                            queryString={queryString}
+                                                            deleteMsg={deleteMsg}
                                                         />
                                                     </td>
                                                 )

@@ -7,11 +7,13 @@ import { withErrorHandler } from '@/app/errors/withErrorHandler'
 import { Suspense } from 'react'
 import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
 import Customers from './_components/customers'
+import { buildQueryParams } from '@/app/utils/buildQueryParams'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default async function Customer({searchParams}) {
     const params = await searchParams
     const query = params?.data || null
+    const queryString = buildQueryParams(params, ['page', 'data'])
     const currentPage = Number(params?.page) || 1
     const fetch = withErrorHandler(FetchData, 'Hubo un error inesperado intententa nuevamente')
     const response = await fetch(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/total-pages${query ? `?data=${query}` : '' }`, 'GET')
@@ -31,7 +33,7 @@ export default async function Customer({searchParams}) {
                 placeHolder="Buscar cliente por Nombre, Cédula"
             />
             <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={4} />}>
-                <Customers page={currentPage} query={query} />
+                <Customers page={currentPage} query={query} queryString={queryString}/>
             </Suspense>
             
             {

@@ -252,13 +252,13 @@ a {
 /* form error */
 .field_error {
   color: var(--color-accentRed400);
-  font-size: 14px;
+  font-size: 16px;
   margin-top: 4px;
 }
 
 .success_message {
   color: var(--color-blue700);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .form-edit {

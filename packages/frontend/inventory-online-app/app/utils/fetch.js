@@ -7,7 +7,6 @@ export default async function FetchData(url, method, body = null) {
     if (!token) {
         return null
     }
-    
     const response = await fetch(url, {
         method: method,
         headers: {
@@ -17,15 +16,16 @@ export default async function FetchData(url, method, body = null) {
         body: body ? JSON.stringify(body) : null
     })
     
-    const data = await response.json()
-
+    const text = await response.text()
+    const data = text ? JSON.parse(text) : null
+    
     if (!response.ok) {
         if (response.status === 500){
             throw new Error('Something went wrong')
         }
 
         if (response.status === 404) {
-            throw new NotfoundError()
+            throw new NotfoundError('Not found')
         }
     
         return {
