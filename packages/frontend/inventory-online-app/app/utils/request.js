@@ -1,16 +1,20 @@
 import FetchData from '@/app/utils/fetch'
 import { withErrorHandler } from '@/app/errors/withErrorHandler'
+const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
-export default async function Request(url, method = 'GET', body = null){
-    if(!url ) {
+export default async function Request(endpoint, method = 'GET', body = null){
+    if(!endpoint ) {
         return {
             data: null,
-            error: 'Url is required'
+            error: 'Endpoin is required'
         }
     }
     
+    const url = `${NEXT_PUBLIC_API_BASE_URL}/api/${endpoint}`
+    
     const fetch = withErrorHandler(FetchData)
     const response = await fetch(url, method, body)
+    
     return response 
 
 }
