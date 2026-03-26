@@ -2,7 +2,7 @@ import FetchData from '@/app/utils/fetch'
 import { withErrorHandler } from '@/app/errors/withErrorHandler'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
-export default async function Request(endpoint, method = 'GET', body = null){
+export default async function Request(endpoint, method = 'GET', body = {}){
     if(!endpoint ) {
         return {
             data: null,
