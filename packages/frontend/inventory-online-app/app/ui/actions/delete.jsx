@@ -5,7 +5,7 @@ import { Button } from '@/app/ui/utils/button/buttons'
 import { Form } from '@/app/ui/form/form/form'
 import styles from './delete.module.css'
 import { OvalLoader } from '@/app/ui/loader/spinner'
-import deleteFuncion from '@/app/lib/actions/deleteResource'
+import deleteFuncion from '@/app/lib/actions/delete'
 import { useActionState, useEffect } from 'react'
 
 export default function DeleteModal({
