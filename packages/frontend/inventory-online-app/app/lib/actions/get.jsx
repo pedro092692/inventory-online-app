@@ -2,7 +2,7 @@
 import Request from '@/app/utils/request'
 import { revalidatePath } from 'next/cache'
 
-export default async function GetItemAction(endpoint) {
+export default async function GetItemAction(endpoint, errorMsg = 'Algo salio mal intenta nuevamente') {
     
     if(!endpoint) {
         return {
@@ -11,7 +11,7 @@ export default async function GetItemAction(endpoint) {
         }
     }
    
-    const response = await Request(endpoint, 'GET')
+    const response = await Request(endpoint, 'GET', null, errorMsg)
     
     return response
  }

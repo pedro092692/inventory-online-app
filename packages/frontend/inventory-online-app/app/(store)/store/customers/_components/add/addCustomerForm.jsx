@@ -1,5 +1,4 @@
 'use client'
-// import AddCustomerAction from '@/app/lib/actions/customers/add'
 import AddItemAction from '@/app/lib/actions/add'
 import { Form } from '@/app/ui/form/form/form'
 import { Input } from '@/app/ui/form/input/input'
