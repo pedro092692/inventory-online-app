@@ -4,6 +4,7 @@ import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
 import styles from '@/app/(store)/store/customers/_components/detail/input.module.css'
 import editCustomer from '@/app/lib/actions/customers/edit'
+import EditItemAction from '@/app/lib/actions/edit'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState, useState, useEffect } from 'react'
 
@@ -14,7 +15,7 @@ export default function CustomerDetailForm({customer}) {
         cellphone: customer?.phone
     }
     const initialState = {message: null, inputs: originalValues, errors: {}}
-    const updateCustomer = editCustomer.bind(null, customer.id)
+    const updateCustomer = EditItemAction.bind(null, `customers/${customer?.id}`, ['name', 'id_number', 'phone'], 'Cliente editado con éxito')
     const [state, formAction, isPending] = useActionState(updateCustomer, initialState)
     const [field, setField] = useState({name: {isEdited: false,}, id_number: {isEdited: false}, phone: {isEdited: false}})
     const [phoneValue, setPhoneValue] = useState(state.inputs?.phone ?? customer?.phone)
@@ -27,9 +28,9 @@ export default function CustomerDetailForm({customer}) {
     
     const handleSubmit = (formData) => {
         if(!hasChanges) return 
-        const formattedPhone = formData.get('cellphone') || ''
+        const formattedPhone = formData.get('phone') || ''
         const cleaned = '+' +  formattedPhone.replace(/\D/g, '')
-        formData.set('cellphone', cleaned)
+        formData.set('phone', cleaned)
 
         return formAction(formData)
 
@@ -62,7 +63,7 @@ export default function CustomerDetailForm({customer}) {
                     />
                     {state?.errors?.id_number && <span className="field_error">{state?.errors?.id_number}</span>}
                     
-                    <Input type="phone" icon="phone" value={phoneValue} name={'cellphone'} 
+                    <Input type="phone" icon="phone" value={phoneValue} name={'phone'} 
                         onChange={(e) => { setPhoneValue(e.target.value) 
                                            setField({...field, phone: {isEdited: true}}) 
                         }}
