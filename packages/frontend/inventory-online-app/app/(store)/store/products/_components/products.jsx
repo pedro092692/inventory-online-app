@@ -1,10 +1,8 @@
-import FetchData from '@/app/utils/fetch'
-import { withErrorHandler } from '@/app/errors/withErrorHandler'
+import GetItemAction from '@/app/lib/actions/get'
 import List from '@/app/ui/list/list'
-const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default async function Customers({ limit = 10, page = 1, query = null, queryString = null}){
-    const enpoint = query ? '/api/products/search' : '/api/products/all'
+    const enpoint = query ? 'products/search' : 'products/all'
     const params = new URLSearchParams()
     const rawParams = params.toString()
 
@@ -14,10 +12,9 @@ export default async function Customers({ limit = 10, page = 1, query = null, qu
         params.append('data', query)
     }
 
-    const url = `${NEXT_PUBLIC_API_BASE_URL}${enpoint}?${params.toString()}`
-    const fetch = withErrorHandler(FetchData, 'hubo un error inesperado')
+    const url = `${enpoint}?${params.toString()}`
     
-    const response = await fetch(url, 'GET')
+    const response = await GetItemAction(url)
     
     const {data, error} = response
     const rawData = data?.products || []
