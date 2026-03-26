@@ -1,5 +1,6 @@
 'use client'
-import AddCustomerAction from '@/app/lib/actions/customers/add'
+// import AddCustomerAction from '@/app/lib/actions/customers/add'
+import AddItemAction from '@/app/lib/actions/add'
 import { Form } from '@/app/ui/form/form/form'
 import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
@@ -10,16 +11,17 @@ import { useActionState, useState, useEffect } from 'react'
 export default function AddClientForm() {
     
     const initialState = {message: null, inputs: {}, errors: {}}
-    const [state, formAction, isPending] = useActionState(AddCustomerAction, initialState)
+    const addCustomer = AddItemAction.bind(null, 'customers', ['name', 'id_number', 'phone'], 'Cliente agregado con éxito')
+    const [state, formAction, isPending] = useActionState(addCustomer, initialState)
     const [field, setField] = useState({name: {isEdited: false,}, id_number: {isEdited: false}, phone: {isEdited: false}})
     const [phoneValue, setPhoneValue] = useState(state.inputs?.phone ?? '')
 
 
     const handleSubmit = (formData) => {
-        if( !formData.get('name') || !formData.get('id_number') || !formData.get('cellphone')) return
-        const formattedPhone = formData.get('cellphone')
+        if( !formData.get('name') || !formData.get('id_number') || !formData.get('phone')) return
+        const formattedPhone = formData.get('phone')
         const cleaned = '+' +  formattedPhone.replace(/\D/g, '')
-        formData.set('cellphone', cleaned)
+        formData.set('phone', cleaned)
         formAction(formData)
     }
 
@@ -46,7 +48,7 @@ export default function AddClientForm() {
             />
             {state?.errors?.id_number && <span className="field_error">{state?.errors?.id_number}</span>}
             
-            <Input type="phone" icon="phone"  name={'cellphone'} 
+            <Input type="phone" icon="phone"  name={'phone'} placeHolder='Número de teléfono'
                 value={phoneValue} 
                 onChange={(e) => { setPhoneValue(e.target.value) } }
             />
