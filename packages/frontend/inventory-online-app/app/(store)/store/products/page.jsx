@@ -2,21 +2,18 @@ import { Container } from '@/app/ui/utils/container'
 import Route from '@/app/ui/routesLinks/routes'
 import Search from "@/app/ui/form/search/search"
 import Pagination from '@/app/ui/pagination/pagination'
-import FetchData from '@/app/utils/fetch'
-import { withErrorHandler } from '@/app/errors/withErrorHandler'
 import { Suspense } from 'react'
 import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
 import Products from './_components/products'
+import GetItemAction from '@/app/lib/actions/get'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
-const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default async function Product({searchParams}) {
   const params = await searchParams
   const query = params?.data || null
   const currentPage = Number(params?.page) || 1
   const queryString = buildQueryParams(params, ['page', 'data'])
-  const fetch = withErrorHandler(FetchData, 'Hubo un error inesperado intententa nuevamente')
-  const response = await fetch(`${NEXT_PUBLIC_API_BASE_URL}/api/products/total-pages${query ? `?data=${query}` : '' }`, 'GET')
+  const response = await GetItemAction(`products/total-pages${query ? `?data=${query}` : '' }`, 'Hubo un error inesperado intenta nuevamente')
   const {data, error} = response 
   const totalPages = data?.total || 1
 

@@ -1,7 +1,7 @@
 import GetItemAction from '@/app/lib/actions/get'
 import List from '@/app/ui/list/list'
 
-export default async function Customers({ limit = 10, page = 1, query = null, queryString = null}){
+export default async function Products({ limit = 10, page = 1, query = null, queryString = null}){
     const enpoint = query ? 'products/search' : 'products/all'
     const params = new URLSearchParams()
     const rawParams = params.toString()
