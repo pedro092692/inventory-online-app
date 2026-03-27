@@ -1,13 +1,9 @@
-import FetchData from '@/app/utils/fetch'
-import { withErrorHandler } from '@/app/errors/withErrorHandler'
+import Request from '@/app/utils/request'
 import ProductDetailForm from '@/app/(store)/store/products/_components/detail/productDetailForm'
-const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default async function ProductInfo({id}){
-    const endpoint = `/api/products/${id}`
-    const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}`
-    const fetch = withErrorHandler(FetchData, 'Hubo un error inesperado intententa nuevamente')
-    const response = await fetch(url, 'GET')
+    const endpoint = `products/${id}`
+    const response = await Request(endpoint, 'GET', null, 'Hubo un error inesperado intententa nuevamente')
     const {data, error} = response
 
     const product = data?.product || null
