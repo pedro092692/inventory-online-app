@@ -16,7 +16,6 @@ export default async function Login({}) {
                     <Logo type='fullColorLogin'/>
                     <h1 className='h2'>Inicia sesión en Nexastock</h1>
 
-         
                     <LoginForm/>
                     
                 </Container>
