@@ -11,6 +11,7 @@ export default async function Request(endpoint, method = 'GET', body = null, err
     }
   
     const url = `${NEXT_PUBLIC_API_BASE_URL}/api/${endpoint}`
+  
     const fetch = withErrorHandler(FetchData, errorMgs ? errorMgs : null)
     const response = await fetch(url, method, body)
     

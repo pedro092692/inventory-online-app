@@ -2,11 +2,9 @@ import Route from '@/app/ui/routesLinks/routes'
 import { Container } from '@/app/ui/utils/container'
 import CustomerInfo from '@/app/(store)/store/customers/_components/detail/detail'
 import { Suspense } from 'react'
-import FetchData from '@/app/utils/fetch'
-import { withErrorHandler } from '@/app/errors/withErrorHandler'
+import Request from '@/app/utils/request'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
 import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
-const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default async function CustomerDetail({ params, searchParams }) {
     const { id } = await params
@@ -14,8 +12,7 @@ export default async function CustomerDetail({ params, searchParams }) {
     const invoicePage = Number(urlParams?.invoice_page) || 1
     const invoiceQuery = Number(urlParams?.invoice) || null
     const queryString = buildQueryParams(urlParams, ['page', 'data'])
-    const fetch = withErrorHandler(FetchData, 'Hubo un error inesperado intententa nuevamente')
-    const response = await fetch(`${NEXT_PUBLIC_API_BASE_URL}/api/customers/total-invoices?id=${id}`, 'GET')
+    const response = await Request(`customers/total-invoices?id=${id}`, 'GET', null, 'Hubo un error inesperado intententa nuevamente')
     const {data, error} = response
     const totalInvoicePages = data?.total || 0
 

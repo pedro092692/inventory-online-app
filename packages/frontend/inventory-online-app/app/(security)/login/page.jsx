@@ -5,7 +5,7 @@ import styles from './login.module.css'
 
 
 
-export default async function Login({}) {
+export default async function Login() {
      return (
             <Container
             className={styles.section}
