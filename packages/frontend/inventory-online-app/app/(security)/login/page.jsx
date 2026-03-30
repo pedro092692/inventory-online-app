@@ -6,8 +6,9 @@ import styles from './login.module.css'
 
 
 export default async function Login({searchParams}) {
-    const next = await searchParams.next || '/store'
-
+    const params = await searchParams
+    const next = params?.next || '/store'
+    
      return (
             <Container
             className={styles.section}

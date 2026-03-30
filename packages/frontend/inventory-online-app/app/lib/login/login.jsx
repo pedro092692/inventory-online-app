@@ -5,7 +5,8 @@ import checkNextParam from '@/app/utils/checkNextParam'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
 export default async function Login(nextUrl, prevState, formData) {
-    const safeNext = checkNextParam(nextUrl) 
+    const safeNext = checkNextParam(nextUrl)
+    console.log('safe:',safeNext)
     const email = formData.get('email')
     const password = formData.get('password')
     const invalidCredentialsError = 'Usuario o contraseña incorrectos'
