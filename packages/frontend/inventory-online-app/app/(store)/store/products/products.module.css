@@ -1,0 +1,12 @@
+.table table [data-label=selling_price], 
+.table table [data-label=purchase_price],
+.table table [data-label=selling_price_bs],
+.table table [data-label=stock]{
+  text-align: right;
+}
+
+.table tbody tr:hover{
+  background-color: #EEE1C4 !important;
+  cursor: default;
+  font-size: 1.2em;
+}

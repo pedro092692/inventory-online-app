@@ -1,5 +1,6 @@
 import GetItemAction from '@/app/lib/actions/get'
 import List from '@/app/ui/list/list'
+import styles from '@/app/(store)/store/products/products.module.css'
 
 export default async function Products({ limit = 10, page = 1, query = null, queryString = null}){
     const enpoint = query ? 'products/search' : 'products/all'
@@ -80,6 +81,7 @@ export default async function Products({ limit = 10, page = 1, query = null, que
             deleteKey={'productId'}
             deleteMsg='Producto eliminado con éxito'
             showView={false}
+            customClass={styles.table}
             
         />
     )

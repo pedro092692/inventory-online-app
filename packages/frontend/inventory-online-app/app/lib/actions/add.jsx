@@ -1,5 +1,6 @@
 'use server'
 import Request from '@/app/utils/request'
+import { revalidatePath } from 'next/cache'
 
 export default async function AddItemAction(
         endpoint, 
@@ -33,6 +34,7 @@ export default async function AddItemAction(
         }
     }
 
+    
     if (error) {
         return {
             message: null, 
