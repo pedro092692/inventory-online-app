@@ -7,10 +7,10 @@ import Login from '@/app/lib/login/login'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState } from 'react'
 
-export default function LoginForm() {
-
+export default function LoginForm({next}) {
     const initialState = {message: null, inputs: {}, error: null}
-    const [state, formAction, isPending] = useActionState(Login, initialState)
+    const loginAction = Login.bind(null, next)
+    const [state, formAction, isPending] = useActionState(loginAction, initialState)
 
     return (
         <Form action={formAction} >

@@ -5,7 +5,8 @@ export async function verifyAuth(request) {
     const token = request.cookies.get('access_token')?.value
     if(!token) {
         const redirectUrl = new URL('/login', request.url)
-        redirectUrl.searchParams.set('next', new URL(request.url).pathname)
+        const next = request.nextUrl.pathname + request.nextUrl.search
+        redirectUrl.searchParams.set('next', next)
         return NextResponse.redirect(redirectUrl)
 
     }

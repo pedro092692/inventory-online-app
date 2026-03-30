@@ -5,7 +5,9 @@ import styles from './login.module.css'
 
 
 
-export default async function Login() {
+export default async function Login({searchParams}) {
+    const next = await searchParams.next || '/store'
+
      return (
             <Container
             className={styles.section}
@@ -16,7 +18,7 @@ export default async function Login() {
                     <Logo type='fullColorLogin'/>
                     <h1 className='h2'>Inicia sesión en Nexastock</h1>
 
-                    <LoginForm/>
+                    <LoginForm next={next}/>
                     
                 </Container>
       

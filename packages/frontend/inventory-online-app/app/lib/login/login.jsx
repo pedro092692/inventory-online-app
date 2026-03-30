@@ -1,9 +1,11 @@
 'use server'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
+import checkNextParam from '@/app/utils/checkNextParam'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
-export default async function Login(prevState, formData) {
+export default async function Login(nextUrl, prevState, formData) {
+    const safeNext = checkNextParam(nextUrl) 
     const email = formData.get('email')
     const password = formData.get('password')
     const invalidCredentialsError = 'Usuario o contraseña incorrectos'
@@ -44,7 +46,7 @@ export default async function Login(prevState, formData) {
                 maxAge: 3600,
             })
 
-            redirect('/store')
+            redirect(safeNext) 
         }
     }
     
