@@ -23,6 +23,7 @@ class ProductRoutes {
         this.router.get('/total-pages', (req, res) => new ProductController(req.Product).totalPages(req, res))
         this.router.get('/:id', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).getProduct(req, res))
         this.router.post('/', validateFields('createProduct'), (req, res) => new ProductController(req.Product).createProduct(req, res))
+        this.router.post('/bulk', (req, res) => res.send('create bulk products'))
         this.router.patch('/:id', authorization(PERMISSIONS.UPDATE), validateFields('createProduct'), (req, res) => new ProductController(req.Product).updateProduct(req, res))
         this.router.delete('/', (req, res) => new ProductController(req.Product).deleteProduct(req, res))
     }
