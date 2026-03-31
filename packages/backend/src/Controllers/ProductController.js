@@ -25,6 +25,13 @@ class ProductController{
         res.status(201).json(product)
     })
 
+    
+    bulkProducts = this.#error.handler( async(req, res) => {
+        const file = req.file || null
+        const products = {}
+        res.status(201).json(products)
+    })
+
     /**
      * Retrieves all products.
      * @param {Object} req - request object
