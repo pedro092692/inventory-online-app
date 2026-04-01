@@ -2,6 +2,8 @@ import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import DollarValueService from './DollarValueService.js'
 import { Op, ValidationError} from 'sequelize'
+import * as XLSX from 'xlsx'
+import fs from 'fs'
 
 class ProductService{
     // instance of error handler
@@ -34,6 +36,15 @@ class ProductService{
             })
             return newProduct
         })
+    }
+
+
+    createProductsBulk(products) {
+        const workbook = XLSX.readFile('products.xlsx')
+        const sheet = workbook.Sheets[workbook.SheetNames[0]]
+        const data = XLSX.utils.sheet_to_json(sheet)
+        return data
+
     }
 
     /**
