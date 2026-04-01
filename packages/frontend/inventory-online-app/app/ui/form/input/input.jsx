@@ -21,7 +21,8 @@ export function Input({
         autoFocus=false,
         capitalize=false,
         inputMode=null,
-        defaultValue=null
+        defaultValue=null,
+        accept=null,
 
     }) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%', textTransform: capitalize ? 'capitalize' : 'none'}
@@ -51,6 +52,7 @@ export function Input({
                     autoComplete={autocomplete}
                     autoFocus={autoFocus}
                     inputMode={inputMode}
+                    accept={accept}
                 />
         :
                 <InputMask

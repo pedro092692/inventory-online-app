@@ -2,8 +2,7 @@ import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import DollarValueService from './DollarValueService.js'
 import { Op, ValidationError} from 'sequelize'
-import * as XLSX from 'xlsx'
-import fs from 'fs'
+import XLSX from 'xlsx'
 
 class ProductService{
     // instance of error handler
@@ -39,11 +38,28 @@ class ProductService{
     }
 
 
-    createProductsBulk(products) {
-        const workbook = XLSX.readFile('products.xlsx')
-        const sheet = workbook.Sheets[workbook.SheetNames[0]]
-        const data = XLSX.utils.sheet_to_json(sheet)
-        return data
+    async createProductsBulk(products) {
+        // if (!products) {
+        //     throw new Error('File is required')
+        // }
+        const workbook = XLSX.readFile('productos.ods', {type: 'buffer'})
+        
+        const sheetName = workbook.SheetNames[0]
+        const sheet = workbook.Sheets[sheetName]
+        const rows = XLSX.utils.sheet_to_json(sheet, {header: 1})
+        const [header, ...data] = rows 
+        
+        // check if headers are valid
+        this.validateHeaders(header)
+
+        const productData = this.productData(data)
+
+        // validate product data
+        this.validateProductData(productData)
+
+        await this.Product.bulkCreate(productData)
+
+        return productData
 
     }
 
@@ -310,6 +326,87 @@ class ProductService{
         return products
     }
 
+
+    validateFile(file) {
+        return this.#error.handler(['Validate File'], () => {
+            const allowdMimeType = [
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-excel',
+                'text/csv',
+                'application/vnd.oasis.opendocument.spreadsheet' 
+            ]
+
+            const allowedExtensions = ['xlsx', 'xls', 'csv', 'ods']
+            const fileExtension = file.originalname.split('.').pop().toLowerCase()
+
+
+            if (!allowdMimeType.includes(file.mimeType) || !allowedExtensions.includes(fileExtension)) {
+                throw new Error('Not allwed file type')
+            }
+
+            const workbook = XLSX.readFile(file.buffer, {type: 'buffer'})
+
+            return workbook
+        })
+    }
+
+    validateHeaders(headers) {
+        const expectedHeaders = [
+            'nombre',
+            'codigo de barras',
+            'precio de compra',
+            'precio de venta',
+            'stock'
+        ]
+
+        const normalizedHeaders = headers.map(header => header
+                                                            .trim()
+                                                            .toLowerCase()
+                                                            .normalize("NFD")
+                                                            .replace(/[\u0300-\u036f]/g, "")
+                                                            .replace(/\s+/g, ' '))
+        
+        const isValid = expectedHeaders.every(expectedHeader => normalizedHeaders.includes(expectedHeader))
+
+        if (!isValid) {
+            throw new Error('Invalid file headers.')
+        }
+
+       
+
+    }
+
+    productData(rows) {
+        if (!rows) {
+            throw new Error('Row is required')
+        }
+
+        const productData = rows.map(row => {
+            return {
+                name: row[0].toLowerCase().trim(),
+                barcode: row[1],
+                purchase_price: row[2],
+                selling_price: row[3],
+                stock: row[4]
+            }
+        })
+        return productData
+    }
+
+    validateProductData(products) {
+        if (!products) {
+            throw new Error('Products are required')
+        }
+
+        products.forEach((product, index) => {
+            if (!product.name) throw new Error(`Product name is required in row ${index + 2}`)
+            if (!product.barcode) throw new Error(`Product barcode is required in row ${index + 2}`)
+            if (!product.purchase_price || isNaN(product.purchase_price)) throw new Error(`Product purchase price is required in row ${index + 2}`)
+            if (!product.selling_price || isNaN(product.selling_price)) throw new Error(`Product selling price is required in row ${index + 2}`)
+            if (!product.stock || isNaN(product.stock)) throw new Error(`Product stock is required in row ${index + 2}`)
+        })
+
+    }
 
 }
 
