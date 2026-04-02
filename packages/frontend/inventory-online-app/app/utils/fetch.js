@@ -3,6 +3,7 @@ import { NotfoundError } from '@/app/errors/NotFoundError'
 export default async function FetchData(url, method, body = null) {
     const cookieStore = await cookies()
     const token = cookieStore.get('access_token')?.value
+    const isFormData = body instanceof FormData
     // await new Promise (resolve => setTimeout(resolve, 100))
     if (!token) {
         return null
@@ -11,9 +12,14 @@ export default async function FetchData(url, method, body = null) {
         method: method,
         headers: {
             'Cookie': `access_token=${token}`,
-            'Content-Type': 'application/json'
+            ...(isFormData ? {} : {'Content-Type': 'application/json'} 
+            )
         },
-        body: body ? JSON.stringify(body) : null
+        body: body
+            ? isFormData
+                ? body
+                : JSON.stringify(body)
+            : null
     })
     
     const text = await response.text()

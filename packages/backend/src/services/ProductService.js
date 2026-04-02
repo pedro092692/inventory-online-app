@@ -38,17 +38,18 @@ class ProductService{
     }
 
 
-    async createProductsBulk(products) {
-        // if (!products) {
-        //     throw new Error('File is required')
-        // }
-        const workbook = XLSX.readFile('productos.ods', {type: 'buffer'})
+    async createProductsBulk(file) {
+        if (!file) {
+            throw new Error('File is required')
+        }
+
+        const workbook = await this.validateFile(file)
         
         const sheetName = workbook.SheetNames[0]
         const sheet = workbook.Sheets[sheetName]
         const rows = XLSX.utils.sheet_to_json(sheet, {header: 1})
         const [header, ...data] = rows 
-        
+       
         // check if headers are valid
         this.validateHeaders(header)
 
@@ -327,7 +328,7 @@ class ProductService{
     }
 
 
-    validateFile(file) {
+    async validateFile(file) {
         return this.#error.handler(['Validate File'], () => {
             const allowdMimeType = [
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -339,12 +340,11 @@ class ProductService{
             const allowedExtensions = ['xlsx', 'xls', 'csv', 'ods']
             const fileExtension = file.originalname.split('.').pop().toLowerCase()
 
-
-            if (!allowdMimeType.includes(file.mimeType) || !allowedExtensions.includes(fileExtension)) {
+            if (!allowdMimeType.includes(file.mimetype) || !allowedExtensions.includes(fileExtension)) {
                 throw new Error('Not allwed file type')
             }
 
-            const workbook = XLSX.readFile(file.buffer, {type: 'buffer'})
+            const workbook = XLSX.read(file.buffer, {type: 'buffer'})
 
             return workbook
         })

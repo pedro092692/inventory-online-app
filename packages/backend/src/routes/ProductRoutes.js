@@ -4,12 +4,17 @@ import { authenticated } from '../middlewares/authMiddleware.js'
 import { validateFields } from '../validators/fieldValidator.js'
 import { authorization } from '../middlewares/authorization.js'
 import { PERMISSIONS } from '../constants/roles.js'
+import multer from 'multer'
+
+
 
 class ProductRoutes {
     constructor(){
         this.router = Router()
         this.router.use(authenticated)
         this.router.use(this.setRoutesModels.bind(this))
+        this.storate = multer.memoryStorage()
+        this.upload = multer({storage: this.storate})
         this.initializeRoutes()
     }
     /**
@@ -23,7 +28,7 @@ class ProductRoutes {
         this.router.get('/total-pages', (req, res) => new ProductController(req.Product).totalPages(req, res))
         this.router.get('/:id', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).getProduct(req, res))
         this.router.post('/', validateFields('createProduct'), (req, res) => new ProductController(req.Product).createProduct(req, res))
-        this.router.post('/bulk', (req, res) => new ProductController(req.Product).bulkProducts(req, res))
+        this.router.post('/bulk', this.upload.single('file'), (req, res) => new ProductController(req.Product).bulkProducts(req, res))
         this.router.patch('/:id', authorization(PERMISSIONS.UPDATE), validateFields('createProduct'), (req, res) => new ProductController(req.Product).updateProduct(req, res))
         this.router.delete('/', (req, res) => new ProductController(req.Product).deleteProduct(req, res))
     }
