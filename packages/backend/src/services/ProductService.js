@@ -62,7 +62,6 @@ class ProductService{
             const sheet = workbook.Sheets[sheetName]
             
             // get rows 
-
             const rows = XLSX.utils.sheet_to_json(sheet, {header: 1})
             const [headers, ...data] = rows
 
