@@ -1,9 +1,8 @@
 'use server'
 import Request from '@/app/utils/request'
-import { revalidatePath } from 'next/cache'
 
 export default async function AddBulkAction(preStave, formData) {
-    await new Promise(resolve => setTimeout(resolve, 1000))
+
     const file = formData.get('file')
     if (!file) {
         return {
@@ -19,11 +18,11 @@ export default async function AddBulkAction(preStave, formData) {
     
     const {data, error} = response 
     
+
     if (data?.errors) {
         return {
             message: null,
-            errors: data.errors,
-            inputs: body
+            errors: data.errors
         }
     }
 
@@ -31,12 +30,12 @@ export default async function AddBulkAction(preStave, formData) {
     if (error) {
         return {
             message: null, 
-            errors: {error: 'Hubo un error inesperado intenta nuevamente'},
+            errors: 'Hubo un error inesperado intenta nuevamente',
         }
     }
 
     return {
         message: 'Productos agregados con éxito',
-        errors: {}
+        errors: null
     }
  }

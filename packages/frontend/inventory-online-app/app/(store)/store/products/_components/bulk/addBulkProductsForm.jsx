@@ -7,13 +7,13 @@ import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState } from 'react'
 
 export default function AddBulkProductsForm() {
-    const initialState = {message: null, errors: {}}
+    const initialState = {message: null, errors: null}
     const [state, formAction, isPending] = useActionState(AddBulkAction, initialState)
     return (
         <Form action={formAction}>
             <Input showIcon={false} icon='upload' type='file' name='file' label='Archivo de productos' accept='.xlsx, .xls, .csv' />
             
-            {state?.errors?.error && <span className="field_error">{state?.errors?.error}</span>}
+            {state?.errors && <span className="field_error">{state?.errors}</span>}
             {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
             
             <Button role="submit" type="secondary"> 

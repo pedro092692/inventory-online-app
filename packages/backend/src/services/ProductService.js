@@ -1,5 +1,6 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
+import { FileError, InvalidFileTypeError, EmptyRowsError } from '../errors/FileError.js'
 import DollarValueService from './DollarValueService.js'
 import { Op, ValidationError} from 'sequelize'
 import XLSX from 'xlsx'
@@ -371,7 +372,7 @@ class ProductService{
             const fileExtension = file.originalname.split('.').pop().toLowerCase()
 
             if (!allowdMimeType.includes(file.mimetype) || !allowedExtensions.includes(fileExtension)) {
-                throw new Error('Not allwed file type')
+                throw new InvalidFileTypeError('Solo se permiten archivos .xlsx, .xls, .csv y .ods')
             }
 
             const workbook = XLSX.read(file.buffer, {type: 'buffer'})
@@ -414,7 +415,7 @@ class ProductService{
         const isValid = expectedHeaders.every(expectedHeader => normalizedHeaders.includes(expectedHeader))
 
         if (!isValid) {
-            throw new Error('Invalid file headers.')
+            throw new FileError('Columnas inválidas. Asegúrate de que el archivo contenga las columnas: Nombre, Código de Barras, Precio de Compra, Precio de Venta y Stock')
         }
     }
     
@@ -472,11 +473,11 @@ class ProductService{
         }
 
         products.forEach((product, index) => {
-            if (!product.name) throw new Error(`Product name is required in row ${index + 2}`)
-            if (!product.barcode) throw new Error(`Product barcode is required in row ${index + 2}`)
-            if (!product.purchase_price || isNaN(product.purchase_price)) throw new Error(`Product purchase price is required in row ${index + 2}`)
-            if (!product.selling_price || isNaN(product.selling_price)) throw new Error(`Product selling price is required in row ${index + 2}`)
-            if (!product.stock || isNaN(product.stock)) throw new Error(`Product stock is required in row ${index + 2}`)
+            if (!product.name) throw new EmptyRowsError(`El nombre del producto es requerido en la fila ${index + 2}`)
+            if (!product.barcode) throw new EmptyRowsError(`El código de barras del producto es requerido en la fila ${index + 2}`)
+            if (!product.purchase_price || isNaN(product.purchase_price)) throw new EmptyRowsError(`El precio de compra del producto es requerido en la fila ${index + 2}`)
+            if (!product.selling_price || isNaN(product.selling_price)) throw new EmptyRowsError(`El precio de venta del producto es requerido en la fila ${index + 2}`)
+            if (!product.stock || isNaN(product.stock)) throw new EmptyRowsError(`El stock del producto es requerido en la fila ${index + 2}`)
         })
 
     }

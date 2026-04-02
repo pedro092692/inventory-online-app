@@ -1,4 +1,5 @@
 import { ValidationError } from 'sequelize'
+import { FileError, InvalidFileTypeError, EmptyRowsError } from './FileError.js'
 import { NotFoundError } from './NofoundError.js'
 import process from 'process'
 
@@ -36,6 +37,10 @@ class ServiceErrorHandler {
 
         if(error instanceof NotFoundError) {
             throw new NotFoundError(`${kwargs[2]} with ID ${kwargs[1]} not found`)
+        }
+
+        if(error instanceof InvalidFileTypeError || error instanceof FileError || error instanceof EmptyRowsError) {
+            throw new InvalidFileTypeError(error.message)
         }
         
         if (process.env.NODE_ENV === 'development') {
