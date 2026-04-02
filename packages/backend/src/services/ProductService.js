@@ -406,7 +406,22 @@ class ProductService{
        
 
     }
+    
 
+    /**
+     * Transforms raw spreadsheet rows into structured product objects.
+     * This method maps an array of arrays (representing spreadsheet rows) into 
+     * an array of objects with keys corresponding to the database model fields.
+     * It also performs basic data normalization on the product name.
+     * @param {Array<Array<any>>} rows - The raw data rows extracted from the sheet (excluding headers).
+     * @returns {Array<Object>} An array of formatted product objects for bulk insertion.
+     * @property {string} name - Normalized product name (lowercase and trimmed).
+     * @property {string|number} barcode - The product's unique identifier.
+     * @property {number} purchase_price - The cost price.
+     * @property {number} selling_price - The retail price.
+     * @property {number} stock - The initial inventory quantity.
+     * @throws {Error} Throws "Row is required" if the rows argument is null or undefined.
+     */
     productData(rows) {
         if (!rows) {
             throw new Error('Row is required')
