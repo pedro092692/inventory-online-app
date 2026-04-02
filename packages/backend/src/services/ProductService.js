@@ -451,6 +451,22 @@ class ProductService{
         return productData
     }
 
+    /**
+     * Validates the integrity and data types of the processed product list.
+     * Iterates through the product objects to ensure all required fields are present
+     * and that numeric fields (prices and stock) contain valid numbers. 
+     * Error messages include the specific row number (index + 2) to help the user 
+     * locate the error in their spreadsheet.
+     * @param {Object[]} products - An array of product objects to validate.
+     * @param {string} products[].name - The name of the product.
+     * @param {string|number} products[].barcode - The unique barcode identifier.
+     * @param {number} products[].purchase_price - The cost price of the product.
+     * @param {number} products[].selling_price - The retail price of the product.
+     * @param {number} products[].stock - The current inventory level.
+     * @returns {void} Returns nothing if all products pass validation.
+     * @throws {Error} Throws "Products are required" if the input is null/undefined.
+     * @throws {Error} Throws a specific error indicating the missing field and the 
+     */
     validateProductData(products) {
         if (!products) {
             throw new Error('Products are required')
