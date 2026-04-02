@@ -381,6 +381,21 @@ class ProductService{
         })
     }
 
+
+    /**
+     * Validates that the spreadsheet contains all required columns.
+     * This method normalizes the provided headers by:
+     * 1. Trimming whitespace.
+     * 2. Converting to lowercase.
+     * 3. Removing accents/diacritics (Unicode NFD normalization).
+     * 4. Collapsing multiple internal spaces into a single space.
+     * It then checks if every required header in `expectedHeaders` exists 
+     * within the normalized list.
+     * @param {string[]} headers - The raw header row extracted from the spreadsheet.
+     * @returns {void} Returns nothing if validation passes.
+     * @throws {Error} Throws "Invalid file headers." if one or more required 
+     * columns are missing after normalization.
+     */ 
     validateHeaders(headers) {
         const expectedHeaders = [
             'nombre',
@@ -402,9 +417,6 @@ class ProductService{
         if (!isValid) {
             throw new Error('Invalid file headers.')
         }
-
-       
-
     }
     
 
