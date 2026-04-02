@@ -346,9 +346,21 @@ class ProductService{
         return products
     }
 
-
-    async validateFile(file) {
-        return this.#error.handler(['Validate File'], () => {
+    /**
+     * Validates the uploaded file's format and reads it into a workbook object.
+     * This method checks both the MIME type and the file extension against a whitelist 
+     * of allowed spreadsheet formats (XLSX, XLS, CSV, ODS). If valid, it parses the 
+     * file buffer using the XLSX library.
+     * @param {Object} file - The file object (typically from Multer or a similar middleware).
+     * @param {string} file.originalname - The original name of the file including extension.
+     * @param {string} file.mimetype - The MIME type of the file.
+     * @param {Buffer} file.buffer - The raw data buffer of the file.
+     * @returns {Promise<Object>} A promise that resolves to an XLSX Workbook object.
+     * @throws {Error} Throws "Not allwed file type" if the extension or MIME type is invalid.
+     * @throws {Error} Throws if the XLSX library fails to parse the file buffer.
+     */
+    validateFile(file) {
+        return this.#error.handler(['Validate File'], async () => {
             const allowdMimeType = [
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'application/vnd.ms-excel',
