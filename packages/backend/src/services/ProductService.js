@@ -37,30 +37,49 @@ class ProductService{
         })
     }
 
+    /**
+     * Handles the bulk creation of products from an uploaded file (Excel/CSV).
+     * This method validates the file structure, extracts data from the first sheet,
+     * Normalizes headers and product information, and performs a bulk insertion 
+     * into the database.
+     * @param {File|Blob|Buffer} file - The raw file object containing product data.
+     * @returns {Promise<boolean>} Resolves to true if the bulk creation is successful.
+     * @throws {Error} Throws if the file is missing or null.
+     * @throws {ValidationError} Throws if headers do not match requirements or data is malformed.
+     * @throws {DatabaseError} Throws if the Sequelize `bulkCreate` operation fails.
+     */
+    createProductsBulk(file) {
+        return this.#error.handler(['Create Products Bulk'], async() => {
+            if (!file) {
+                throw new Error('File is required')
+            }
 
-    async createProductsBulk(file) {
-        if (!file) {
-            throw new Error('File is required')
-        }
+            // validate file 
+            const workbook = await this.validateFile(file)
 
-        const workbook = await this.validateFile(file)
-        
-        const sheetName = workbook.SheetNames[0]
-        const sheet = workbook.Sheets[sheetName]
-        const rows = XLSX.utils.sheet_to_json(sheet, {header: 1})
-        const [header, ...data] = rows 
-       
-        // check if headers are valid
-        this.validateHeaders(header)
+            // get sheet 
+            const sheetName = workbook.SheetNames[0]
+            const sheet = workbook.Sheets[sheetName]
+            
+            // get rows 
 
-        const productData = this.productData(data)
+            const rows = XLSX.utils.sheet_to_json(sheet, {header: 1})
+            const [headers, ...data] = rows
 
-        // validate product data
-        this.validateProductData(productData)
+            // validate headers
+            this.validateHeaders(headers)
 
-        await this.Product.bulkCreate(productData)
+            const productData = this.productData(data)
 
-        return productData
+            // validate products data 
+            this.validateProductData(productData)
+
+            // create products in bulk
+            await this.Product.bulkCreate(productData)
+
+            return true
+
+        })
 
     }
 
