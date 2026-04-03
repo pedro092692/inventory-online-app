@@ -374,7 +374,7 @@ class ProductService{
             if (!allowdMimeType.includes(file.mimetype) || !allowedExtensions.includes(fileExtension)) {
                 throw new InvalidFileTypeError('Solo se permiten archivos .xlsx, .xls, .csv y .ods')
             }
-
+            
             const workbook = XLSX.read(file.buffer, {type: 'buffer'})
 
             return workbook
@@ -397,6 +397,10 @@ class ProductService{
      * columns are missing after normalization.
      */ 
     validateHeaders(headers) {
+        const errorMsg = 
+            'Columnas inválidas. Asegúrate de que el archivo contenga las columnas: Nombre, \
+            Código de Barras, Precio de Compra, Precio de Venta y Stock'
+        
         const expectedHeaders = [
             'nombre',
             'codigo de barras',
@@ -404,7 +408,13 @@ class ProductService{
             'precio de venta',
             'stock'
         ]
-
+        // cheveck if headers are valids 
+        const checkHeaders = headers.map(header => {
+            if (typeof header !== 'string' || header.trim() === '') {
+                throw new FileError(errorMsg)
+            }
+        })
+        
         const normalizedHeaders = headers.map(header => header
                                                             .trim()
                                                             .toLowerCase()
@@ -415,7 +425,7 @@ class ProductService{
         const isValid = expectedHeaders.every(expectedHeader => normalizedHeaders.includes(expectedHeader))
 
         if (!isValid) {
-            throw new FileError('Columnas inválidas. Asegúrate de que el archivo contenga las columnas: Nombre, Código de Barras, Precio de Compra, Precio de Venta y Stock')
+            throw new FileError(errorMsg)
         }
     }
     

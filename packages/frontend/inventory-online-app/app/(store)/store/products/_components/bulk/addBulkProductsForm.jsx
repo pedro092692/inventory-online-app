@@ -11,7 +11,7 @@ export default function AddBulkProductsForm() {
     const [state, formAction, isPending] = useActionState(AddBulkAction, initialState)
     return (
         <Form action={formAction}>
-            <Input showIcon={false} icon='upload' type='file' name='file' label='Archivo de productos' accept='.xlsx, .xls, .csv' />
+            <Input showIcon={false} icon='upload' type='file' name='file' label='Archivo de productos' accept='.xlsx, .xls, .csv, .ods' />
             
             {state?.errors && <span className="field_error">{state?.errors}</span>}
             {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}

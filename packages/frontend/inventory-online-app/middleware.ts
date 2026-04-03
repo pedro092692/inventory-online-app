@@ -9,7 +9,6 @@ export function middleware(request: NextRequest) {
   const privatePaths = ['/store']
   const authorizePaths = ['/store/customers/edit',
                           '/store/products/edit',
-                          '/store/pr/edit',
                           '/store/cashiers', 
                           '/store/payment-methods',
                           '/store/currency',

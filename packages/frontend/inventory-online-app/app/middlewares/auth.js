@@ -2,8 +2,11 @@ import { NextResponse } from 'next/server'
 import { verifyToken } from '../utils/verifyToken'
 
 export async function verifyAuth(request) {
+    const isServerAction = request.headers.get('Next-Action') !== null
     const token = request.cookies.get('access_token')?.value
     if(!token) {
+        if (isServerAction) return NextResponse.next()
+
         const redirectUrl = new URL('/login', request.url)
         const next = request.nextUrl.pathname + request.nextUrl.search
         redirectUrl.searchParams.set('next', next)

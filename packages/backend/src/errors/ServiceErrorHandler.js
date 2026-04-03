@@ -46,6 +46,7 @@ class ServiceErrorHandler {
         if (process.env.NODE_ENV === 'development') {
             throw new Error(`Error in: ${error.message}`)
         }else{
+            console.error(error)
             throw new Error('Something went wrong')
         }
     }

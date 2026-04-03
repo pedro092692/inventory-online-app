@@ -15,7 +15,6 @@ export default async function AddBulkAction(preStave, formData) {
     const endpoint = 'products/bulk'
 
     const response = await Request(endpoint, 'POST', form)
-    
     const {data, error} = response 
     
 

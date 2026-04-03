@@ -1,4 +1,5 @@
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { NotfoundError } from '@/app/errors/NotFoundError'
 export default async function FetchData(url, method, body = null) {
     const cookieStore = await cookies()
@@ -6,7 +7,7 @@ export default async function FetchData(url, method, body = null) {
     const isFormData = body instanceof FormData
     // await new Promise (resolve => setTimeout(resolve, 100))
     if (!token) {
-        return null
+       redirect(await buildLoginUrl())
     }
     const response = await fetch(url, {
         method: method,
@@ -42,4 +43,10 @@ export default async function FetchData(url, method, body = null) {
     return data
 
 }
-    
+
+async function buildLoginUrl() {
+    const headersList = await headers()
+    const referer = headersList.get('referer')
+    const next = referer ? new URL(referer).pathname : '/'
+    return `/login?next=${encodeURIComponent(next)}`
+}
