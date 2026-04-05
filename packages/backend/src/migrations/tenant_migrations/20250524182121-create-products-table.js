@@ -30,6 +30,7 @@ export default {
           barcode: {
             type: Sequelize.STRING,
             allowNull: false,
+            unique: true,
             defaultValue: '0000000000001'
           },
 
