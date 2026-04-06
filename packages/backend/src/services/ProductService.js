@@ -74,8 +74,11 @@ class ProductService{
             // validate products data 
             this.validateProductData(productData)
 
+            // check for duplicate barcodes in the file
+            this.findDuplicateBarcodes(productData)
+
             // create products in bulk
-            await this.Product.bulkCreate(productData)
+            // await this.Product.bulkCreate(productData)
 
             return true
 
@@ -490,6 +493,51 @@ class ProductService{
             if (!product.stock || isNaN(product.stock)) throw new EmptyRowsError(`El stock del producto es requerido en la fila ${index + 2}`)
         })
 
+    }
+
+    /**
+    * Identifies duplicate barcodes within a list of products and throws a ValidationError 
+    * if any are found. It reports the first three duplicate instances found, including 
+    * their associated spreadsheet row numbers (assuming a header row exists).
+    *
+    * @param {Object[]} products - The array of product objects to validate.
+    * @param {string} products[].barcode - The unique identifier/barcode for the product.
+    * @throws {ValidationError} Throws an error containing a formatted string of 
+    * duplicate barcodes and their corresponding row locations.
+    * @returns {void}
+    */
+    findDuplicateBarcodes(products) {
+        const seen = new Set()
+        const duplicates = new Map()
+    
+        products.forEach((product, index) => {
+            const barcode = product.barcode
+            const row = index + 2 
+
+            if (seen.has(barcode)) {
+                if(!duplicates.has(barcode)) {
+                    duplicates.set(barcode, [row])
+                } else {
+                    duplicates.get(barcode).push(row)
+                }
+
+            } else {
+                seen.add(barcode)
+            }
+        })
+        
+        if (duplicates.size > 0) {
+            const message = Array.from(duplicates.entries()).slice(0, 3).map(([barcode, rows]) => {
+                return `Código: "${barcode}" en filas: ${rows.slice(0, 3).join(', ')}`
+            }).join(' | ')
+
+            const extraInfo = duplicates.size > 3
+                ? ` y ${duplicates.size - 3} más...`
+                : ''
+           
+
+            throw new ValidationError(`Se encontraron códigos de barras duplicados: ${message}${extraInfo}`)
+        }
     }
 
 }
