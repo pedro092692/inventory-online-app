@@ -39,9 +39,8 @@ function initializeProduct(sequelize, schema) {
             },
 
             barcode: {
-                type: DataTypes.STRING, 
+                type: DataTypes.STRING,
                 allowNull: false, 
-                unique: true,
                 defaultValue: '0000000000001' // default barcode number 
             },
 

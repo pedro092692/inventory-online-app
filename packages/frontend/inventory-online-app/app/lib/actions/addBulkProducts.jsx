@@ -34,7 +34,7 @@ export default async function AddBulkAction(preStave, formData) {
     }
 
     return {
-        message: 'Productos agregados con éxito',
+        message: data ? `✔ ${data.newProducts} nuevos | 🔄 ${data.productsToUpdate} actualizados | ⏸ ${data.ignoredProducts} sin cambios`: 'Productos guardados con éxito',
         errors: null
     }
  }

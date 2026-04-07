@@ -78,9 +78,12 @@ class ProductService{
             this.findDuplicateBarcodes(productData)
 
             // create products in bulk
-            // await this.Product.bulkCreate(productData)
 
-            return true
+            //upsert products in bulk
+            const {newProducts, productsToUpdate, ignoredProducts} = await this.upsertProductsBulk(productData)
+            
+
+            return {newProducts, productsToUpdate, ignoredProducts}
 
         })
 
@@ -539,6 +542,136 @@ class ProductService{
             throw new ValidationError(`Se encontraron códigos de barras duplicados: ${message}${extraInfo}`)
         }
     }
+
+    upsertProductsBulk(products){
+         return this.#error.handler(['Upsert Products Bulk'], async() => {
+            const barcodes = products.map(product => `${product.barcode}`)
+            const productsInDb = await this.getProductByBarcodes(barcodes)
+            const productsToCheckUpdate = new Map()
+            const productsToCreate = []
+            let updatedProducts = 0
+            let ignored = 0
+
+            products.forEach((product) => {
+                if(productsInDb.has(`${product.barcode}`)) {
+                   productsToCheckUpdate.set(product.barcode, product)
+
+                } else {
+                    productsToCreate.push(
+                        product
+                    )
+                }
+            })
+
+          
+            if (productsToCreate.length > 0) {
+                await this.Product.bulkCreate(productsToCreate)
+            }
+
+            if (productsToCheckUpdate.size > 0) {
+                const {productsToUpdate, ignoredProducts} = this.checkProductForUpdate(productsToCheckUpdate, productsInDb)
+                
+                if (productsToUpdate.length > 0) {
+                    await this.Product.bulkCreate(productsToUpdate, {
+                        updateOnDuplicate: ['name', 'purchase_price', 'selling_price', 'stock']
+                    })
+                }
+                
+                ignored = ignoredProducts
+                updatedProducts = productsToUpdate.length
+        
+            }
+            
+            return {
+                newProducts: productsToCreate ? productsToCreate.length : 0,
+                productsToUpdate: updatedProducts,
+                ignoredProducts: ignored
+            }
+        
+         })
+
+    }
+
+    getProductByBarcodes(barcodes) {
+        return this.#error.handler(['Get Product By Barcodes'], async() => {
+            const productDb = new Map()
+            const products = await this.Product.findAll({
+                where: {
+                    barcode: {
+                        [Op.in]: barcodes
+                    }
+                }
+                })
+            
+                products.forEach(product => {
+                productDb.set(product.barcode, product)
+            })
+            return productDb
+        })
+
+    }
+
+    checkProductForUpdate(products, productsInDb) {
+        const productsToUpdate = new Map()
+        let ignoredProducts = 0
+      
+        products.forEach((product) => {
+            const existing = productsInDb.get(`${product.barcode}`)
+            let updateObject = productsToUpdate.get(`${product.barcode}`)
+            let hasChanges = false
+
+            if (!updateObject) {
+                updateObject = {
+                    id: existing.id,
+                    barcode: existing.barcode,
+                    name: existing.name,
+                    purchase_price: existing.purchase_price,
+                    selling_price: existing.selling_price,
+                    stock: existing.stock
+                }
+                
+            }
+
+            if(product.name !== productsInDb.get(`${product.barcode}`).name) {
+                updateObject.name = product.name
+                hasChanges = true
+            
+            }
+
+            if(parseFloat(product.purchase_price) !== parseFloat(productsInDb.get(`${product.barcode}`).purchase_price)) {
+                  updateObject.purchase_price = product.purchase_price
+                  hasChanges = true
+            }
+
+            if(parseFloat(product.selling_price) !== parseFloat(productsInDb.get(`${product.barcode}`).selling_price)) {
+                updateObject.selling_price = product.selling_price
+                hasChanges = true
+            }
+
+            if(parseFloat(product.stock) !== parseFloat(productsInDb.get(`${product.barcode}`).stock)) {
+                updateObject.stock = product.stock
+                hasChanges = true
+            }
+
+            if(hasChanges) {
+                productsToUpdate.set(`${product.barcode}`, updateObject)
+            }else{
+                ignoredProducts++
+            
+            }
+
+        })
+        
+        return {
+            productsToUpdate: Array.from(productsToUpdate.values()),
+            ignoredProducts: ignoredProducts
+        }
+        
+    }
+
+
+
+
 
 }
 

@@ -28,8 +28,8 @@ class ProductController{
     /* JSdocs here */
     bulkProducts = this.#error.handler( async(req, res) => {
         const file = req.file || null
-        const products = await this.ProductService.createProductsBulk(file)
-        res.status(201).json(products)
+        const {newProducts, productsToUpdate, ignoredProducts} = await this.ProductService.createProductsBulk(file)
+        res.status(201).json({newProducts, productsToUpdate, ignoredProducts})
     })
 
     /**
