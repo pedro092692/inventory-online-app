@@ -613,6 +613,16 @@ class ProductService{
 
     }
 
+    /**
+    * Retrieves products from the database by their barcodes and maps them for efficient lookup.
+    * This method queries the database for all products matching the provided barcodes 
+    * and returns a Map where the barcode is the key and the product object is the value.
+    *
+    * @param {string[]|number[]} barcodes - An array of barcodes to search for.
+    * @returns {Promise<Map<string, Object>>} A Promise resolving to a Map containing 
+    * the products found, indexed by their barcode.
+    * @throws {Error} Re-throws errors handled by the internal error handler.
+    */
     getProductByBarcodes(barcodes) {
         return this.#error.handler(['Get Product By Barcodes'], async() => {
             const productDb = new Map()
