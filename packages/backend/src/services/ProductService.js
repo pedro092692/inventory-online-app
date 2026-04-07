@@ -543,6 +543,27 @@ class ProductService{
         }
     }
 
+
+    /**
+    * Performs a bulk upsert (Update or Insert) operation on a list of products.
+    * * The logic splits the incoming products into two groups:
+    * 1. **New products**: Those not found in the database are created via `bulkCreate`.
+    * 2. **Existing products**: Those found in the database are checked for differences. 
+    * If changes are detected, they are updated; otherwise, they are ignored.
+    *
+    * @param {Object[]} products - The list of product objects to process.
+    * @param {string|number} products[].barcode - The unique barcode identifier.
+    * @param {string} products[].name - The name of the product.
+    * @param {number} products[].purchase_price - The purchase price.
+    * @param {number} products[].selling_price - The selling price.
+    * @param {number} products[].stock - The current stock level.
+    * @returns {Promise<{
+    * newProducts: number, 
+    * productsToUpdate: number, 
+    * ignoredProducts: number
+    * }>} An object containing counts of the operation results.
+    * * @throws {Error} Re-throws errors handled by the internal error handler.
+    */
     upsertProductsBulk(products){
          return this.#error.handler(['Upsert Products Bulk'], async() => {
             const barcodes = products.map(product => `${product.barcode}`)
