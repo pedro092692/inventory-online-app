@@ -20,7 +20,7 @@ export default function AddBulkProductsForm() {
         }
     } 
     return (
-        <Form action={formAction} >
+        <Form action={formAction} style={{padding: '0px'}}>
             <Input showIcon={false} id={'file'} icon='upload' 
                 className={styles.fileInput} type='file' name='file' label='Archivo de productos' 
                 accept='.xlsx, .xls, .csv, .ods' 
@@ -31,7 +31,7 @@ export default function AddBulkProductsForm() {
                 width={'100%'}
                 padding={'20px'}
                 borderRadius={'8px'}
-                backgroundColor={'var(--color-neutralGrey300)'}
+                backgroundColor={'var(--color-neutralGrey500)'}
                 className='shadow'
                 justifyContent={'start'}
             >

@@ -5,6 +5,7 @@ import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState, useState, useEffect } from 'react'
+import styles from './styles.module.css'
 
 export default function AddProductForm() {
     const initialState = {message: null, inputs: {}, errors: {}}
@@ -28,6 +29,7 @@ export default function AddProductForm() {
         formAction(formData)
     }
 
+
     useEffect(() => {
         const success = state?.message 
         if (success) {
@@ -42,7 +44,7 @@ export default function AddProductForm() {
     }, [state])
 
     return (
-        <Form className={'form-edit'} style={{padding: "16px"}} action={handleSubmit}  >
+        <Form className={`form-edit ${styles.form}`} style={{padding: "16px", width: '100%'}} action={handleSubmit}  >
             <label>Nombre del producto</label>
             <Input type="text" placeHolder="Nombre del producto" icon="product" 
             defaultValue={state.inputs?.name ?? ""} name={'name'} 

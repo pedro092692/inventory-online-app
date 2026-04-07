@@ -7,8 +7,6 @@ import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
 import Products from './_components/products'
 import GetItemAction from '@/app/lib/actions/get'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
-import { Button } from '@/app/ui/utils/button/buttons'
-import Link from 'next/link'
 
 export default async function Product({searchParams}) {
   const params = await searchParams
@@ -28,9 +26,6 @@ export default async function Product({searchParams}) {
           >
           
               <Route path='products' endpoints={['add', 'default']} /> 
-              <Link href='/store/products/bulk'>
-                <Button type='secondary' size='sm'>Carga Masiva de productos</Button>
-              </Link>
               <Search 
                 placeHolder="Buscar producto por Nombre, Código De Barras"
               />
