@@ -1,0 +1,26 @@
+.fileInput {
+  display: none !important;
+}
+
+.fileLabel {
+  background-color: var(--color-blue800);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 300;
+  transition: background-color .3s ease, transform .2s ease;
+  display: inline-block;
+}
+
+.fileLabel:hover {
+  background-color: var(--color-blue700);
+  transform: translateY(-1px);
+}
+
+.fileLabel:active {
+  transform: translateY(0);
+}
+
+

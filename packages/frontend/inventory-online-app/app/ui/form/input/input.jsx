@@ -13,7 +13,7 @@ export function Input({
         showIcon=true, 
         icon='playArrow', 
         gap='0px', 
-        className, 
+        className='', 
         value, 
         name,  
         readOnly=false,
@@ -23,6 +23,7 @@ export function Input({
         inputMode=null,
         defaultValue=null,
         accept=null,
+        id=null,
 
     }) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%', textTransform: capitalize ? 'capitalize' : 'none'}
@@ -53,6 +54,7 @@ export function Input({
                     autoFocus={autoFocus}
                     inputMode={inputMode}
                     accept={accept}
+                    id={id}
                 />
         :
                 <InputMask

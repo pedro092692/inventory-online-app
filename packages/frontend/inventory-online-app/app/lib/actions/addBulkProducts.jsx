@@ -2,7 +2,6 @@
 import Request from '@/app/utils/request'
 
 export default async function AddBulkAction(preStave, formData) {
-
     const file = formData.get('file')
     if (!file) {
         return {
