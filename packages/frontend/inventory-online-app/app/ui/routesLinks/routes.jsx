@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import { Container } from '../utils/container'
+import { getCurrentUser } from '@/app/utils/getCurrentUser'
 
 
-export default function Route({path='customers', endpoints=['default', 'add'], queryString='' }) {
+export default async function Route({path='customers', endpoints=['default', 'add'], queryString='' }) {
+    const userInfo = await getCurrentUser()
     const endpoint = `/store/${path}`
     const withParams = (url) => {
         return queryString ? `${url}?${queryString}` : url
@@ -12,36 +14,43 @@ export default function Route({path='customers', endpoints=['default', 'add'], q
         customers: {
             default: {
                 href: withParams(endpoint),
-                label: 'Clientes'
+                label: 'Clientes',
+                role: [1,2,3,4]
             },
             add: {
                 href: `${endpoint}/add`,
-                label: 'Agregar cliente'
+                label: 'Agregar cliente',
+                role: [1,2,3,4]
             },
 
             detail: {
                 href: `${endpoint}/detail/[id]`,
-                label: 'Detalle del cliente'
+                label: 'Detalle del cliente',
+                role: [1,2,3,4]
             },
 
             edit: {
                 href: `${endpoint}/edit/[id]`,
-                label: 'Editar cliente'
+                label: 'Editar cliente',
+                role: [1,2,3]
             }
         },
 
         products: {
             default: {
                 href: withParams(endpoint),
-                label: 'Productos'
+                label: 'Productos',
+                role: [1,2,3,4]
             },
             add: {
                 href: `${endpoint}/add`,
-                label: 'Agregar producto'
+                label: 'Agregar producto',
+                role: [1,2,3]
             },
             edit: {
                 href: `${endpoint}/edit/[id]`,
-                label: 'Editar producto'
+                label: 'Editar producto',
+                role: [1,2,3,4]
 
             }
         }
@@ -58,18 +67,25 @@ export default function Route({path='customers', endpoints=['default', 'add'], q
                     key={index}
                         
                     > 
-                    {index < endpoints.length -1 ?
-                        <Link
-                            href={routes[path][endpiont].href}
-                            key={index}
-                        >
-                            {routes[path][endpiont].label}
-                        </Link>
-                        :
-                        <p style={{cursor: 'default', color: 'var(--color-neutralGrey800)'}}>{routes[path][endpiont].label}</p>
-                        
+                    {
+                        routes[path][endpiont].role.includes(userInfo.role) ? (
+                            <>
+                                {index < endpoints.length -1 ?
+                                    <Link
+                                        href={routes[path][endpiont].href}
+                                        key={index}
+                                    >
+                                        {routes[path][endpiont].label}
+                                    </Link>
+                                    :
+                                    <p style={{cursor: 'default', color: 'var(--color-neutralGrey800)'}}>{routes[path][endpiont].label}</p>
+                                    
+                                }
+                                    {index < endpoints.length -1 && '/'}
+                            </>
+                         ) : 
+                         null
                     }
-                        {index < endpoints.length -1 && '/'}
                     </Container>
                         
                 )
