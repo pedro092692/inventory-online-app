@@ -642,6 +642,19 @@ class ProductService{
 
     }
 
+    /**
+    * Compares incoming product data against existing database records to identify changes.
+    * It performs a field-by-field comparison (name, prices, and stock) to determine
+    * if an update is necessary. If no values have changed, the product is ignored.
+    * @param {Map<string, Object>|Array<Object>} products - The incoming product data to check.
+    * @param {Map<string, Object>} productsInDb - A Map of existing products from the database, 
+    * indexed by barcode.
+    *  @returns {{
+    * productsToUpdate: Object[], 
+    * ignoredProducts: number
+    * }} An object containing an array of products that require database updates and a 
+    * count of products that remained unchanged.
+    */
     checkProductForUpdate(products, productsInDb) {
         const productsToUpdate = new Map()
         let ignoredProducts = 0
@@ -699,10 +712,6 @@ class ProductService{
         }
         
     }
-
-
-
-
 
 }
 
