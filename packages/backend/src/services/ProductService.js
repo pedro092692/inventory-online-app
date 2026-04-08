@@ -76,7 +76,6 @@ class ProductService{
             // get rows 
             const rows = XLSX.utils.sheet_to_json(sheet, {header: 1})
             const [headers, ...data] = rows
-
             // validate headers
             this.validateHeaders(headers)
 
@@ -431,6 +430,7 @@ class ProductService{
                 throw new FileError(errorMsg)
             }
         })
+
         
         const normalizedHeaders = headers.map(header => header
                                                             .trim()
@@ -465,8 +465,13 @@ class ProductService{
         if (!rows) {
             throw new Error('Row is required')
         }
-
-        const productData = rows.map(row => {
+        
+        const cleanedRows = rows.filter(row => {
+            return row && row.length > 0 && row[0] !== undefined && row[0] !== null && String(row[0]).trim() !== '';
+            
+        })
+       
+        const productData = cleanedRows.map(row => {
             return {
                 name: row[0].toLowerCase().trim(),
                 barcode: row[1],
@@ -722,6 +727,53 @@ class ProductService{
             ignoredProducts: ignoredProducts
         }
         
+    }
+
+    exportProductsToSheet(format='xlsx') {
+            return this.#error.handler(['Export Products To Sheet'], async() => {
+            const rawProducts = await this.Product.findAll()
+            const products = rawProducts.map((product) => {
+                return {
+                    name: product.name,
+                    barcode: product.barcode,
+                    purchase_price: parseFloat(product.purchase_price),
+                    selling_price: parseFloat(product.selling_price),
+                    stock: product.stock
+                }
+            })
+            // create new book
+            const workbook = XLSX.utils.book_new()
+
+            // header
+            const header = ['Nombre', 'Código de Barras', 'Precio de Compra', 'Precio de Venta', 'Stock']
+
+            // convert array to json
+            const worksheet = XLSX.utils.json_to_sheet(products, {skipHeader: true})
+
+            // add headers 
+            XLSX.utils.sheet_add_aoa(worksheet, [header], { origin: 'A1' })
+
+            // update column with
+            worksheet['!cols'] = [
+                {width: 30},
+                {width: 20},
+                {width: 15},
+                {width: 15},
+                {width: 15}
+            ]
+
+            // add new sheet
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Products')
+            
+            // generate file 
+           const buffer = XLSX.write(workbook, {
+                type: "buffer",
+                bookType: format
+            })
+
+
+            return buffer
+        })
     }
 
 }

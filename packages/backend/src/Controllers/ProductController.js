@@ -123,6 +123,13 @@ class ProductController{
         res.status(204).json({})
     })
 
+    exportProductsSheet = this.#error.handler( async(req, res) => {
+        const buffer = await this.ProductService.exportProductsToSheet()
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        res.setHeader('Content-Disposition', 'attachment; filename=products.xlsx')
+        res.send(buffer)
+    })
+
     includePurchasePrice(req) {
         const userRole = getUserRole(req.user.role)
         let includePurchasePrice = false

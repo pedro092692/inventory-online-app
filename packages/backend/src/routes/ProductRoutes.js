@@ -28,9 +28,10 @@ class ProductRoutes {
         this.router.get('/total-pages', (req, res) => new ProductController(req.Product).totalPages(req, res))
         this.router.get('/:id', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).getProduct(req, res))
         this.router.post('/', validateFields('createProduct'), (req, res) => new ProductController(req.Product).createProduct(req, res))
-        this.router.post('/bulk', this.upload.single('file'), (req, res) => new ProductController(req.Product).bulkProducts(req, res))
+        this.router.post('/bulk', authorization(PERMISSIONS.UPDATE), this.upload.single('file'), (req, res) => new ProductController(req.Product).bulkProducts(req, res))
+        this.router.post('/export', authorization(PERMISSIONS.UPDATE), (req, res) => new ProductController(req.Product).exportProductsSheet(req, res))
         this.router.patch('/:id', authorization(PERMISSIONS.UPDATE), validateFields('createProduct'), (req, res) => new ProductController(req.Product).updateProduct(req, res))
-        this.router.delete('/', (req, res) => new ProductController(req.Product).deleteProduct(req, res))
+        this.router.delete('/', authorization(PERMISSIONS.UPDATE), (req, res) => new ProductController(req.Product).deleteProduct(req, res))
     }
 
     /**

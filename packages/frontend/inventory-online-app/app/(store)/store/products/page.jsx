@@ -7,6 +7,7 @@ import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
 import Products from './_components/products'
 import GetItemAction from '@/app/lib/actions/get'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
+import ExportProductForm from '@/app/(store)/store/products/_components/export/exportForm'
 
 export default async function Product({searchParams}) {
   const params = await searchParams
@@ -39,9 +40,19 @@ export default async function Product({searchParams}) {
                 ) 
                 : 
                 (
-                    <Pagination totalPages={totalPages} />
+                    <Container
+                        padding={'0px'}
+                        width={'100%'}
+                        justifyContent={'space-between'}
+                    >
+                        <Pagination totalPages={totalPages} />
+
+                        <ExportProductForm/>
+                        
+                    </Container>
                 )
               }
+              
           </Container>
          
       )
