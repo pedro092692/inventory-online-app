@@ -1,5 +1,6 @@
 import GetItemAction from '@/app/lib/actions/get'
 import List from '@/app/ui/list/list'
+import styles from '@/app/(store)/store/customers/_components/customers.module.css'
 
 export default async function Customers({ limit = 10, page = 1, query = null, queryString = null}){
  
@@ -72,6 +73,7 @@ export default async function Customers({ limit = 10, page = 1, query = null, qu
             userPermissions={userPermissions}
             queryString={queryString}
             deleteMsg='Cliente eliminado con éxito'
+            customClass={styles.table}
         />
     )    
 } 

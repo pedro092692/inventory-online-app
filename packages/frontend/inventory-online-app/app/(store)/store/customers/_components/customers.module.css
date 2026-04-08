@@ -1,0 +1,9 @@
+.table table [data-label=id_number]{
+  text-align: right;
+}
+
+.table tbody tr:hover{
+  background-color: #EEE1C4 !important;
+  cursor: default;
+  /* font-size: 1.2em; */
+}
