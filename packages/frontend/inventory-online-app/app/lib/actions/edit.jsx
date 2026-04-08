@@ -19,6 +19,10 @@ export default async function EditItemAction(
     }     
     
     for (const key of bodyNames) {
+        if(key === 'name') {
+            body[key] = formData.get(key).toLowerCase()
+            continue
+        }
         body[key] = formData.get(key)
     }
 
