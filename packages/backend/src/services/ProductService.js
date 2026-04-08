@@ -40,7 +40,7 @@ class ProductService{
             
             const newProduct = await this.Product.create({
                 barcode: barcode,
-                name: name, 
+                name: name.toLowerCase(), 
                 purchase_price: purchase_price, 
                 selling_price: selling_price,
                 stock
