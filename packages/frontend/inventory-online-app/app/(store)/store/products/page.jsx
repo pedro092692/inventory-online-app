@@ -26,7 +26,7 @@ export default async function Product({searchParams}) {
               width='100%'
           >
           
-              <Route path='products' endpoints={['add', 'default']} /> 
+              <Route path='products' endpoints={['add', 'default']} queryString={queryString} /> 
               <Search 
                 placeHolder="Buscar producto por Nombre, Código De Barras"
               />

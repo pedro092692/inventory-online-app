@@ -18,7 +18,7 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 role: [1,2,3,4]
             },
             add: {
-                href: `${endpoint}/add`,
+                href: `${endpoint}/add${queryString?`?${queryString}`: ''}`,
                 label: 'Agregar cliente',
                 role: [1,2,3,4]
             },
@@ -43,7 +43,7 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 role: [1,2,3,4]
             },
             add: {
-                href: `${endpoint}/add`,
+                href: `${endpoint}/add${queryString?`?${queryString}`: ''}`,
                 label: 'Agregar producto',
                 role: [1,2,3]
             },
