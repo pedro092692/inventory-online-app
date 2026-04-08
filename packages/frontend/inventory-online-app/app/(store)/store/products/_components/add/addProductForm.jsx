@@ -29,7 +29,6 @@ export default function AddProductForm() {
         formAction(formData)
     }
 
-
     useEffect(() => {
         const success = state?.message 
         if (success) {
@@ -60,7 +59,7 @@ export default function AddProductForm() {
             name={'barcode'} />
 
             {state?.errors?.barcode && <span className="field_error">{state?.errors?.barcode}</span>}
-            
+            {typeof state?.errors === 'string' && <span className="field_error">{state.errors}</span>}
 
             <label>Precio de compra $</label>
             <Input type="text" placeHolder="Precio de compra $" icon="dollar" 
@@ -86,7 +85,7 @@ export default function AddProductForm() {
             
             {state?.errors?.stock && <span className="field_error">{state?.errors?.stock}</span>}
                 
-            {state?.errors?.error && <span className="field_error">{state?.errors?.error}</span>}
+            {state?.errors?.error && <span className="field_error">{state?.errors?.error }</span>}
 
             {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
 

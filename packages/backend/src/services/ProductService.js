@@ -27,6 +27,17 @@ class ProductService{
      */
     createProduct(barcode, name, purchase_price, selling_price, stock) {
         return this.#error.handler(['Create Product'], async() => {
+            // check if barcode exists
+            const product = await this.Product.findOne({
+                where: {
+                    barcode: barcode
+                }
+            })
+
+            if (product) {
+                throw new ValidationError('Ya existe un producto con este código de barras')
+            }
+            
             const newProduct = await this.Product.create({
                 barcode: barcode,
                 name: name, 
