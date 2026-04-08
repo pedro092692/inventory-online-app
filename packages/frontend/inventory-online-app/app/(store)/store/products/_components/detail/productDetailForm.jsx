@@ -79,7 +79,7 @@ export default function ProductDetailForm({product}) {
                 {state?.errors?.purchase_price && <span className="field_error">{state?.errors?.purchase_price}</span>}
     
                 <label>Precio de venta $</label>
-                <Input type="text" placeHolder="selling_price" icon="selling_price" 
+                <Input type="text" placeHolder="Precio De Venta $" icon="selling_price" 
                 defaultValue={state.inputs?.selling_price ?? product.selling_price}
                 onChange={() => setField({...field, selling_price: {isEdited: true}})}
                 name={'selling_price'} />
