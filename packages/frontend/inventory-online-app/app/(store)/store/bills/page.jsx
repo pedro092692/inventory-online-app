@@ -15,7 +15,7 @@ export default function Bills() {
             padding='0px'
             width='100%'
         >
-            <p>Bills</p>
+            
         </Container>
     )
 }

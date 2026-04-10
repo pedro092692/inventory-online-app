@@ -53,6 +53,25 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 role: [1,2,3,4]
 
             }
+        },
+
+        bills: {
+            default: {
+                href: withParams(endpoint),
+                label: 'Ordenes de compra',
+                role: [1,2,3,4]
+
+            },
+            add: {
+                href: `${endpoint}/add${queryString?`?${queryString}`: ''}`,
+                label: 'Crear Venta',
+                role: [1,2,3,4]
+            },
+            edit: {
+                href: `${endpoint}/edit/[id]`,
+                label: 'Editar Venta',
+                role: [1,2,4]
+            }
         }
     }
     
