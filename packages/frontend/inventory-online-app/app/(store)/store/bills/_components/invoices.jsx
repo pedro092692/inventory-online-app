@@ -16,6 +16,7 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
     const {data, error} = response
     const rawData = data?.invoices || []
     const userPermissions = data?.permissions || []
+    console.log(userPermissions)
     const transformData = (invoices) => {
         let data = []
         if (invoices.length > 0) {
@@ -28,6 +29,7 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
                     status: invoice.status == 'paid' ? 'Pagado' : 'Pendiente',
                     seller: invoice.seller.name,
                     customer: invoice.customer.name,
+                    id: invoice.id,
                 }
             ))
         }
@@ -55,8 +57,12 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
                     'estado': 'Estado',
                     'vendedor': 'Vendedor',
                     'cliente': 'Cliente',
+                    'actions': 'Acciones'
                 }
             }
+            showActions={true}
+            showEdit={false}
+            showDelete={false}
             tableData={invoices}
             params={rawParams}
             endpoint='invoices'
