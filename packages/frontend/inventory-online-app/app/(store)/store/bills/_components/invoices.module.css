@@ -1,0 +1,7 @@
+.table td[data-label="invoice_number"],
+.table td[data-label="date"],
+.table td[data-label="total"],
+.table td[data-label="total_reference"],
+.table td[data-label="total_paid"]{
+    text-align: right;
+}

@@ -5,6 +5,7 @@ import Pagination from '@/app/ui/pagination/pagination'
 import GetItemAction from '@/app/lib/actions/get'
 import { Suspense } from 'react'
 import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
+import Invoices from '@/app/(store)/store/bills/_components/invoices'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
 
 export default async function Bills({searchParams}) {
@@ -24,6 +25,9 @@ export default async function Bills({searchParams}) {
         >
             <Route path='bills' endpoints={['add', 'default']} queryString={queryString}/>
             <Search placeHolder="Buscar factura por # número, Nombre del cliente o Cédula del cliente" />
+            <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={7} />}>
+                <Invoices page={currentPage} query={query} queryString={queryString}/>
+            </Suspense>
             {
                 error ? 
                 (    
