@@ -597,7 +597,13 @@ class InvoiceService {
         })
     }
 
-
+    /**
+     * Calculates the total number of pages for invoices results based on a search query and limit.
+     * @param {string} [query=''] - The search term to filter invoices by ID or customer name and customer id number.
+     * @param {number} [limit=10] - The number of records to display per page.
+     * @returns {Promise<number>} A promise that resolves to the total number of calculated pages.
+     * @throws Will be handled by the internal error handler.
+     */
     totalPages(query = '', limit = 10) {
         return this.#error.handler(['Total pages', query, 'Invoices'], async () => {
             if (!query) {

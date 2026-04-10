@@ -18,6 +18,7 @@ class InvoiceRoutes {
         this.router.get('/all', (req, res) => new InvoiceController(req.Invoice).allInvoices(req, res))
         this.router.get('/day', (req, res) => new InvoiceController(req.Invoice).dayInvoices(req, res))
         this.router.get('/search', (req, res) => new InvoiceController(req.Invoice).searchInvoicesbyId(req, res))
+        this.router.get('/total-pages', (req, res) => new InvoiceController(req.Invoice, null, null, null, req.Customer).totalPages(req, res))
         this.router.get('/:id', (req, res) => new InvoiceController(req.Invoice, null, null, req.Dollar).getInvoice(req, res))
         this.router.get('/send-whatsapp/:id', (req, res) => new InvoiceController(req.Invoice, null, null, req.Dollar).sendWhatsappInvoice(req, res))
         this.router.post('/', (req, res) => new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).createInvoice(req, res))
@@ -40,14 +41,15 @@ class InvoiceRoutes {
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {Invoice, Product, Dollar, InvoiceDetail} = req.tenantModels
-        if(!Dollar || !Invoice || !Product || !InvoiceDetail) {
-            return res.status(400).json({ message: 'Invoice, Product, Dollar and InvoiceDetail models are required' })
+        const {Invoice, Product, Dollar, InvoiceDetail, Customer} = req.tenantModels
+        if(!Dollar || !Invoice || !Product || !InvoiceDetail || !Customer) {
+            return res.status(400).json({ message: 'All models are required' })
         }
         req.Invoice = Invoice
         req.Product = Product
         req.InvoiceDetail = InvoiceDetail
         req.Dollar = Dollar
+        req.Customer = Customer
 
         next()
     }
