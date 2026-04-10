@@ -7,6 +7,7 @@ import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
 import Products from './_components/products'
 import GetItemAction from '@/app/lib/actions/get'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
+import { getCurrentUser } from '@/app/utils/getCurrentUser'
 import ExportProductForm from '@/app/(store)/store/products/_components/export/exportForm'
 
 export default async function Product({searchParams}) {
@@ -17,6 +18,7 @@ export default async function Product({searchParams}) {
   const response = await GetItemAction(`products/total-pages${query ? `?data=${query}` : '' }`, 'Hubo un error inesperado intenta nuevamente')
   const {data, error} = response 
   const totalPages = data?.total || 1
+  const currentUser = await getCurrentUser()
 
      return (
           <Container
@@ -47,7 +49,7 @@ export default async function Product({searchParams}) {
                     >
                         <Pagination totalPages={totalPages} />
 
-                        <ExportProductForm/>
+                        {['admin', 'storeOwner', 'storeManager'].includes(currentUser?.role_name) && <ExportProductForm/>}
                         
                     </Container>
                 )

@@ -31,6 +31,7 @@ class SecurityService {
                     id: user.id, 
                     email: user.email,
                     role: user.role_id,
+                    role_name: this.roleName(user.role_id),
                     tenant_id: user.tenant_id
                 },
                 jtw_secret,
@@ -62,6 +63,7 @@ class SecurityService {
                     id: data.id,
                     email: data.email,
                     role: data.role,
+                    role_name: this.roleName(data.role),
                     tenant_id: data.tenant_id
                 }
             }catch {
@@ -91,6 +93,22 @@ class SecurityService {
 
             return false
         })
+    }
+
+    /**
+     * Maps a numeric role ID to its corresponding string representation.
+     * *@param {number|string} roleId - The unique identifier for the user role.
+     * @returns {('admin'|'storeOwner'|'storeManager'|'user')} The string name of the role. 
+     * Defaults to 'user' if the ID is not recognized.
+    */
+    roleName(roleId){
+        const roles = {
+            1: 'admin',
+            2: 'storeOwner',
+            3: 'storeManager',
+            4: 'user'
+        }
+        return roles[roleId] || 'user'
     }
 }
 
