@@ -1,12 +1,12 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
-export async function GET() {
+export async function POST() {
     const cookieStore = await cookies()
     const token = cookieStore.get('access_token')?.value
 
     if(!token) {
-        return NextResponse.redirect(new URL('/login', request.url))
+        return NextResponse.json({ error: 'FORBIDDEN' }, { status: 401 })
     }
 
     const API_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/export`
@@ -19,8 +19,13 @@ export async function GET() {
             }
         })
         if(!response.ok) {
-            throw new Error('Error al descargar el archivo')
+            if(response.status === 403) {
+                return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
+            }
+
+            return NextResponse.json({ error: 'SERVER_ERROR' }, { status: 500 })
         }
+        
         const buffer = await response.arrayBuffer()
 
         return new NextResponse(buffer, {
@@ -31,6 +36,6 @@ export async function GET() {
             }
         })
     }catch(error){
-        throw new Error('Error al descargar el archivo')
+        return NextResponse.json({ error: 'FECTCH_FALIED' }, { status: 500 })
     }
 }

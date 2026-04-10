@@ -13,7 +13,8 @@ export function middleware(request: NextRequest) {
                           '/store/cashiers', 
                           '/store/payment-methods',
                           '/store/currency',
-                          '/store/reports'
+                          '/store/reports',
+                          '/api/export',
                         ]
 
   if(publicPaths.some((path) => pathname.startsWith(path))) {

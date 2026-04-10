@@ -2,12 +2,14 @@
 import { Button } from '@/app/ui/utils/button/buttons'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import sytles from './form.module.css'
 
 
 export default function exportProductForm() {
     const [isPending, setIsPending] = useState(false)
     const [error, setError] = useState(null)
+    const router = useRouter()
     
     const handleDownload = async (e) => {
         e.preventDefault()
@@ -15,10 +17,20 @@ export default function exportProductForm() {
         
         try{ 
             const response = await fetch('/api/export', {
-                method: 'GET'
+                method: 'POST'
             })
 
             if (!response.ok) {
+                if (response.status === 403) {
+                    router.push('/store')
+                    return
+                }
+
+                if (response.status === 403) {
+                    router.push('/login')
+                    return
+                }
+
                 throw Error('Error en la descarga')
             }
 
