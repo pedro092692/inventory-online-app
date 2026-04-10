@@ -61,8 +61,8 @@ class InvoiceController {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
         const permission = userPermissions(req)
-        const {invoices} = []
-        res.status(200).json({customers, permissions: permission})
+        const {invoices} = await this.invoiceService.getAllInvoices()
+        res.status(200).json({invoices, permissions: permission})
     })
     
     /**

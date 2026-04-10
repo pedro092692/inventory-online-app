@@ -97,30 +97,36 @@ class InvoiceService {
     * @param {number} offset - number of invoices to skip 
     * @returns {Array} - array of invoices with details
     */
-    getAllInvoices(limit=10, offset=0) {
-        
-        return this.#error.handler(['Read All invoices'], async () => {
+    getAllInvoices(limit=10, page=1, includeDetails=false) {
+        const offset = (page - 1) * limit
+        return this.#error.handler(['Read All invoices'], async() => {
+            const customerAssociation = {
+                association: 'customer', attributes: ['name', 'phone']
+                
+            }
+            const sellerAssociation = {
+                association: 'seller', attributes: ['name']
+            }
+            const invoiceDetailsAssociation = {
+                association: 'products',
+                attributes: ['name'],
+                through: {
+                    attributes: ['quantity', 'unit_price'] 
+                }
+            }
+            const inluce = [customerAssociation, sellerAssociation]
+            if(includeDetails) {
+                inluce.push(invoiceDetailsAssociation)
+            }
             const invoices = await this.Invoice.findAll({
-                include: [
-                    {
-                        association: 'customer', attributes: ['name', 'phone']
-                    },
-                    {
-                        association: 'products',
-                        attributes: ['name'],
-                        through: {
-                            attributes: ['quantity', 'unit_price'] 
-                        }
-                    },
-                    {
-                        association: 'seller', attributes: ['name']
-                    }
-                ],
+                include: inluce,
                 order: [['id', 'DESC']],
                 limit: limit,
                 offset: offset,
             })
-            return invoices
+            return {
+                invoices: invoices
+            }
         })
     }
 
