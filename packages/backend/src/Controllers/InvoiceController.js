@@ -1,6 +1,7 @@
 import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
 import calculeTotalInvoice from '../utils/calculeTotal.js'
 import InvoiceService from '../services/InvoiceService.js'
+import { userPermissions } from './CustomerController.js'
 
 class InvoiceController {
     // error controller new instace 
@@ -57,8 +58,11 @@ class InvoiceController {
      * @throws {ServiceError} - throws an error if invoices could not be retrieved
      */
     allInvoices = this.#error.handler( async(req, res) => {
-        const invoices = await this.invoiceService.getAllInvoices()
-        res.status(200).json(invoices)
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const page = req.query.page ? parseInt(req.query.page) : 1
+        const permission = userPermissions(req)
+        const {invoices} = []
+        res.status(200).json({customers, permissions: permission})
     })
     
     /**
