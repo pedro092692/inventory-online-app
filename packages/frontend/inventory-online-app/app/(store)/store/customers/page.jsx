@@ -25,7 +25,7 @@ export default async function Customer({searchParams}) {
             width='100%'
         >
         
-            <Route path='customers' endpoints={['add', 'default']} /> 
+            <Route path='customers' endpoints={['add', 'default']} queryString={queryString} /> 
             <Search 
                 placeHolder="Buscar cliente por Nombre, Cédula"
             />
