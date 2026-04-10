@@ -4,18 +4,19 @@ import ProductService from './ProductService.js'
 import DollarValueService from './DollarValueService.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import verifyDetails from '../utils/VerifiyDetails.js'
-import { Op, cast, where, col } from 'sequelize'
+import { Op, cast, where, col, ValidationError } from 'sequelize'
 
 class InvoiceService {
     
     // instance of error handler 
     #error = new ServiceErrorHandler()
 
-    constructor(model, detailModel=null, productModel=null, dollarModel=null) {
+    constructor(model, detailModel=null, productModel=null, dollarModel=null, customerModel=null) {
         this.Invoice = model
         this.InvoiceDetail = new InvoiceDetailService(detailModel)
         this.Product = new ProductService(productModel, dollarModel)
         this.dollarValue = new DollarValueService(dollarModel)
+        this.Customer = customerModel
         this.#error
     }
 
@@ -593,6 +594,33 @@ class InvoiceService {
             const waLink = `https://wa.me/${phone}?text=${encoded_data}`;
             
             return waLink
+        })
+    }
+
+
+    totalPages(query = '', limit = 10) {
+        return this.#error.handler(['Total pages', query, 'Invoices'], async () => {
+            if (!query) {
+                const count = await this.Invoice.count()
+                return Math.ceil(count / limit)
+            }
+            const results = await this.Invoice.findAndCountAll({
+                where: {
+                    [Op.or]: [
+                        where(cast(col('Invoice.id'), 'VARCHAR'), { [Op.like]: `%${query}%` }),
+                        where(cast(col('customer.id_number'), 'VARCHAR'), {[Op.like]: `%${query}%`}),
+                        where(col('customer.name'), { [Op.like]: `%${query}%` }),
+                    ]
+                },
+                include: [{
+                    model: this.Customer,
+                    as: 'customer',
+                    attributes: ['id', 'name', 'id_number'],
+                    required: true
+                }]
+            })
+            return Math.ceil(results.count / limit)
+
         })
     }
 }
