@@ -70,7 +70,7 @@ export default async function Route({path='customers', endpoints=['default', 'ad
             edit: {
                 href: `${endpoint}/edit/[id]`,
                 label: 'Editar Venta',
-                role: [1,2,4]
+                role: [1,2,3]
             }
         }
     }
