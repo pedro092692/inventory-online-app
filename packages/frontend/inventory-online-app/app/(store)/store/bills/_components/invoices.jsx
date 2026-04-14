@@ -16,16 +16,17 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
     const {data, error} = response
     const rawData = data?.invoices || []
     const userPermissions = data?.permissions || []
-    console.log(userPermissions)
+    // console.log(userPermissions)
     const transformData = (invoices) => {
         let data = []
         if (invoices.length > 0) {
             data = invoices.map(invoice => (
                 {
-                    invoice_number: invoice.id,
+                    invoice_number: String(invoice.id).padStart(8, '0'),
                     date: new Date(invoice.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }),
                     total: `$ ${invoice.total}`,
                     total_reference: new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(invoice.total_reference),
+                    exchange_rate: invoice.exchangeRate ? new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(invoice.exchangeRate) : 'N/A',
                     status: invoice.status == 'paid' ? 'Pagado' : 'Pendiente',
                     seller: invoice.seller.name,
                     customer: invoice.customer.name,
@@ -54,6 +55,7 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
                     'fecha': 'Fecha',
                     'total': 'Total',
                     'total_bs': 'Total Bs',
+                    'exchange_rate': 'Tasa de Cambio',
                     'estado': 'Estado',
                     'vendedor': 'Vendedor',
                     'cliente': 'Cliente',

@@ -124,6 +124,13 @@ class InvoiceService {
                 limit: limit,
                 offset: offset,
             })
+
+            // add exchange rate to each invoice
+            invoices.forEach((invoice) => {
+                invoice.dataValues.exchangeRate = 
+                (invoice.total_reference && invoice.total) ? (invoice.total_reference / invoice.total).toFixed(2) : null
+            })
+            
             return {
                 invoices: invoices
             }

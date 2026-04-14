@@ -2,7 +2,8 @@
 .table td[data-label="date"],
 .table td[data-label="total"],
 .table td[data-label="total_reference"],
-.table td[data-label="total_paid"]{
+.table td[data-label="total_paid"],
+.table td[data-label="exchange_rate"] {
     text-align: right;
 }
 
