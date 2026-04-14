@@ -72,7 +72,7 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
             showDelete={false}
             tableData={invoices}
             params={rawParams}
-            endpoint='invoices'
+            endpoint='bills'
             deleteKey={'id'}
             userPermissions={userPermissions}
             queryString={queryString}
