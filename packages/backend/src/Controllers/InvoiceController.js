@@ -113,6 +113,22 @@ class InvoiceController {
         }
         res.status(200).json({'message': 'No invoices found'})
     })
+    
+    /**
+    * Handle HTTP request to search for invoices with a specific query.
+    * @param {Object} req - Express request object.
+    * @param {Object} req.params - URL path parameters.
+    * @param {string|data} req.params.data - The query param to perform the search.
+    * @param {Object} res - Express response object.
+    * @returns {Promise<void>} Sends a JSON response containing the generated WhatsApp URL.
+    */
+    searchInvoices = this.#error.handler( async(req, res) => {
+        const { data } = req.query
+        const limitResults = req.query.limit ? parseInt(req.query.limitResults) : 10 
+        const page = req.query.page ? parseInt(req.query.page) : 1
+        const { invoices } = await this.invoiceService.searchInvoices(data, page, limitResults)
+        res.status(200).json({ invoices })
+    })
 
     /**
      * Handle HTTP request to generate a WhatsApp share link for a specific invoice.

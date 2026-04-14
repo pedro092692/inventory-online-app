@@ -43,7 +43,8 @@ export default function Search ({
         const params = new URLSearchParams(searchParams.toString())
         params.set(page_param, '1')
         if (term) {
-            params.set(paramName, term)
+            const cleanTerm = term.trim().replaceAll('.', '').replace(/\s+/g, ' ')
+            params.set(paramName, cleanTerm)
         }else {
             params.delete(paramName)
         }

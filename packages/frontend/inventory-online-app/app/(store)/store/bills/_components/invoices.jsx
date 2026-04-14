@@ -3,12 +3,17 @@ import List from '@/app/ui/list/list'
 import styles from '@/app/(store)/store/bills/_components/invoices.module.css'
 
 export default async function Invoices({limit = 10, page = 1, query = null, queryString = null}) {
-    const endpoint = 'invoices/all'
+    const endpoint =  query ? `invoices/search-query` : 'invoices/all'
     const params = new URLSearchParams()
     const rawParams = params.toString()
-
+    if(query){
+        params.append('data', query)
+        params.append('limitResults', limit)
+        params.append('page', page)
+    }else{
     params.append('limit', limit)
     params.append('page', page)
+    }
 
     const url  = `${endpoint}?${params.toString()}`
 

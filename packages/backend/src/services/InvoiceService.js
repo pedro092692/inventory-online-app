@@ -114,25 +114,22 @@ class InvoiceService {
                     attributes: ['quantity', 'unit_price'] 
                 }
             }
-            const inluce = [customerAssociation, sellerAssociation]
+            const inludes = [customerAssociation, sellerAssociation]
             if(includeDetails) {
-                inluce.push(invoiceDetailsAssociation)
+                inludes.push(invoiceDetailsAssociation)
             }
             const invoices = await this.Invoice.findAll({
-                include: inluce,
+                include: inludes,
                 order: [['id', 'DESC']],
                 limit: limit,
                 offset: offset,
             })
 
             // add exchange rate to each invoice
-            invoices.forEach((invoice) => {
-                invoice.dataValues.exchangeRate = 
-                (invoice.total_reference && invoice.total) ? (invoice.total_reference / invoice.total).toFixed(2) : null
-            })
+            const invoicesWithExchangeRate = this.calculateExchangeRate(invoices)
             
             return {
-                invoices: invoices
+                invoices: invoicesWithExchangeRate
             }
         })
     }
@@ -312,6 +309,59 @@ class InvoiceService {
         return {
             invoices: result.rows,
             totalPages: Math.ceil(result.count / limit),
+            }
+        })
+    }
+
+    /**
+     * Searches for invoices using a string query with support for pagination.
+     * * The search performs a partial match (LIKE) across the following fields:
+     * - Invoice ID (cast to string)
+     * - Customer Identification Number
+     * - Customer Name
+     * @param {string} query - The search term to match against IDs or names.
+     * @param {number} [page=10] - The current page number (defaults to 10 based on signature).
+     * @param {number} [limitResults=10] - The number of records to return per page.
+     * @returns {Promise<{invoices: Object[]}>} A promise resolving to an object containing 
+     * the array of matching invoice models, enriched with calculated exchange rates.
+     * * @throws {Error} Re-throws errors handled by the internal error handler.
+     */
+    searchInvoices(query, page=10, limitResults=10) {
+        const offesetResults = (page  - 1) * limitResults
+        
+        return this.#error.handler(['Search Invoices', query, 'Invoices'], async() => {
+            
+
+            const results = await this.Invoice.findAndCountAll({
+                where: {
+                    [Op.or]: [
+                        where(cast(col('Invoice.id'), 'VARCHAR'), { [Op.eq]: query}),
+                        where(cast(col('customer.id_number'), 'VARCHAR'), {[Op.eq]: query}),
+                        where(col('customer.name'), { [Op.like]: `%${query}%` }),
+                    ]
+                },
+                include: [
+                    {
+                        association: 'customer',
+                        attributes: ['id', 'name', 'id_number'],
+                        required: true
+                    },
+                    {
+                        association: 'seller',
+                        attributes: ['name']
+                    }
+                ],
+
+
+
+                order: [['id', 'DESC']],
+                limit: limitResults,
+                offset: offesetResults,
+                
+            })
+            const invoicesWithExchangeRate = this.calculateExchangeRate(results.rows)
+            return {
+                invoices: invoicesWithExchangeRate
             }
         })
     }
@@ -626,14 +676,16 @@ class InvoiceService {
             const results = await this.Invoice.findAndCountAll({
                 where: {
                     [Op.or]: [
-                        where(cast(col('Invoice.id'), 'VARCHAR'), { [Op.like]: `%${query}%` }),
-                        where(cast(col('customer.id_number'), 'VARCHAR'), {[Op.like]: `%${query}%`}),
+                        // where(cast(col('Invoice.id'), 'VARCHAR'), { [Op.like]: `%${query}%` }), for testing search by id with like operator
+                        // where(cast(col('customer.id_number'), 'VARCHAR'), {[Op.like]: `%${query}%`}), for testing search by customer id number with like operator
+                        where(cast(col('Invoice.id'), 'VARCHAR'), { [Op.eq]: query}),
+                        where(cast(col('customer.id_number'), 'VARCHAR'), {[Op.eq]: query}),
+                        where(col('customer.name'), { [Op.like]: `%${query}%` }),
                         where(col('customer.name'), { [Op.like]: `%${query}%` }),
                     ]
                 },
                 include: [{
-                    model: this.Customer,
-                    as: 'customer',
+                    association: 'customer',
                     attributes: ['id', 'name', 'id_number'],
                     required: true
                 }]
@@ -641,6 +693,26 @@ class InvoiceService {
             return Math.ceil(results.count / limit)
 
         })
+    }
+
+    /**
+    * Calculates and injects the exchange rate into a list of invoice objects.
+    * The exchange rate is derived by dividing the reference total by the local total.
+    * The result is appended to the Sequelize `dataValues` object of each invoice.
+    * @param {Object[]} invoices - An array of invoice model instances.
+    * @param {number} invoices[].total - The total amount in local currency.
+    * @param {number} invoices[].total_reference - The total amount in reference currency (e.g., USD).
+    * @param {Object} invoices[].dataValues - The internal state of the Sequelize model.
+    * @returns {Object[]} The modified array of invoices, each containing an `exchangeRate` 
+    * (string formatted to 2 decimals) or `null` if calculation is not possible.
+    */
+    calculateExchangeRate(invoices) {
+        const invoicesWithExchangeRate = invoices.map((invoice) => {
+            invoice.dataValues.exchangeRate = 
+            (invoice.total_reference && invoice.total) ? (invoice.total_reference / invoice.total).toFixed(2) : null
+            return invoice
+        })
+        return invoicesWithExchangeRate
     }
 }
 
