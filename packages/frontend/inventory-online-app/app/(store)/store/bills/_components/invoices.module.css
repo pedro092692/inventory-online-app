@@ -5,3 +5,8 @@
 .table td[data-label="total_paid"]{
     text-align: right;
 }
+
+.table tbody tr:hover{
+  background-color: #EEE1C4 !important;
+  cursor: default;
+}
