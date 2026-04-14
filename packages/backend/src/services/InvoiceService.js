@@ -208,7 +208,7 @@ class InvoiceService {
             const invoice = await this.Invoice.findByPk(id, {
                 include: [
                     {
-                        association: 'customer', attributes: ['name', 'phone']
+                        association: 'customer', attributes: ['name', 'phone', 'id_number'],
                     },
                     {
                         association: 'products',
@@ -269,7 +269,9 @@ class InvoiceService {
             }
             
 
-            return invoice
+            return {
+                invoice: invoice
+            }
         })
     }
 

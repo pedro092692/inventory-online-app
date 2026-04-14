@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import Request from '@/app/utils/request'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
 import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
+import BillInfo from '@/app/(store)/store/bills/_components/detail/detail'
 
 export default async function BillDetail({ params, searchParams}) {
     const { id }  = await params
@@ -17,8 +18,10 @@ export default async function BillDetail({ params, searchParams}) {
             width='100%'
         >
             <Route path='bills' endpoints={['default', 'detail']} queryString={queryString}/> 
-        
-            <h1>Hi pedro</h1>        
+            
+            <Suspense key={id} fallback={<FormSkeleton nFields={5}/>}>
+                <BillInfo id={id}/>  
+            </Suspense>
                    
         </Container>
     )
