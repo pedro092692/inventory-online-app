@@ -6,8 +6,8 @@ import { userPermissions } from './CustomerController.js'
 class InvoiceController {
     // error controller new instace 
     #error = new ControllerErrorHandler()
-    constructor(model, detailModel=null, productModel=null, dollarModel=null) {
-        this.invoiceService = new InvoiceService(model, detailModel, productModel, dollarModel)
+    constructor(model, detailModel=null, productModel=null, dollarModel=null, customerModel=null) {
+        this.invoiceService = new InvoiceService(model, detailModel, productModel, dollarModel, customerModel)
         this.#error
     }
     
