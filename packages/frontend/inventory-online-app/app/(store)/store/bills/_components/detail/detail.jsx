@@ -3,12 +3,13 @@ import { Container } from '@/app/ui/utils/container'
 import CustomerInfo from '@/app/(store)/store/bills/_components/detail/customerDetail/customerDetail'
 import SellerInfo from '@/app/(store)/store/bills/_components/detail/sellerDetail/sellerDetail'
 import BillStatusDetail from '@/app/(store)/store/bills/_components/detail/status/status'
+import PaymentDetails from '@/app/(store)/store/bills/_components/detail/paymentDetail/paymentDetail'
 
 export default async function BillInfo({ id }) {
     const endpoint = `invoices/${id}`
     const response = await GetItemAction(endpoint)
     const { data, error } = response
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    // await new Promise(resolve => setTimeout(resolve, 1000))
     const invoice = data?.invoice || null
     console.log(invoice)
     return (
@@ -59,6 +60,9 @@ export default async function BillInfo({ id }) {
                 direction={'row'}
                 gap={'32px'}
                 alignItem={'start'}
+                justifyContent={'start'}
+                width={'100%'}
+                // backgroundColor={'red'}
             >            
                 {/* customer details */}
                 <CustomerInfo customer={invoice?.customer}/>
@@ -80,6 +84,8 @@ export default async function BillInfo({ id }) {
                 
                 </Container>
                 
+                {/* payment details */}
+                {invoice?.['payments-details']?.length > 0 && <PaymentDetails paymentDetails={invoice['payments-details']}/>}
             </Container>
             
                 

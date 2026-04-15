@@ -7,7 +7,6 @@ export default function CustomerInfo({ customer }) {
             width={'100%'}
             padding={'0px'}
             alignItem={'start'}
-            // backgroundColor={'blue'}
         >
             <h3 className='p1-r'>Detalle del cliente</h3>
             <Container
@@ -17,6 +16,7 @@ export default function CustomerInfo({ customer }) {
                 className='shadow'
                 direction={'column'}
                 alignItem={'start'}
+                width={'100%'}
             >
                 <label htmlFor="name">Nombre</label>
                 <Input type='text' id='name' icon='person' defaultValue={customer?.name || 'customer name'} readOnly={true}/>

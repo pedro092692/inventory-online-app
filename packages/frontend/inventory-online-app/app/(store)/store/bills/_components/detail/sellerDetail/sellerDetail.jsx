@@ -17,6 +17,7 @@ export default function SellerInfo({ seller }) {
                 className='shadow'
                 direction={'column'}
                 alignItem={'start'}
+                width={'100%'}
             >
                 <label htmlFor="name">Nombre</label>
                 <Input type='text' id='name' icon='person' defaultValue={seller?.name || 'seller name'} readOnly={true}/>
