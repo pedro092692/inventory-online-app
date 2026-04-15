@@ -1,5 +1,5 @@
 import GetItemAction from '@/app/lib/actions/get'
-import BillDetailForm from '@/app/(store)/store/bills/_components/detail/formDetail'
+import { Container } from '@/app/ui/utils/container'
 
 export default async function BillInfo({ id }) {
     const endpoint = `invoices/${id}`
@@ -8,9 +8,19 @@ export default async function BillInfo({ id }) {
     await new Promise(resolve => setTimeout(resolve, 1000))
     const invoice = data?.invoice || null
     return (
-        <>
-            <BillDetailForm bill={invoice} readOnly={true}/>
-        </>
+        <Container
+            direction={'column'}
+            width={'100%'}
+            flexGrow={'1'}
+            padding={'16px'}
+            alignItem={'start'}
+            backgroundColor={'red'}
+            borderRadius={'8px'}
+            className='shadow'
+        >
+            
+        </Container>
     )
+}
 
-    }
+
