@@ -1,5 +1,7 @@
 import GetItemAction from '@/app/lib/actions/get'
 import { Container } from '@/app/ui/utils/container'
+import CustomerInfo from '@/app/(store)/store/bills/_components/detail/customerDetail/customerDetail'
+import SellerInfo from '@/app/(store)/store/bills/_components/detail/sellerDetail/sellerDetail'
 
 export default async function BillInfo({ id }) {
     const endpoint = `invoices/${id}`
@@ -7,20 +9,80 @@ export default async function BillInfo({ id }) {
     const { data, error } = response
     await new Promise(resolve => setTimeout(resolve, 1000))
     const invoice = data?.invoice || null
+    console.log(invoice)
     return (
         <Container
             direction={'column'}
-            width={'100%'}
+            // width={'100%'}
             flexGrow={'1'}
-            padding={'16px'}
+            padding={'24px'}
             alignItem={'start'}
-            backgroundColor={'red'}
             borderRadius={'8px'}
             className='shadow'
+            gap={'24px'}
+            // backgroundColor={'var(--color-neutralGrey300)'}
         >
+            {/* date and time of the invoice */}
+            <Container
+                padding={'0px'}
+                direction={'row'}
+                width={'100%'}
+                justifyContent={'space-between'}
+            >
+                
+                {/* order id */}
+                <h3 className='p2-b'>N° Recibo: 
+                    <span className='p2-r'>
+                        {` ${String(invoice?.id).padStart(8, '0')|| ''}`}
+                    </span>
+                </h3>
+                {/* date: */}
+                <Container padding={'0px'}>
+                    <h3 className='p2-b'>Fecha: 
+                        <span className='p2-r'>
+                            {` ${invoice?.date ? formaDate(invoice?.date) : ''}`}
+                        </span>
+                    </h3>
+                    {/* time */}
+                    <h3 className='p2-b'>Hora: 
+                        <span className='p2-r'>
+                            {` ${invoice?.date ? formaDate(invoice?.date, true) : ''}`}
+                        </span>
+                    </h3>
+                </Container>
+            </Container>
             
+            {/* invoice details */}
+            <Container
+                padding={'0px'}
+                direction={'row'}
+                gap={'32px'}
+                alignItem={'start'}
+            >
+
+            
+                {/* customer details */}
+                <CustomerInfo customer={invoice?.customer}/>
+                {/* seller details */}
+                <SellerInfo seller={invoice?.seller}/>
+            </Container>
         </Container>
     )
 }
 
 
+
+function formaDate(date, time = false) {
+    if(!time) {
+        return new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' })
+    }
+
+    const actualDate = new Date(date)
+    let hours = actualDate.getUTCHours()
+    let minutes = actualDate.getUTCMinutes()
+    const ampm = hours >=12 ? 'PM' : 'AM'
+    hours = hours % 12
+    hours = hours ? hours : 12
+    const min = minutes.toString().padStart(2, '0')
+    return `${hours}:${min} ${ampm}`
+}
