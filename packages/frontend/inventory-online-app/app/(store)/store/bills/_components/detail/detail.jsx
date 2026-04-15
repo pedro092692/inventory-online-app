@@ -2,6 +2,7 @@ import GetItemAction from '@/app/lib/actions/get'
 import { Container } from '@/app/ui/utils/container'
 import CustomerInfo from '@/app/(store)/store/bills/_components/detail/customerDetail/customerDetail'
 import SellerInfo from '@/app/(store)/store/bills/_components/detail/sellerDetail/sellerDetail'
+import BillStatusDetail from '@/app/(store)/store/bills/_components/detail/status/status'
 
 export default async function BillInfo({ id }) {
     const endpoint = `invoices/${id}`
@@ -13,7 +14,7 @@ export default async function BillInfo({ id }) {
     return (
         <Container
             direction={'column'}
-            // width={'100%'}
+            width={'100%'}
             flexGrow={'1'}
             padding={'24px'}
             alignItem={'start'}
@@ -58,14 +59,30 @@ export default async function BillInfo({ id }) {
                 direction={'row'}
                 gap={'32px'}
                 alignItem={'start'}
-            >
-
-            
+            >            
                 {/* customer details */}
                 <CustomerInfo customer={invoice?.customer}/>
+
+                <Container
+                    padding={'0px'}
+                    gap={'24px'}
+                    direction={'column'}
+                    alignItem={'start'}
+                    width={'100%'}
+                    // backgroundColor={'blue'}
+                >   
+                
                 {/* seller details */}
                 <SellerInfo seller={invoice?.seller}/>
+                {/* status */}
+                <BillStatusDetail status={invoice?.status} total_paid={invoice?.total_paid} total={invoice?.total} total_reference={invoice?.total_reference}/>
+                
+                
+                </Container>
+                
             </Container>
+            
+                
         </Container>
     )
 }
