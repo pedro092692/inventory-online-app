@@ -12,7 +12,6 @@ export default async function BillInfo({ id }) {
     const { data, error } = response
     // await new Promise(resolve => setTimeout(resolve, 1000))
     const invoice = data?.invoice || null
-    // console.log(invoice)
     return (
         <Container
             direction={'column'}
@@ -31,14 +30,30 @@ export default async function BillInfo({ id }) {
                 direction={'row'}
                 width={'100%'}
                 justifyContent={'space-between'}
+                alignItem={'start'}
             >
                 
-                {/* order id */}
-                <h3 className='p2-b'>N° Recibo: 
-                    <span className='p2-r'>
-                        {` ${String(invoice?.id).padStart(8, '0')|| ''}`}
-                    </span>
-                </h3>
+                {/* order basic details id and seller */}
+                <Container
+                    padding={'0px'}
+                    direction={'column'}
+                    gap={'8px'}
+                    alignItem={'start'}
+                >
+                    {/* order id */}
+                    <h3 className='p2-b'>N° Recibo: 
+                        <span className='p2-r'>
+                            {` ${String(invoice?.id).padStart(8, '0')|| ''}`}
+                        </span>
+                    </h3>
+                    {/* seller */}
+                    <h3 className='p2-b'>Vendedor: 
+                        <span className='p2-r'>
+                            { ` ${invoice?.seller.name}` || ' Default Seller'}
+                        </span>
+                    </h3>
+                </Container>
+                
                 {/* date: */}
                 <Container padding={'0px'}>
                     <h3 className='p2-b'>Fecha: 
@@ -66,33 +81,15 @@ export default async function BillInfo({ id }) {
                 // backgroundColor={'red'}
             >            
                 {/* customer details */}
-                <CustomerInfo customer={invoice?.customer}/>
-
-                <Container
-                    padding={'0px'}
-                    gap={'24px'}
-                    direction={'column'}
-                    alignItem={'start'}
-                    width={'100%'}
-                    // backgroundColor={'blue'}
-                >   
-                
-                {/* seller details */}
-                <SellerInfo seller={invoice?.seller}/>
-                {/* status */}
+                <CustomerInfo customer={invoice?.customer}/>    
+                {/*invoices status */}
                 <BillStatusDetail status={invoice?.status} total_paid={invoice?.total_paid} total={invoice?.total} 
-                total_reference={invoice?.total_reference}/>
-                
-                
-                </Container>
-                
-                {/* payment details */}
-                {invoice?.['payments-details']?.length > 0 && <PaymentDetails paymentDetails={invoice['payments-details']}/>}
+                total_reference={invoice?.total_reference}/>            
             </Container>
             
             {/* products details */}
             {invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']}/>}
-                
+    
         </Container>
     )
 }
