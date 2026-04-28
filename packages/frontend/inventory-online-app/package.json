@@ -12,6 +12,7 @@
     "axios": "1.13.6",
     "comigo-tech-react-input-mask": "^3.0.0-alpha.3",
     "next": "^15.4.8",
+    "puppeteer": "^24.42.0",
     "react": "^19.1.2",
     "react-dom": "^19.1.2",
     "react-loader-spinner": "^8.0.2",

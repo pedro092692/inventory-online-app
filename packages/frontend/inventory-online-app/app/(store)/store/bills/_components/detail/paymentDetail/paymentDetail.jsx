@@ -1,6 +1,5 @@
 import { Container } from '@/app/ui/utils/container'
 export default function PaymentDetails({ paymentDetails }) {
-    console.log('paymentDetails', paymentDetails)
     return (
         <Container
             direction={'column'}
