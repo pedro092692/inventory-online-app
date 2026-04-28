@@ -4,6 +4,7 @@ import CustomerInfo from '@/app/(store)/store/bills/_components/detail/customerD
 import SellerInfo from '@/app/(store)/store/bills/_components/detail/sellerDetail/sellerDetail'
 import BillStatusDetail from '@/app/(store)/store/bills/_components/detail/status/status'
 import PaymentDetails from '@/app/(store)/store/bills/_components/detail/paymentDetail/paymentDetail'
+import ProductDetails from '@/app/(store)/store/bills/_components/detail/productDetail/productDetail'
 
 export default async function BillInfo({ id }) {
     const endpoint = `invoices/${id}`
@@ -11,7 +12,7 @@ export default async function BillInfo({ id }) {
     const { data, error } = response
     // await new Promise(resolve => setTimeout(resolve, 1000))
     const invoice = data?.invoice || null
-    console.log(invoice)
+    // console.log(invoice)
     return (
         <Container
             direction={'column'}
@@ -21,7 +22,7 @@ export default async function BillInfo({ id }) {
             alignItem={'start'}
             borderRadius={'8px'}
             className='shadow'
-            gap={'24px'}
+            gap={'16px'}
             // backgroundColor={'var(--color-neutralGrey300)'}
         >
             {/* date and time of the invoice */}
@@ -58,7 +59,7 @@ export default async function BillInfo({ id }) {
             <Container
                 padding={'0px'}
                 direction={'row'}
-                gap={'32px'}
+                gap={'16px'}
                 alignItem={'start'}
                 justifyContent={'start'}
                 width={'100%'}
@@ -79,7 +80,8 @@ export default async function BillInfo({ id }) {
                 {/* seller details */}
                 <SellerInfo seller={invoice?.seller}/>
                 {/* status */}
-                <BillStatusDetail status={invoice?.status} total_paid={invoice?.total_paid} total={invoice?.total} total_reference={invoice?.total_reference}/>
+                <BillStatusDetail status={invoice?.status} total_paid={invoice?.total_paid} total={invoice?.total} 
+                total_reference={invoice?.total_reference}/>
                 
                 
                 </Container>
@@ -88,6 +90,8 @@ export default async function BillInfo({ id }) {
                 {invoice?.['payments-details']?.length > 0 && <PaymentDetails paymentDetails={invoice['payments-details']}/>}
             </Container>
             
+            {/* products details */}
+            {invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']}/>}
                 
         </Container>
     )

@@ -1,0 +1,6 @@
+.table td[data-label="price"],
+.table td[data-label="quantity"],
+.table td[data-label="total"] {
+    text-align: right;
+}
+
