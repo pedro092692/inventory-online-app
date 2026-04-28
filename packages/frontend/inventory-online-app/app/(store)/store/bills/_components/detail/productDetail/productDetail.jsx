@@ -4,7 +4,6 @@ import styles from './product.module.css'
 
 export default function ProductDetails({ productsDetails }){
     const products = formatProductsDetails(productsDetails)
-    console.log(products)
     function formatProductsDetails(productsDetails) {
         return productsDetails.map(product => {
             return {

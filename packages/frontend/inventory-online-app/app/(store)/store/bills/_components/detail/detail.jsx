@@ -10,8 +10,9 @@ export default async function BillInfo({ id }) {
     const endpoint = `invoices/${id}`
     const response = await GetItemAction(endpoint)
     const { data, error } = response
-    // await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise(resolve => setTimeout(resolve, 1000))
     const invoice = data?.invoice || null
+
     return (
         <Container
             direction={'column'}
@@ -78,7 +79,6 @@ export default async function BillInfo({ id }) {
                 alignItem={'start'}
                 justifyContent={'start'}
                 width={'100%'}
-                // backgroundColor={'red'}
             >            
                 {/* customer details */}
                 <CustomerInfo customer={invoice?.customer}/>    
@@ -89,6 +89,9 @@ export default async function BillInfo({ id }) {
             
             {/* products details */}
             {invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']}/>}
+
+            {/* payment details */}
+            {invoice?.['payments-details']?.length > 0 && <PaymentDetails paymentDetails={invoice['payments-details']}/>}
     
         </Container>
     )
