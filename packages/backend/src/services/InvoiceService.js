@@ -337,7 +337,7 @@ class InvoiceService {
             const results = await this.Invoice.findAndCountAll({
                 where: {
                     [Op.or]: [
-                        where(cast(col('Invoice.id'), 'VARCHAR'), { [Op.eq]: query}),
+                        where(cast(col('Invoice.id'), 'VARCHAR'), { [Op.eq]: query.replace(/^0+/, '')}),
                         where(cast(col('customer.id_number'), 'VARCHAR'), {[Op.eq]: query}),
                         where(col('customer.name'), { [Op.like]: `%${query}%` }),
                     ]
