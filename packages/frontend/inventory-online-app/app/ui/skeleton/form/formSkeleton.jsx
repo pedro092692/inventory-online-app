@@ -4,10 +4,10 @@ import styles from '@/app/(store)/store/customers/_components/detail/input.modul
 import styles_input from './form.module.css'
 
 
-export default function FormSkeleton({ nFields = 1 }) {
+export default function FormSkeleton({ nFields = 1, custonStyle = {}}) {
 
     return (
-        <Form className={`${styles.formview} shadow`} onSubmit={(e) => e.preventDefault()} >
+        <Form className={`${styles.formview} shadow`} style={custonStyle} onSubmit={(e) => e.preventDefault()} >
             {
                 Array.from({length: nFields}).map((_, index) => {
                     return (
