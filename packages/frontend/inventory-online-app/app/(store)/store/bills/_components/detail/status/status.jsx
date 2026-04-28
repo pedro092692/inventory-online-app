@@ -1,4 +1,5 @@
 import { Container } from '@/app/ui/utils/container'
+import { Input } from '@/app/ui/form/input/input'
 export default function BillStatusDetail({ status, total_paid, total, total_reference}) {
     return (
         <Container
@@ -11,19 +12,29 @@ export default function BillStatusDetail({ status, total_paid, total, total_refe
             <h3 className='p1-r'>Estatus de orden de compra</h3>
             <Container
                 padding={'16px'}
-                width={'100%'}
                 borderRadius={'8px'}
-                backgroundColor={'var(--color-neutralGrey300)'}
+                backgroundColor={'var(--color-neutralGrey400)'}
                 className='shadow'
                 direction={'column'}
                 alignItem={'start'}
+                width={'100%'}
             >
-                <p className='p2-b'>Estatus: <span className='p2-r'>{status == 'paid' ? 'Pagado ✅' : 'Pendiente ⚠️' || 'Status'}</span></p>
+                <label htmlFor="status">Estatus</label>
+                <Input type='text' id='status' icon='alert' defaultValue={status == 'paid' ? 'Pagado ✅' : 'Pendiente ⚠️' || 'Status'} readOnly={true}/>
                 {status != 'paid' && (
-                    <p className='p2-b'>Total pagado: <span className='p2-r'>{`$${total_paid || 0}`}</span></p>
+                    <>
+                        <label htmlFor="total-paid">Total Tagado</label>
+                        <Input type='text' id='total-paid' icon='coins' 
+                        defaultValue={`$${total_paid || 0}`} readOnly={true}/>
+                    </>
                 )}
-                <p className='p2-b'>Total: <span className='p2-r'>{`$${total}`}</span></p>
-                <p>Total Bs: <span className='p2-r'>{`${total_reference} Bs`}</span></p>
+                <label htmlFor="total">Total Dolares</label>
+                <Input type='text' id='total' icon='dollar' 
+                    defaultValue={`${new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'}).format(total)}`} readOnly={true}/>
+
+                <label htmlFor="total-reference">Total Bs</label>
+                <Input type='text' id='total-reference' icon='coins' 
+                defaultValue={`${ new Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(total_reference)}`} readOnly={true}/>
             </Container>
         </Container>
     )

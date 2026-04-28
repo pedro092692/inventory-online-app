@@ -1,7 +1,6 @@
 import { Input } from '@/app/ui/form/input/input'
 import { Container } from '@/app/ui/utils/container'
 export default function CustomerInfo({ customer }) {
-    console.log(customer?.phone.startsWith('+58') ? 'phone' : 'text')
     return (
         <Container
             direction={'column'}

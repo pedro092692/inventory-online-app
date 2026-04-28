@@ -80,12 +80,14 @@ export default async function BillInfo({ id }) {
                 justifyContent={'start'}
                 width={'100%'}
             >            
-                {/* customer details */}
-                <CustomerInfo customer={invoice?.customer}/>    
-                {/*invoices status */}
-                <BillStatusDetail status={invoice?.status} total_paid={invoice?.total_paid} total={invoice?.total} 
-                total_reference={invoice?.total_reference}/>            
+            {/* customer details */}
+            <CustomerInfo customer={invoice?.customer}/>    
+            
+            {/*invoices status */}
+            <BillStatusDetail status={invoice?.status} total_paid={invoice?.total_paid} total={invoice?.total} 
+            total_reference={invoice?.total_reference}/>   
             </Container>
+                     
             
             {/* products details */}
             {invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']}/>}

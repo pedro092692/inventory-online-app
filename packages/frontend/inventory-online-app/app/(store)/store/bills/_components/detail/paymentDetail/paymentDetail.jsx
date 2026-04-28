@@ -39,8 +39,14 @@ export default function PaymentDetails({ paymentDetails }) {
                                 <p className='p2-b'>Método de pago: <span className='p2-r'>{payment?.payments?.name || 'N/A'}</span></p>
                                 <p className='p2-b'>Moneda: <span className='p2-r'>{payment?.payments?.currency || 'N/A'}</span></p>
                             </Container>
-                            <p className='p2-b'>Monto: <span className='p2-r'>{payment?.amount == payment?.reference_amount ? `$ ${payment?.amount}` : `${payment?.amount} Bs` || 'N/A'}</span></p>
-                            <p className='p2-b'>Referencia: <span className='p2-r'>{`$ ${payment?.reference_amount}` || 'N/A'}</span></p>
+                            <p className='p2-b'>Monto: <span className='p2-r'>
+                                {payment?.amount == payment?.reference_amount ? 
+                                    new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'}).format(payment?.amount) : 
+                                    `${new Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(payment?.amount)}` || 'N/A'}
+                                </span></p>
+                            <p className='p2-b'>Referencia: <span className='p2-r'>
+                                {`${new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'}).format(payment?.reference_amount)}` || 'N/A'}
+                            </span></p>
                         </Container>
                         
                     ))
