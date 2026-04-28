@@ -20,7 +20,8 @@ export default function BillStatusDetail({ status, total_paid, total, total_refe
                 width={'100%'}
             >
                 <label htmlFor="status">Estatus</label>
-                <Input type='text' id='status' icon='alert' defaultValue={status == 'paid' ? 'Pagado ✅' : 'Pendiente ⚠️' || 'Status'} readOnly={true}/>
+                <Input type='text' id='status' icon='alert' defaultValue={status == 'paid' ? 'Pagado ✅' : 'Pendiente ⚠️' || 'Status'} 
+                readOnly={true}/>
                 {status != 'paid' && (
                     <>
                         <label htmlFor="total-paid">Total Tagado</label>

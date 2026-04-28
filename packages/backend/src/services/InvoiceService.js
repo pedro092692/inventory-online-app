@@ -361,7 +361,7 @@ class InvoiceService {
                 offset: offesetResults,
                 
             })
-            const invoicesWithExchangeRate = this.calculateExchangeRate(results.rows)
+            const invoicesWithExchangeRate = await this.calculateExchangeRate(results.rows, false)
             return {
                 invoices: invoicesWithExchangeRate
             }
@@ -708,8 +708,11 @@ class InvoiceService {
     * @returns {Object[]} The modified array of invoices, each containing an `exchangeRate` 
     * (string formatted to 2 decimals) or `null` if calculation is not possible.
     */
-    async calculateExchangeRate(invoices) {
-        const dollarValue = await this.dollarValue.getLastValue()
+    async calculateExchangeRate(invoices, setDollar = true) {
+        let dollarValue = {}
+        if(setDollar) {
+            dollarValue = await this.dollarValue.getLastValue()
+        }
         const invoicesWithExchangeRate = invoices.map((invoice) => {
             if (parseInt(invoice.total_reference)) {
                 invoice.dataValues.exchangeRate = 
@@ -721,6 +724,7 @@ class InvoiceService {
                 return invoice
             }  
         })
+       
         return invoicesWithExchangeRate
     }
 }
