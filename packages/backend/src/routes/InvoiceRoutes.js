@@ -15,7 +15,7 @@ class InvoiceRoutes {
      */
     inicializateRoutes() {
         this.router.get('/', (req, res) => res.send('Invoices Routes'))
-        this.router.get('/all', (req, res) => new InvoiceController(req.Invoice).allInvoices(req, res))
+        this.router.get('/all', (req, res) => new InvoiceController(req.Invoice, null, null, req.Dollar).allInvoices(req, res))
         this.router.get('/day', (req, res) => new InvoiceController(req.Invoice).dayInvoices(req, res))
         this.router.get('/search', (req, res) => new InvoiceController(req.Invoice).searchInvoicesbyId(req, res))
         this.router.get('/search-query', (req, res) => new InvoiceController(req.Invoice).searchInvoices(req, res))

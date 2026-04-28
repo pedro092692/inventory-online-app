@@ -101,7 +101,7 @@ class InvoiceService {
         const offset = (page - 1) * limit
         return this.#error.handler(['Read All invoices'], async() => {
             const customerAssociation = {
-                association: 'customer', attributes: ['name', 'phone']
+                association: 'customer', attributes: ['name']
                 
             }
             const sellerAssociation = {
@@ -126,7 +126,7 @@ class InvoiceService {
             })
 
             // add exchange rate to each invoice
-            const invoicesWithExchangeRate = this.calculateExchangeRate(invoices)
+            const invoicesWithExchangeRate = await this.calculateExchangeRate(invoices)
             
             return {
                 invoices: invoicesWithExchangeRate
@@ -708,11 +708,18 @@ class InvoiceService {
     * @returns {Object[]} The modified array of invoices, each containing an `exchangeRate` 
     * (string formatted to 2 decimals) or `null` if calculation is not possible.
     */
-    calculateExchangeRate(invoices) {
+    async calculateExchangeRate(invoices) {
+        const dollarValue = await this.dollarValue.getLastValue()
         const invoicesWithExchangeRate = invoices.map((invoice) => {
-            invoice.dataValues.exchangeRate = 
-            (invoice.total_reference && invoice.total) ? (invoice.total_reference / invoice.total).toFixed(2) : null
-            return invoice
+            if (parseInt(invoice.total_reference)) {
+                invoice.dataValues.exchangeRate = 
+                (invoice.total_reference && invoice.total) ? (invoice.total_reference / invoice.total).toFixed(2) : null
+                return invoice
+            }else {
+                invoice.dataValues.exchangeRate = dollarValue.value
+                invoice.dataValues.total_reference = (invoice.total * invoice.dataValues.exchangeRate).toFixed(2)
+                return invoice
+            }  
         })
         return invoicesWithExchangeRate
     }

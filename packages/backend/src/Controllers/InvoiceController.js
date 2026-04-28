@@ -144,7 +144,7 @@ class InvoiceController {
         // get invoice information 
         const invoice = await this.invoiceService.getInvoice(id)
         // create data to be send
-        const waLink = await this.invoiceService.invoiceDataForWhatsapp(invoice)
+        const waLink = await this.invoiceService.invoiceDataForWhatsapp(invoice.invoice)
         res.status(200).json({ link: waLink})
     })
 
