@@ -288,5 +288,6 @@ a {
   100% { background-position: 200% 0; }
 } 
 
+@layer base { img {display: initial; }}
 /* end others */
  
