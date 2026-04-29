@@ -69,7 +69,7 @@ export default async function Route({path='customers', endpoints=['default', 'ad
             },
             detail: {
                 href: `${endpoint}/detail/${id}${queryString?`?${queryString}`: ''}`,
-                label: 'Detalle de ordern de compra',
+                label: 'Detalle de order de compra',
                 role: [1,2,3,4]
             },
             edit: {
