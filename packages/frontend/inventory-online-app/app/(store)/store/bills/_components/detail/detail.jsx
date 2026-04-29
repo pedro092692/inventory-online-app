@@ -11,13 +11,15 @@ import { Icon } from '@/app/ui/utils/icons/icons'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
 import Link from 'next/link'
 
-export default async function BillInfo({ id }) {
+export default async function BillInfo({ id, queryString=''}) {
     const endpoint = `invoices/${id}`
     const response = await GetItemAction(endpoint)
-     const currentUser = await getCurrentUser()
+    const currentUser = await getCurrentUser()
     const { data, error } = response
-    // await new Promise(resolve => setTimeout(resolve, 1000))
     const invoice = data?.invoice || null
+    
+    // await new Promise(resolve => setTimeout(resolve, 1000))
+
     return (
         <>
         {invoice ?
@@ -32,7 +34,8 @@ export default async function BillInfo({ id }) {
             gap={'16px'}
             id='invoice'
         >
-            {/* download invoice in pdf */}
+            
+            {/* actions */}
             <Container
                 width={'100%'}
                 padding={'0px'}
@@ -40,7 +43,6 @@ export default async function BillInfo({ id }) {
                 direction={'row'}
                 justifyContent={'end'}
             >
-                {/* actions */}
                 {/* download pdf */}
                 <InvoicePDF 
                     info={<InvoiceBasicInfo invoice={invoice}/>} 
@@ -57,7 +59,7 @@ export default async function BillInfo({ id }) {
                     />
                 {/* edit */}
                 {['admin', 'storeOwner', 'storeManager'].includes(currentUser?.role_name) && 
-                    <Link href={`/store/bills/edit/${invoice?.id}`}>
+                    <Link href={`/store/bills/edit/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
                         <Button type='grey' style={{backgroundColor: 'var(--color-accentOrange400)'}}
                         >
                             <Icon icon='edit' size={[24, 24]}></Icon>

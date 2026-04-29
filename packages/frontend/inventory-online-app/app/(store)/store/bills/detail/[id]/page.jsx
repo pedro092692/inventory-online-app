@@ -18,7 +18,7 @@ export default async function BillDetail({ params, searchParams}) {
         >
             <Route path='bills' endpoints={['default', 'detail']} queryString={queryString}/> 
             <Suspense key={id} fallback={<FormSkeleton nFields={5} custonStyle={{width: '100% !important'}}/>}>
-                <BillInfo id={id}/>  
+                <BillInfo id={id} queryString={queryString} />  
             </Suspense>
                    
         </Container>
