@@ -14,6 +14,8 @@ export default async function BillInfo({ id }) {
     // await new Promise(resolve => setTimeout(resolve, 1000))
     const invoice = data?.invoice || null
     return (
+        <>
+        {invoice ?
         <Container
             direction={'column'}
             width={'100%'}
@@ -45,7 +47,7 @@ export default async function BillInfo({ id }) {
                     }
                     products={invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']}/>}
                     payments={invoice?.['payments-details']?.length > 0 && <PaymentDetails paymentDetails={invoice['payments-details']}/>}
-                    id={invoice.id}
+                    id={invoice?.id}
                     />
             </Container>
 
@@ -77,6 +79,10 @@ export default async function BillInfo({ id }) {
             {invoice?.['payments-details']?.length > 0 && <PaymentDetails paymentDetails={invoice['payments-details']}/>}
     
         </Container>
+        :
+        <p>Orden no encontrada...</p>
+        }
+        </>
     )
 }
 
