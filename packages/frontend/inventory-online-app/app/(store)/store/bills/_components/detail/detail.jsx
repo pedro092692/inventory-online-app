@@ -6,10 +6,14 @@ import PaymentDetails from '@/app/(store)/store/bills/_components/detail/payment
 import ProductDetails from '@/app/(store)/store/bills/_components/detail/productDetail/productDetail'
 import InvoicePDF from '@/app/(store)/store/bills/_components/pdf/pdf'
 import InvoiceBasicInfo from '@/app/(store)/store/bills/_components/detail/basicInfo/basicInfo'
+import { Button } from '@/app/ui/utils/button/buttons'
+import { Icon } from '@/app/ui/utils/icons/icons'
+import { getCurrentUser } from '@/app/utils/getCurrentUser'
 
 export default async function BillInfo({ id }) {
     const endpoint = `invoices/${id}`
     const response = await GetItemAction(endpoint)
+     const currentUser = await getCurrentUser()
     const { data, error } = response
     // await new Promise(resolve => setTimeout(resolve, 1000))
     const invoice = data?.invoice || null
@@ -31,11 +35,12 @@ export default async function BillInfo({ id }) {
             <Container
                 width={'100%'}
                 padding={'0px'}
-                gap={'0px'}
-                direction={'column'}
-                alignItem={'end'}
+                gap={'16px'}
+                direction={'row'}
+                justifyContent={'end'}
             >
-              
+                {/* actions */}
+                {/* download pdf */}
                 <InvoicePDF 
                     info={<InvoiceBasicInfo invoice={invoice}/>} 
                     customer={<CustomerInfo customer={invoice?.customer}/>}
@@ -49,6 +54,13 @@ export default async function BillInfo({ id }) {
                     payments={invoice?.['payments-details']?.length > 0 && <PaymentDetails paymentDetails={invoice['payments-details']}/>}
                     id={invoice?.id}
                     />
+                {/* edit */}
+                {['admin', 'storeOwner', 'storeManager'].includes(currentUser?.role_name) && 
+                    <Button type='grey' style={{backgroundColor: 'var(--color-accentOrange400)'}}
+                    >
+                        <Icon icon='edit' size={[24, 24]}></Icon>
+                    </Button>
+                }
             </Container>
 
             {/* date and time of the invoice */}
