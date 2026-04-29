@@ -3,7 +3,7 @@ import { Container } from '../utils/container'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
 
 
-export default async function Route({path='customers', endpoints=['default', 'add'], queryString='' }) {
+export default async function Route({path='customers', endpoints=['default', 'add'], queryString='', id=null}) {
     const userInfo = await getCurrentUser()
     const endpoint = `/store/${path}`
     const withParams = (url) => {
@@ -68,13 +68,13 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 role: [1,2,3,4]
             },
             detail: {
-                href: `${endpoint}/detail/[id]`,
+                href: `${endpoint}/detail/${id}`,
                 label: 'Detalle de ordern de compra',
                 role: [1,2,3,4]
             },
             edit: {
-                href: `${endpoint}/edit/[id]`,
-                label: 'Editar Venta',
+                href: `${endpoint}/edit/`,
+                label: 'Editar Orden de compra',
                 role: [1,2,3]
             }
         }

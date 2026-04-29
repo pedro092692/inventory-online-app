@@ -9,6 +9,7 @@ import InvoiceBasicInfo from '@/app/(store)/store/bills/_components/detail/basic
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
+import Link from 'next/link'
 
 export default async function BillInfo({ id }) {
     const endpoint = `invoices/${id}`
@@ -56,10 +57,12 @@ export default async function BillInfo({ id }) {
                     />
                 {/* edit */}
                 {['admin', 'storeOwner', 'storeManager'].includes(currentUser?.role_name) && 
-                    <Button type='grey' style={{backgroundColor: 'var(--color-accentOrange400)'}}
-                    >
-                        <Icon icon='edit' size={[24, 24]}></Icon>
-                    </Button>
+                    <Link href={`/store/bills/edit/${invoice?.id}`}>
+                        <Button type='grey' style={{backgroundColor: 'var(--color-accentOrange400)'}}
+                        >
+                            <Icon icon='edit' size={[24, 24]}></Icon>
+                        </Button>
+                    </Link>
                 }
             </Container>
 
