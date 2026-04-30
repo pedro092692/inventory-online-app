@@ -506,7 +506,8 @@ class InvoiceService {
      * 
      */
     async _recalculateTotal(invoiceId) {
-        const invoice = await this.getInvoice(invoiceId, false)
+        const data = await this.getInvoice(invoiceId, false)
+        const invoice = data.invoice
         return this.calculeTotalFromInvoice(invoice.products)
     }
     
@@ -518,7 +519,8 @@ class InvoiceService {
      */
     deleteInvoice(invoiceId) {
         return this.#error.handler(['Delete Invoice', invoiceId, 'Invoice'], async() => {
-            const invoice = await this.getInvoice(invoiceId, false)
+            const data = await this.getInvoice(invoiceId, false)
+            const invoice = data.invoice
             
             // gets invoices details ids 
             const product_details = invoice.products.map((product => product.invoice_details.id))
