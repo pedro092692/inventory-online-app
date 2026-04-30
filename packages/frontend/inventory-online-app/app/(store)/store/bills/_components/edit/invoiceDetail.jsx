@@ -4,7 +4,7 @@ import InvoiceDetailForm from '@/app/(store)/store/bills/_components/edit/invoic
 export default async function InvoiceInfo({id}){
     const endpointInvoice = `invoices/${id}`
     const endpointSellers = `sellers/all`
-    
+
     const [invoiceRes, sellersRes] = await Promise.all([
         GetItemAction(endpointInvoice),
         GetItemAction(endpointSellers)

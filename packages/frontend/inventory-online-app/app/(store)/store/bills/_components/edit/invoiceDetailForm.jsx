@@ -5,6 +5,8 @@ import { Button } from '@/app/ui/utils/button/buttons'
 import EditItemAction from '@/app/lib/actions/edit'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState, useState, useEffect } from 'react'
+import ClientSearchInput from './searchClient/searchClient'
+
 
 export default function InvoiceDetailForm({invoice=null, sellers=null}) {
     // console.log(invoice)
@@ -16,13 +18,11 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
 
     const initialSte = {message: null, inputs: originalValues, errors: {}}
     const updateInvoice = EditItemAction.bind(null, `invoices/${invoice?.id}`, 
-        ['seller_id'], 'Factura editada con éxito')
+        ['seller_id', 'customer_id'], 'Factura editada con éxito')
     
     const [state, formAction, isPending] = useActionState(updateInvoice, initialSte)
 
-    const handleSubmit = (formData) => {
-        return formAction(formData)
-    }
+ 
 
     useEffect(() => {
         const success = state?.message 
@@ -30,7 +30,7 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
     }, [state, invoice?.seller_id]) 
 
     return (
-        <Form className={'form-edit'} style={{padding: "16px"}} action={handleSubmit}>
+        <Form className={'form-edit'} style={{padding: "16px"}} action={formAction}>
             <label>Vendedor</label>
             <select name="seller_id" value={sellerId} onChange={(e) => setSellerId(e.target.value)}>
                 {sellers.map(seller => (
@@ -39,6 +39,9 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
                     </option>
                 ))}
             </select>
+
+            <ClientSearchInput defaultCustomer={invoice?.customer} customerId={invoice?.customer_id}/>
+
             {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
             <Button role="submit" type="secondary">
                 {isPending && <OvalLoader/>}   
