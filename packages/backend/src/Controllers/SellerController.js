@@ -37,8 +37,11 @@ class SellerController {
      * @returns {Promise<void>} - returns the list of sellers in the response
      */
     allSeller = this.#error.handler(async(req, res) => {
-        const sellers = await this.sellerService.getAllSellers()
-        res.status(200).json(sellers)
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const page = req.query.page ? parseInt(req.query.page) : 1
+        const includeInvoices = req.query.includeInvoices ? req.query.includeInvoices : false
+        const {sellers} = await this.sellerService.getAllSellers()
+        res.status(200).json({sellers})
     })
 
     /**

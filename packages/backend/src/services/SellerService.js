@@ -38,18 +38,24 @@ class SellerService {
      * @throws {ServiceError} - throws an error if the sellers could not be retrieved
      * @returns {Promise<Array>} - returns an array of sellers with their sales
      */
-    getAllSellers(limit=10, offset=0) {
+    getAllSellers(limit = 10, page = 1, includeInvoices = false) {
+        const offset = (page - 1) * limit
+        const salesAssociation = {}
+        if (includeInvoices) {
+            association.association = 'sales',
+            association.attributes = ['id', 'date', 'total']
+            association.order = [['id', 'DESC'], ['sales', 'id', 'DESC']]
+        }
         return this.#error.handler(['Read All Sellers'], async() => {
             const sellers = await this.Seller.findAll({
-                 include: {
-                    association: 'sales',
-                    attributes: ['id', 'date', 'total']
-                },
-                order: [['sales', 'id', 'DESC']],
+                include: includeInvoices ? [salesAssociation] : [],
+                order: includeInvoices ? salesAssociation.order : [['id', 'DESC']],
                 limit: limit,
                 offset: offset
             })
-            return sellers
+            return {
+                sellers: sellers
+            }
         })
     }
 
