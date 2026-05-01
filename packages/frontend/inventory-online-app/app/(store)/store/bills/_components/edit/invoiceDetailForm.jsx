@@ -1,12 +1,9 @@
 'use client'
 import { Form } from '@/app/ui/form/form/form'
-import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
 import EditItemAction from '@/app/lib/actions/edit'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState, useState, useEffect } from 'react'
-import ClientSearchInput from './searchClient/searchClient'
-import TestSearch from './searchClient/test'
 
 
 export default function InvoiceDetailForm({invoice=null, sellers=null}) {
@@ -40,10 +37,6 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
                     </option>
                 ))}
             </select>
-
-            {/* <ClientSearchInput defaultCustomer={invoice?.customer} customerId={invoice?.customer_id}/> */}
-
-            <TestSearch></TestSearch>
 
             {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
             <Button role="submit" type="secondary">
