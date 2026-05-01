@@ -2,6 +2,7 @@
 import { Form } from '@/app/ui/form/form/form'
 import { Button } from '@/app/ui/utils/button/buttons'
 import EditItemAction from '@/app/lib/actions/edit'
+import SelectedCustomer from '@/app/ui/customers/searchAndSelect/selectedCustomer'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState, useState, useEffect } from 'react'
 
@@ -12,6 +13,9 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
         seller_id: invoice?.seller_id
     }
 
+    //add id to customer object 
+    invoice.customer['id'] = invoice['customer_id']
+    
     const [sellerId, setSellerId] = useState(invoice?.seller_id || '')
 
     const initialSte = {message: null, inputs: originalValues, errors: {}}
@@ -37,6 +41,8 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
                     </option>
                 ))}
             </select>
+            
+            <SelectedCustomer customer={invoice.customer}/>
 
             {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
             <Button role="submit" type="secondary">

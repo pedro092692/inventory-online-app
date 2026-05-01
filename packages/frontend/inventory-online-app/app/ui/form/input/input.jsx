@@ -46,7 +46,7 @@ export function Input({
                     placeholder={placeHolder} 
                     onChange={onChange}
                     style={style_}
-                    defaultValue={value ?? defaultValue ?? ""}
+                    defaultValue={ value ?? defaultValue ?? ""}
                     name={name}
                     required
                     readOnly={readOnly}
