@@ -6,6 +6,7 @@ import EditItemAction from '@/app/lib/actions/edit'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState, useState, useEffect } from 'react'
 import ClientSearchInput from './searchClient/searchClient'
+import TestSearch from './searchClient/test'
 
 
 export default function InvoiceDetailForm({invoice=null, sellers=null}) {
@@ -27,7 +28,7 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
     useEffect(() => {
         const success = state?.message 
         setSellerId(invoice?.seller_id || '')
-    }, [state, invoice?.seller_id]) 
+    }, [state, invoice?.seller_id, invoice?.customer_id]) 
 
     return (
         <Form className={'form-edit'} style={{padding: "16px"}} action={formAction}>
@@ -40,7 +41,9 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
                 ))}
             </select>
 
-            <ClientSearchInput defaultCustomer={invoice?.customer} customerId={invoice?.customer_id}/>
+            {/* <ClientSearchInput defaultCustomer={invoice?.customer} customerId={invoice?.customer_id}/> */}
+
+            <TestSearch></TestSearch>
 
             {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
             <Button role="submit" type="secondary">

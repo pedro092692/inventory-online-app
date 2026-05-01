@@ -1,5 +1,5 @@
 'use client'
-import { Form } from '@/app/ui/form/form/form'
+// import { Form } from '@/app/ui/form/form/form'
 import { Input } from '@/app/ui/form/input/input'
 import styles from './search.module.css'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
@@ -52,7 +52,7 @@ export default function Search ({
     }, 300)
     
     return (
-        <Form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+        // <Form className={styles.form} onSubmit={(e) => e.preventDefault()}>
             <Input  
                     type="search" 
                     name="search" 
@@ -64,6 +64,6 @@ export default function Search ({
                     value={value}
                     inputMode={inputMode}
             />
-        </Form>
+        // {/* </Form> */}
     )
 }
