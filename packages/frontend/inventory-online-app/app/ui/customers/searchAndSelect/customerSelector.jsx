@@ -6,6 +6,8 @@ import { useDebouncedCallback } from 'use-debounce'
 import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import styles from '@/app/(store)/store/customers/_components/detail/input.module.css'
+// import inputStyles from '@/app/ui/form/search/search.module.css'
+import inputStyles from './input.module.css'
 
 
 
@@ -68,14 +70,14 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
             >
                 <Icon icon={'search'} color='black'/>
                 <input 
-                className={`p2-r ${styles.input}`}
-                type="search" 
-                name="search" 
-                placeholder={placeHolder} 
-                icon="search" 
-                autoFocus={true}
-                onChange={(e) => handleInputChange(e)}
-                value={query}
+                    className={`p2-r ${inputStyles.input}`}
+                    type="search" 
+                    name="search" 
+                    placeholder={placeHolder} 
+                    icon="search" 
+                    autoFocus={true}
+                    onChange={(e) => handleInputChange(e)}
+                    value={query}
 
                 />
             </Container>

@@ -1,0 +1,7 @@
+.input {
+    border: none;
+    width: 100%;
+    padding: '0px 0px 0px 8px';
+    text-transform: capitalize;
+    background-color: var(--color-neutralGrey300);
+}
