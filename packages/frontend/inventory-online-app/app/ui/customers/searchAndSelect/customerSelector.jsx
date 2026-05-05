@@ -6,7 +6,6 @@ import { useDebouncedCallback } from 'use-debounce'
 import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import styles from '@/app/(store)/store/customers/_components/detail/input.module.css'
-// import inputStyles from '@/app/ui/form/search/search.module.css'
 import inputStyles from './input.module.css'
 
 
@@ -71,6 +70,7 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
                 <Icon icon={'search'} color='black'/>
                 <input 
                     className={`p2-r ${inputStyles.input}`}
+                    style={{background: 'var(--color-neutralGrey300)'}}
                     type="search" 
                     name="search" 
                     placeholder={placeHolder} 
@@ -108,14 +108,13 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
             
             {error &&  <p className='p2-r errorMsg'>{error}</p>}
             
-            {value && (
+            {(value || selected) && (
                 <>
                     <Input type="text" icon="person" value={selected?.name ?? value.name} name={'name'} className={styles.inputReadOnly} readOnly={true}/>
                     <Input type="text" icon="id" value={selected?.id_number ?? value.id_number} name={'id_number'} className={styles.inputReadOnly} readOnly={true}/>
                     <Input type="text" 
                         icon="phone" value={selected?.phone ?? value.phone} name={'phone'} className={styles.inputReadOnly} />  
                 </>
-                // <p>Cliente Selecciondo: { selected?.name ?? value.name }</p>
                 )
             }
         </Container>
