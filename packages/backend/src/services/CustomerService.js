@@ -119,11 +119,20 @@ class CustomerService {
      */
     searchCustomers(query, page=1, limitResults=10,) {
         const offsetResults = (page - 1) * limitResults
+        const terms = query
+            .toLowerCase()
+            .split(" ")
+            .filter(t => t.trim() !== "")
+
         return this.#error.handler(['Search Customers', query, 'Customer'], async () => {
             const results = await this.Customer.findAndCountAll({
                 where: {
                     [Op.or]: [
-                        { name: {[Op.substring]: query.toLowerCase() } },
+                        {
+                            [Op.and]: terms.map(term => ({
+                                name: { [Op.substring]: term }
+                            }))
+                        },
                         { id_number: {[Op.eq]: !isNaN(query) ? parseInt(query) : null} }
                     ]
                 },
