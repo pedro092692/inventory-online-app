@@ -1,7 +1,7 @@
 .input {
     display: flex;
     height: 48px;
-    background-color: 'var(--color-neutralGrey300)';
+    background-color: var(--color-neutralGrey300);
     border: none;
     border-radius: 8px;
     width: 100%;
@@ -9,7 +9,48 @@
     padding-right: 8px;
 }
 
-.input:focus {
+.customerInput {
+    display: flex;
+    height: 48px;
+    background-color: var(--color-neutralGrey300);
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    text-transform: capitalize;
+    cursor: auto;
+}
+
+
+.input:focus, .customerInput:focus {
     border: none;
     outline: none;
 }
+
+.father{
+    position: relative;
+}
+
+.results {
+    background-color: white;
+    width: 100%;
+    padding: 18px 0px 16px 0px;
+    margin-top: 42px;
+    border-radius: 0px 0px 8px 8px;
+    text-transform: capitalize;
+    box-shadow: 0px 12px 10px -7px rgba(0,0,0,0.47);
+    position: absolute;
+
+}
+
+.result {
+    width: 100%;
+    padding: 6px 16px;
+    cursor: pointer;
+}
+
+.result:hover {
+    background-color: var(--color-neutralGrey100);
+}
+
+
+

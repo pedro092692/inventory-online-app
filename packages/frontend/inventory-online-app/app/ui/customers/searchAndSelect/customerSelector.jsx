@@ -1,13 +1,12 @@
 'use client'
 import GetItemAction from '@/app/lib/actions/get'
-import { Input } from '@/app/ui/form/input/input'
 import { useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { Container } from '@/app/ui/utils/container'
-import { Icon } from '@/app/ui/utils/icons/icons'
-import styles from '@/app/(store)/store/customers/_components/detail/input.module.css'
 import inputStyles from './input.module.css'
-
+import InputWithIcon from '@/app/ui/customers/searchAndSelect/input/inputWithIcon'
+import SearchCustomerInput from '@/app/ui/customers/searchAndSelect/input/searchInput'
+import SearchResultsContainer from '@/app/ui/customers/searchAndSelect/results/searchResults'
 
 
 export default function CustomerSelector({value, onChange, placeHolder='Buscar cliente por Nombre, Cédula'}) {
@@ -34,7 +33,7 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
         if(term) {
             const response = await GetItemAction(url)
             const {data, error} = response
-            if (error) setError(error)
+            if (error) {setError(error)} else setError(null)
             setResults(data?.customers || [])
         }else{
             setResults([])
@@ -56,64 +55,22 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
             justifyContent={'start'}
             alignItem={'start'}
             width={'100%'}
-            // backgroundColor={'red'}
+            className={inputStyles.father}
         >
             {/* input search */}
-            <Container
-                padding={'0px 0px 0px 16px'}
-                backgroundColor={'var(--color-neutralGrey300)'}
-                width='100%'
-                gap={'0px'}
-                borderRadius='8px'
-                justifyContent='start'
-            >
-                <Icon icon={'search'} color='black'/>
-                <input 
-                    className={`p2-r ${inputStyles.input}`}
-                    style={{background: 'var(--color-neutralGrey300)'}}
-                    type="search" 
-                    name="search" 
-                    placeholder={placeHolder} 
-                    icon="search" 
-                    autoFocus={true}
-                    onChange={(e) => handleInputChange(e)}
-                    value={query}
-
-                />
-            </Container>
-            
+            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder}/>
 
             {/* show results  */}
-            {results.length > 0 && 
-                <Container
-                    padding={'0px'}
-                    gap={'2px'}
-                    direction={'column'}
-                    alignItem={'start'}
-                    justifyContent={'start'}
-                    // backgroundColor={'blue'}
-                >
-                    {results.map((customer) => {
-                        return (
-                            <p 
-                                key={customer.id}
-                                onClick={() => handleClick(customer) }
-                            >
-                                {customer.name}
-                            </p>
-                        )
-                    })}
-                </Container>
-            }
+            <SearchResultsContainer results={results} onClick={handleClick}/>
+            
             
             {error &&  <p className='p2-r errorMsg'>{error}</p>}
             
             {(value || selected) && (
                 <>
-                    <Input type="text" icon="person" value={selected?.name ?? value.name} name={'name'} className={styles.inputReadOnly} readOnly={true}/>
-                    <Input type="text" icon="id" value={selected?.id_number ?? value.id_number} name={'id_number'} className={styles.inputReadOnly} readOnly={true}/>
-                    <Input type="text" 
-                        icon="phone" value={selected?.phone ?? value.phone} name={'phone'} className={styles.inputReadOnly} />  
+                    <InputWithIcon value={selected?.name ?? value.name} icon="person" name={'name'}/>
+                    <InputWithIcon value={selected?.id_number ?? value.id_number} icon="id" name={'id_number'}/>
+                    <InputWithIcon value={selected?.phone ?? value.phone} icon="phone" name={'phone'}/>
                 </>
                 )
             }
