@@ -2,7 +2,7 @@
 import { Container } from '@/app/ui/utils/container'
 import inputStyles from '@/app/ui/customers/searchAndSelect/input.module.css'
 
-export default function SearchResultsContainer({results=[], onClick}) {
+export default function SearchResultsContainer({results=[], onClick, ref}) {
     return (
         <>
         {results.length > 0 && 
@@ -12,6 +12,7 @@ export default function SearchResultsContainer({results=[], onClick}) {
                 alignItem={'start'}
                 justifyContent={'start'}
                 className={inputStyles.results}
+                ref={ref}
             >
                 {results.map((customer) => {
                     return (

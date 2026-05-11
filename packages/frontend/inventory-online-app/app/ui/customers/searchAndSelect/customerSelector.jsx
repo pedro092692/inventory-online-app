@@ -1,6 +1,6 @@
 'use client'
 import GetItemAction from '@/app/lib/actions/get'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { Container } from '@/app/ui/utils/container'
 import inputStyles from './input.module.css'
@@ -14,9 +14,11 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
     const [results, setResults] = useState([])
     const [selected, setSelected] = useState(null)
     const [error, setError] = useState(null)
+    const showResultsRef = useRef(null)
 
     const endpoint = `customers/search`
     const params = new URLSearchParams()
+    
     // add params to url
     params.append('data', query)
     params.append('limitResults', 6)
@@ -48,6 +50,21 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
         setQuery('') 
     }
 
+    const handleClickOutside = (event) => {
+        if (showResultsRef.current && !showResultsRef.current.contains(event.target)) {
+            setResults([])
+            setQuery('')
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside)
+        
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
+
     return (
         <Container
             padding={'0px'}
@@ -61,7 +78,7 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
             <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder}/>
 
             {/* show results  */}
-            <SearchResultsContainer results={results} onClick={handleClick}/>
+            <SearchResultsContainer ref={showResultsRef} results={results} onClick={handleClick}/>
             
             
             {error &&  <p className='p2-r errorMsg'>{error}</p>}
