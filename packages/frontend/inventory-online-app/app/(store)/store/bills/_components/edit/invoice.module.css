@@ -1,0 +1,13 @@
+.select {
+    appearance: none;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+.select:hover {
+    background-color: #f0f0f0;
+}

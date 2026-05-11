@@ -5,10 +5,11 @@ import EditItemAction from '@/app/lib/actions/edit'
 import SelectedCustomer from '@/app/ui/customers/searchAndSelect/selectedCustomer'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState, useState, useEffect } from 'react'
+import styles from './invoice.module.css'
+import { Icon } from '@/app/ui/utils/icons/icons'
 
 
 export default function InvoiceDetailForm({invoice=null, sellers=null}) {
-    // console.log(invoice)
     const originalValues = {
         seller_id: invoice?.seller_id
     }
@@ -33,8 +34,10 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
 
     return (
         <Form className={'form-edit'} style={{padding: "16px"}} action={formAction}>
+            
             <label>Vendedor</label>
-            <select name="seller_id" value={sellerId} onChange={(e) => setSellerId(e.target.value)}>
+            
+            <select name="seller_id" className={`${styles.select} p3-r`} value={sellerId} onChange={(e) => setSellerId(e.target.value)}>
                 {sellers.map(seller => (
                     <option key={seller.id} value={seller.id}>
                         {seller.name}
