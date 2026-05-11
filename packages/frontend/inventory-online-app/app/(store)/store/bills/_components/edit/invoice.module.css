@@ -6,8 +6,13 @@
     border-radius: 4px;
     outline: none;
     cursor: pointer;
+    background-color: var(--color-neutralGrey300);
 }
 
-.select:hover {
-    background-color: #f0f0f0;
+.select option {
+    margin-top: 8px;
+    border: none;
+    color: black;
+    padding: 10px;
+    z-index: 3;
 }

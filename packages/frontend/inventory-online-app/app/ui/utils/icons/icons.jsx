@@ -1,4 +1,4 @@
-export function Icon({icon='person', color='white', size=[20, 20], className='', onClick}) {
+export function Icon({icon='person', color='white', size=[20, 20], className='', onClick, style={}}) {
     const icons = {
         product: {
             icon: <path d="M22 
@@ -355,6 +355,7 @@ export function Icon({icon='person', color='white', size=[20, 20], className='',
             onClick={onClick}
             viewBox="0 0 48 48"
             fill="none"
+            style={style}
         >
             {icons[icon].icon}
         </svg>

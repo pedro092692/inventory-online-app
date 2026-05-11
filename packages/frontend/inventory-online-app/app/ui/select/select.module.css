@@ -1,0 +1,12 @@
+.parent {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+.child {
+    position: absolute;
+    top: 115%;
+    cursor: auto;
+    user-select: none;
+}
