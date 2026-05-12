@@ -1,18 +1,4 @@
-.select {
-    appearance: none;
-    border: none;
-    width: 100%;
-    padding: 12px;
-    border-radius: 4px;
-    outline: none;
-    cursor: pointer;
-    background-color: var(--color-neutralGrey300);
-}
-
-.select option {
-    margin-top: 8px;
-    border: none;
-    color: black;
-    padding: 10px;
-    z-index: 3;
+.form {
+    background-color: var(--color-neutralGrey400);
+    border-radius: 16px;
 }

@@ -16,7 +16,6 @@ export default async function InvoiceInfo({id}){
     const invoice = invoiceData?.invoice || null
     const sellers = sellersData?.sellers || null
 
-
     // await new Promise(resolve => setTimeout(resolve, 2000))
 
     if (invoiceError || sellersError) {
