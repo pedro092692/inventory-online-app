@@ -46,9 +46,7 @@ export default function Select({options=[], defaultValue=null, onChange, name='s
                 <p className='p2-b'>{value}</p>
                 <Icon icon='playArrow' color='var(--color-neutralGrey900)' style={{ rotate: open ? '90deg' : '0deg' }}/>
 
-                {/* <select name={name} value={defaultValue} onChange={onChange}>
-                    <option value={defaultValue}>Option 1</option>
-                </select> */}
+            
             </Container>
 
             {/* options */}
@@ -61,7 +59,7 @@ export default function Select({options=[], defaultValue=null, onChange, name='s
                     borderRadius={'8px'}
                     backgroundColor={'white'}
                     alignItem={'start'}
-                    className={`${styles.child} shadow`}
+                    className={`${styles.child}`}
                 >
                     {options.map(option => {
                         return (

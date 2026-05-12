@@ -5,6 +5,7 @@ import EditItemAction from '@/app/lib/actions/edit'
 import SelectedCustomer from '@/app/ui/customers/searchAndSelect/selectedCustomer'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState, useState, useEffect } from 'react'
+import SelectObject from '@/app/utils/selectObject'
 import Select from '@/app/ui/select/select'
 import styles from './invoice.module.css'
 
@@ -19,7 +20,8 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
     invoice.customer['id'] = invoice['customer_id']
     
     const [sellerId, setSellerId] = useState(invoice?.seller_id || '')
-    const sellerOptions = sellers.map(seller => (seller['value'] = seller.id, seller['label'] = seller.name, seller))
+    const sellerOptions = SelectObject(sellers, 'id', 'name') || []
+    
 
     const initialSte = {message: null, inputs: originalValues, errors: {}}
     const updateInvoice = EditItemAction.bind(null, `invoices/${invoice?.id}`, 
