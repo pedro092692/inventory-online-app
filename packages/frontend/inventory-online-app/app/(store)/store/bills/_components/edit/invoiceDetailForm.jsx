@@ -40,16 +40,9 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
             
             <label>Vendedor</label>
 
-            <Select name='seller_id' options={sellerOptions} defaultValue={invoice?.seller?.name || 'No tiene vendedor'}/>
+            <Select name='seller_id' options={sellerOptions} selectKey={sellerId} defaultValue={invoice?.seller?.name || 'No tiene vendedor'}/>
             
-            <select name="seller_id" className={`${styles.select} p3-r`} value={sellerId} onChange={(e) => setSellerId(e.target.value)}>
-                {sellers.map(seller => (
-                    <option key={seller.id} value={seller.id}>
-                        {seller.name}
-                    </option>
-                ))}
-            </select>
-            
+           
             <label>Cliente</label>
             <SelectedCustomer customer={invoice.customer}/>
 

@@ -4,10 +4,17 @@ import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import styles from './select.module.css'
 
-export default function Select({options=[], defaultValue=null, onChange, name='select_name'}) {
+export default function Select({options=[], defaultValue=null, selectKey='', name='select_name'}) {
     const [value, setValue] = useState(defaultValue)
+    const [key, setKey] = useState(selectKey || '')
     const [open, setOpen] = useState(false)
     const selectRef = useRef(null)
+
+    const handleOptionClick = (option) => {
+        setValue(option.label)
+        setKey(option.value)
+        setOpen(false)
+    }
 
     const handleClickOutside = (event) => {
         if (selectRef.current && !selectRef.current.contains(event.target)) {
@@ -63,16 +70,23 @@ export default function Select({options=[], defaultValue=null, onChange, name='s
                 >
                     {options.map(option => {
                         return (
-                            <div
+                            <Container
+                                padding={'0px'}
+                                width={'100%'}
+                                direction={'column'}
+                                alignItem={'start'}
                                 key={option.value}
                             >
-                                <p className='p2-r'>{option.label}</p>
-                            </div>
+                                <p className={`${styles.item} p2-r`} onClick={() => handleOptionClick(option)}>
+                                    {option.label}
+                                </p>
+                            </Container>
                         )
                     })}
                 </Container>
                 )
             }
+            <input type='hidden' name={name} value={key} />
         </Container>
 
         

@@ -12,3 +12,16 @@
     box-shadow: 0px 21px 16px -8px rgba(0,0,0,0.43);
     z-index: 200;
 }
+
+.item {
+    padding: 8px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.item:hover {
+    background-color: var(--color-neutralGrey200);
+    font-weight: 500;
+}
