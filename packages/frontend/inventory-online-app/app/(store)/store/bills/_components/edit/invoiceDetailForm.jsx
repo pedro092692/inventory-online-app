@@ -63,10 +63,11 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
                 }).format(new Date(date))}</p>
             </Container>
             
+            {/* seller */}
             <label>Vendedor</label>
             <Select name='seller_id' options={sellerOptions} selectKey={sellerId} defaultValue={invoice?.seller?.name || 'No tiene vendedor'}/>
             
-           
+            {/* customer */}
             <label>Cliente</label>
             <SelectedCustomer customer={invoice.customer}/>
 
