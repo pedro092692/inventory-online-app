@@ -64,6 +64,13 @@ class PayInvoiceController {
         await this.PayInvoice.deletePaymenInvoiceDetail(payment_detail_id)
         res.status(204).json({})
     })
+
+
+    cancelPaymentInvoiceDetail = this.#error.handler( async(req, res) => {
+        const payment_detail_id = req.body.payment_detail_id
+        const {invoice} = await this.PayInvoice.cancelPaymentInvoiceDetail(payment_detail_id)
+        res.status(200).json({invoice})
+    })
     
 }
 

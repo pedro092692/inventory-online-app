@@ -19,6 +19,7 @@ class PayInvoiceRoutes {
         this.router.get('/', (req, res) => res.send('Pay Invoice Detail Route'))
         this.router.get('/:id', (req, res) => new PayInvoiceController(req.PaymentDetail).getPaymentDetail(req, res))
         this.router.post('/', (req, res) => new PayInvoiceController(req.PaymentDetail, req.Dollar, req.Invoice).createPaymentInvoiceDetail(req, res))
+        this.router.post('/cancel', (req, res) => new PayInvoiceController(req.PaymentDetail, req.Dollar, req.Invoice).cancelPaymentInvoiceDetail(req, res))
         this.router.patch('/:id', (req, res) => new PayInvoiceController(req.PaymentDetail, req.Dollar, req.Invoice).updatePaymentDetail(req, res))
         this.router.delete('/', (req, res) => new PayInvoiceController(req.PaymentDetail, req.Dollar, req.Invoice).deletePaymentDetail(req, res))
     }

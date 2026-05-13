@@ -200,6 +200,7 @@ class InvoiceService {
     /**
     * Get an invoice by id
     * @param {number} id - id of the invoice
+    * @param {boolean} referenceProduct - if true calculate product price in bolivars using dollar value, if false return product price in dollars
     * @returns {Object} - invoice with details, customer and seller
     * @throws {NotFoundError} - if invoice not found
     */
@@ -222,10 +223,13 @@ class InvoiceService {
                     },
                     {
                         association: 'payments-details',
+                        where: { status: 'active' },
+                        required: false,
                         include: [
                             {
                                 association: 'payments',
                                 attributes: ['name', 'currency'],
+                                required: false,
                             },
                             
                         ],

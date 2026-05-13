@@ -123,7 +123,8 @@ class PayInvoiceService {
         return this.#error.handler(['Read payments detail', invoiceId, 'Read payments details'], async() => {
             const paymentsDetails = await this.PaymentDetail.findAll({
                     where: {
-                        invoice_id: invoiceId
+                        invoice_id: invoiceId,
+                        status: 'active'
                     }
                 })
 
@@ -137,6 +138,7 @@ class PayInvoiceService {
      * @param {object} updates - object containing the updates to be made
      * @param {number} updates.payment_id - the id of payment method
      * @param {number} updates.amount - the amount of paid money
+     * @param {string} updates.status - Optional the status of payment detail
      * @returns {Promise<Object>} - returns the updated payment detail
      */
     updatePaymentInvoiceDetail(paymentDetailId, updates) {
@@ -216,6 +218,40 @@ class PayInvoiceService {
                 return 1
             })
     }
+
+
+    cancelPaymentInvoiceDetail(paymentDetailId) {
+        return this.#error.handler(['Cancel Invoice Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
+            // check if current user is admin or manager 
+            // pass 
+
+            const paymentDetail = await this.getPaymentInvoiceDetail(paymentDetailId)
+            const invoice_id = paymentDetail.invoice_id
+
+            // update pyament detail status to void
+            await paymentDetail.update({status: 'void'})
+
+            // recalcule total paid for current invoice
+            const allPayments = await this.getPaymentsInvoice(invoice_id)
+            // calcule total paid
+            const totalPaid = this._calculeInvoiceTotalPaid(allPayments)
+
+            // get invoice 
+            const currentInvoice = await this.invoiceService.getSimpleInvoice(invoice_id)
+            // update invoice status
+            if(totalPaid < parseFloat(currentInvoice.total)) {
+
+                await this.invoiceService.updateInvoice(invoice_id, {status: 'unpaid', total_paid: parseFloat(totalPaid).toFixed(2)})
+            }
+
+            // refresh invoice data
+            const updatedInvoice = await this.invoiceService.getSimpleInvoice(invoice_id)
+            return {
+                invoice: updatedInvoice
+            }
+        })
+    }
+
 
 
     /**
@@ -330,7 +366,7 @@ class PayInvoiceService {
     _calculeInvoiceTotalPaid(details) {
         return details.length > 1 ? details.reduce((accumulator, currentNumber) => {
             return parseFloat(accumulator.reference_amount) + parseFloat(currentNumber.reference_amount)
-        }) : parseFloat(details[0].reference_amount)
+        }) : parseFloat(details[0]?.reference_amount || 0.00)
     }
  
 }
