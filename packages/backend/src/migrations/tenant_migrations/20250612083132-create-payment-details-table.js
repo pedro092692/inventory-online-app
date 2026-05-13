@@ -62,6 +62,12 @@ export default {
             validate: {
               isNumeric: true
             }
+          },
+
+          status: {
+            type: Sequelize.ENUM('active', 'void'),
+            allowNull: false,
+            defaultValue: 'active',
           }
       },
       {
