@@ -244,10 +244,8 @@ class PayInvoiceService {
                 await this.invoiceService.updateInvoice(invoice_id, {status: 'unpaid', total_paid: parseFloat(totalPaid).toFixed(2)})
             }
 
-            // refresh invoice data
-            const updatedInvoice = await this.invoiceService.getSimpleInvoice(invoice_id)
             return {
-                invoice: updatedInvoice
+                invoice: await this.invoiceService.getSimpleInvoice(invoice_id)
             }
         })
     }
