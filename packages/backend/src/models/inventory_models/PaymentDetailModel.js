@@ -87,6 +87,12 @@ function initializePaymentDetail(sequelize, schema) {
                         msg: 'A valid Number is required.'
                     }
                 }
+            },
+
+            status: {
+                type: DataTypes.ENUM('active', 'void'),
+                allowNull: false,
+                defaultValue: 'active',
             }
         },
         {
