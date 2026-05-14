@@ -25,7 +25,7 @@ class Database {
             dialect: dialect,
             logging: false,
             pool: {
-                max: 1, 
+                max: 3, 
                 min: 0,
                 acquire: 3000,
                 idle: 10000
@@ -43,6 +43,8 @@ class Database {
         this.initializeRelations()
 
         this.tenant = new TenantConnection(this.sequelize)
+
+        // this.transaction = this.sequelize.transaction.bind(this.sequelize)
         
     }
 
@@ -75,8 +77,9 @@ class Database {
     }
 }
 const db = new Database()
+const sequelize = db.sequelize
 const associations = await db.initializeTenantAssociations
 
-export {associations}
+export {associations, sequelize}
 
 export default Database

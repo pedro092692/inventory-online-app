@@ -2,6 +2,7 @@ import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import DollarValueService from './DollarValueService.js'
 import InvoiceService from './InvoiceService.js'
+import { sequelize } from '../database/database.js'
 
 class PayInvoiceService {
     // instace of error handler
@@ -224,28 +225,47 @@ class PayInvoiceService {
         return this.#error.handler(['Cancel Invoice Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
             // check if current user is admin or manager 
             // pass 
+            const t = await sequelize.transaction()
+            
+            try {
+                const paymentDetail = await this.getPaymentInvoiceDetail(paymentDetailId, {transaction: t})
+                
+                // check if payment detail is already cancelled
+                if (paymentDetail.status == 'void') {
+                    throw new Error('Payment detail is already cancelled')
+                }
 
-            const paymentDetail = await this.getPaymentInvoiceDetail(paymentDetailId)
-            const invoice_id = paymentDetail.invoice_id
+                // execute changes with transaction
+                await paymentDetail.update({ status: 'void'}, {transaction: t})
 
-            // update pyament detail status to void
-            await paymentDetail.update({status: 'void'})
+                const invoice_id = paymentDetail.invoice_id
+                
+                const allPayments = await this.PaymentDetail.findAll({
+                    where: {
+                        invoice_id: invoice_id,
+                        status: 'active'
+                    },
+                    transaction: t
+                })
+                
+                const totalPaid = this._calculeInvoiceTotalPaid(allPayments)
 
-            // recalcule total paid for current invoice
-            const allPayments = await this.getPaymentsInvoice(invoice_id)
-            // calcule total paid
-            const totalPaid = this._calculeInvoiceTotalPaid(allPayments)
+                const currentInvoice = await this.invoiceService.getSimpleInvoice(invoice_id, {transaction: t})
 
-            // get invoice 
-            const currentInvoice = await this.invoiceService.getSimpleInvoice(invoice_id)
-            // update invoice status
-            if(totalPaid < parseFloat(currentInvoice.total)) {
+                if(totalPaid < parseFloat(currentInvoice.total)) {
+                    await this.invoiceService.updateInvoice(invoice_id, 
+                        {status: 'unpaid', total_paid: parseFloat(totalPaid).toFixed(2)},
+                        {transaction: t}
+                    )
+                }
+                
+                await t.commit()
 
-                await this.invoiceService.updateInvoice(invoice_id, {status: 'unpaid', total_paid: parseFloat(totalPaid).toFixed(2)})
-            }
-
-            return {
-                invoice: await this.invoiceService.getSimpleInvoice(invoice_id)
+                return {invoice: await this.invoiceService.getSimpleInvoice(invoice_id)}
+            
+            }catch(error) {
+                await t.rollback()
+                throw error
             }
         })
     }
