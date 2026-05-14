@@ -26,6 +26,31 @@ export default {
           primaryKey: true
         },
 
+        user_id: {
+          type: Sequelize.INTEGER,
+          allowNull: true,
+          references: {
+            model: 'users',
+            key: 'id'
+          },
+          onUpdate: 'CASCADE',
+          onDelete: 'SET NULL'
+        },
+
+        is_supervisor: {
+          type: Sequelize.BOOLEAN,
+          allowNull: false,
+          defaultValue: false
+        },
+
+        pin: {
+          type: Sequelize.STRING,
+          allowNull: false,
+          validate: {
+            notEmpty: true
+          }
+        },
+
         id_number: {
           type: Sequelize.INTEGER,
           allowNull: false,

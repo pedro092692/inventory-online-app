@@ -14,6 +14,13 @@ class Seller extends Model {
             as: 'sales'
         })
     }
+
+    static associationUser(model) {
+        this.belongsTo(model.User, {
+            foreignKey: 'user_id',
+            as: 'user'
+        })
+    }
 }
 
 /**
@@ -33,6 +40,33 @@ function initializeSeller(sequelize, schema) {
                  primaryKey: true,
              },
             
+            user_id: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                references: {
+                    model: 'users',
+                    key: 'id'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'SET NULL'
+            },
+
+            is_supervisor: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            },
+
+            pin: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: 'A valid pin is required.'
+                    }
+                }
+            },
+
             id_number: {
                  type: DataTypes.INTEGER, 
                  allowNull: false,
