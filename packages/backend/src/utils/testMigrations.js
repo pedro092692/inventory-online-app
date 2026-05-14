@@ -22,13 +22,18 @@ dotenv.config({ path: envPath })
  */
 async function testMigration(schema='test_schema') {
     // sequelize new instance
-    const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
+    const sequelize = new Sequelize(
+        String(process.env.DB_DATABASE ?? ''),
+        String(process.env.DB_USER ?? ''),
+        String(process.env.DB_PASSWORD ?? ''), 
+    {
         host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
+        port: parseInt(process.env.DB_PORT ?? '5432', 10),
         dialect: 'postgres',
         logging: false,
-        schema: 'test_schema'  // set test schema for testing.
-    })
+        schema,
+    }
+)
 
     // queryInterface for migration 
     const queryInterface = sequelize.getQueryInterface()
