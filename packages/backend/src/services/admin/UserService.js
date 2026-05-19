@@ -73,7 +73,15 @@ class UserService {
      */
     getUser(id) {
         return this.#error.handler(['Read user', id, 'User'], async() => {
-            const user = await User.findByPk(id)
+            const user = await User.findByPk(id, {
+                attributes: ['id', 'email'],
+                include: [
+                    {
+                        association: 'role',
+                        attributes: ['name']
+                    }
+                ]
+            })
             if(!user) {
                 throw new NotFoundError()
             }

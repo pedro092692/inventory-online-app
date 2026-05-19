@@ -224,7 +224,8 @@ class PayInvoiceService {
     cancelPaymentInvoiceDetail(paymentDetailId) {
         return this.#error.handler(['Cancel Invoice Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
             // check if current user is admin or manager 
-            // pass 
+            // 
+            
             const t = await sequelize.transaction()
             
             try {
