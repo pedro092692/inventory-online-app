@@ -1,6 +1,7 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import DollarValueService from './DollarValueService.js'
+import SellerService from './SellerService.js'
 import InvoiceService from './InvoiceService.js'
 import { sequelize } from '../database/database.js'
 
@@ -8,10 +9,11 @@ class PayInvoiceService {
     // instace of error handler
     #error = new ServiceErrorHandler()
 
-    constructor(model, dollarValueModel=null, invoiceModel=null) {
+    constructor(model, dollarValueModel=null, invoiceModel=null, sellerModel=null) {
         this.PaymentDetail = model,
         this.dollarValue = new DollarValueService(dollarValueModel)
         this.invoiceService = new InvoiceService(invoiceModel, null, null, dollarValueModel)
+        this.sellerService = new SellerService(sellerModel)
         this.#error
     }
 
@@ -221,11 +223,14 @@ class PayInvoiceService {
     }
 
 
-    cancelPaymentInvoiceDetail(paymentDetailId, pinIsRequired = true,  pint = null) {
+    cancelPaymentInvoiceDetail(paymentDetailId, pinIsRequired = true,  pin = null) {
         return this.#error.handler(['Cancel Invoice Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
             // check if current user is admin or manager 
             if (pinIsRequired) {
-                console.log('Pin is required to cancel payment detail')
+                console.log('Pin is required to cancel payment detail', pin)
+                // check pin 
+                const { authorizedBy } = await this.sellerService.authorizeSeller(pin)
+                console.log('Authorized by:', authorizedBy)
             }
 
             const t = await sequelize.transaction()

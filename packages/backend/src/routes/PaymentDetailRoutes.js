@@ -19,7 +19,7 @@ class PayInvoiceRoutes {
         this.router.get('/', (req, res) => res.send('Pay Invoice Detail Route'))
         this.router.get('/:id', (req, res) => new PayInvoiceController(req.PaymentDetail).getPaymentDetail(req, res))
         this.router.post('/', (req, res) => new PayInvoiceController(req.PaymentDetail, req.Dollar, req.Invoice).createPaymentInvoiceDetail(req, res))
-        this.router.post('/cancel', (req, res) => new PayInvoiceController(req.PaymentDetail, req.Dollar, req.Invoice).cancelPaymentInvoiceDetail(req, res))
+        this.router.post('/cancel', (req, res) => new PayInvoiceController(req.PaymentDetail, req.Dollar, req.Invoice, req.Seller).cancelPaymentInvoiceDetail(req, res))
         this.router.patch('/:id', (req, res) => new PayInvoiceController(req.PaymentDetail, req.Dollar, req.Invoice).updatePaymentDetail(req, res))
         this.router.delete('/', (req, res) => new PayInvoiceController(req.PaymentDetail, req.Dollar, req.Invoice).deletePaymentDetail(req, res))
     }
@@ -38,13 +38,14 @@ class PayInvoiceRoutes {
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {PaymentDetail, Dollar, Invoice} = req.tenantModels
-        if(!Dollar || !PaymentDetail || !Invoice) {
-            return res.status(400).json({ message: 'Dollar, Invoice and PaymentDetail model are required' })
+        const {PaymentDetail, Dollar, Invoice, Seller} = req.tenantModels
+        if(!Dollar || !PaymentDetail || !Invoice || !Seller) {
+            return res.status(400).json({ message: 'Dollar, Invoice, Seller and PaymentDetail model are required' })
         }
         req.PaymentDetail = PaymentDetail
         req.Invoice = Invoice
-        req.Dollar = Dollar
+        req.Dollar = Dollar,
+        req.Seller = Seller,
         next()
     }
 }

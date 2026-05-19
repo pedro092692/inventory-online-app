@@ -84,6 +84,23 @@ class SellerService {
         })
     }
 
+
+    authorizeSeller(pin) {
+        return this.#error.handler(['Authorize Seller'], async() => {
+            const authoriZedSeller = await this.Seller.findOne({
+                where: {
+                    pin: pin,
+                    is_supervisor: true
+                },
+                attributes: ['id', 'user_id', 'name', 'last_name']
+            })
+
+            return {
+                authorizedBy: authoriZedSeller
+            }
+        })
+    }
+
     /**
      * Updates a seller by their ID.
      * @description Updates the seller with the given ID using the provided updates.
