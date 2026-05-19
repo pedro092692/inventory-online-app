@@ -221,7 +221,7 @@ class PayInvoiceService {
     }
 
 
-    cancelPaymentInvoiceDetail(paymentDetailId, pinIsRequired = true) {
+    cancelPaymentInvoiceDetail(paymentDetailId, pinIsRequired = true,  pint = null) {
         return this.#error.handler(['Cancel Invoice Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
             // check if current user is admin or manager 
             if (pinIsRequired) {
