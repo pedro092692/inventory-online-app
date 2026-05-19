@@ -11,14 +11,15 @@ class Seller extends Model {
     static associationSales(model) {
         this.hasMany(model.Invoice, {
             foreignKey: 'seller_id',
-            as: 'sales'
+            as: 'sales',
         })
     }
 
     static associationUser(model) {
         this.belongsTo(model.User, {
             foreignKey: 'user_id',
-            as: 'user'
+            as: 'user',
+            constraints: false,
         })
     }
 }
@@ -43,12 +44,6 @@ function initializeSeller(sequelize, schema) {
             user_id: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
-                references: {
-                    model: 'users',
-                    key: 'id'
-                },
-                onUpdate: 'CASCADE',
-                onDelete: 'SET NULL'
             },
 
             is_supervisor: {
@@ -59,7 +54,7 @@ function initializeSeller(sequelize, schema) {
 
             pin: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
                 validate: {
                     notEmpty: {
                         msg: 'A valid pin is required.'
