@@ -26,7 +26,7 @@ class Seller extends Model {
 
 /**
  * Initialize Seller model with its schema definiton and configuration.
- * This function set up Seller model with fields such as: `id`, `id_number`, `name`, `last_name`, and `address`
+ * This function set up Seller model with fields such as: `id`, `id_number`, `is_supervisor`, `pin`, `name`, `last_name`, and `address`
  * and Configure Sequelize options like model name, table name, schema and timestamps.
  * @param {import('sequelize').Sequelize} sequelize -An Sequelize instance used to initialize the Seller model. 
  * @param {string} schema - The schame used to register the model.
