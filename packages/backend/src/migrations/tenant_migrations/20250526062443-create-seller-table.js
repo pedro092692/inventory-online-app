@@ -3,6 +3,9 @@
  *
  * The table includes:
  * - `id`: Auto-incrementing primary key.
+ * - `user_id`: Optional integer field linking to a user.
+ * - `is_supervisor`: Boolean indicating if the seller is a supervisor, defaults to false.
+ * - `pin`: Optional string field for a personal identification number.
  * - `id_number`: Integer field for Venezuelan ID numbers, required and non-empty.
  * - `name`: Seller's name, required and non-empty.
  * - `last_name`: Seller's last name, required and non-empty.
