@@ -221,11 +221,13 @@ class PayInvoiceService {
     }
 
 
-    cancelPaymentInvoiceDetail(paymentDetailId) {
+    cancelPaymentInvoiceDetail(paymentDetailId, pinIsRequired = true) {
         return this.#error.handler(['Cancel Invoice Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
             // check if current user is admin or manager 
-            // 
-            
+            if (pinIsRequired) {
+                console.log('Pin is required to cancel payment detail')
+            }
+
             const t = await sequelize.transaction()
             
             try {

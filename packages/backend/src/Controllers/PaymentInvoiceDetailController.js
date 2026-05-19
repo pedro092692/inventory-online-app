@@ -1,7 +1,6 @@
 import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
 import PayInvoiceService from '../services/PayInvoiceService.js'
-import { userPermissions } from './CustomerController.js'
-
+import { getUserRole } from '../middlewares/authorization.js'
 class PayInvoiceController {
     // Error hanlder instance 
     #error = new ControllerErrorHandler()
@@ -69,12 +68,9 @@ class PayInvoiceController {
 
     cancelPaymentInvoiceDetail = this.#error.handler( async(req, res) => {
         const payment_detail_id = req.body.payment_detail_id
-
-        
-        const permissions = userPermissions(req)
-        console.log('permissions: ', permissions)
-
-        const {invoice} = await this.PayInvoice.cancelPaymentInvoiceDetail(payment_detail_id)
+        const userRole = getUserRole(req.user.role)
+        const pinIsRequired = !['ADMIN', 'MANAGER'].includes(userRole)
+        const {invoice} = await this.PayInvoice.cancelPaymentInvoiceDetail(payment_detail_id, pinIsRequired)
         res.status(200).json({invoice})
     })
     
