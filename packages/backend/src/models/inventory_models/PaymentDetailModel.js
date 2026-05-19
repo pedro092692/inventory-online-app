@@ -30,7 +30,8 @@ class PaymentDetail extends Model {
 
 /** 
  * Initializes PaymentDetail model with its schema definition and configuration.
- * This function set up the PaymentDetail model with fields such as `id`, `invoice_id`, `payment_id`, `amount` and `reference_amount`
+ * This function set up the PaymentDetail model with fields such as 
+ * `id`, `invoice_id`, `payment_id`, `amount`, `reference_amount` and `status`, along with their data types, constraints, and validation rules.
  * and configures Sequelize options like model name, table name, schema, and timestamps.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
  * @param {string} schema - The schame used to register the model.
