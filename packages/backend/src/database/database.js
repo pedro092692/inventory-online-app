@@ -78,7 +78,7 @@ class Database {
 }
 const db = new Database()
 const sequelize = db.sequelize
-const associations = await db.initializeTenantAssociations
+const associations = await db.tenant.initializeTenantAssociations
 
 export {associations, sequelize}
 

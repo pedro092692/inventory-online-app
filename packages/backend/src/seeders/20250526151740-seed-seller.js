@@ -15,18 +15,36 @@ export default {
       },
       [
         {
+          user_id: 1,
+          is_supervisor: true,
+          pin: '8974',
+          id_number: 21259867, // Example Venezuelan ID number
+          name: 'Pedro Daniel',
+          last_name: 'Beltran',
+          address: 'San Fernando De Henares, Madrid, Spain' // Example address
+        },
+        {
+          user_id: 2,
+          is_supervisor: false,
+          pin: '1234',
           id_number: 19101504, // Venezuelan ID number
           name: 'Daniel',
-          last_name: 'Beltran',
+          last_name: 'Ceballos',
           address: '123 Main St, Caracas, Venezuela', // Example address
         },
         {
+          user_id: 3,
+          is_supervisor: false,
+          pin: '5678',
           id_number: 25542141, // Another Venezuelan ID number
           name: 'Andrea',
           last_name: 'Gonzalez',
           address: '456 Elm St, Maracaibo, Venezuela', // Another example address
         },
         {
+          user_id: 4,
+          is_supervisor: true,
+          pin: '9012',
           id_number: 12345661, // Yet another Venezuelan ID number
           name: 'Javier',
           last_name: 'Martinez',

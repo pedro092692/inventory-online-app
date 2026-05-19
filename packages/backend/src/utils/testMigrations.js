@@ -3,8 +3,6 @@ import { Umzug, SequelizeStorage } from 'umzug'
 import dotenv from 'dotenv'
 import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
-import process from 'process'
-import { associations } from '../database/database.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -22,20 +20,18 @@ dotenv.config({ path: envPath })
  */
 async function testMigration(schema='test_schema') {
     // sequelize new instance
-    const sequelize = new Sequelize(
-        String(process.env.DB_DATABASE ?? ''),
-        String(process.env.DB_USER ?? ''),
-        String(process.env.DB_PASSWORD ?? ''), 
-    {
+   
+    const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
         host: process.env.DB_HOST,
-        port: parseInt(process.env.DB_PORT ?? '5432', 10),
+        port: process.env.DB_PORT, 
         dialect: 'postgres',
         logging: false,
-        schema,
-    }
-)
+    })
 
-    // queryInterface for migration 
+    // create schema if not exists
+    await sequelize.query(`CREATE SCHEMA IF NOT EXISTS ${schema};`)
+
+    // query interface for migrations
     const queryInterface = sequelize.getQueryInterface()
 
     // umzug instance 
@@ -48,7 +44,7 @@ async function testMigration(schema='test_schema') {
                     up: async () => {
                         const migrationPath = pathToFileURL(path)
                         const migration = ( await import(migrationPath)).default
-                        migration.up(context.queryInterface, Sequelize, context.schema)
+                        await migration.up(context.queryInterface, Sequelize, context.schema)
                     }
                 }
             }
@@ -67,9 +63,7 @@ async function testMigration(schema='test_schema') {
     })
 
     const new_migrations = await umzug.pending()
-    // make associations 
-    associations
-    
+
     if(new_migrations.length > 0) {
         await umzug.up() // execute migrations
     }
@@ -78,8 +72,6 @@ async function testMigration(schema='test_schema') {
     
     await sequelize.close() // close the connection
 }
-
-
 
 await testMigration().then( () => process.exit(0) ).catch(error => {
     console.log('Error executing migrations:', error)

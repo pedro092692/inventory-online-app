@@ -247,9 +247,8 @@ class PayInvoiceService {
                     },
                     transaction: t
                 })
-                
+            
                 const totalPaid = this._calculeInvoiceTotalPaid(allPayments)
-
                 const currentInvoice = await this.invoiceService.getSimpleInvoice(invoice_id, {transaction: t})
 
                 if(totalPaid < parseFloat(currentInvoice.total)) {

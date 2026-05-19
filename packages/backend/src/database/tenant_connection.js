@@ -8,7 +8,8 @@ import { initializeSeller, Seller } from '../models/inventory_models/SellerModel
 import { initializeProduct, Product } from '../models/inventory_models/ProductModel.js'
 import { initializePayment, Payment } from '../models/inventory_models/PaymentModel.js'
 import { initializePaymentDetail, PaymentDetail } from '../models/inventory_models/PaymentDetailModel.js' 
-import { initializeDollar } from '../models/inventory_models/DollarModel.js'
+import { initializeDollar, Dollar } from '../models/inventory_models/DollarModel.js'
+import { User } from '../models/UserModel.js'
 import { Umzug, SequelizeStorage } from 'umzug'
 import { fileURLToPath, pathToFileURL } from 'url'
 import path from 'path'
@@ -210,6 +211,7 @@ class TenantConnection {
         InvoiceDetail.associationInvoice({Invoice})
         InvoiceDetail.associationProducts({Product})
         Seller.associationSales({Invoice})
+        Seller.associationUser({User})
         Product.associationInvoiceDetails({Invoice})
         Payment.associationPaymentDetail({Invoice})
         PaymentDetail.associationInvoice({Invoice})
@@ -314,7 +316,5 @@ class TenantConnection {
         return umzug
     }
 }
-
-
 
 export default TenantConnection

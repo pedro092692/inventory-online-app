@@ -26,6 +26,22 @@ export default {
           primaryKey: true
         },
 
+        user_id: {
+          type: Sequelize.INTEGER,
+          allowNull: true,
+        },
+
+        is_supervisor: {
+          type: Sequelize.BOOLEAN,
+          allowNull: false,
+          defaultValue: false
+        },
+
+        pin: {
+          type: Sequelize.STRING,
+          allowNull: true,
+        },
+
         id_number: {
           type: Sequelize.INTEGER,
           allowNull: false,
@@ -65,7 +81,7 @@ export default {
     )
   },
   /**
-   * Reverts the migration by dropping the `products` table from the specified schema.
+   * Reverts the migration by dropping the `sellers` table from the specified schema.
    *
    * @param {import('sequelize').QueryInterface} queryInterface - The interface for database operations.
    * @param {import('sequelize')} Sequelize - Sequelize library.
