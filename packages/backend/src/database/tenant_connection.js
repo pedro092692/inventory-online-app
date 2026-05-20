@@ -9,6 +9,7 @@ import { initializeProduct, Product } from '../models/inventory_models/ProductMo
 import { initializePayment, Payment } from '../models/inventory_models/PaymentModel.js'
 import { initializePaymentDetail, PaymentDetail } from '../models/inventory_models/PaymentDetailModel.js' 
 import { initializeDollar, Dollar } from '../models/inventory_models/DollarModel.js'
+import { initializeAuditLog, AuditLog } from '../models/inventory_models/auditLogModel.js'
 import { User } from '../models/UserModel.js'
 import { Umzug, SequelizeStorage } from 'umzug'
 import { fileURLToPath, pathToFileURL } from 'url'
@@ -166,6 +167,7 @@ class TenantConnection {
      *  - Payment
      *  - PaymentDetail
      *  - Dollar
+     *  - AuditLog
      */
     async initializeTenantModels(sequelize, schema) {
         const Customer = initializeCustomer(sequelize, schema)
@@ -176,6 +178,8 @@ class TenantConnection {
         const Payment = initializePayment(sequelize, schema)
         const PaymentDetail = initializePaymentDetail(sequelize, schema)
         const Dollar = initializeDollar(sequelize, schema)
+        const AuditLog = initializeAuditLog(sequelize, schema)
+        
         return {
             Customer, 
             Invoice, 
@@ -184,7 +188,8 @@ class TenantConnection {
             Product, 
             Payment, 
             PaymentDetail, 
-            Dollar
+            Dollar,
+            AuditLog
         }
     }
 
@@ -216,6 +221,8 @@ class TenantConnection {
         Payment.associationPaymentDetail({Invoice})
         PaymentDetail.associationInvoice({Invoice})
         PaymentDetail.associationPaymentMethod({Payment})
+        AuditLog.associationUser({User})
+        AuditLog.associationSupervisorSeller({Seller})
 
     }
     
