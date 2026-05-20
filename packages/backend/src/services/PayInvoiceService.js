@@ -223,14 +223,17 @@ class PayInvoiceService {
     }
 
 
-    cancelPaymentInvoiceDetail(paymentDetailId, pinIsRequired = true,  pin = null) {
+    cancelPaymentInvoiceDetail(paymentDetailId, pinIsRequired = true,  pin = null, currentUserId = null) {
         return this.#error.handler(['Cancel Invoice Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
             // check if current user is admin or manager 
             if (pinIsRequired) {
-                console.log('Pin is required to cancel payment detail', pin)
                 // check pin 
                 const { authorizedBy } = await this.sellerService.authorizeSeller(pin)
-                console.log('Authorized by:', authorizedBy)
+                if (!authorizedBy) {
+                    throw new Error('Invalid pin. Unauthorized to cancel payment detail')
+                }
+                const { name, last_name, user_id } = authorizedBy
+                console.log(name, last_name, user_id)
             }
 
             const t = await sequelize.transaction()
