@@ -25,13 +25,13 @@ export default {
       'audit_logs',
       {
         id: {
-          type: DataTypes.INTEGER,
+          type: Sequelize.INTEGER,
           autoIncrement: true,
           primaryKey: true
         },
                     
         action: {
-          type: DataTypes.STRING,
+          type: Sequelize.STRING,
           allowNull: false,
           validate: {
             notEmpty: {
@@ -41,7 +41,7 @@ export default {
         },
                     
         table_name: {
-          type: DataTypes.STRING,
+          type: Sequelize.STRING,
           allowNull: false,
           validate: {
             notEmpty: {
@@ -51,7 +51,7 @@ export default {
         },
         
         record_id: {
-          type: DataTypes.INTEGER,
+          type: Sequelize.INTEGER,
           allowNull: false,
           validate: {
             isInt: {
@@ -61,17 +61,17 @@ export default {
         },
 
         old_value: {
-          type: DataTypes.JSONB,
+          type: Sequelize.JSONB,
           allowNull: true,
         }, 
 
         new_value: {
-          type: DataTypes.JSONB,
+          type: Sequelize.JSONB,
           allowNull: true,
         },
 
         user_id: {
-          type: DataTypes.INTEGER,
+          type: Sequelize.INTEGER,
           allowNull: false,
           validate: {
             isInt: {
@@ -81,14 +81,14 @@ export default {
         },
 
         supervisor_seller_id: {
-          type: DataTypes.INTEGER,
+          type: Sequelize.INTEGER,
           allowNull: true,
         },
 
         created_at: {
-          type: DataTypes.DATE,
+          type: Sequelize.DATE,
           allowNull: false,
-          defaultValue: DataTypes.NOW
+          defaultValue: Sequelize.NOW
         }
       },
       {
