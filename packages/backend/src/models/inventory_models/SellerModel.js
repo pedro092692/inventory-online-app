@@ -15,6 +15,11 @@ class Seller extends Model {
         })
     }
 
+    /**
+     * Creates an association between Seller model and the User model.
+     * @param {{User: typeof Model}} model - An object containing the User model.
+     * @return {void} This method does not return a value. 
+     */
     static associationUser(model) {
         this.belongsTo(model.User, {
             foreignKey: 'user_id',
