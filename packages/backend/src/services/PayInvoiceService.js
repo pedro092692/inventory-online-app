@@ -3,17 +3,19 @@ import { NotFoundError } from '../errors/NofoundError.js'
 import DollarValueService from './DollarValueService.js'
 import SellerService from './SellerService.js'
 import InvoiceService from './InvoiceService.js'
+import AuditLogService from './AuditLogService.js'
 import { sequelize } from '../database/database.js'
 
 class PayInvoiceService {
     // instace of error handler
     #error = new ServiceErrorHandler()
 
-    constructor(model, dollarValueModel=null, invoiceModel=null, sellerModel=null) {
+    constructor(model, dollarValueModel=null, invoiceModel=null, sellerModel=null, auditLogModel=null) {
         this.PaymentDetail = model,
         this.dollarValue = new DollarValueService(dollarValueModel)
         this.invoiceService = new InvoiceService(invoiceModel, null, null, dollarValueModel)
         this.sellerService = new SellerService(sellerModel)
+        this.auditLogService = new AuditLogService(auditLogModel)
         this.#error
     }
 
