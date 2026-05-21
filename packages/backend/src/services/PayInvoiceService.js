@@ -5,6 +5,7 @@ import SellerService from './SellerService.js'
 import InvoiceService from './InvoiceService.js'
 import AuditLogService from './AuditLogService.js'
 import { sequelize } from '../database/database.js'
+import hasPassword from '../utils/encrypt.js'
 
 class PayInvoiceService {
     // instace of error handler
@@ -236,13 +237,16 @@ class PayInvoiceService {
      * @returns {Promise<Object>} - Returns a promise that resolves to the updated invoice object.
      * @throws {NotFoundError} - Throws an error if the invoice payment detail is not found.
      */
-    cancelPaymentInvoiceDetail(paymentDetailId, pinIsRequired = true,  pin = null, currentUserId = null) {
+    cancelPaymentInvoiceDetail(paymentDetailId, pinIsRequired = true,  pin = null, currentUser = {id: null, tenant_id: null}) {
         return this.#error.handler(['Cancel Invoice Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
+            
+            const hashedPin = pinIsRequired ? hasPassword(pin, String(currentUser.tenant_id)) : null
+
 
             const t = await sequelize.transaction()
             try {
                 //1. check if user is authorized to cancel payment detail and get authorized user info if pin is required
-                const authorizedBy = pinIsRequired ? await this.sellerService.authorizeSeller(pin, { transaction: t }) : null
+                const authorizedBy = pinIsRequired ? await this.sellerService.authorizeSeller(hashedPin, { transaction: t }) : null
                 
                 //2. get actual payment detail 
                 const paymentDetail = await this.getPaymentInvoiceDetail(paymentDetailId, {transaction: t})
@@ -266,7 +270,7 @@ class PayInvoiceService {
                     tableName: 'payment_details',
                     recordId: paymentDetailId,
                     details: {oldSnapshot, newSnapshot},
-                    userId: currentUserId,
+                    userId: currentUser.id,
                     supervisor_seller_id: authorizedBy?.authorizedBy?.id || null
                 }, {transaction: t})
                 

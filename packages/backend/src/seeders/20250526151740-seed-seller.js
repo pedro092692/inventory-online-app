@@ -1,4 +1,4 @@
-  import hasPassword from "../utils/encrypt";
+  import hasPassword from '../utils/encrypt.js'
   
   /**
    * Inserts dummy seller data into the `sellers` table within the specified schema.
