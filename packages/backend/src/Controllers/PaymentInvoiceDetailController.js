@@ -65,7 +65,13 @@ class PayInvoiceController {
         res.status(204).json({})
     })
 
-
+    /**
+     * Cancels a payment detail by its ID.
+     * @param {Object} req - request object containing the payment details ID in the body
+     * @param {Object} res - response object to send a success status
+     * @throws {ServiceError} - throws an error if the payment detail could not be canceled
+     * @returns {Promise<void>} - returns a success status in the response
+     */
     cancelPaymentInvoiceDetail = this.#error.handler( async(req, res) => {
         const payment_detail_id = req.body.payment_detail_id
         const pin = req.body.pin || null

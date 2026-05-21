@@ -100,7 +100,7 @@ class PayInvoiceService {
      * @return {Promise<Object>} - A promise that resolves to the invoice payment detail object.
      * @throws {ServiceError} - If an error occurs during the retrieval operation.
      */
-    getPaymentInvoiceDetail(id) {
+    getPaymentInvoiceDetail(id, options = {}) {
         return this.#error.handler(['Read Payment Detail', id, 'Pay Invoice'], async() => {
             const paymentDetail = await this.PaymentDetail.findByPk(id, {
                 include: [
@@ -108,6 +108,9 @@ class PayInvoiceService {
                         association: 'payments', attributes: ['name']
                     }
                 ]
+            },
+            {
+                transaction: options.transaction
             })
             
             if(!paymentDetail) {
@@ -224,52 +227,48 @@ class PayInvoiceService {
             })
     }
 
-
+    /**
+     * Cancels an invoice payment detail by its ID
+     * @param {number} paymentDetailId - The ID of the invoice payment detail to cancel.
+     * @param {boolean} pinIsRequired - Indicates whether a supervisor PIN is required for cancellation (default: true).
+     * @param {string|null} pin - The supervisor PIN for authorization (required if pinIsRequired is true).
+     * @param {number|null} currentUserId - The ID of the user performing the cancellation (optional).
+     * @returns {Promise<Object>} - Returns a promise that resolves to the updated invoice object.
+     * @throws {NotFoundError} - Throws an error if the invoice payment detail is not found.
+     */
     cancelPaymentInvoiceDetail(paymentDetailId, pinIsRequired = true,  pin = null, currentUserId = null) {
         return this.#error.handler(['Cancel Invoice Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
-            // check if current user is admin or manager 
-            if (pinIsRequired) {
-                // check pin 
-                const { authorizedBy } = await this.sellerService.authorizeSeller(pin)
-                if (!authorizedBy) {
-                    throw new Error('Invalid pin. Unauthorized to cancel payment detail')
-                }
-                const { name, last_name, user_id } = authorizedBy
-                console.log(name, last_name, user_id)
-            }
 
             const t = await sequelize.transaction()
-            
             try {
+                //1. check if user is authorized to cancel payment detail and get authorized user info if pin is required
+                const authorizedBy = pinIsRequired ? await this.sellerService.authorizeSeller(pin, { transaction: t }) : null
+                
+                //2. get actual payment detail 
                 const paymentDetail = await this.getPaymentInvoiceDetail(paymentDetailId, {transaction: t})
                 
                 // check if payment detail is already cancelled
-                if (paymentDetail.status == 'void') {
-                    throw new Error('Payment detail is already cancelled')
-                }
+                if (paymentDetail.status === 'void') throw new Error('Payment detail is already cancelled')
+                const oldSnapshot = paymentDetail.toJSON()
 
-                // execute changes with transaction
+                //3. cancel payment detail (update status to void)
                 await paymentDetail.update({ status: 'void'}, {transaction: t})
+                const newSnapshot = paymentDetail.toJSON()
 
                 const invoice_id = paymentDetail.invoice_id
                 
-                const allPayments = await this.PaymentDetail.findAll({
-                    where: {
-                        invoice_id: invoice_id,
-                        status: 'active'
-                    },
-                    transaction: t
-                })
-            
-                const totalPaid = this._calculeInvoiceTotalPaid(allPayments)
-                const currentInvoice = await this.invoiceService.getSimpleInvoice(invoice_id, {transaction: t})
+                //4. recalcule total paid for current invoice and update invoice status if it is needed
+                await this._recalculeInvoiceTotalPaid(invoice_id, {transaction: t})
 
-                if(totalPaid < parseFloat(currentInvoice.total)) {
-                    await this.invoiceService.updateInvoice(invoice_id, 
-                        {status: 'unpaid', total_paid: parseFloat(totalPaid).toFixed(2)},
-                        {transaction: t}
-                    )
-                }
+                //5 create audit log of cancelled payment detail
+                await this.auditLogService.createAuditLog({
+                    action: 'CANCEL_PAYMENT',
+                    tableName: 'payment_details',
+                    recordId: paymentDetailId,
+                    details: {oldSnapshot, newSnapshot},
+                    userId: currentUserId,
+                    supervisor_seller_id: authorizedBy?.authorizedBy?.id || null
+                }, {transaction: t})
                 
                 await t.commit()
 
@@ -397,6 +396,52 @@ class PayInvoiceService {
         return details.length > 1 ? details.reduce((accumulator, currentNumber) => {
             return parseFloat(accumulator.reference_amount) + parseFloat(currentNumber.reference_amount)
         }) : parseFloat(details[0]?.reference_amount || 0.00)
+    }
+
+    /**
+     * This method check the total amount active paid amount for an specific invoice.
+     * @param {Number} invoice_id - the ID of the invoice.
+     * @param {Object} options - the options for the query.
+     * @returns {Object} - The active payments for the specific invoice.
+     */
+    getInvoiceActivePayments(invoice_id, options = {}) {
+        return this.#error.handler(['Read Active Payments of Invoice', invoice_id, 'Pay Invoice'], async() => {
+            const activePayments = await this.PaymentDetail.findAll({
+                where: {
+                    invoice_id: invoice_id,
+                    status: 'active'
+                },
+                transaction: options.transaction || null
+            })
+            
+            return {
+                activePayments: activePayments
+            }
+        })
+    }
+
+    /**
+     * This method recalculates the total amount paid for an specific invoice and updates its status if necessary.
+     * @param {Number} invoice_id - the ID of the invoice.
+     * @param {Object} options - the options for the query.
+     * @returns {Void} - This method does not return anything, but it updates the invoice status to 
+     * 'unpaid' if the total paid is less than the invoice total.
+     */
+    async _recalculeInvoiceTotalPaid(invoice_id, options = {}) {
+        const allPayments = await this.getInvoiceActivePayments(invoice_id, {transaction: options.transaction || null})
+            
+        const totalPaid = this._calculeInvoiceTotalPaid(allPayments)
+        const currentInvoice = await this.invoiceService.getSimpleInvoice(invoice_id, {transaction: options.transaction || null})
+
+        if(totalPaid < parseFloat(currentInvoice.total)) {
+            await this.invoiceService.updateInvoice(
+                invoice_id, 
+                {
+                    status: 'unpaid', 
+                    total_paid: parseFloat(totalPaid).toFixed(2)
+                }
+            )
+        }
     }
  
 }

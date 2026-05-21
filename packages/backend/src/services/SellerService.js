@@ -84,17 +84,32 @@ class SellerService {
         })
     }
 
-
-    authorizeSeller(pin) {
-        return this.#error.handler(['Authorize Seller'], async() => {
+    /**
+     * Authorizes a seller by their PIN.
+     * @description Checks if the provided PIN belongs to a supervisor seller and returns the authorized seller's information.
+     * @param {String} pin - The PIN of the supervisor seller for authorization.
+     * @param {Object} options - Options for the database transaction.
+     * @throws {ServiceError} - throws an error if the seller could not be found
+     * @returns {Promise<Object>} - returns the authorized seller's information
+     */
+    authorizeSeller(pin, options = {}) {
+        return this.#error.handler(['Authorize Seller', pin, 'Seller'], async() => {
             const authoriZedSeller = await this.Seller.findOne({
                 where: {
                     pin: pin,
                     is_supervisor: true
                 },
                 attributes: ['id', 'user_id', 'name', 'last_name']
+            },
+            {
+                transaction: options.transaction || null
             })
+            
+            if(!authoriZedSeller) {
+                throw new Error('Pin incorrecto o el vendedor no tiene permisos de supervisor')
+            }
 
+ 
             return {
                 authorizedBy: authoriZedSeller
             }
