@@ -11,3 +11,7 @@
   background-color: #EEE1C4 !important;
   cursor: default;
 }
+
+.pendingRow{
+  background-color: var(--color-accentRed200) !important; 
+}

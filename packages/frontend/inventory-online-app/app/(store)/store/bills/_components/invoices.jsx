@@ -77,6 +77,7 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
             queryString={queryString}
             deleteMsg='Recibo eliminado con éxito'
             customClass={styles.table}
+            rowClassName={(rowData) => rowData.status === 'Pendiente' ? styles.pendingRow : ''}
         />
     )
 

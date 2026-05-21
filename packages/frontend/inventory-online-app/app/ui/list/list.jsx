@@ -14,6 +14,7 @@ export default function List({
         showEdit=true,
         showDelete=true,
         queryString='',
+        rowClassName = () => '',
         deleteMsg='Elemento eliminado con éxito'
 
     }) {
@@ -37,8 +38,9 @@ export default function List({
                 <tbody>
                    {
                         tableData.map((data, index) => {
+                            const dynamicClass = rowClassName(data)
                             return (
-                                <tr key={index}>
+                                <tr key={index} className={dynamicClass}>
                                     {
                                         Object.keys(data).map((key, idx) => {
                                             if (key !== 'id') {
