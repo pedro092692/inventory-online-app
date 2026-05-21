@@ -1,3 +1,5 @@
+  import hasPassword from "../utils/encrypt";
+  
   /**
    * Inserts dummy seller data into the `sellers` table within the specified schema.
    *
@@ -17,7 +19,7 @@ export default {
         {
           user_id: 1,
           is_supervisor: true,
-          pin: '8974',
+          pin: hasPassword('8974', '1'),
           id_number: 21259867, // Example Venezuelan ID number
           name: 'Pedro Daniel',
           last_name: 'Beltran',
@@ -26,7 +28,7 @@ export default {
         {
           user_id: 2,
           is_supervisor: false,
-          pin: '1234',
+          pin: hasPassword('1234', '1'),
           id_number: 19101504, // Venezuelan ID number
           name: 'Daniel',
           last_name: 'Ceballos',
@@ -35,7 +37,7 @@ export default {
         {
           user_id: 3,
           is_supervisor: false,
-          pin: '5678',
+          pin: hasPassword('5678', '1'),
           id_number: 25542141, // Another Venezuelan ID number
           name: 'Andrea',
           last_name: 'Gonzalez',
@@ -44,7 +46,7 @@ export default {
         {
           user_id: 4,
           is_supervisor: true,
-          pin: '9012',
+          pin: hasPassword('9012', '1'),
           id_number: 12345661, // Yet another Venezuelan ID number
           name: 'Javier',
           last_name: 'Martinez',
