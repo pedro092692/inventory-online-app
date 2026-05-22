@@ -13,7 +13,7 @@ export function Button(
         onClick,
         role='button',
         title='',
-        disable=false
+        disable=false,
     }) {
     const textStyle = {
         primary: 'p1-b',

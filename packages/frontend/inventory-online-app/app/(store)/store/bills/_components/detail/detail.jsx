@@ -56,16 +56,25 @@ export default async function BillInfo({ id, queryString=''}) {
                     products={invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']}/>}
                     payments={invoice?.['payments-details']?.length > 0 && <PaymentDetails paymentDetails={invoice['payments-details']}/>}
                     id={invoice?.id}
-                    />
+                />
                 {/* edit */}
                 {['admin', 'storeOwner', 'storeManager'].includes(currentUser?.role_name) && 
                     <Link href={`/store/bills/edit/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
                         <Button type='grey' style={{backgroundColor: 'var(--color-accentOrange400)'}}
+                            title={'Editar factura'}
                         >
                             <Icon icon='edit' size={[24, 24]}></Icon>
                         </Button>
                     </Link>
                 }
+
+                <Link href={`/store/bills/edit/payment/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
+                        <Button type='grey' style={{backgroundColor: 'black'}}
+                            title={'Editar metodos de pago'}
+                        >
+                            <Icon icon='coins' size={[24, 24]}></Icon>
+                        </Button>
+                </Link>
             </Container>
 
             {/* date and time of the invoice */}

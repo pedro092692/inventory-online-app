@@ -26,6 +26,7 @@ export default function InvoicePDF({info=null, customer=null, billStatus=null, p
     return (
         <>
             <Button type='grey' style={{backgroundColor: 'var(--color-accentRed400)'}}
+                title={'Descargar factura'}
                 onClick={handleInvoicePDF}
             >
                 <Icon icon='pdf' size={[24, 24]}></Icon>
