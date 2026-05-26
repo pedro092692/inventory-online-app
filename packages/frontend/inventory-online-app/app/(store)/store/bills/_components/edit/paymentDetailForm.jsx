@@ -51,7 +51,7 @@ export default function PaymentDetailForm({invoice=null}) {
                     padding={'0px'}
                 >
                     <h3 className='p2-b'>Vendedor:</h3>
-                    <p className='p2-r'>{invoice?.seller?.name || 'No tiene vendedor'}</p>
+                    <p className='p2-r'>{invoice?.seller?.name || 'No tiene vendedor.'}</p>
                 </Container>
                 
                 {/* customer */}
@@ -59,7 +59,15 @@ export default function PaymentDetailForm({invoice=null}) {
                     padding={'0px'}
                 >
                     <h3 className='p2-b'>Cliente:</h3>
-                    <p className='p2-r'>{invoice?.customer?.name || 'Error con el nombre del cliente'}</p>
+                    <p className='p2-r'>{invoice?.customer?.name || 'Error con el nombre del cliente.'}</p>
+                </Container>
+
+                {/* gran total */}
+                <Container
+                    padding={'0px'}
+                >
+                    <h3 className='p2-b'>Total:</h3>
+                    <p className='p2-r'>{`${invoice?.total} $` || 'Error en el monto.'}</p>
                 </Container>
 
             </Form>
@@ -87,8 +95,10 @@ export default function PaymentDetailForm({invoice=null}) {
                             showActions={true}
                             showEdit={false}
                             showView={false}
-                            deleteKey={'id'}
-                            userPermissions={'delete'}
+                            deleteKey={'payment_detail_id'}
+                            endpoint={'pay-invoice'}
+                            deleteMsg={'Pago eliminado con éxito'}
+                            userPermissions={['delete']}
                             CustomStyles={{height: 'auto', borderRadius: '8px'}}
                             customClass={styles.table}
                         />

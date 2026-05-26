@@ -433,8 +433,7 @@ class PayInvoiceService {
      */
     async _recalculeInvoiceTotalPaid(invoice_id, options = {}) {
         const allPayments = await this.getInvoiceActivePayments(invoice_id, {transaction: options.transaction || null})
-            
-        const totalPaid = this._calculeInvoiceTotalPaid(allPayments)
+        const totalPaid = this._calculeInvoiceTotalPaid(allPayments.activePayments)
         const currentInvoice = await this.invoiceService.getSimpleInvoice(invoice_id, {transaction: options.transaction || null})
 
         if(totalPaid < parseFloat(currentInvoice.total)) {
