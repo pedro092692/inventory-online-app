@@ -6,7 +6,9 @@ import { Form } from '@/app/ui/form/form/form'
 import styles from './delete.module.css'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import deleteFuncion from '@/app/lib/actions/delete'
-import { useActionState, useEffect } from 'react'
+import CancelResource from '@/app/lib/actions/cancelAction'
+import { Input } from '@/app/ui/form/input/input'
+import { useActionState, useEffect, useState } from 'react'
 
 export default function DeleteModal({
         title = '¿Estas Seguro De Eliminar Este Elemento?', 
@@ -15,11 +17,18 @@ export default function DeleteModal({
         id = null, 
         path = '', 
         deleteKey = '',
-        deleteMsg = 'Elemento eliminado con éxito'
+        deleteMsg = 'Elemento eliminado con éxito',
+        cancelSupervisor = false,
+        pin = null
 
     }) {
     const initialState = {message: null, error: null}
-    const deleteResource = deleteFuncion.bind(null, id, path, deleteKey, deleteMsg)
+    const deleteResource = !cancelSupervisor ? 
+        deleteFuncion.bind(null, id, path, deleteKey, deleteMsg)
+        :
+        CancelResource.bind(null, id, pin, path, deleteKey, deleteMsg)
+    
+    const [superVisorPin, setSuperVisorPin] = useState('')
     const [state, formAction, isPending] = useActionState(deleteResource, initialState)
 
     const handleCancel = () => {
@@ -59,19 +68,45 @@ export default function DeleteModal({
                     padding={'12px'}
                 >
                     <Form className={styles.form} action={formAction}>
-                        <Button
-                            role="submit"
-                            type={'secondary'}
-                        >
-                            {isPending && <OvalLoader/>}   
-                            {isPending ? 'Eliminando...' : 'Si eliminar'} 
-                        </Button>
-                        <Button
-                            type={'danger'}
-                            onClick={handleCancel}
-                        >
-                            Cancelar
-                        </Button>
+                        <Container
+                            padding={'0px'}
+                            direction={'column'}
+                        >   
+                            { pin && <Input 
+                                type={'text'}
+                                inputMode={'numeric'}
+                                placeHolder={'Pin de supervisor'}
+                                icon={'padlock'} 
+                                autocomplete={'off'}
+                                name={'pin'}
+                                value={superVisorPin}
+                                onChange={(e) => {
+                                    const v = e.target.value
+                                    if (/^[0-9]*$/.test(v)) setSuperVisorPin(v)
+                                }}
+                                className={styles.pinInput}
+                                /> 
+                            }
+                            <Container
+                                padding={'0px'}
+                                direction={'row'}
+                            >
+                                
+                                <Button
+                                    role="submit"
+                                    type={'secondary'}
+                                >
+                                    {isPending && <OvalLoader/>}   
+                                    {isPending ? 'Eliminando...' : 'Si eliminar'} 
+                                </Button>
+                                <Button
+                                    type={'danger'}
+                                    onClick={handleCancel}
+                                >
+                                    Cancelar
+                                </Button>
+                            </Container>
+                        </Container>
                     </Form>
                 </Container>
                 <p className='p2-b success_message'>{state?.message}</p>

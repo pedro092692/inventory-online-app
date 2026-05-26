@@ -1,6 +1,7 @@
 import { ValidationError } from 'sequelize'
 import { FileError, InvalidFileTypeError, EmptyRowsError } from './FileError.js'
 import { NotFoundError } from './NofoundError.js'
+import { InvalidPinError } from '../errors/supervisorPinError.js'
 import process from 'process'
 
 class ServiceErrorHandler {
@@ -41,6 +42,10 @@ class ServiceErrorHandler {
 
         if(error instanceof InvalidFileTypeError || error instanceof FileError || error instanceof EmptyRowsError) {
             throw new InvalidFileTypeError(error.message)
+        }
+
+        if (error instanceof InvalidPinError) {
+            throw new InvalidPinError(error.message)
         }
         
         if (process.env.NODE_ENV === 'development') {

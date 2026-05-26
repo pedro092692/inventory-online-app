@@ -15,7 +15,8 @@ export default function List({
         showDelete=true,
         queryString='',
         rowClassName = () => '',
-        deleteMsg='Elemento eliminado con éxito'
+        deleteMsg='Elemento eliminado con éxito',
+        cancelSupervisor = false
 
     }) {
     return (
@@ -65,6 +66,7 @@ export default function List({
                                                             showDelete={showDelete}
                                                             queryString={queryString}
                                                             deleteMsg={deleteMsg}
+                                                            cancelSupervisor={cancelSupervisor}
                                                         />
                                                     </td>
                                                 )

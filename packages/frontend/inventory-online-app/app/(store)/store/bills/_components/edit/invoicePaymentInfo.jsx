@@ -8,7 +8,8 @@ export default async function InvoicePaymentInfo({id}){
     const invoiceRes = await GetItemAction(endpointInvoice)
     
     const { data: invoiceData, error: invoiceError } = invoiceRes
-
+    const permission = invoiceData?.permissions || []
+    
     const invoice = invoiceData?.invoice || null
     invoice.date = invoice?.date ? new Date(invoice.date).toDateString() : null   
 
@@ -18,6 +19,6 @@ export default async function InvoicePaymentInfo({id}){
         return <p className='p2-r errorMsg'>{error}</p>
     }
     return (
-        <PaymentDetailForm invoice={invoice}/>
+        <PaymentDetailForm invoice={invoice} permissions={permission}/>
     )
 }

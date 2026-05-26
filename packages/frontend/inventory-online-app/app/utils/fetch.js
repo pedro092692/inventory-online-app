@@ -34,7 +34,7 @@ export default async function FetchData(url, method, body = null) {
         if (response.status === 404) {
             throw new NotfoundError('Not found')
         }
-    
+        
         return {
             errors: data?.errors || data?.message || data?.error ||  'Something went wrong'
         }

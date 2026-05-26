@@ -4,19 +4,23 @@ import { withErrorHandler } from '@/app/errors/withErrorHandler'
 import { revalidatePath } from 'next/cache'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
-export default async function DeleteResource(id, path = '', deleteKey = '', msg = '',  prevState, formData) {
+export default async function CancelResource(id, pin, path = '', deleteKey = {} , msg = '',  prevState, formData) {
     const endpoint = `/api/${path}`
     const url = `${NEXT_PUBLIC_API_BASE_URL}${endpoint}`
 
     const fetch = withErrorHandler(FetchData)
-    const body = deleteKey
-    ? { [deleteKey]: id}
-    : {
-        id: id
-    }
+    const body = 
+        { 
+            [deleteKey]: id,
+            pin: formData.get('pin')
+
+        }
+    
+
     const response = await fetch(url, 'DELETE', body)
     
     const {data, error} = response
+
 
     if (data?.errors){
         return {

@@ -15,7 +15,8 @@ export default function Actions({
         showEdit=true, 
         showDelete=true,
         queryString='',
-        deleteMsg='Elemento eliminado con éxito'
+        deleteMsg='Elemento eliminado con éxito',
+        cancelSupervisor = false
     }){
     
     const [showModal, setShowModal] = useState(false)
@@ -102,15 +103,38 @@ export default function Actions({
         >
             {view()}
             {canEdit && edit()}
-            {canDelete && remove()}
-            {canDelete && isMounted && <DeleteModal 
-                                       show={showModal} 
-                                       onClose={closeModal} 
-                                       id={resourceId}
-                                       path={endpoint}
-                                       deleteKey={deleteKey}
-                                       deleteMsg={deleteMsg}
-                                       />}
+            {
+               !cancelSupervisor ? canDelete && remove()
+               :
+               remove()
+            }
+            
+            {   
+                canDelete ? 
+                    isMounted && <DeleteModal 
+                                        show={showModal} 
+                                        onClose={closeModal} 
+                                        id={resourceId}
+                                        path={endpoint}
+                                        deleteKey={deleteKey}
+                                        deleteMsg={deleteMsg}
+                                        cancelSupervisor={cancelSupervisor}
+                                    />
+                :
+                    isMounted && <DeleteModal 
+                                        show={showModal} 
+                                        onClose={closeModal} 
+                                        id={resourceId}
+                                        path={endpoint}
+                                        deleteKey={deleteKey}
+                                        deleteMsg={deleteMsg}
+                                        cancelSupervisor={cancelSupervisor}
+                                        pin={true}
+                                    />
+                    
+            }
+            
         </Container>
     )
 }
+

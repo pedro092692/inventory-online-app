@@ -5,7 +5,7 @@ import List from '@/app/ui/list/list'
 import styles from './invoice.module.css'
 
 
-export default function PaymentDetailForm({invoice=null}) {
+export default function PaymentDetailForm({invoice=null, permissions=[]}) {
     const paymentsDetails = invoice?.['payments-details'].map(payment => {
         return {
             paymentMethod: payment?.payments?.name || 'Undefined',
@@ -98,9 +98,10 @@ export default function PaymentDetailForm({invoice=null}) {
                             deleteKey={'payment_detail_id'}
                             endpoint={'pay-invoice'}
                             deleteMsg={'Pago eliminado con éxito'}
-                            userPermissions={['delete']}
+                            userPermissions={permissions}
                             CustomStyles={{height: 'auto', borderRadius: '8px'}}
                             customClass={styles.table}
+                            cancelSupervisor={true}
                         />
                     : 
                     <p>Esta order de compra no tienes pagos asociados...</p>

@@ -1,5 +1,6 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
+import { InvalidPinError } from '../errors/supervisorPinError.js'
 
 class SellerService {
     // new instance of service error handler 
@@ -106,7 +107,7 @@ class SellerService {
             })
             
             if(!authoriZedSeller) {
-                throw new Error('Pin incorrecto o el vendedor no tiene permisos de supervisor')
+                throw new InvalidPinError('Pin incorrecto o el vendedor no tiene permisos de supervisor')
             }
 
  
