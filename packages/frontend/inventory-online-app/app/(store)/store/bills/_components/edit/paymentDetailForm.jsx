@@ -1,8 +1,6 @@
 'use client'
 import { Form } from '@/app/ui/form/form/form'
 import { Container } from '@/app/ui/utils/container'
-import EditItemAction from '@/app/lib/actions/edit'
-import { useActionState, useState, useEffect } from 'react'
 import List from '@/app/ui/list/list'
 import styles from './invoice.module.css'
 
@@ -17,20 +15,12 @@ export default function PaymentDetailForm({invoice=null}) {
             id: payment?.id || null,
         }
     }) || []
-    const originalValues = {}
+   
     const date = new Date(invoice?.date).toISOString()
-    const initialSte = {message: null, inputs: originalValues, errors: {}}
-    const cancelPayment = EditItemAction.bind(null, `endpoint`, 
-        ['payment_id', 'pin'], 'Detalle de pago cancelado con éxito')
-    
-    const [state, formAction, isPending] = useActionState(cancelPayment, initialSte)
-
-    // console.log(invoice)
- 
 
     return (
         <>
-            <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
+            <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}}>
                 <Container
                     width={'100%'}
                     padding={'8px'}
