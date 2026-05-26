@@ -1,5 +1,6 @@
 import GetItemAction from '@/app/lib/actions/get'
-import InvoiceDetailForm from '@/app/(store)/store/bills/_components/edit/invoiceDetailForm'
+import PaymentDetailForm from '@/app/(store)/store/bills/_components/edit/paymentDetailForm'
+
 
 export default async function InvoicePaymentInfo({id}){
     const endpointInvoice = `invoices/${id}`
@@ -17,6 +18,6 @@ export default async function InvoicePaymentInfo({id}){
         return <p className='p2-r errorMsg'>{error}</p>
     }
     return (
-        <p>Informacion de los metodos de pago de la orden de compra</p>
+        <PaymentDetailForm invoice={invoice}/>
     )
 }

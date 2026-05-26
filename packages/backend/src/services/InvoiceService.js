@@ -232,7 +232,7 @@ class InvoiceService {
                             },
                             
                         ],
-                        attributes: ['id', 'amount', 'reference_amount']
+                        attributes: ['id', 'amount', 'reference_amount', 'status']
                     }
                 ],
                 order: [['products', 'name', 'ASC']]
