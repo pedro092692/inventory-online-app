@@ -124,7 +124,6 @@ class InvoiceService {
                 limit: limit,
                 offset: offset,
             })
-
             // add exchange rate to each invoice
             const invoicesWithExchangeRate = await this.calculateExchangeRate(invoices)
             
@@ -233,7 +232,7 @@ class InvoiceService {
                             },
                             
                         ],
-                        attributes: ['amount', 'reference_amount']
+                        attributes: ['id', 'amount', 'reference_amount']
                     }
                 ],
                 order: [['products', 'name', 'ASC']]
@@ -730,7 +729,6 @@ class InvoiceService {
                 return invoice
             }  
         })
-       
         return invoicesWithExchangeRate
     }
 }
