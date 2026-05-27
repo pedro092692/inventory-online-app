@@ -397,9 +397,11 @@ class PayInvoiceService {
      * @returns {Number} - The total of total paid for specific invoice.
      */
     _calculeInvoiceTotalPaid(details) {
+        
+        const initialValue = 0
         return details.length > 1 ? details.reduce((accumulator, currentNumber) => {
-            return parseFloat(accumulator.reference_amount) + parseFloat(currentNumber.reference_amount)
-        }) : parseFloat(details[0]?.reference_amount || 0.00)
+            return accumulator + parseFloat(currentNumber.reference_amount)
+        }, initialValue) : parseFloat(details[0]?.reference_amount || 0.00)
     }
 
     /**
@@ -435,7 +437,7 @@ class PayInvoiceService {
         const allPayments = await this.getInvoiceActivePayments(invoice_id, {transaction: options.transaction || null})
         const totalPaid = this._calculeInvoiceTotalPaid(allPayments.activePayments)
         const currentInvoice = await this.invoiceService.getSimpleInvoice(invoice_id, {transaction: options.transaction || null})
-
+        
         if(totalPaid < parseFloat(currentInvoice.total)) {
             await this.invoiceService.updateInvoice(
                 invoice_id, 
