@@ -24,6 +24,7 @@ export function Input({
         defaultValue=null,
         accept=null,
         id=null,
+        required=true
 
     }) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%', textTransform: capitalize ? 'capitalize' : 'none'}
@@ -48,7 +49,7 @@ export function Input({
                     style={style_}
                     defaultValue={ value ?? defaultValue ?? ""}
                     name={name}
-                    required
+                    required={required}
                     readOnly={readOnly}
                     autoComplete={autocomplete}
                     autoFocus={autoFocus}

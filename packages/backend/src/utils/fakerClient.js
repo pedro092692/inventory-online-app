@@ -6,8 +6,10 @@ import { faker } from '@faker-js/faker';
  * @returns {Array<{ id_number: number, name: string, phone: string }>} Array of fake customer objects.
  */
 function fakerCustomer(count = 150) {
+    const max = 30000000
+    const min = 3000000
     const customers = Array.from({ length: count }, () => ({
-        id_number: Math.floor(Math.random() * (30000000 - 3000000 + 1)) + 3000000,
+        id_number: Math.floor(Math.random() * (max - min + 1)) + min,
         name: faker.person.fullName().toLowerCase(),
         phone: faker.phone.number()
 

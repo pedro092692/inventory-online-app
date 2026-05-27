@@ -29,6 +29,7 @@ export default function DeleteModal({
         CancelResource.bind(null, id, pin, path, deleteKey, deleteMsg)
     
     const [superVisorPin, setSuperVisorPin] = useState('')
+    const [noPin, setNoPin] = useState(false)
     const [state, formAction, isPending] = useActionState(deleteResource, initialState)
 
     const handleCancel = () => {
@@ -45,6 +46,15 @@ export default function DeleteModal({
             return () => clearTimeout(timer)
         }
     }, [state?.message])
+
+    const handleSubmit = (formData) => {
+        const pinValue = formData.get("pin")
+        if (!pinValue && pin) {
+            setNoPin(true)
+            return
+        }
+        return formAction(formData)
+    }
 
     return(
         <Modal 
@@ -67,7 +77,7 @@ export default function DeleteModal({
                 <Container
                     padding={'12px'}
                 >
-                    <Form className={styles.form} action={formAction}>
+                    <Form className={styles.form} action={handleSubmit}>
                         <Container
                             padding={'0px'}
                             direction={'column'}
@@ -82,11 +92,14 @@ export default function DeleteModal({
                                 value={superVisorPin}
                                 onChange={(e) => {
                                     const v = e.target.value
-                                    if (/^[0-9]*$/.test(v)) setSuperVisorPin(v)
+                                    if (/^[0-9]*$/.test(v)) setSuperVisorPin(v) 
+                                    setNoPin(false)
                                 }}
                                 className={styles.pinInput}
+                                required={false}
                                 /> 
                             }
+                            { noPin && <p className='errorMsg'>El pin es requerido.</p>}
                             <Container
                                 padding={'0px'}
                                 direction={'row'}

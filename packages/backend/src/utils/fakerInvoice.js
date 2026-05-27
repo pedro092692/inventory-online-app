@@ -71,7 +71,7 @@ class FakerInvoice {
         for(let date of dates) {
             for(let k =0; k<Math.floor(Math.random() * (122 - 10)) + 10; k++){
                 const randomUser = this._randomId(150)
-                const randomSeller = this._randomId(3)
+                const randomSeller = this._randomId(4)
                 const numberOfProduct = this._randomNumberProducts()
                 const products = this._getRandomProducts(numberOfProduct, 499)
                 const total = this._getInvoiceTotal(products)
@@ -79,7 +79,7 @@ class FakerInvoice {
                 try{
                     dollarValue = this.dollarValues[i].value
                 }catch{
-                    dollarValue = 1
+                    dollarValue = this.dollarValues.at(-1).value
                 }
                 const newDate = new Date(date)
                 newDate.setHours(Math.floor(Math.random() * (20 - 8)) + 8 )
