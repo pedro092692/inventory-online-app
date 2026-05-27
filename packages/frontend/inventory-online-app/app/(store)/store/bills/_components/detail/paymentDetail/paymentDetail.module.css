@@ -1,0 +1,11 @@
+.paymentDetailContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 8px;
+    background-color: var(--color-neutralGrey300);
+    padding: 24px 16px;
+}

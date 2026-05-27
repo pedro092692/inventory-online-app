@@ -54,7 +54,10 @@ export default async function BillInfo({ id, queryString=''}) {
                                           total_reference={invoice?.total_reference}/>
                     }
                     products={invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']}/>}
-                    payments={invoice?.['payments-details']?.length > 0 && <PaymentDetails paymentDetails={invoice['payments-details']}/>}
+                    payments={invoice?.['payments-details']?.length > 0 && <PaymentDetails 
+                                                                    paymentDetails={invoice['payments-details']}
+                                                                    pdf={true}
+                                                                    />}
                     id={invoice?.id}
                 />
                 {/* edit */}
@@ -100,10 +103,9 @@ export default async function BillInfo({ id, queryString=''}) {
             
             {/* products details */}
             {invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']}/>}
-
+            
             {/* payment details */}
             {invoice?.['payments-details']?.length > 0 && <PaymentDetails paymentDetails={invoice['payments-details']}/>}
-    
         </Container>
         :
         <p>Orden no encontrada...</p>

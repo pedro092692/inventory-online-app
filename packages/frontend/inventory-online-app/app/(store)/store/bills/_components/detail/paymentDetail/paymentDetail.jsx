@@ -1,27 +1,7 @@
 import { Container } from '@/app/ui/utils/container'
-export default function PaymentDetails({ paymentDetails }) {
-    return (
-        <Container
-            direction={'column'}
-            width={'100%'}
-            padding={'0px'}
-            alignItem={'start'}
-            // backgroundColor={'blue'}
-        >
-            <h3 className='p1-r'>Detalles de pago</h3>
-            <Container
-                padding={'16px'}
-                width={'100%'}
-                height={'100%'}
-                borderRadius={'8px'}
-                backgroundColor={'var(--color-neutralGrey300)'}
-                className='shadow'
-                direction={'column'}
-                alignItem={'start'}
-                gap={'24px'}
-            >
-                {
-                    paymentDetails?.map((payment, index) => (
+import styles from './paymentDetail.module.css'
+export default function PaymentDetails({ paymentDetails, pdf=false}) {
+    const paymentsDetails = paymentDetails?.map((payment, index) => (
                         <Container key={index}
                             padding={'0px'}
                             gap={'4px'}
@@ -49,8 +29,36 @@ export default function PaymentDetails({ paymentDetails }) {
                         </Container>
                         
                     ))
+
+    const wrapper = !pdf ? 
+       <div className={`${styles.paymentDetailContainer} shadow`}>
+                {
+                    paymentsDetails
                 }
-            </Container>
+        </div> :
+        <Container
+                padding={'16px'}
+                width={'100%'}
+                borderRadius={'8px'}
+                backgroundColor={'var(--color-neutralGrey300)'}
+                className={`shadow`}
+                direction={'column'}
+                alignItem={'start'}
+                gap={'24px'}
+        >
+            {
+                paymentsDetails
+            }
+        </Container>         
+    return (
+        <Container
+            direction={'column'}
+            width={'100%'}
+            padding={'0px'}
+            alignItem={'start'}
+        >
+            <h3 className='p1-r'>Detalles de pago</h3>
+            {wrapper}
         </Container>
     )
 }
