@@ -41,7 +41,7 @@ class CustomerCredit extends Model {
 
 /**
  * Initializes the CustomerCredit model with its schema definition and configuration.
- * This function sets up the Customer model with fields such as `id`, `customer_id`, `payment_id`, `amount`,
+ * This function sets up the Customer model with fields such as `id`, `customer_id`, `payment_method_id`, `amount`,
  * `status` and `origin_invoice_id`
  * and configures Sequelize options like table name, schema, and timestamps.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
