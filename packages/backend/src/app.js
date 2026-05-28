@@ -2,6 +2,7 @@ import express from 'express'
 import Database from './database/database.js'
 import CustomerRoutes from './routes/CustomerRoutes.js'
 import InvoiceRoutes from './routes/InvoiceRoutes.js'
+import InvoiceDetailRoutes from './routes/invoiceDetailRoute.js'
 import SellerRoutes from './routes/SellerRoutes.js'
 import ProductRoutes from './routes/ProductRoutes.js'
 import UserRoutes from './routes/admin/UserRoutes.js'
@@ -61,6 +62,9 @@ class Server {
 
         // invoices routes
         this.app.use('/api/invoices', new InvoiceRoutes().router)
+
+        // invoice detail routes
+        this.app.use('/api/invoice-details', new InvoiceDetailRoutes().router)
 
         // seller routes
         this.app.use('/api/sellers', new SellerRoutes().router)

@@ -82,11 +82,19 @@ class InvoiceDetailService {
     getDetailByInvoiceId(invoiceId, offset=0, limit=10) {
         return this.#error.handler(['Read Invoice Details by Invoice ID'], async() => {
             const details = await this.InvoiceDetail.findAll({
+                include: [
+                    {
+                        association: 'products',
+                        attributes: ['name'],
+                    }
+                ],
                 where: {
                     invoice_id: invoiceId
                 },
+                attributes: ['id', 'quantity', 'unit_price'],
                 offset: offset,
-                limit: limit
+                limit: limit,
+                order: [['products', 'name', 'ASC']]
             })
             return details
         })

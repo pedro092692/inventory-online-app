@@ -9,15 +9,22 @@ import InvoiceBasicInfo from '@/app/(store)/store/bills/_components/detail/basic
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
+import Pagination from '@/app/ui/pagination/pagination'
 import Link from 'next/link'
 
-export default async function BillInfo({ id, queryString=''}) {
+export default async function BillInfo({ id, queryString='', limit = 5, page = 1, totalProductPages = 0 }) {
     const endpoint = `invoices/${id}`
-    const response = await GetItemAction(endpoint)
+    const params = new URLSearchParams()
+    params.append('limitProducts', limit)
+    params.append('pageProducts', page)
+
+    const url = `${endpoint}?${params.toString()}`
+
+    const response = await GetItemAction(url)
     const currentUser = await getCurrentUser()
     const { data, error } = response
     const invoice = data?.invoice || null
-    
+
     // await new Promise(resolve => setTimeout(resolve, 1000))
 
     return (
@@ -103,6 +110,7 @@ export default async function BillInfo({ id, queryString=''}) {
             
             {/* products details */}
             {invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']}/>}
+            {invoice?.['products']?.length > 0 && <Pagination totalPages={totalProductPages} paramName={'pageProducts'}/>}
             
             {/* payment details */}
             {invoice?.['payments-details']?.length > 0 && <PaymentDetails paymentDetails={invoice['payments-details']}/>}

@@ -203,19 +203,14 @@ class InvoiceService {
     * @returns {Object} - invoice with details, customer and seller
     * @throws {NotFoundError} - if invoice not found
     */
-    getInvoice(id, referenceProduct=true) {
+    getInvoice(id, referenceProduct=true, pageProducts=1, limitProducts=5) {
+        const offset = (pageProducts - 1) * limitProducts
         return this.#error.handler(['Read Invoice', id, 'Invoice'], async() => {
-            const invoice = await this.Invoice.findByPk(id, {
+            const [invoice, invoiceProducts] = await Promise.all([
+                this.Invoice.findByPk(id, {
                 include: [
                     {
                         association: 'customer', attributes: ['name', 'phone', 'id_number'],
-                    },
-                    {
-                        association: 'products',
-                        attributes: ['name'],
-                        through: {
-                            attributes: ['id', 'quantity', 'unit_price'] 
-                        }
                     },
                     {
                         association: 'seller', attributes: ['name']
@@ -234,10 +229,11 @@ class InvoiceService {
                         ],
                         attributes: ['id', 'amount', 'reference_amount', 'status']
                     }
-                ],
-                order: [['products', 'name', 'ASC']]
-            })
-
+                ]
+            }),
+                this.InvoiceDetail.getDetailByInvoiceId(id, offset, limitProducts)
+            ])
+            
             // if invoice not found throw not found error
             if(!invoice) {
                 throw new NotFoundError()
@@ -251,7 +247,7 @@ class InvoiceService {
                     invoice.total_reference = (invoice.total * dollarValue.value).toFixed(2)
 
                     // changed product price to reference price 
-                    invoice.products = this._calculeBolivarPriceProducts(invoice.products, dollarValue)
+                    invoice.products = this._calculeBolivarPriceProducts(invoiceProducts, dollarValue)
 
                     // add total paid in boilvar to invoice
                     invoice.dataValues.total_Paid_Bolivar = (invoice.total_paid * dollarValue.value).toFixed(2)
@@ -264,13 +260,10 @@ class InvoiceService {
                     // get reference value
                     const dollarValue = (parseFloat(invoice.total_reference) / parseFloat(invoice.total)).toFixed(2)
                     // changed product price to reference price 
-                    invoice.products = this._calculeBolivarPriceProducts(invoice.products, { value: dollarValue })
-                    
-                    // add total paid in boilvar to invoice
+                    invoice.setDataValue('products', this._calculeBolivarPriceProducts(invoiceProducts, { value: dollarValue }))
                     invoice.dataValues.total_Paid_Bolivar = invoice.total_reference
                 }   
             }
-            
 
             return {
                 invoice: invoice
@@ -635,9 +628,16 @@ class InvoiceService {
      * @returns {Array} array of products with prices in bolivars.
      */   
     _calculeBolivarPriceProducts(products, dollarvalue) {
-        return products.map(product => {
-            product.invoice_details.dataValues.unit_price = (product.invoice_details.dataValues.unit_price * dollarvalue.value).toFixed(2)
+        const productReferencePrice = products.map(product => {
+            const unit_price_reference = (product.unit_price * dollarvalue.value).toFixed(2)
+            product.unit_price = unit_price_reference
+            return product
         })
+        return productReferencePrice
+        // return products.map(product => {
+        //     product.invoice_details.dataValues.unit_price = (product.invoice_details.dataValues.unit_price * dollarvalue.value).toFixed(2)
+        //     product.unit_price = (product.unit_price * dollarvalue.value).toFixed(2)
+        // })
     }
 
     /**

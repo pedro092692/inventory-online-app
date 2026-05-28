@@ -4,14 +4,15 @@ import styles from './product.module.css'
 
 export default function ProductDetails({ productsDetails }){
     const products = formatProductsDetails(productsDetails)
+    
     function formatProductsDetails(productsDetails) {
         return productsDetails.map(product => {
             return {
-                name : product.name,
-                price: new Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(product.invoice_details.unit_price),
-                quantity: product.invoice_details.quantity,
+                name : product.products.name,
+                price: new Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(product.unit_price),
+                quantity: product.quantity,
                 total: Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(
-                    product.invoice_details.unit_price * product.invoice_details.quantity),
+                    product.unit_price * product.quantity),
             }
         })
     }
