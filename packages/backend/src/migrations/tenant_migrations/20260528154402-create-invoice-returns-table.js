@@ -93,6 +93,12 @@ export default {
             model: 'sellers',
             key: 'id'
           }
+        },
+        
+        created_at: {
+          type: Sequelize.DATE,
+          allowNull: false,
+          defaultValue: Sequelize.NOW
         }
       },
       {
