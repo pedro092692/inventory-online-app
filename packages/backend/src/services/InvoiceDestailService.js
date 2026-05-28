@@ -79,14 +79,32 @@ class InvoiceDetailService {
      * @return {Promise<Array>} - A promise that resolves to an array of invoice detail objects.
      * @throws {ServiceError} - If an error occurs during the retrieval operation.
      */
-    getDetailByInvoiceId(invoiceId) {
+    getDetailByInvoiceId(invoiceId, offset=0, limit=10) {
         return this.#error.handler(['Read Invoice Details by Invoice ID'], async() => {
             const details = await this.InvoiceDetail.findAll({
                 where: {
                     invoice_id: invoiceId
-                }
+                },
+                offset: offset,
+                limit: limit
             })
             return details
+        })
+    }
+
+    /**
+     * Retrieves the total count of products associated with a specific invoice.
+     * @param {string|number} invoiceId - The unique identifier of the invoice.
+     * @returns {Promise<number>} A promise that resolves to the total number of products.
+     * @throws {Error} If the database query fails, handled by the internal error handler.
+     */
+    getTotalInvoiceProducts(invoiceId, limit = 5) {
+        return this.#error.handler(['Read Total Invoice Products'], async () => {
+            const totalProducts = await this.InvoiceDetail.count({
+                where: { invoice_id: invoiceId }
+            })
+
+            return Math.ceil(totalProducts / limit)
         })
     }
 

@@ -100,7 +100,7 @@ class CustomerService {
      * @throws {Error} If the database query fails, handled by the internal error handler.
      */
     getTotalCustoemerInvoices(id, limit = 8) {
-        return this.#error.handler(['Read Customer Tootal Invoices', id, 'Customer'], async () => {
+        return this.#error.handler(['Read Customer Total Invoices', id, 'Customer'], async () => {
             const totalInvoices = await this.Invoice.count({
                 where: { customer_id: id }
             })
