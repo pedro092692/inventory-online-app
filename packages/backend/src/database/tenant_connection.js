@@ -11,6 +11,7 @@ import { initializePaymentDetail, PaymentDetail } from '../models/inventory_mode
 import { initializeDollar, Dollar } from '../models/inventory_models/DollarModel.js'
 import { initializeAuditLog, AuditLog } from '../models/inventory_models/auditLogModel.js'
 import { initializeCustomerCredit, CustomerCredit } from '../models/inventory_models/customerCreditModel.js' 
+import { initializeInvoiceReturn, InvoiceReturn } from '../models/inventory_models/InvoiceReturnModel.js'
 import { User } from '../models/UserModel.js'
 import { Umzug, SequelizeStorage } from 'umzug'
 import { fileURLToPath, pathToFileURL } from 'url'
@@ -182,6 +183,7 @@ class TenantConnection {
         const Dollar = initializeDollar(sequelize, schema)
         const AuditLog = initializeAuditLog(sequelize, schema)
         const CustomerCredit = initializeCustomerCredit(sequelize, schema)
+        const InvoiceReturn = initializeInvoiceReturn(sequelize, schema)
         
         return {
             Customer, 
@@ -194,6 +196,7 @@ class TenantConnection {
             Dollar,
             AuditLog,
             CustomerCredit,
+            InvoiceReturn
         }
     }
 
@@ -230,6 +233,11 @@ class TenantConnection {
         CustomerCredit.associationCustomer({Customer})
         CustomerCredit.associationOriginInvoice({Invoice})
         CustomerCredit.associationPayment({Payment})
+        InvoiceReturn.associationInvoiceDetail({InvoiceDetail})
+        InvoiceReturn.associationInvoice({Invoice})
+        InvoiceReturn.associationCustomerCredit({CustomerCredit})
+        InvoiceReturn.associationUser({User})
+        InvoiceReturn.associationSupervisorSeller({Seller})
     }
     
     
