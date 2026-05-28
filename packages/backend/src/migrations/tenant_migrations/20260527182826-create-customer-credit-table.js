@@ -21,7 +21,7 @@
 export default {
   async up (queryInterface, Sequelize, schema) {
     queryInterface.createTable(
-      'audit_logs',
+      'customer_credits',
       {
         id: {
           type: Sequelize.INTEGER,

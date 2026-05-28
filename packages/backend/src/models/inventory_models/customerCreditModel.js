@@ -20,7 +20,7 @@ class CustomerCredit extends Model {
      */
     static associationPayment(model) {
         this.belongsTo(model.Payment, {
-            foreignKey: 'payment_id',
+            foreignKey: 'payment_method_id',
             as: 'payment'
         })
     }

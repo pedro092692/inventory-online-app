@@ -47,7 +47,8 @@ class InvoiceReturn extends Model {
     static associationUser(model) {
         this.belongsTo(model.User, {
             foreignKey: 'user_id',
-            as: 'user'
+            as: 'user',
+            constraints: false
         })
     }
 
@@ -75,14 +76,12 @@ function initializeInvoiceReturn(sequelize, schema) {
                 autoIncrement: true,
                 primaryKey: true
             },
+            
             invoice_id:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                references: {
-                    model: 'invoices',
-                    key: 'id'
-                }
             },
+            
             invoice_detail_id:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -91,6 +90,7 @@ function initializeInvoiceReturn(sequelize, schema) {
                     key: 'id'
                 }
             },
+            
             customer_credit_id: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
@@ -125,10 +125,6 @@ function initializeInvoiceReturn(sequelize, schema) {
             user_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                references: {
-                    model: 'users',
-                    key: 'id'
-                }
             },
             supervisor_seller_id: {
                 type: DataTypes.INTEGER,
