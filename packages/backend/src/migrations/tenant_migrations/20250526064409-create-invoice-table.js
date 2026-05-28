@@ -86,11 +86,17 @@ export default {
           }
         },
 
+        refund_status: {
+          type: Sequelize.ENUM('none', 'partial', 'full'),
+          allowNull: false,
+          defaultValue: 'none',
+        },
+
         status: {
           type: Sequelize.ENUM('paid', 'unpaid'),
           allowNull: false,
           defaultValue: 'unpaid',
-        }
+        },
         
       },
       {

@@ -162,11 +162,18 @@ function initializeInvoice(sequelize, schema) {
                     }
                 }
             },
+
+            refund_status: {
+                type: DataTypes.ENUM('none', 'partial', 'full'),
+                allowNull: false,
+                defaultValue: 'none'
+            },
+
             status: {
                 type: DataTypes.ENUM('paid', 'unpaid'),
                 allowNull: false,
                 defaultValue: 'unpaid',
-            }
+            },
         },
         {
             sequelize,
