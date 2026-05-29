@@ -241,7 +241,7 @@ class PayInvoiceService {
         return this.#error.handler(['Cancel Invoice Payment Detail', paymentDetailId, 'Pay Invoice'], async() => {
             
             const hashedPin = pinIsRequired ? hasPassword(pin, String(currentUser.tenant_id)) : null
-
+            //
 
             const t = await sequelize.transaction()
             try {

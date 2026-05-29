@@ -1,12 +1,16 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
+import SellerService from './SellerService.js'
+import { sequelize } from '../database/database.js'
+import hasPassword from '../utils/encrypt.js'
 
 class InvoiceDetailService {
 
     // instace of error handler
     #error = new ServiceErrorHandler()
 
-    constructor(model) {
+    constructor(model, sellerModel=null) {
         this.InvoiceDetail = model
+        this.SellerService = new SellerService(sellerModel)
         this.#error
     }
 
@@ -115,6 +119,33 @@ class InvoiceDetailService {
             return Math.ceil(totalProducts / limit)
         })
     }
+
+
+    cancelInvoiceItemDetail(itemId, quantity, pinIsRequired = true, pin = null, currentUser = {id: null, tenant_id: null}) {
+        return this.#error.handler(['Cancel Invoice Item Detail', itemId, 'Invoice Detail'], async() => {
+
+            const hashedPin = pinIsRequired ? hasPassword(pin, String(currentUser.tenant_id)) : null
+
+            const t = await sequelize.transaction()
+
+            try{
+                //1. check if user is authorized to cancel item 
+                const authorizedBy = pinIsRequired ? await this.SellerService.authorizeSeller(hashedPin, { transaction: t }) : null
+
+                // get details info 
+                const detail = await this.getInvoiceDetail(itemId)
+                console.log(detail)
+
+
+                return {}
+            }catch(error) {
+                await t.rollback()
+                throw error
+            }
+        })
+    }
+ 
+
 
     /**
      * Deletes invoice details by their IDs.
