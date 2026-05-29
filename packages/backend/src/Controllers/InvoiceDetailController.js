@@ -1,5 +1,6 @@
 import InvoiceDetailService from '../services/InvoiceDestailService.js'
 import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
+import { getUserRole } from '../middlewares/authorization.js'
 
 
 class InvoiceDetailController {
@@ -25,6 +26,18 @@ class InvoiceDetailController {
         const limit = req.query.limit ? parseInt(req.query.limit) : 5
         const total = await this.invoiceDetail.getTotalInvoiceProducts(id, limit)
         res.status(200).json({total})
+    })
+
+
+    cancelInvoiceItemDetail = this.#error.handler( async(req, res) => {
+        const itemId = req.body.itemId
+        const quantity = req.body.quantity
+        const pin = req.body.pin || null
+        const userRole = getUserRole(req.user.role)
+        const pinIsRequired = !['ADMIN', 'MANAGER'].includes(userRole)
+        const currentUser = req.user
+        const {invoice} = await this.invoiceDetail.cancelInvoiceItemDetail(itemId, quantity, pinIsRequired, pin, currentUser)
+        res.status(200).json({invoice})
     })
 }
 
