@@ -285,9 +285,9 @@ class InvoiceDetailService {
     async _updateInvoiceRefundStatus({invoice_id, status}, options = {}) {
         //1. get invoice 
         const invoice = await this.Invoice.findByPk(invoice_id)
-
         //2. update invoice status
         await invoice.update({refund_status: status},{ transaction: options.transaction || null })
+        await invoice.save()
 
     }
     
