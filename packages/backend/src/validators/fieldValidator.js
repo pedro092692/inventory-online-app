@@ -18,6 +18,12 @@ function validateFields(rule) {
             check('purchase_price').isNumeric().withMessage('El precio de compra debe ser un número'),
             check('selling_price').isNumeric().withMessage('El precio de venta debe ser un número'),
             check('stock').isNumeric().withMessage('El stock debe ser un número')
+        ],
+
+        cancelItemDetail: [
+            check('itemId').isInt().withMessage('El id del detalle de la factura debe ser un número entero.'),
+            check('quantity').isInt({ min: 1}).withMessage('La cantidad debe ser un número entero maryor que cero.')
+
         ]
     }
 
