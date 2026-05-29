@@ -10,9 +10,20 @@ class InvoiceReturnService {
     }
 
 
-    processPartialReturn() {
+    processPartialReturn(invoice_id, invoice_detail_id, customer_credit_id, quantity, user_id, supervisor_seller_id=null) {
         return this.#error.handler(['Process Partial Return'], async() => {
-            
+            newPartialReturn = await this.InvoiceReturn.create({
+                invoice_id,
+                invoice_detail_id,
+                customer_credit_id,
+                quantity,
+                user_id,
+                supervisor_seller_id
+            })
+
+            return {
+                newPartialReturn: newPartialReturn
+            }
         })
     }
 }

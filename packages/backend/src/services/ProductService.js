@@ -329,7 +329,7 @@ class ProductService{
      * @returns {Promise<void>} - returns nothing
      * @throws {ServiceError} - throws an error if the stock could not be restored
      */
-    restoreStock(product_id, quantity) {
+    restoreStock({product_id, quantity}, options={}) {
          return this.#error.handler(['Update Stock'], async() => {
             await this.Product.increment(
                 {
@@ -337,6 +337,9 @@ class ProductService{
                 },
                 {
                     where: { id: product_id }
+                },
+                {
+                    transaction: options.transaction || null
                 }
             )
             

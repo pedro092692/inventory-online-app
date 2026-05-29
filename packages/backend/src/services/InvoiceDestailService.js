@@ -1,5 +1,8 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import SellerService from './SellerService.js'
+import ProductService from './ProductService.js'
+import CustomerCreditService from './CustomerCreditService.js'
+import AuditLogService from './AuditLogService.js'
 import { sequelize } from '../database/database.js'
 import hasPassword from '../utils/encrypt.js'
 
@@ -8,9 +11,21 @@ class InvoiceDetailService {
     // instace of error handler
     #error = new ServiceErrorHandler()
 
-    constructor(model, sellerModel=null) {
+    constructor(model, 
+                sellerModel=null, 
+                productModel=null, 
+                invoiceReturnModel=null, 
+                customerCreditModel=null, 
+                invoiceModel=null,
+                auditLogModel=null
+            ) {
         this.InvoiceDetail = model
         this.SellerService = new SellerService(sellerModel)
+        this.ProductService = new ProductService(productModel)
+        this.CustomerCreditService = new CustomerCreditService(customerCreditModel)
+        this.AuditLogService = new AuditLogService(auditLogModel)
+        this.InvoiceReturn = invoiceReturnModel
+        this.Invoice = invoiceModel
         this.#error
     }
 
@@ -54,7 +69,29 @@ class InvoiceDetailService {
      */
     getInvoiceDetail(id) {
         return this.#error.handler(['Read invoice Detail'], async() => {
-            const detail = await this.InvoiceDetail.findByPk(id)
+            const detail = await this.InvoiceDetail.findByPk(id, {
+                include: [
+                    {
+                        association: 'invoice',
+                        include:[
+                            {
+                                association: 'payments-details',
+                                where: { status: 'active' },
+                                required: false,
+                                include: [
+                                    {
+                                        association: 'payments',
+                                        attributes: ['name', 'currency'],
+                                        required: false,
+                                    },
+                                    
+                                ],
+                                attributes: ['id', 'amount', 'reference_amount', 'status']
+                            }
+                        ]
+                    }
+                ]
+            })
             return detail
         })
     }
@@ -134,17 +171,91 @@ class InvoiceDetailService {
 
                 //2. get details info 
                 const detail = await this.getInvoiceDetail(itemId)
-                const {invoice_id, product_id, quantity, unit_price} = detail
-                
-                //3. verify returned Quantity is not greater than original quantity
-                if (returnedQuantity > quantity) {
+                const {invoice_id, product_id, quantity, unit_price, id} = detail
+                const customer_id = detail.invoice.customer_id
+
+                // 3. calcule if there are item already returned
+                const totalAlreadyReturned = await this.InvoiceReturn.sum('quantity', {
+                    where: {
+                        invoice_detail_id: id
+                    },
+                    transaction: t
+                }) || 0
+
+                //4. calcule max allowed returned items
+                const maxAllowedReturned = quantity - totalAlreadyReturned
+
+                //5. verify returned Quantity is not greater than original quantity
+                if (returnedQuantity > maxAllowedReturned) {
                     throw new Error('Returned quantity cannot be greater than original quantity')
                 }
+                
+                //4. restore product stock
+                await this.ProductService.restoreStock({product_id, quantity:returnedQuantity}, {transaction: t})
 
-                console.log(invoice_id, product_id, quantity, unit_price)
+                //5. calcule credit amount to return
+                const amountToReturn = unit_price * returnedQuantity
 
+                //6. create new customer credit
+                const {customerCredit: newCredit} = await this.CustomerCreditService.createCustomerCredit(
+                    {
+                        customer_id: customer_id,
+                        origin_invoice_id: invoice_id,
+                        amount: amountToReturn,
+                        payment_method_id: 8,
+                    },
+                    {
+                        transaction: t
+                    }
+                )
+                //7. Record the return history
+                await this.InvoiceReturn.create({
+                    invoice_id,
+                    invoice_detail_id: id,
+                    customer_credit_id: newCredit.id,
+                    quantity: returnedQuantity,
+                    amount_returned: amountToReturn,
+                    user_id: currentUser.id,
+                    supervisor_seller_id: authorizedBy?.authorizedBy?.id || null
+                }
+                ,{
+                    transaction: t
+                })
 
-                return {}
+                //8. update invoice refund status
+                await this._updateInvoiceRefundStatus({invoice_id, status: 'partial'}, {transaction: t})
+
+                //9. create new audit log
+                await this.AuditLogService.createAuditLog({
+                    action: 'PARTITAL_REFUND',
+                    tableName: 'invoice_returns',
+                    recordId: id,
+                    details: {
+                        oldSnapshot: {
+                            returned_quantity: totalAlreadyReturned,
+                            invoice_id: invoice_id,
+                            status: 'none'
+                        },
+                        newSnapshot: {
+                            returned_quantity: returnedQuantity,
+                            amount_returned: amountToReturn,
+                            customer_credit_id: newCredit.id,
+                            invoice_id: invoice_id,
+                            status: 'refunded'
+                        },
+                    },
+                    userId: currentUser.id,
+                    supervisor_seller_id: authorizedBy?.authorizedBy?.id || null
+                },
+                {
+                    transaction: t
+                })
+
+                await t.commit()
+
+                return {
+                     success: true 
+                }
             }catch(error) {
                 await t.rollback()
                 throw error
@@ -168,6 +279,16 @@ class InvoiceDetailService {
                 }
             })
         })
+    }
+
+
+    async _updateInvoiceRefundStatus({invoice_id, status}, options = {}) {
+        //1. get invoice 
+        const invoice = await this.Invoice.findByPk(invoice_id)
+
+        //2. update invoice status
+        await invoice.update({refund_status: status},{ transaction: options.transaction || null })
+
     }
     
 }

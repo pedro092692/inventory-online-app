@@ -19,7 +19,8 @@ class InvoiceDetailRoutes {
         this.router.get('/', (req, res) => res.send('Invoices Details Routes'))
         this.router.get('/total-pages', (req, res) => new InvoiceDetailController(req.InvoiceDetail).totalProductsPages(req, res))
         this.router.delete('/', validateFields('cancelItemDetail'), (req, res) => new InvoiceDetailController
-            (req.InvoiceDetail, req.Seller).cancelInvoiceItemDetail(req, res))
+            (req.InvoiceDetail, req.Seller, req.Product, req.InvoiceReturn, req.CustomerCredit, req.Invoice, req.AuditLog)
+            .cancelInvoiceItemDetail(req, res))
     }   
 
     /**
@@ -36,12 +37,18 @@ class InvoiceDetailRoutes {
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {InvoiceDetail, Seller} = req.tenantModels
-        if(!InvoiceDetail || !Seller) {
-            return res.status(400).json({ message: 'InvoiceDetail and Seller models are required' })
+        const {InvoiceDetail, Seller, Product, InvoiceReturn, CustomerCredit, Invoice, AuditLog} = req.tenantModels
+        if(!InvoiceDetail || !Seller || !Product || !InvoiceReturn || !CustomerCredit || !Invoice || !AuditLog) {
+            return res.status(400).json({ message: 'InvoiceDetail, Product, CustomerCredit, AuditLog, InvoiceReturn, Invoice and Seller models are required' })
         }
 
         req.InvoiceDetail = InvoiceDetail
+        req.Seller = Seller
+        req.Product = Product
+        req.InvoiceReturn = InvoiceReturn
+        req.CustomerCredit = CustomerCredit
+        req.Invoice = Invoice
+        req.AuditLog = AuditLog
 
         next()
     }

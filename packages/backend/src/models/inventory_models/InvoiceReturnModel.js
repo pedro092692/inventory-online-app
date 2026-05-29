@@ -105,11 +105,8 @@ function initializeInvoiceReturn(sequelize, schema) {
                 allowNull: false,
                 validate: {
                     isInt: {
-                        mgs: 'Quantity must be an integer.',
-                        min: {
-                            args: 1,
-                            msg: 'Quantity must be at least 1.'
-                        }
+                        args: { min: 1 },
+                        msg: 'Quantity must be a integer and at least 1.'
                     }
                 }
             },

@@ -43,6 +43,10 @@ export default {
         {
           name: 'Cripto',
           currency: 'Criptomonedas'
+        },
+        {
+          name: 'Nota de Credito',
+          currency: 'Saldo tienda'
         }
       ]
     )

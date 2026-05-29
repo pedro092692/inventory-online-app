@@ -1,4 +1,4 @@
-import ServiceErrorHandler from '../errors/ServiceErrorHandler'
+import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 
 class CustomerCreditService {
     #error = new ServiceErrorHandler()

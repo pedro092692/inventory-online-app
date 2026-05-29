@@ -1,12 +1,21 @@
 import InvoiceDetailService from '../services/InvoiceDestailService.js'
 import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
+import InvoiceService from '../services/InvoiceService.js'
 import { getUserRole } from '../middlewares/authorization.js'
 
 
 class InvoiceDetailController {
     #error = new ControllerErrorHandler()
-    constructor(invoceDetailModel) {
-        this.invoiceDetail = new InvoiceDetailService(invoceDetailModel)
+    constructor(invoiceDetailModel, 
+                sellerModel=null, 
+                productModel=null, 
+                invoiceReturnModel=null, 
+                customerCreditModel=null, 
+                invliceModel=null,
+                auditLogModel=null,
+            ) {
+        this.invoiceDetail = new InvoiceDetailService
+            (invoiceDetailModel, sellerModel, productModel, invoiceReturnModel, customerCreditModel, invliceModel, auditLogModel)
         this.#error
     }
 
@@ -36,8 +45,8 @@ class InvoiceDetailController {
         const userRole = getUserRole(req.user.role)
         const pinIsRequired = !['ADMIN', 'MANAGER'].includes(userRole)
         const currentUser = req.user
-        const {invoice} = await this.invoiceDetail.cancelInvoiceItemDetail(itemId, quantity, pinIsRequired, pin, currentUser)
-        res.status(200).json({invoice})
+        const {sucess} = await this.invoiceDetail.cancelInvoiceItemDetail(itemId, quantity, pinIsRequired, pin, currentUser)
+        res.status(200).json({sucess})
     })
 }
 
