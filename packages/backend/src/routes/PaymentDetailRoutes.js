@@ -18,9 +18,10 @@ class PayInvoiceRoutes {
     initializeRoutes() {
         this.router.get('/', (req, res) => res.send('Pay Invoice Detail Route'))
         this.router.get('/:id', (req, res) => new PayInvoiceController(req.PaymentDetail).getPaymentDetail(req, res))
-        this.router.post('/', (req, res) => new PayInvoiceController(req.PaymentDetail, req.Dollar, req.Invoice).createPaymentInvoiceDetail(req, res))
+        this.router.post('/', (req, res) => new PayInvoiceController
+            (req.PaymentDetail, req.Dollar, req.Invoice, null, null, req.InvoiceDetail).createPaymentInvoiceDetail(req, res))
         this.router.delete('/', (req, res) => new PayInvoiceController
-            (req.PaymentDetail, req.Dollar, req.Invoice, req.Seller, req.AuditLog).cancelPaymentInvoiceDetail(req, res))
+            (req.PaymentDetail, req.Dollar, req.Invoice, req.Seller, req.AuditLog, req.InvoiceDetail).cancelPaymentInvoiceDetail(req, res))
         this.router.patch('/:id', (req, res) => new PayInvoiceController
             (req.PaymentDetail, req.Dollar, req.Invoice).updatePaymentDetail(req, res))
         this.router.delete('/cancel', (req, res) => new PayInvoiceController
@@ -41,15 +42,16 @@ class PayInvoiceRoutes {
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {PaymentDetail, Dollar, Invoice, Seller, AuditLog} = req.tenantModels
-        if(!Dollar || !PaymentDetail || !Invoice || !Seller || !AuditLog) {
-            return res.status(400).json({ message: 'Dollar, Invoice, Seller, and AuditLog models are required' })
+        const {PaymentDetail, Dollar, Invoice, Seller, InvoiceDetail, AuditLog} = req.tenantModels
+        if(!Dollar || !PaymentDetail || !Invoice || !Seller || !AuditLog || !InvoiceDetail) {
+            return res.status(400).json({ message: 'Dollar, Invoice, Seller, InvoiceDetail and AuditLog models are required' })
         }
         req.PaymentDetail = PaymentDetail
         req.Invoice = Invoice
         req.Dollar = Dollar,
         req.Seller = Seller,
         req.AuditLog = AuditLog,
+        req.InvoiceDetail = InvoiceDetail
         next()
     }
 }

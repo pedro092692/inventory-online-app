@@ -121,7 +121,7 @@ class InvoiceDetailService {
     }
 
 
-    cancelInvoiceItemDetail(itemId, quantity, pinIsRequired = true, pin = null, currentUser = {id: null, tenant_id: null}) {
+    cancelInvoiceItemDetail(itemId, returnedQuantity, pinIsRequired = true, pin = null, currentUser = {id: null, tenant_id: null}) {
         return this.#error.handler(['Cancel Invoice Item Detail', itemId, 'Invoice Detail'], async() => {
 
             const hashedPin = pinIsRequired ? hasPassword(pin, String(currentUser.tenant_id)) : null
@@ -132,9 +132,16 @@ class InvoiceDetailService {
                 //1. check if user is authorized to cancel item 
                 const authorizedBy = pinIsRequired ? await this.SellerService.authorizeSeller(hashedPin, { transaction: t }) : null
 
-                // get details info 
+                //2. get details info 
                 const detail = await this.getInvoiceDetail(itemId)
-                console.log(detail)
+                const {invoice_id, product_id, quantity, unit_price} = detail
+                
+                //3. verify returned Quantity is not greater than original quantity
+                if (returnedQuantity > quantity) {
+                    throw new Error('Returned quantity cannot be greater than original quantity')
+                }
+
+                console.log(invoice_id, product_id, quantity, unit_price)
 
 
                 return {}

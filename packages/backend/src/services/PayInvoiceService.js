@@ -11,10 +11,10 @@ class PayInvoiceService {
     // instace of error handler
     #error = new ServiceErrorHandler()
 
-    constructor(model, dollarValueModel=null, invoiceModel=null, sellerModel=null, auditLogModel=null) {
+    constructor(model, dollarValueModel=null, invoiceModel=null, sellerModel=null, auditLogModel=null, invoiceDetailModel=null) {
         this.PaymentDetail = model,
         this.dollarValue = new DollarValueService(dollarValueModel)
-        this.invoiceService = new InvoiceService(invoiceModel, null, null, dollarValueModel)
+        this.invoiceService = new InvoiceService(invoiceModel, invoiceDetailModel, null, dollarValueModel)
         this.sellerService = new SellerService(sellerModel)
         this.auditLogService = new AuditLogService(auditLogModel)
         this.#error
@@ -30,9 +30,9 @@ class PayInvoiceService {
      */
     createPaymentDetail(invoiceId, paymentId, amount) {
         return this.#error.handler(['Create Payment'], async() => {
+
             // check if invoice exists
             const invoice = await this._getInvoice(invoiceId)
-            
 
             // check if invoice is already paid
             if(invoice.status == 'paid') {

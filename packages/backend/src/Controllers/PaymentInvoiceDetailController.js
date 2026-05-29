@@ -5,8 +5,9 @@ class PayInvoiceController {
     // Error hanlder instance 
     #error = new ControllerErrorHandler()
 
-    constructor(model, dollarValueModel=null, invoiceModel=null, sellerModel=null, auditLogModel=null) {
-        this.PayInvoice = new PayInvoiceService(model, dollarValueModel, invoiceModel, sellerModel, auditLogModel)
+    constructor(model, dollarValueModel=null, invoiceModel=null, sellerModel=null, auditLogModel=null, invoiceDetailModel=null) {
+        this.PayInvoice = new PayInvoiceService
+            (model, dollarValueModel, invoiceModel, sellerModel, auditLogModel, invoiceDetailModel)
         this.#error
     }
 
@@ -19,7 +20,6 @@ class PayInvoiceController {
      */
     createPaymentInvoiceDetail = this.#error.handler( async(req, res) => {
         let { invoice_id, payment_id, amount } = req.body
-    
         const newPaymentDetail = await this.PayInvoice.createPaymentDetail(invoice_id, payment_id, amount)
         res.status(201).json(newPaymentDetail)
     })

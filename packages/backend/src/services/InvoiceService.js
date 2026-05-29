@@ -203,7 +203,7 @@ class InvoiceService {
     * @returns {Object} - invoice with details, customer and seller
     * @throws {NotFoundError} - if invoice not found
     */
-    getInvoice(id, referenceProduct=true, pageProducts=1, limitProducts=5) {
+    getInvoice(id, referenceProduct=true, pageProducts=1, limitProducts=5, withDetails=false) {
         const offset = (pageProducts - 1) * limitProducts
         return this.#error.handler(['Read Invoice', id, 'Invoice'], async() => {
             const [invoice, invoiceProducts] = await Promise.all([
@@ -390,9 +390,8 @@ class InvoiceService {
     updateInvoice(invoiceId, updates) {
         return this.#error.handler(['Update Invoice', invoiceId, 'Invoice'], async() => {
             const invoice = await this.getSimpleInvoice(invoiceId)
-
+          
             const { customer_id, seller_id, total, total_reference, total_paid, details, status } = updates
-
 
             if (!customer_id && !seller_id && !total && !details && !total_reference && !total_paid && !status) {
                 throw new Error('At least one of these customer_id, seller_id, total, total_paid, total_reference, details or status must be defined')
@@ -413,6 +412,7 @@ class InvoiceService {
             })
 
             const newInvoice = await this.getInvoice(invoiceId)
+            
             
             return newInvoice
         })
