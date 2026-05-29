@@ -17,6 +17,8 @@ class InvoiceDetailRoutes {
     inicializateRoutes() {
         this.router.get('/', (req, res) => res.send('Invoices Details Routes'))
         this.router.get('/total-pages', (req, res) => new InvoiceDetailController(req.InvoiceDetail).totalProductsPages(req, res))
+        this.router.delete('/', (req, res) => new InvoiceDetailController
+            (req.InvoiceDetail, req.Seller).cancelInvoiceItemDetail(req, res))
     }   
 
     /**
@@ -33,9 +35,9 @@ class InvoiceDetailRoutes {
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {InvoiceDetail} = req.tenantModels
-        if(!InvoiceDetail) {
-            return res.status(400).json({ message: 'All models are required' })
+        const {InvoiceDetail, Seller} = req.tenantModels
+        if(!InvoiceDetail || !Seller) {
+            return res.status(400).json({ message: 'InvoiceDetail and Seller models are required' })
         }
 
         req.InvoiceDetail = InvoiceDetail
