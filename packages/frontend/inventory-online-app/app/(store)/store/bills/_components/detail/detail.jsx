@@ -54,18 +54,17 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                 <InvoicePDF 
                     info={<InvoiceBasicInfo invoice={invoice}/>} 
                     customer={<CustomerInfo customer={invoice?.customer}/>}
+                    id={invoice?.id}
                     billStatus={
                         <BillStatusDetail status={invoice?.status} 
                                           total_paid={invoice?.total_paid} 
                                           total={invoice?.total} 
                                           total_reference={invoice?.total_reference}/>
                     }
-                    products={invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']}/>}
-                    payments={invoice?.['payments-details']?.length > 0 && <PaymentDetails 
-                                                                    paymentDetails={invoice['payments-details']}
-                                                                    pdf={true}
-                                                                    />}
-                    id={invoice?.id}
+                    products={invoice?.['products']?.length > 0 && 
+                        <ProductDetails productsDetails={invoice['products']}/>}
+                    payments={invoice?.['payments-details']?.length > 0 && 
+                        <PaymentDetails  paymentDetails={invoice['payments-details']} pdf={true} />}
                 />
                 {/* edit */}
                 {['admin', 'storeOwner', 'storeManager'].includes(currentUser?.role_name) && 
@@ -80,7 +79,7 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
 
                 <Link href={`/store/bills/edit/payment/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
                         <Button type='grey' style={{backgroundColor: 'black'}}
-                            title={'Editar metodos de pago'}
+                            title={'Anular metodos de pago'}
                         >
                             <Icon icon='coins' size={[24, 24]}></Icon>
                         </Button>
