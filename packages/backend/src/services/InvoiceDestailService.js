@@ -181,7 +181,7 @@ class InvoiceDetailService {
                 const detail = await this.getInvoiceDetail(itemId)
                 const {invoice_id, product_id, quantity, unit_price, id} = detail
                 const customer_id = detail.invoice.customer_id
-
+                console.log('detail info', invoice_id)
                 // 3. calcule if there are item already returned
                 const totalAlreadyReturned = await this.InvoiceReturn.sum('quantity', {
                     where: {

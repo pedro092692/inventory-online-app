@@ -33,7 +33,7 @@ class InvoiceDetailController {
     totalProductsPages = this.#error.handler( async(req, res) => {
         const id = req.query.id ? parseInt(req.query.id) : null
         const limit = req.query.limit ? parseInt(req.query.limit) : 5
-        const total = await this.invoiceDetail.getTotalInvoiceProducts(id, limit)
+        const total = await this.invoiceDetail.getTotalInvoiceProducts({invoiceId:id, limit})
         res.status(200).json({total})
     })
 

@@ -2,7 +2,7 @@ import GetItemAction from '@/app/lib/actions/get'
 import ProductDetailForm from '@/app/(store)/store/bills/_components/edit/productDetailForm'
 
 
-export default async function InvoiceroductDetailInfo({id, page, totalProductPages, queryString, limit = 8}){
+export default async function InvoiceroductDetailInfo({id, page, totalProductPages, queryString, limit = 5}){
     const endpointInvoice = `invoices/${id}`
     const params = new URLSearchParams()
     params.append('limitProducts', limit)
@@ -18,6 +18,6 @@ export default async function InvoiceroductDetailInfo({id, page, totalProductPag
         return <p className='p2-r errorMsg'>{invoiceError}</p>
     }
     return (
-        <ProductDetailForm invoice={invoice} />
+        <ProductDetailForm invoice={invoice} page={page} totalProductPages={totalProductPages} queryString={queryString} />
     )
 }

@@ -13,7 +13,6 @@ export default async function EditProductInvoice({ params, searchParams }) {
     const response = await Request(`invoice-details/total-pages?id=${id}`, 'GET', null, 'Hubo un error inesperado intententa nuevamente')
     const {data, error} = response
     const totalProductPages = data?.total || 0
-
     return (
         <>
             <Route path='bills' endpoints={['detail', 'editProduct']}  queryString={queryString} id={id}/>

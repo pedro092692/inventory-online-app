@@ -6,3 +6,7 @@
 .table td[data-label="amount"] {
     text-align: right;
 }
+
+.inputNumber {
+    user-select: none !important;
+}

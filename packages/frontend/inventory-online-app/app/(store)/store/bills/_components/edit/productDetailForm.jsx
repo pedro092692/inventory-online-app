@@ -2,14 +2,30 @@
 import { Form } from '@/app/ui/form/form/form'
 import { Container } from '@/app/ui/utils/container'
 import List from '@/app/ui/list/list'
+import { Input } from '@/app/ui/form/input/input'
+import Pagination from '@/app/ui/pagination/pagination'
 import styles from './invoice.module.css'
 
 
-export default function ProductDetailForm({invoice=null}) {
-    const invoiceProducts = invoice?.products || []
-    console.log('invoiceProducts', invoiceProducts)
-   
-    const date = new Date(invoice?.date).toISOString()
+export default function ProductDetailForm({invoice=null, page = 1, totalProductPages = 1, queryString = ''}) {
+    const invoiceProducts = invoice?.products.map((product) => {
+        return {
+            name: product?.products?.name || 'Undefined',
+            quantity: product?.quantity || 0,
+            unitPriceBs: product?.unit_price || 0,
+            unitPriceDollar: invoice?.exchange_rate ? ((product?.unit_price || 0) / invoice.exchange_rate).toFixed(2) : 0,
+            unitsToreturn: <Input name='quantity' 
+                            icon='circleArrow' type='number' 
+                            style={{height: '20px'}} 
+                            min={1} 
+                            max={product?.quantity || 1}
+                            placeHolder='Cantidad a retornar' 
+                            className={styles.inputNumber}  />,
+            id: product?.id || null,
+        }
+    }) || []
+    
+    const date = invoice?.date ? new Date(invoice.date).toISOString() : null
 
     return (
         <>
@@ -74,8 +90,34 @@ export default function ProductDetailForm({invoice=null}) {
                 backgroundColor={'var(--color-neutralGrey300)'}
                 className='shadow'
             >   
+                
                 {
-                    
+                    invoiceProducts.length > 0 ?
+                        <>
+                             <List 
+                                tableHead={{
+                                    'name': 'Producto',
+                                    'quantity': 'Unidades',
+                                    'unitPriceBs': 'Precio unitario (Bs)',
+                                    'uniPriceDollar': 'Precio unitario ($)',
+                                    'unitsToreturn': 'Unidades a devolver',
+                                    'actions': 'Acciones'
+                                }}
+                                tableData={invoiceProducts}
+                                showActions={false}
+                                showEdit={false}
+                                showView={false}
+                                deleteKey={'itemId'}
+                                endpoint={'invoice-details'}
+                                deleteMsg={'El producto se ha retornado con éxito'}
+                                userPermissions={[]}
+                                CustomStyles={{height: '230px', borderRadius: '8px'}}
+                                customClass={styles.table}
+                                cancelSupervisor={true}
+                            /> 
+                            <Pagination totalPages={totalProductPages} paramName={'pageProducts'}/>
+                        </>
+                        :
                     <p>Esta order de compra no tienes productos asociados...</p>
                 }
                 

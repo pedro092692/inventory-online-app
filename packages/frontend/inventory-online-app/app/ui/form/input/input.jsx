@@ -24,7 +24,10 @@ export function Input({
         defaultValue=null,
         accept=null,
         id=null,
-        required=true
+        required=true,
+        min=null,
+        max=null,
+        step=null,
 
     }) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%', textTransform: capitalize ? 'capitalize' : 'none'}
@@ -56,6 +59,9 @@ export function Input({
                     inputMode={inputMode}
                     accept={accept}
                     id={id}
+                    min={min}
+                    max={max}
+                    step={step}
                 />
         :
                 <InputMask
