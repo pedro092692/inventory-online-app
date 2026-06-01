@@ -39,7 +39,7 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
     }) || []
     
     const date = invoice?.date ? new Date(invoice.date).toISOString() : null
-    const customButton = (data) => {
+    const custonButton = (data) => {
         return (
             <Button 
                 children={false}
@@ -60,7 +60,6 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
         }])
         
     } 
-    
     return (
         <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}}>
             <Container
@@ -147,7 +146,7 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                             CustomStyles={{height: '280px', borderRadius: '8px'}}
                             customClass={styles.table}
                             cancelSupervisor={true}
-                            customActionButton={(data) => customButton(data)}
+                            custonActionButton={(data) => custonButton(data)}
                         /> 
                         <Pagination totalPages={totalProductPages} paramName={'pageProducts'}/>
                     </>

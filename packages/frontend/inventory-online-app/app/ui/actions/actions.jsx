@@ -17,7 +17,7 @@ export default function Actions({
         queryString='',
         deleteMsg='Elemento eliminado con éxito',
         cancelSupervisor = false,
-        customActionButton = false
+        custonActionButton = false
     }){
     
     const [showModal, setShowModal] = useState(false)
@@ -98,7 +98,7 @@ export default function Actions({
     }
 
     const customButton = () => {
-        return customActionButton ? customActionButton : null
+        return custonActionButton ? custonActionButton : null
     }
 
     return (
@@ -139,7 +139,7 @@ export default function Actions({
                     
             }
 
-            { customActionButton && customButton() }
+            { custonActionButton && customButton() }
             
         </Container>
     )

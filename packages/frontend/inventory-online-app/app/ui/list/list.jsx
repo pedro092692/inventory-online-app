@@ -17,7 +17,7 @@ export default function List({
         rowClassName = () => '',
         deleteMsg='Elemento eliminado con éxito',
         cancelSupervisor = false,
-        customActionButton = () => ''
+        custonActionButton = () => ''
 
     }) {
     return (
@@ -41,7 +41,7 @@ export default function List({
                    {
                         tableData.map((data, index) => {
                             const dynamicClass = rowClassName(data)
-                            const customButtom = customActionButton(data)
+                            const custonButtom = custonActionButton(data)
                             return (
                                 <tr key={index} className={dynamicClass}>
                                     {
@@ -69,7 +69,7 @@ export default function List({
                                                             queryString={queryString}
                                                             deleteMsg={deleteMsg}
                                                             cancelSupervisor={cancelSupervisor}
-                                                            customActionButton={customButtom}
+                                                            custonActionButton={custonButtom}
                                                         />
                                                     </td>
                                                 )
