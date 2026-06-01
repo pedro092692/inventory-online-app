@@ -1,6 +1,5 @@
 import Route from '@/app/ui/routesLinks/routes'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
-import InvoicePaymentInfo from '@/app/(store)/store/bills/_components/edit/invoicePaymentInfo'
 import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
 import { Suspense } from 'react'
 
@@ -11,9 +10,9 @@ export default async function EditInvoice({ params, searchParams }) {
 
     return (
         <>
-            <Route path='bills' endpoints={['detail', 'editPayment']}  queryString={queryString} id={id}/>
+            <Route path='bills' endpoints={['detail', 'editProduct']}  queryString={queryString} id={id}/>
             <Suspense key={id} fallback={<FormSkeleton nFields={5} custonStyle={{with: '100% !important'}}/>}>
-                <InvoicePaymentInfo id={id}/>
+               <p>Edit invoice products</p>
             </Suspense>
         </>
     )

@@ -76,6 +76,18 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 href: `${endpoint}/edit/`,
                 label: 'Editar Orden de compra',
                 role: [1,2,3]
+            },
+            
+            editPayment: {
+                href:`${endpoint}/edit/payment/[id]`,
+                label: 'Gestionar metodos de pago',
+                role: [1,2,3,4]
+            },
+
+            editProduct: {
+                href:`${endpoint}/edit/product/[id]`,
+                label: 'Gestionar productos de la factura',
+                role: [1,2,3,4]
             }
         }
     }

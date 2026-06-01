@@ -87,7 +87,7 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                 </Link>
 
                 {/* return products */}
-                <Link href={`#`}>
+                <Link href={`/store/bills/edit/product/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
                         <Button type='grey' style={{backgroundColor: 'var(--color-accentBlue400)', padding: '8px'}}
                             title={'Hacer una devolución'}
                         >
