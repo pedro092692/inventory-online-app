@@ -16,7 +16,8 @@ export default function Actions({
         showDelete=true,
         queryString='',
         deleteMsg='Elemento eliminado con éxito',
-        cancelSupervisor = false
+        cancelSupervisor = false,
+        customActionButton = false
     }){
     
     const [showModal, setShowModal] = useState(false)
@@ -96,6 +97,10 @@ export default function Actions({
         }
     }
 
+    const customButton = () => {
+        return customActionButton ? customActionButton : null
+    }
+
     return (
         <Container 
             padding={'0px'}
@@ -133,6 +138,8 @@ export default function Actions({
                                     />
                     
             }
+
+            { customActionButton && customButton() }
             
         </Container>
     )
