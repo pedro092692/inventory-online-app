@@ -46,7 +46,7 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
             <Container
                 width={'100%'}
                 padding={'0px'}
-                gap={'16px'}
+                gap={'14px'}
                 direction={'row'}
                 justifyContent={'end'}
             >
@@ -69,8 +69,8 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                 {/* edit */}
                 {['admin', 'storeOwner', 'storeManager'].includes(currentUser?.role_name) && 
                     <Link href={`/store/bills/edit/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
-                        <Button type='grey' style={{backgroundColor: 'var(--color-accentOrange400)'}}
-                            title={'Editar factura'}
+                        <Button type='grey' style={{backgroundColor: 'var(--color-accentOrange400)', padding: '8px'}}
+                            title={'Editar factura'} 
                         >
                             <Icon icon='edit' size={[24, 24]}></Icon>
                         </Button>
@@ -79,7 +79,7 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                 
                 {/* annull payment methods */}
                 <Link href={`/store/bills/edit/payment/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
-                        <Button type='grey' style={{backgroundColor: 'black'}}
+                        <Button type='grey' style={{backgroundColor: 'black', padding: '8px'}}
                             title={'Anular metodos de pago'}
                         >
                             <Icon icon='coins' size={[24, 24]}></Icon>
@@ -88,7 +88,7 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
 
                 {/* return products */}
                 <Link href={`#`}>
-                        <Button type='grey' style={{backgroundColor: 'var(--color-accentBlue400)'}}
+                        <Button type='grey' style={{backgroundColor: 'var(--color-accentBlue400)', padding: '8px'}}
                             title={'Hacer una devolución'}
                         >
                             <Icon icon='circleArrow' size={[24, 24]}></Icon>
