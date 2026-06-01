@@ -236,7 +236,7 @@ class InvoiceDetailService {
 
                 //9. create new audit log
                 await this.AuditLogService.createAuditLog({
-                    action: 'PARTITAL_REFUND',
+                    action: refundStatus === 'full' ? 'FULL_REFUND' : 'PARTIAL_REFUND',
                     tableName: 'invoice_returns',
                     recordId: id,
                     details: {

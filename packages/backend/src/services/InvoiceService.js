@@ -203,7 +203,7 @@ class InvoiceService {
     * @returns {Object} - invoice with details, customer and seller
     * @throws {NotFoundError} - if invoice not found
     */
-    getInvoice(id, referenceProduct=true, pageProducts=1, limitProducts=5, withDetails=false) {
+    getInvoice(id, referenceProduct=true, pageProducts=0, limitProducts=0, withDetails=false) {
         const offset = (pageProducts - 1) * limitProducts
         return this.#error.handler(['Read Invoice', id, 'Invoice'], async() => {
             const [invoice, invoiceProducts] = await Promise.all([
