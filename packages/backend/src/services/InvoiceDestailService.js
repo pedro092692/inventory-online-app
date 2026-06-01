@@ -7,7 +7,6 @@ import { sequelize } from '../database/database.js'
 import hasPassword from '../utils/encrypt.js'
 
 class InvoiceDetailService {
-
     // instace of error handler
     #error = new ServiceErrorHandler()
 
@@ -147,17 +146,26 @@ class InvoiceDetailService {
      * @returns {Promise<number>} A promise that resolves to the total number of products.
      * @throws {Error} If the database query fails, handled by the internal error handler.
      */
-    getTotalInvoiceProducts(invoiceId, limit = 5) {
+    getTotalInvoiceProducts({invoiceId, limit = 5, paginated = true}, options = {}) {
         return this.#error.handler(['Read Total Invoice Products'], async () => {
             const totalProducts = await this.InvoiceDetail.count({
-                where: { invoice_id: invoiceId }
+                where: { invoice_id: invoiceId },
+                transaction: options.transaction || null
             })
 
-            return Math.ceil(totalProducts / limit)
+            return paginated ? Math.ceil(totalProducts / limit) : totalProducts
         })
     }
 
-
+    /**
+     * Cancels an invoice item detail and processes the return.
+     * @param {string} itemId - The ID of the invoice item to cancel.
+     * @param {number} returnedQuantity - The quantity of the item to return.
+     * @param {boolean} pinIsRequired - Indicates if a PIN is required for cancellation.
+     * @param {string} pin - The PIN for authorization (if required).
+     * @param {Object} currentUser - The currently logged-in user.
+     * @return {Promise<void>} - A promise that resolves when the cancellation is complete.
+     */
     cancelInvoiceItemDetail(itemId, returnedQuantity, pinIsRequired = true, pin = null, currentUser = {id: null, tenant_id: null}) {
         return this.#error.handler(['Cancel Invoice Item Detail', itemId, 'Invoice Detail'], async() => {
 
@@ -223,7 +231,8 @@ class InvoiceDetailService {
                 })
 
                 //8. update invoice refund status
-                await this._updateInvoiceRefundStatus({invoice_id, status: 'partial'}, {transaction: t})
+                const refundStatus = await this._calculaRefundStatus(invoice_id, {transaction: t})
+                await this._updateInvoiceRefundStatus({invoice_id, status: refundStatus}, {transaction: t})
 
                 //9. create new audit log
                 await this.AuditLogService.createAuditLog({
@@ -263,8 +272,6 @@ class InvoiceDetailService {
         })
     }
  
-
-
     /**
      * Deletes invoice details by their IDs.
      * @param {Array} ids - An array of invoice detail IDs to delete.
@@ -281,7 +288,34 @@ class InvoiceDetailService {
         })
     }
 
+    /**
+     * Calculates the refund status for a given invoice.
+     * @param {string} invoice_id - The ID of the invoice.
+     * @param {Object} options - The options for the calculation.
+     * @return {Promise<string>} - A promise that resolves to the refund status.
+     */
+    async _calculaRefundStatus(invoice_id, options = {}) {
+        //1. get invoice total products quantity
+        const totalProducts = await this.getTotalInvoiceProducts({invoiceId: invoice_id, limit: null, paginated: false}, options) || 0
+        //2. get total returned products quantity
+        const totalReturned = await this.InvoiceReturn.sum('quantity', {
+            where: {
+                invoice_id: invoice_id
+            },
+            transaction: options.transaction || null
+        }) || 0 
+        //3. return refund status 
+        return totalReturned === 0 ? 'none' : totalReturned >= totalProducts ? 'full' : 'partial'
+    }
 
+    /**
+     * Updates the refund status of an invoice.
+     * @param {Object} params - The parameters for updating the refund status.
+     * @param {string} params.invoice_id - The ID of the invoice.
+     * @param {string} params.status - The new refund status.
+     * @param {Object} options - The options for the update.
+     * @return {Promise<void>} - A promise that resolves when the update is complete.
+     */
     async _updateInvoiceRefundStatus({invoice_id, status}, options = {}) {
         //1. get invoice 
         const invoice = await this.Invoice.findByPk(invoice_id)
