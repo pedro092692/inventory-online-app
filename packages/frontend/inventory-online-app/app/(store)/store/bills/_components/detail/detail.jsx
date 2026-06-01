@@ -76,12 +76,22 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                         </Button>
                     </Link>
                 }
-
+                
+                {/* annull payment methods */}
                 <Link href={`/store/bills/edit/payment/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
                         <Button type='grey' style={{backgroundColor: 'black'}}
                             title={'Anular metodos de pago'}
                         >
                             <Icon icon='coins' size={[24, 24]}></Icon>
+                        </Button>
+                </Link>
+
+                {/* return products */}
+                <Link href={`#`}>
+                        <Button type='grey' style={{backgroundColor: 'var(--color-accentBlue400)'}}
+                            title={'Hacer una devolución'}
+                        >
+                            <Icon icon='circleArrow' size={[24, 24]}></Icon>
                         </Button>
                 </Link>
             </Container>
