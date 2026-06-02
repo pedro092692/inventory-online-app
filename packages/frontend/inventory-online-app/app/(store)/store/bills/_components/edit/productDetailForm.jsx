@@ -5,7 +5,7 @@ import List from '@/app/ui/list/list'
 import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
 import Pagination from '@/app/ui/pagination/pagination'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import styles from './invoice.module.css'
 
 
@@ -70,6 +70,7 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                             quantity: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? data.quantity : parseInt(item.quantity, 10) + extraQuantity
                         }
                     }
+                    setTotalMoneyToReturn()
                     return item
                 })
             }else {
@@ -113,8 +114,16 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                 ]
             }
         })
-
+        
     } 
+
+    const totalToReturn = useMemo(() => {
+        return productsToReturnInfo.reduce((acc, item) => {
+            return acc + (item.quantity * item.unitPrice)
+        }, 0)
+    }, [productsToReturnInfo])
+
+        
         return (
         <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}}>
             <Container
@@ -213,6 +222,7 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
 
             {/* products to return */}
             {productsToReturnInfo.length > 0 &&
+                <>
                 <List
                     tableHead={{
                         'name': 'Producto',
@@ -222,7 +232,9 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                     }}
                     tableData={productsToReturnInfo}
                     showActions={false}
-                />       
+                />
+                <p>Total a devolver: {totalToReturn.toFixed(2)} $</p>
+                </>       
             }
             
         </Form>
