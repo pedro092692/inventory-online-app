@@ -11,7 +11,9 @@ import styles from './invoice.module.css'
 
 export default function ProductDetailForm({invoice=null, page = 1, totalProductPages = 1, queryString = ''}) {
     const [productsToReturn, setProductsToReturn] = useState([])
+    const [productsToReturnInfo, setProductsToReturnInfo] = useState([])
     const [quantityToReturn, setQuantityToReturn] = useState({})
+    const [totalMoneyToReturn, setTotalMoneyToReturn] = useState(0)
     
     const invoiceProducts = invoice?.products.map((product) => {
         return {
@@ -54,13 +56,66 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
     }
 
     const handleReturnProductButton = (data) => {
-        return setProductsToReturn(prev => [...prev, {
-            'itemId': data.id,
-            'quantity': quantityToReturn[data.id] || 0
-        }])
-        
+        setProductsToReturn(prev => {
+            const extraQuantity = parseInt(quantityToReturn[data.id] || 0, 10)
+            if (extraQuantity <= 0 ) return prev
+
+            const itemExist = prev.find(item => item.itemId === data.id)
+
+            if (itemExist) {
+                return prev.map(item => {
+                    if (item.itemId === data.id) {
+                        return {
+                            ...item,
+                            quantity: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? data.quantity : parseInt(item.quantity, 10) + extraQuantity
+                        }
+                    }
+                    return item
+                })
+            }else {
+                return [
+                    ...prev,
+                    {
+                        itemId: data.id,
+                        quantity: extraQuantity
+                    }
+                ]
+            }
+        })
+
+        setProductsToReturnInfo(prev => {
+            const extraQuantity = parseInt(quantityToReturn[data.id] || 0, 10)
+            if (extraQuantity <= 0 ) return prev
+
+            const itemExist = prev.find(item => item.id === data.id)
+            if (itemExist) {
+                return prev.map(item => {
+                    if (item.id === data.id) {
+                        return{
+                            ...item,
+                            quantity: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? data.quantity : parseInt(item.quantity, 10) + extraQuantity,
+                            total: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? (data.quantity * item.unitPrice).toFixed(2) : ((parseInt(item.quantity, 10) + extraQuantity) * item.unitPrice).toFixed(2)
+                        }
+                    }
+                    return item
+                })
+            }else {
+                return [
+                    ...prev,
+                    {
+                        name: data.name,
+                        unitPrice: data.unitPriceDollar,
+                        quantity: extraQuantity,
+                        total: `${(data.unitPriceDollar * extraQuantity).toFixed(2)} $`,
+                        id: data.id,
+
+                    }
+                ]
+            }
+        })
+
     } 
-    return (
+        return (
         <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}}>
             <Container
                 width={'100%'}
@@ -156,7 +211,23 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
             
             </Container>
 
+            {/* products to return */}
+            {productsToReturnInfo.length > 0 &&
+                <List
+                    tableHead={{
+                        'name': 'Producto',
+                        'uniPriceDollar': 'Precio unitario ($)',
+                        'quantity': 'Unidades a devolver',
+                        'total': 'Total credito a devolver',
+                    }}
+                    tableData={productsToReturnInfo}
+                    showActions={false}
+                />       
+            }
+            
         </Form>
+        
+        
             
     )
 }
