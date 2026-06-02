@@ -180,21 +180,26 @@ class InvoiceDetailService {
 
             const t = await sequelize.transaction()
 
+            // check if invoice if already paid 
+            const invoiceId = await this._getInvoiceIdFromItem({itemId:itemsToReturn[0]['itemId']}, {transaction: t})
+            
+            const invoice = await this.Invoice.findByPk(invoiceId, {transaction: t})
+            if (invoice.status != 'paid') {
+                throw new Error('Invoice must be paid before to return items.')
+            }
+
             try{
                 //1. check if user is authorized to cancel item 
                 const authorizedBy = pinIsRequired ? await this.SellerService.authorizeSeller(hashedPin, { transaction: t }) : null
 
                 //2. get details info and set up necessary data for the return process
                 let totalAmountToReturn = 0
-                let invoiceId = null
                 const returnToCreate = []
 
                 for (const item of itemsToReturn) {
                     // A. get product detail info
                     const detail = await this.getInvoiceDetail(item.itemId)
-                    // B. get invoiceId 
-                    if (!invoiceId) invoiceId = detail.invoice_id
-
+                    
                     // c. validate returned quantity
                      const totalAlreadyReturned = await this.InvoiceReturn.sum('quantity', {
                                 where: {
@@ -231,7 +236,6 @@ class InvoiceDetailService {
                 }
 
                 //6. create new customer credit and get customer info
-                const invoice = await this.Invoice.findByPk(invoiceId, {transaction: t})
                 const {customerCredit: newCredit} = await this.CustomerCreditService.createCustomerCredit(
                     {
                         customer_id: invoice.customer_id,
@@ -344,6 +348,15 @@ class InvoiceDetailService {
         await invoice.update({refund_status: status},{ transaction: options.transaction || null })
         await invoice.save()
 
+    }
+
+
+    async _getInvoiceIdFromItem({itemId}, options = {}) {
+        const invoiceId = await this.InvoiceDetail.findByPk(itemId, {
+            attributes: ['invoice_id'],
+            transaction: options.transaction || null
+        })
+        return invoiceId?.invoice_id || null
     }
     
 }
