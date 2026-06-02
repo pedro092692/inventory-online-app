@@ -5,7 +5,9 @@ import List from '@/app/ui/list/list'
 import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
 import Pagination from '@/app/ui/pagination/pagination'
-import { useState, useMemo } from 'react'
+import { OvalLoader } from '@/app/ui/loader/spinner'
+import ReturnInvoceItemAction from '@/app/lib/actions/returnProductAction'
+import { useActionState, useState, useMemo } from 'react'
 import styles from './invoice.module.css'
 
 
@@ -14,6 +16,13 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
     const [productsToReturnInfo, setProductsToReturnInfo] = useState([])
     const [quantityToReturn, setQuantityToReturn] = useState({})
     const [totalMoneyToReturn, setTotalMoneyToReturn] = useState(0)
+    const originalValues = {
+        products: invoice?.products || []
+    }
+    const initialSte = {message: null, inputs: originalValues, errors: {}}
+        
+    const returnItems = ReturnInvoceItemAction.bind(null, 'invoice-details/', 'Nota de crédito guardada con éxito')
+    const [state, formAction, isPending] = useActionState(returnItems, initialSte)
     
     const invoiceProducts = invoice?.products.map((product) => {
         return {
@@ -35,6 +44,7 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                                     [product?.id]: e.target.value
                                 }))
                             }} 
+                            required={false}
                             className={styles.inputNumber}  />,
             id: product?.id || null,
         }
@@ -67,7 +77,7 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                     if (item.itemId === data.id) {
                         return {
                             ...item,
-                            quantity: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? data.quantity : parseInt(item.quantity, 10) + extraQuantity
+                            returnedQuantity: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? data.quantity : parseInt(item.quantity, 10) + extraQuantity
                         }
                     }
                     setTotalMoneyToReturn()
@@ -78,7 +88,7 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                     ...prev,
                     {
                         itemId: data.id,
-                        quantity: extraQuantity
+                        returnedQuantity: extraQuantity
                     }
                 ]
             }
@@ -95,7 +105,7 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                         return{
                             ...item,
                             quantity: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? data.quantity : parseInt(item.quantity, 10) + extraQuantity,
-                            total: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? (data.quantity * item.unitPrice).toFixed(2) : ((parseInt(item.quantity, 10) + extraQuantity) * item.unitPrice).toFixed(2)
+                            total: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? `${(data.quantity * item.unitPrice).toFixed(2)} $` : ((parseInt(item.quantity, 10) + extraQuantity) * item.unitPrice).toFixed(2)
                         }
                     }
                     return item
@@ -122,10 +132,9 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
             return acc + (item.quantity * item.unitPrice)
         }, 0)
     }, [productsToReturnInfo])
-
         
         return (
-        <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}}>
+        <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
             <Container
                 width={'100%'}
                 padding={'8px'}
@@ -236,6 +245,20 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                 <p>Total a devolver: {totalToReturn.toFixed(2)} $</p>
                 </>       
             }
+            <input type="hidden" 
+                name="itemsToReturn" 
+                value={JSON.stringify(productsToReturn)}
+            />
+            
+                <input 
+                    type="hidden" 
+                    name="pin"
+                    value="1234"
+                />
+            <Button role="submit" type="secondary">
+                {isPending && <OvalLoader/>}   
+                {isPending ? 'Guardando...' : 'Editar Orden de compra'}
+            </Button>
             
         </Form>
         
