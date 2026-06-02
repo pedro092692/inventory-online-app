@@ -21,9 +21,9 @@ function validateFields(rule) {
         ],
 
         cancelItemDetail: [
-            check('itemId').isInt().withMessage('El id del detalle de la factura debe ser un número entero.'),
-            check('quantity').isInt({ min: 1}).withMessage('La cantidad debe ser un número entero maryor que cero.')
-
+            check('itemsToReturn').isArray({ min: 1 }).withMessage('Debe haber al menos un ítem para devolver.'),
+            check('itemsToReturn.*.itemId').isInt().withMessage('El id del detalle de la factura debe ser un número entero.'),
+            check('itemsToReturn.*.returnedQuantity').isInt({ min: 1 }).withMessage('La cantidad debe ser un número entero mayor que cero.')
         ]
     }
 

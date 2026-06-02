@@ -39,13 +39,12 @@ class InvoiceDetailController {
 
 
     cancelInvoiceItemDetail = this.#error.handler( async(req, res) => {
-        const itemId = req.body.itemId
-        const quantity = req.body.quantity
+        const itemsToReturn = req.body.itemsToReturn || []
         const pin = req.body.pin || null
         const userRole = getUserRole(req.user.role)
         const pinIsRequired = !['ADMIN', 'MANAGER'].includes(userRole)
         const currentUser = req.user
-        const {sucess} = await this.invoiceDetail.cancelInvoiceItemDetail(itemId, quantity, pinIsRequired, pin, currentUser)
+        const {sucess} = await this.invoiceDetail.cancelInvoiceItemDetail(itemsToReturn, pinIsRequired, pin, currentUser)
         res.status(200).json({sucess})
     })
 }

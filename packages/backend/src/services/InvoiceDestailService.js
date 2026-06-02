@@ -5,6 +5,7 @@ import CustomerCreditService from './CustomerCreditService.js'
 import AuditLogService from './AuditLogService.js'
 import { sequelize } from '../database/database.js'
 import hasPassword from '../utils/encrypt.js'
+import { NotFoundError } from '../errors/NofoundError.js'
 
 class InvoiceDetailService {
     // instace of error handler
@@ -88,18 +89,24 @@ class InvoiceDetailService {
                                 attributes: ['id', 'amount', 'reference_amount', 'status']
                             }
                         ]
+                    },
+                    {
+                        association: 'products',
+                        attributes: ['name']
                     }
                 ]
             })
+            if (!detail) {
+                throw new NotFoundError(`Invoice product detail not found`)
+            }
             return detail
         })
     }
 
     /**
-     * 
+     * Retrieves invoice details by their IDs.
      * @param {Array} - ids - An array of invoice detail IDs to retrieve.
-     * Retrieves invoice details by their IDs. 
-     * @returns <Promise<Array>} - A promise that resolves to an array of invoice detail objects.
+     * @returns {Promise<Array>} - A promise that resolves to an array of invoice detail objects.
      * @throws {ServiceError} - If an error occurs during the retrieval operation.
      */
     getInvoiceDetails(ids) {
@@ -166,8 +173,8 @@ class InvoiceDetailService {
      * @param {Object} currentUser - The currently logged-in user.
      * @return {Promise<void>} - A promise that resolves when the cancellation is complete.
      */
-    cancelInvoiceItemDetail(itemId, returnedQuantity, pinIsRequired = true, pin = null, currentUser = {id: null, tenant_id: null}) {
-        return this.#error.handler(['Cancel Invoice Item Detail', itemId, 'Invoice Detail'], async() => {
+    cancelInvoiceItemDetail(itemsToReturn, pinIsRequired = true, pin = null, currentUser = {id: null, tenant_id: null}) {
+        return this.#error.handler(['Process Bulk Returns', itemsToReturn.length, 'Invoice Detail'], async() => {
 
             const hashedPin = pinIsRequired ? hasPassword(pin, String(currentUser.tenant_id)) : null
 
@@ -177,39 +184,59 @@ class InvoiceDetailService {
                 //1. check if user is authorized to cancel item 
                 const authorizedBy = pinIsRequired ? await this.SellerService.authorizeSeller(hashedPin, { transaction: t }) : null
 
-                //2. get details info 
-                const detail = await this.getInvoiceDetail(itemId)
-                const {invoice_id, product_id, quantity, unit_price, id} = detail
-                const customer_id = detail.invoice.customer_id
-                console.log('detail info', invoice_id)
-                // 3. calcule if there are item already returned
-                const totalAlreadyReturned = await this.InvoiceReturn.sum('quantity', {
-                    where: {
-                        invoice_detail_id: id
-                    },
-                    transaction: t
-                }) || 0
+                //2. get details info and set up necessary data for the return process
+                let totalAmountToReturn = 0
+                let invoiceId = null
+                const returnToCreate = []
 
-                //4. calcule max allowed returned items
-                const maxAllowedReturned = quantity - totalAlreadyReturned
+                for (const item of itemsToReturn) {
+                    // A. get product detail info
+                    const detail = await this.getInvoiceDetail(item.itemId)
+                    // B. get invoiceId 
+                    if (!invoiceId) invoiceId = detail.invoice_id
 
-                //5. verify returned Quantity is not greater than original quantity
-                if (returnedQuantity > maxAllowedReturned) {
-                    throw new Error('Returned quantity cannot be greater than original quantity')
+                    // c. validate returned quantity
+                     const totalAlreadyReturned = await this.InvoiceReturn.sum('quantity', {
+                                where: {
+                                    invoice_detail_id: item.itemId
+                                },
+                                transaction: t
+                            }) || 0
+                    // D. calcule max allowed returned items
+                    const maxAllowed = detail.quantity - totalAlreadyReturned
+
+                    // E . verify returned Quantity is not greater than original quantity
+                    if (item.returnedQuantity > maxAllowed) {
+                        throw new Error
+                        (`Quantity captures fraud for item ${detail.products?.name || 'unknown product'}. Max allowed: ${maxAllowed}`)
+                    }
+
+                    //F restore product stock
+                    await this.ProductService.restoreStock({product_id: detail.product_id, quantity: item.returnedQuantity}, {transaction: t})
+
+                    //G calcule credit amount to return
+                    const itemAmount = (detail.unit_price * item.returnedQuantity).toFixed(2)
+                    
+                    totalAmountToReturn += itemAmount
+
+                    //H prepare return to create
+                    returnToCreate.push({
+                        invoice_id: detail.invoice_id,
+                        invoice_detail_id: item.itemId,
+                        quantity: item.returnedQuantity,
+                        amount_returned: itemAmount,
+                        user_id: currentUser.id,
+                        supervisor_seller_id: authorizedBy?.authorizedBy?.id || null
+                    })
                 }
-                
-                //4. restore product stock
-                await this.ProductService.restoreStock({product_id, quantity:returnedQuantity}, {transaction: t})
 
-                //5. calcule credit amount to return
-                const amountToReturn = unit_price * returnedQuantity
-
-                //6. create new customer credit
+                //6. create new customer credit and get customer info
+                const invoice = await this.Invoice.findByPk(invoiceId, {transaction: t})
                 const {customerCredit: newCredit} = await this.CustomerCreditService.createCustomerCredit(
                     {
-                        customer_id: customer_id,
-                        origin_invoice_id: invoice_id,
-                        amount: amountToReturn,
+                        customer_id: invoice.customer_id,
+                        origin_invoice_id: invoiceId,
+                        amount: totalAmountToReturn,
                         payment_method_id: 8,
                     },
                     {
@@ -217,40 +244,31 @@ class InvoiceDetailService {
                     }
                 )
                 //7. Record the return history
-                await this.InvoiceReturn.create({
-                    invoice_id,
-                    invoice_detail_id: id,
-                    customer_credit_id: newCredit.id,
-                    quantity: returnedQuantity,
-                    amount_returned: amountToReturn,
-                    user_id: currentUser.id,
-                    supervisor_seller_id: authorizedBy?.authorizedBy?.id || null
-                }
-                ,{
-                    transaction: t
-                })
+                const finalReturns = returnToCreate.map(returnItem => ({
+                    ...returnItem,
+                    customer_credit_id: newCredit.id
+                }))
+                await this.InvoiceReturn.bulkCreate(finalReturns, { transaction: t })
+
 
                 //8. update invoice refund status
-                const refundStatus = await this._calculaRefundStatus(invoice_id, {transaction: t})
-                await this._updateInvoiceRefundStatus({invoice_id, status: refundStatus}, {transaction: t})
+                const refundStatus = await this._calculaRefundStatus(invoiceId, {transaction: t})
+                await this._updateInvoiceRefundStatus({invoice_id: invoiceId, status: refundStatus}, {transaction: t})
 
                 //9. create new audit log
                 await this.AuditLogService.createAuditLog({
-                    action: refundStatus === 'full' ? 'FULL_REFUND' : 'PARTIAL_REFUND',
+                    action: refundStatus == 'full' ? 'FULL_REFUND' : 'PARTIAL_REFUND',
                     tableName: 'invoice_returns',
-                    recordId: id,
+                    recordId: invoiceId,
                     details: {
                         oldSnapshot: {
-                            returned_quantity: totalAlreadyReturned,
-                            invoice_id: invoice_id,
-                            status: 'none'
+                            status: invoice.refund_status,
+                            invoiceId: invoiceId,
                         },
                         newSnapshot: {
-                            returned_quantity: returnedQuantity,
-                            amount_returned: amountToReturn,
-                            customer_credit_id: newCredit.id,
-                            invoice_id: invoice_id,
-                            status: 'refunded'
+                            status: refundStatus,
+                            total_credit_generated: totalAmountToReturn,
+                            invoiceId: invoiceId,
                         },
                     },
                     userId: currentUser.id,
@@ -296,14 +314,17 @@ class InvoiceDetailService {
      */
     async _calculaRefundStatus(invoice_id, options = {}) {
         //1. get invoice total products quantity
-        const totalProducts = await this.getTotalInvoiceProducts({invoiceId: invoice_id, limit: null, paginated: false}, options) || 0
+        const InvoiceProducts = await this.getDetailByInvoiceId(invoice_id, null, null)
+        const totalProducts = InvoiceProducts.reduce((total, product) => total + product.quantity, 0)
+        
         //2. get total returned products quantity
-        const totalReturned = await this.InvoiceReturn.sum('quantity', {
+        const returnedRows = await this.InvoiceReturn.findAll({
             where: {
                 invoice_id: invoice_id
             },
             transaction: options.transaction || null
         }) || 0 
+        const totalReturned = returnedRows.reduce((total, row) => total + row.quantity, 0)
         //3. return refund status 
         return totalReturned === 0 ? 'none' : totalReturned >= totalProducts ? 'full' : 'partial'
     }
