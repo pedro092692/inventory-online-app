@@ -12,8 +12,7 @@ import styles from './invoice.module.css'
 
 
 export default function ProductDetailForm({invoice=null, totalProductPages = 1, queryString = ''}) {
-    const [productsToReturn, setProductsToReturn] = useState([])
-    const [productsToReturnInfo, setProductsToReturnInfo] = useState([])
+    const [info, setInfo] = useState({productsToReturn: [], productsData: []})
     const [quantityToReturn, setQuantityToReturn] = useState({})
     
     const originalValues = {
@@ -59,77 +58,75 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     }
 
     const handleReturnProductButton = (data) => {
-        setProductsToReturn(prev => {
-            const extraQuantity = parseInt(quantityToReturn[data.id] || 0, 10)
-            if (extraQuantity <= 0 ) return prev
+        const extraQuantity = parseInt(quantityToReturn[data.id] || 0, 10)
+        
+        const newQuantity = (item, data, extraQuantity) => {
+            return (parseInt(item.returnedQuantity, 10) + extraQuantity) > data.quantity 
+                ? data.quantity
+                : parseInt(item.returnedQuantity, 10) + extraQuantity
+        }
 
-            const itemExist = prev.find(item => item.itemId === data.id)
+        if (extraQuantity <= 0 ) return 
 
-            if (itemExist) {
-                return prev.map(item => {
-                    if (item.itemId === data.id) {
-                        return {
-                            ...item,
-                            returnedQuantity: 
-                                (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? 
-                                    data.quantity 
-                                    : 
-                                    parseInt(item.quantity, 10) + extraQuantity
-                        }
-                    }
-                    setTotalMoneyToReturn()
-                    return item
-                })
-            }else {
-                return [
+        setInfo(prev => {
+            const itemExits = prev.productsToReturn.find(item => item.itemId === data.id)
+            if (itemExits) {
+                return {
                     ...prev,
-                    {
-                        itemId: data.id,
-                        returnedQuantity: extraQuantity
-                    }
-                ]
-            }
-        })
-
-        setProductsToReturnInfo(prev => {
-            const extraQuantity = parseInt(quantityToReturn[data.id] || 0, 10)
-            if (extraQuantity <= 0 ) return prev
-
-            const itemExist = prev.find(item => item.id === data.id)
-            if (itemExist) {
-                return prev.map(item => {
-                    if (item.id === data.id) {
-                        return{
-                            ...item,
-                            quantity: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? data.quantity : parseInt(item.quantity, 10) + extraQuantity,
-                            total: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? `${(data.quantity * item.unitPrice).toFixed(2)} $` : ((parseInt(item.quantity, 10) + extraQuantity) * item.unitPrice).toFixed(2)
-                        }
-                    }
-                    return item
-                })
+                    productsToReturn: prev.productsToReturn.map(item => {                        
+                        if (item.itemId !== data.id) return item
+                             
+                            return {
+                                ...item,
+                                returnedQuantity: newQuantity(item, data, extraQuantity)
+                            }
+                        
+                    }),
+                    productsData: prev.productsData.map(itemInfo => {
+                        if (itemInfo.id !== data.id) return itemInfo
+                            
+                            return {
+                                ...itemInfo,
+                                returnedQuantity: newQuantity(itemInfo, data, extraQuantity),
+                                total: (newQuantity(itemInfo, data, extraQuantity) * itemInfo.unitPrice).toFixed(2)
+                            }
+                        
+                    }) 
+                }   
             }else {
-                return [
+                return {
                     ...prev,
-                    {
-                        name: data.name,
-                        unitPrice: data.unitPriceDollar,
-                        quantity: extraQuantity,
-                        total: `${(data.unitPriceDollar * extraQuantity).toFixed(2)} $`,
-                        id: data.id,
-
-                    }
-                ]
+                    productsToReturn: [
+                        ...prev.productsToReturn,
+                        {
+                            itemId: data.id,
+                            returnedQuantity: extraQuantity
+                        },
+                    ],
+                    productsData: [
+                        ...prev.productsData,
+                        {
+                            name: data.name,
+                            unitPrice: data.unitPriceDollar,
+                            returnedQuantity: extraQuantity,
+                            total: (data.unitPriceDollar * extraQuantity).toFixed(2),
+                            id: data.id
+                        }
+                    ]
+                }
             }
         })
         
     } 
-
+   
     const totalToReturn = useMemo(() => {
-        return productsToReturnInfo.reduce((acc, item) => {
-            return acc + (item.quantity * item.unitPrice)
-        }, 0)
-    }, [productsToReturnInfo])
-        
+        return info.productsData.reduce((acc, item) => {
+            return acc + (item.returnedQuantity * item.unitPrice)
+        }, 0).toFixed(2)
+    }, [info.productsData])     
+
+  
+    
     return (
         <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
             <Container
@@ -227,7 +224,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
             </Container>
 
             {/* products to return */}
-            {productsToReturnInfo.length > 0 &&
+            {info.productsData.length > 0 &&
                 <>
                 <List
                     tableHead={{
@@ -236,15 +233,15 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
                         'quantity': 'Unidades a devolver',
                         'total': 'Total credito a devolver',
                     }}
-                    tableData={productsToReturnInfo}
+                    tableData={info.productsData}
                     showActions={false}
                 />
-                <p>Total a devolver: {totalToReturn.toFixed(2)} $</p>
+            <p>Total a devolver: {totalToReturn} $</p>
                 </>       
             }
             <input type="hidden" 
                 name="itemsToReturn" 
-                value={JSON.stringify(productsToReturn)}
+                value={JSON.stringify(info.productsToReturn)}
             />
             
                 <input 
