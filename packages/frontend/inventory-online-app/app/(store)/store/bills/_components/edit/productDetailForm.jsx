@@ -11,41 +11,34 @@ import { useActionState, useState, useMemo } from 'react'
 import styles from './invoice.module.css'
 
 
-export default function ProductDetailForm({invoice=null, page = 1, totalProductPages = 1, queryString = ''}) {
+export default function ProductDetailForm({invoice=null, totalProductPages = 1, queryString = ''}) {
     const [productsToReturn, setProductsToReturn] = useState([])
     const [productsToReturnInfo, setProductsToReturnInfo] = useState([])
     const [quantityToReturn, setQuantityToReturn] = useState({})
-    const [totalMoneyToReturn, setTotalMoneyToReturn] = useState(0)
+    
     const originalValues = {
         products: invoice?.products || []
     }
     const initialSte = {message: null, inputs: originalValues, errors: {}}
-        
+
+    const inputMsg = 'Cantidad a retornar'
+    const productUnitPrice = (product) => invoice?.exchange_rate ? ((product?.unit_price || 0) / invoice.exchange_rate).toFixed(2) : 0
+    const returnInput = (product) => <Input name='quantity' key={product?.id}icon='circleArrow' type='number' style={{height: '20px'}} min={1} 
+                            max={product?.quantity || 1} placeHolder={inputMsg} 
+                            onChange={(e) => { setQuantityToReturn(prev => ({...prev, [product?.id]: e.target.value})) }} 
+                            required={false}
+                            className={styles.inputNumber} />
+
     const returnItems = ReturnInvoceItemAction.bind(null, 'invoice-details/', 'Nota de crédito guardada con éxito')
     const [state, formAction, isPending] = useActionState(returnItems, initialSte)
     
-    const invoiceProducts = invoice?.products.map((product) => {
+    const invoiceData = invoice?.products.map((product) => {
         return {
             name: product?.products?.name || 'Undefined',
             quantity: product?.quantity || 0,
             unitPriceBs: product?.unit_price || 0,
-            unitPriceDollar: invoice?.exchange_rate ? ((product?.unit_price || 0) / invoice.exchange_rate).toFixed(2) : 0,
-            unitsToreturn: <Input name='quantity' 
-                            key={product?.id}
-                            icon='circleArrow' type='number' 
-                            style={{height: '20px'}} 
-                            min={1} 
-                            max={product?.quantity || 1}
-                            // value={quantityToReturn[product?.id] || 0}
-                            placeHolder='Cantidad a retornar'
-                            onChange={(e) => {
-                                setQuantityToReturn(prev => ({
-                                    ...prev,
-                                    [product?.id]: e.target.value
-                                }))
-                            }} 
-                            required={false}
-                            className={styles.inputNumber}  />,
+            unitPriceDollar: productUnitPrice(product),
+            unitsToreturn: returnInput(product),
             id: product?.id || null,
         }
     }) || []
@@ -77,7 +70,11 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                     if (item.itemId === data.id) {
                         return {
                             ...item,
-                            returnedQuantity: (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? data.quantity : parseInt(item.quantity, 10) + extraQuantity
+                            returnedQuantity: 
+                                (parseInt(item.quantity, 10) + extraQuantity) > data.quantity ? 
+                                    data.quantity 
+                                    : 
+                                    parseInt(item.quantity, 10) + extraQuantity
                         }
                     }
                     setTotalMoneyToReturn()
@@ -133,7 +130,7 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
         }, 0)
     }, [productsToReturnInfo])
         
-        return (
+    return (
         <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
             <Container
                 width={'100%'}
@@ -196,7 +193,7 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
         >   
             
             {
-                invoiceProducts.length > 0 ?
+                invoiceData.length > 0 ?
                     <>
                         <List 
                             tableHead={{
@@ -207,7 +204,7 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                                 'unitsToreturn': 'Unidades a devolver',
                                 'actions': 'Acciones'
                             }}
-                            tableData={invoiceProducts}
+                            tableData={invoiceData}
                             showActions={true}
                             showDelete={false}
                             showEdit={false}
@@ -260,9 +257,6 @@ export default function ProductDetailForm({invoice=null, page = 1, totalProductP
                 {isPending ? 'Guardando...' : 'Editar Orden de compra'}
             </Button>
             
-        </Form>
-        
-        
-            
+        </Form>    
     )
 }

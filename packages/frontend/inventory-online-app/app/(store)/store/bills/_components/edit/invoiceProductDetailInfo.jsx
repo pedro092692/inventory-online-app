@@ -18,6 +18,6 @@ export default async function InvoiceroductDetailInfo({id, page, totalProductPag
         return <p className='p2-r errorMsg'>{invoiceError}</p>
     }
     return (
-        <ProductDetailForm invoice={invoice} page={page} totalProductPages={totalProductPages} queryString={queryString} />
+        <ProductDetailForm invoice={invoice} totalProductPages={totalProductPages} queryString={queryString} />
     )
 }
