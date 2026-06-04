@@ -20,24 +20,24 @@ export default async function ReturnInvoceItemAction(path = '', msg = '',  prevS
     
     const {data, error} = response
 
-
-    if (data?.errors){
-        return {
-            message: null,
-            error: data.errors
-        }
-    }
-
     if(error){
         return {
             message: null,
             error: 'Hubo un error inesperado intenta nuevamente'
         }
     }
+
+    if(data?.errors){
+        return {
+            message: null,
+            error: data.errors?.itemsToReturn || 'Hubo un error inesperado intenta nuevamente'
+        }
+    }
+
  
     revalidatePath(`/store/${path}`)
     return {
-        message: msg ? msg : 'Elemento eliminado con éxito',
+        message: msg ? msg : 'Nota de crédito guardada con éxito',
         error: null
     }
 }

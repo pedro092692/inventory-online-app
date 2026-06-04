@@ -20,7 +20,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
         products: invoice?.products || []
     }
     
-    const initialSte = {message: null, inputs: originalValues, errors: {}}
+    const initialSte = {message: null, inputs: originalValues, error: null}
     
     const returnItems = ReturnInvoceItemAction.bind(null, 'invoice-details/', 'Nota de crédito guardada con éxito')
     const [state, formAction, isPending] = useActionState(returnItems, initialSte)
@@ -103,7 +103,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
             return acc + (item.returnedQuantity * item.unitPrice)
         }, 0).toFixed(2)
     }, [info.productsData])     
-  
+
     return (
         <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
             {/* header */}
@@ -131,6 +131,9 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
                 name="pin"
                 value="1234"
             />
+
+            {state?.error && <span className="field_error">{state?.error}</span>}
+            {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
             
             <Button role="submit" type="secondary">
                 {isPending && <OvalLoader/>}   
