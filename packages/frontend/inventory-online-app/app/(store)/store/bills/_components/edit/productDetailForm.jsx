@@ -1,8 +1,5 @@
 'use client'
 import { Form } from '@/app/ui/form/form/form'
-import { Container } from '@/app/ui/utils/container'
-import List from '@/app/ui/list/list'
-import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import ReturnInvoceItemAction from '@/app/lib/actions/returnProductAction'
@@ -10,6 +7,7 @@ import { useActionState, useState, useMemo } from 'react'
 import InvoiceProducts from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceProducts'
 import InvoiceHeader from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceHeader'
 import InvoiceBasicDetails from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceBasicDetails'
+import ProductToReturn from '@/app/(store)/store/bills/_components/edit/invoiceDetails/productsToReturn'
 import styles from './invoice.module.css'
 
 
@@ -20,36 +18,13 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     const originalValues = {
         products: invoice?.products || []
     }
+    
     const initialSte = {message: null, inputs: originalValues, errors: {}}
-
-    const inputMsg = 'Cantidad a retornar'
     
-    const productUnitPrice = (product) => invoice?.exchange_rate ? ((product?.unit_price || 0) / invoice.exchange_rate).toFixed(2) : 0
-    
-    const returnInput = (product) => <Input name='quantity' key={product?.id}icon='circleArrow' type='number' style={{height: '20px'}} min={1} 
-                            max={product?.quantity || 1} placeHolder={inputMsg} 
-                            onChange={(e) => { setQuantityToReturn(prev => ({...prev, [product?.id]: e.target.value})) }} 
-                            required={false}
-                            className={styles.inputNumber} />
-
     const returnItems = ReturnInvoceItemAction.bind(null, 'invoice-details/', 'Nota de crédito guardada con éxito')
     const [state, formAction, isPending] = useActionState(returnItems, initialSte)
     
-    const invoiceData = invoice?.products.map((product) => {
-        return {
-            name: product?.products?.name || 'Undefined',
-            quantity: product?.quantity || 0,
-            unitPriceBs: product?.unit_price || 0,
-            unitPriceDollar: productUnitPrice(product),
-            unitsToreturn: returnInput(product),
-            id: product?.id || null,
-        }
-    }) || []
-    
-   
-   
-
-    const handleReturnProductButton = (data) => {
+    const handleReturnProduct = (data) => {
         const extraQuantity = parseInt(quantityToReturn[data.id] || 0, 10)
         
         const newQuantity = (item, data, extraQuantity) => {
@@ -116,9 +91,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
             return acc + (item.returnedQuantity * item.unitPrice)
         }, 0).toFixed(2)
     }, [info.productsData])     
-
   
-    
     return (
         <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
             {/* header */}
@@ -128,25 +101,15 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
             <InvoiceBasicDetails invoice={invoice}/>
             
             {/* invoice products   */}
-            <InvoiceProducts invoiceData={invoiceData} totalProductPages={totalProductPages} onClick={handleReturnProductButton}/>
+            <InvoiceProducts invoice={invoice} totalProductPages={totalProductPages} onClick={handleReturnProduct} 
+                onChange={setQuantityToReturn}
+            />
             
 
             {/* products to return */}
-            {info.productsData.length > 0 &&
-                <>
-                <List
-                    tableHead={{
-                        'name': 'Producto',
-                        'uniPriceDollar': 'Precio unitario ($)',
-                        'quantity': 'Unidades a devolver',
-                        'total': 'Total credito a devolver',
-                    }}
-                    tableData={info.productsData}
-                    showActions={false}
-                />
-            <p>Total a devolver: {totalToReturn} $</p>
-                </>       
-            }
+            <ProductToReturn products={info.productsData} totalToReturn={totalToReturn} />
+            
+            
             <input type="hidden" 
                 name="itemsToReturn" 
                 value={JSON.stringify(info.productsToReturn)}
@@ -159,7 +122,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
                 />
             <Button role="submit" type="secondary">
                 {isPending && <OvalLoader/>}   
-                {isPending ? 'Guardando...' : 'Editar Orden de compra'}
+                {isPending ? 'Generando...' : 'Generar Nota de crédito'}
             </Button>
             
         </Form>    

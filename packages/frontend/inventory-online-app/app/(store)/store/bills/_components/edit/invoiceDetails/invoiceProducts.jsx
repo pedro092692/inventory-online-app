@@ -2,10 +2,32 @@ import List from '@/app/ui/list/list'
 import Pagination from '@/app/ui/pagination/pagination'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Container } from '@/app/ui/utils/container'
+import { Input } from '@/app/ui/form/input/input'
 import styles from '../invoice.module.css'
 
-export default function InvoiceProducts({ invoiceData, totalProductPages, onClick=null}) {
-     const customButton = (data) => {
+export default function InvoiceProducts({ invoice=null, totalProductPages, onClick=null, onChange=null}) {
+    if(!invoice) return null
+    
+    const inputMsg = 'Cantidad a retornar'
+    const productUnitPrice = (product) => invoice?.exchange_rate ? ((product?.unit_price || 0) / invoice.exchange_rate).toFixed(2) : 0
+    const returnInput = (product) => <Input name='quantity' key={product?.id}icon='circleArrow' type='number' style={{height: '20px'}} min={1} 
+                            max={product?.quantity || 1} placeHolder={inputMsg} 
+                            onChange={(e) => { onChange(prev => ({...prev, [product?.id]: e.target.value})) }} 
+                            required={false}
+                            className={styles.inputNumber} />
+    
+    const invoiceData = invoice?.products.map((product) => {
+        return {
+            name: product?.products?.name || 'Undefined',
+            quantity: product?.quantity || 0,
+            unitPriceBs: product?.unit_price || 0,
+            unitPriceDollar: productUnitPrice(product),
+            unitsToreturn: returnInput(product),
+            id: product?.id || null,
+        }
+    }) || []
+    
+    const customButton = (data) => {
         return (
             <Button 
                 className={styles.returnInput}

@@ -17,10 +17,12 @@
     text-align: right;
 }
 
-.tableProducts {
+.tableProducts, .tableReturnedProducts {
     height: 240px;
     border-radius: 4px
 }
+
+
 
 .returnInput {
     padding: 2px
