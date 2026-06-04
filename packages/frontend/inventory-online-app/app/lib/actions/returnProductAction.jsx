@@ -19,7 +19,6 @@ export default async function ReturnInvoceItemAction(path = '', msg = '',  prevS
     const response = await fetch(url, 'DELETE', body)
     
     const {data, error} = response
-
     if(error){
         return {
             message: null,

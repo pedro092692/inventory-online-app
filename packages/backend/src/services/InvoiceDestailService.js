@@ -5,6 +5,7 @@ import CustomerCreditService from './CustomerCreditService.js'
 import AuditLogService from './AuditLogService.js'
 import { sequelize } from '../database/database.js'
 import hasPassword from '../utils/encrypt.js'
+import {fn, col } from 'sequelize'
 import { NotFoundError } from '../errors/NofoundError.js'
 
 class InvoiceDetailService {
@@ -129,6 +130,7 @@ class InvoiceDetailService {
     getDetailByInvoiceId(invoiceId, offset=0, limit=10) {
         return this.#error.handler(['Read Invoice Details by Invoice ID'], async() => {
             const details = await this.InvoiceDetail.findAll({
+                subQuery: false,
                 include: [
                     {
                         association: 'products',
@@ -136,13 +138,29 @@ class InvoiceDetailService {
                     },
                     {
                         association: 'invoice_returns',
-                        attributes: ['quantity', 'amount_returned']
+                        attributes: []
                     }
+                ],
+                attributes: [
+                    'id', 
+                    'quantity', 
+                    'unit_price',
+                    [
+                        fn('COALESCE', fn('SUM', col('invoice_returns.quantity')), 0),
+                        'total_quantity_returned'
+                    ],
+                    [
+                        fn('COALESCE', fn('SUM', col('invoice_returns.amount_returned')), 0),
+                        'total_amount_returned'
+                    ]
                 ],
                 where: {
                     invoice_id: invoiceId
                 },
-                attributes: ['id', 'quantity', 'unit_price'],
+                group: [
+                    'InvoiceDetail.id',
+                    'products.id'
+                ],
                 offset: offset,
                 limit: limit,
                 order: [['products', 'name', 'ASC']]
@@ -179,7 +197,6 @@ class InvoiceDetailService {
      */
     cancelInvoiceItemDetail(itemsToReturn, pinIsRequired = true, pin = null, currentUser = {id: null, tenant_id: null}) {
         return this.#error.handler(['Process Bulk Returns', itemsToReturn.length, 'Invoice Detail'], async() => {
-
             const hashedPin = pinIsRequired ? hasPassword(pin, String(currentUser.tenant_id)) : null
 
             const t = await sequelize.transaction()
@@ -226,8 +243,7 @@ class InvoiceDetailService {
                     //G calcule credit amount to return
                     const itemAmount = (detail.unit_price * item.returnedQuantity).toFixed(2)
                     
-                    totalAmountToReturn += itemAmount
-
+                    totalAmountToReturn += parseFloat(itemAmount)
                     //H prepare return to create
                     returnToCreate.push({
                         invoice_id: detail.invoice_id,
@@ -238,7 +254,7 @@ class InvoiceDetailService {
                         supervisor_seller_id: authorizedBy?.authorizedBy?.id || null
                     })
                 }
-
+                
                 //6. create new customer credit and get customer info
                 const {customerCredit: newCredit} = await this.CustomerCreditService.createCustomerCredit(
                     {
@@ -251,13 +267,14 @@ class InvoiceDetailService {
                         transaction: t
                     }
                 )
+            
                 //7. Record the return history
                 const finalReturns = returnToCreate.map(returnItem => ({
                     ...returnItem,
                     customer_credit_id: newCredit.id
                 }))
                 await this.InvoiceReturn.bulkCreate(finalReturns, { transaction: t })
-
+                
 
                 //8. update invoice refund status
                 const refundStatus = await this._calculaRefundStatus(invoiceId, {transaction: t})
@@ -285,7 +302,6 @@ class InvoiceDetailService {
                 {
                     transaction: t
                 })
-
                 await t.commit()
 
                 return {

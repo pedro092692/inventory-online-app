@@ -28,6 +28,7 @@ export function Input({
         min=null,
         max=null,
         step=null,
+        disable=false
 
     }) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%', textTransform: capitalize ? 'capitalize' : 'none'}
@@ -62,6 +63,7 @@ export function Input({
                     min={min}
                     max={max}
                     step={step}
+                    disabled={disable}
                 />
         :
                 <InputMask

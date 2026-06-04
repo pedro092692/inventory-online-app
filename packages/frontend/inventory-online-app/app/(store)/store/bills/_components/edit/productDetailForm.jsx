@@ -3,7 +3,7 @@ import { Form } from '@/app/ui/form/form/form'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import ReturnInvoceItemAction from '@/app/lib/actions/returnProductAction'
-import { useActionState, useState, useMemo } from 'react'
+import { useActionState, useState, useMemo, useEffect } from 'react'
 import InvoiceProducts from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceProducts'
 import InvoiceHeader from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceHeader'
 import InvoiceBasicDetails from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceBasicDetails'
@@ -17,7 +17,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     const [inputErrors, setInputErrors] = useState({})
     
     const originalValues = {
-        products: invoice?.products || []
+        products: invoice?.products || [],
     }
     
     const initialSte = {message: null, inputs: originalValues, error: null}
@@ -104,6 +104,15 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
         }, 0).toFixed(2)
     }, [info.productsData])     
 
+    useEffect(() => {
+        const success = state?.message
+        if (success) {
+            setInfo({productsToReturn: [], productsData: []})
+            setQuantityToReturn({})
+            setInputErrors({})
+        }
+    }, [state])
+
     return (
         <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
             {/* header */}
@@ -132,7 +141,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
                 value="1234"
             />
 
-            {state?.error && <span className="field_error">{state?.error}</span>}
+            {state?.error && <span className='field_error'>{state?.error}</span>}
             {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
             
             <Button role="submit" type="secondary">

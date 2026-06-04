@@ -17,7 +17,8 @@ export default function List({
         rowClassName = () => '',
         deleteMsg='Elemento eliminado con éxito',
         cancelSupervisor = false,
-        custonActionButton = () => ''
+        custonActionButton = () => '', 
+        noRenderKeys = [],
 
     }) {
     return (
@@ -46,7 +47,7 @@ export default function List({
                                 <tr key={index} className={dynamicClass}>
                                     {
                                         Object.keys(data).map((key, idx) => {
-                                            if (key !== 'id') {
+                                            if (key !== 'id' && !noRenderKeys.includes(key)) {
                                                 return (
                                                     <td key={idx} data-label={key} 
                                                         style={key === 'name' ? { textTransform: 'capitalize' } : {}}>

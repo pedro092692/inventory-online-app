@@ -12,17 +12,32 @@ export default function InvoiceProducts({ invoice=null, totalProductPages, onCli
     
     const inputMsg = 'Cantidad a retornar'
     const productUnitPrice = (product) => invoice?.exchange_rate ? ((product?.unit_price || 0) / invoice.exchange_rate).toFixed(2) : 0
-    const returnInput = (product) => <Input name='quantity' 
-                        key={product?.id} 
-                        id={product?.id} 
-                        icon='circleArrow' type='number' 
-                        style={{height: '20px', borderRadius: '0px'}} 
-                        min={1} 
-                        max={product?.quantity || 1} placeHolder={inputMsg} 
-                        onChange={(e) => {  setErrors(prev => ({ ...prev, [product?.id]: false})); 
-                                            onChange(prev => ({...prev, [product?.id]: e.target.value})) }} 
-                        required={false}
-                        className={`${styles.inputNumber} ${inputErrors[product?.id] ? styles.returnInputError : ''}`} />
+    const returnInput = (product) => 
+                        {
+                            return(
+                                <>
+                                {
+                                    product?.quantity - parseInt(product?.total_quantity_returned) !== 0 
+                                ?
+                                    <Input name='quantity' 
+                                    key={product?.id} 
+                                    id={product?.id} 
+                                    icon='circleArrow' type='number' 
+                                    style={{height: '20px', borderRadius: '0px'}} 
+                                    min={1} 
+                                    max={product?.quantity - parseInt(product?.total_quantity_returned) || 1} 
+                                    placeHolder={inputMsg} 
+                                    onChange={(e) => {  setErrors(prev => ({ ...prev, [product?.id]: false})); 
+                                                        onChange(prev => ({...prev, [product?.id]: e.target.value})) }} 
+                                    required={false}
+                                    disable={product?.quantity - parseInt(product?.total_quantity_returned) === 0 ? true : false }
+                                    className={`${styles.inputNumber} ${inputErrors[product?.id] ? styles.returnInputError : ''}`} />
+                                :
+                                    <p className={'field_error p2-r'} style={{paddingLeft: '16px'}}>Sin stock para devolver</p>
+                                }
+                                </>
+                            )
+                        }
     
     const invoiceData = invoice?.products.map((product) => {
         return {
@@ -32,9 +47,9 @@ export default function InvoiceProducts({ invoice=null, totalProductPages, onCli
             unitPriceDollar: productUnitPrice(product),
             unitsToreturn: returnInput(product),
             id: product?.id || null,
+        
         }
     }) || []
-    
     const customButton = (data) => {
         return (
             <Button 
@@ -82,6 +97,7 @@ export default function InvoiceProducts({ invoice=null, totalProductPages, onCli
                         customClass={styles.tableProducts}
                         cancelSupervisor={true}
                         custonActionButton={(data) => customButton(data)}
+                        noRenderKeys={['alredayReturned']}
                     />
                     <Pagination totalPages={totalProductPages} paramName={'pageProducts'}/> 
                 </>
