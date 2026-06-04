@@ -24,7 +24,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     const returnItems = ReturnInvoceItemAction.bind(null, 'invoice-details/', 'Nota de crédito guardada con éxito')
     const [state, formAction, isPending] = useActionState(returnItems, initialSte)
     
-    const handleReturnProduct = (data) => {
+    const handleReturnProduct = (data, remove = false) => {
         const extraQuantity = parseInt(quantityToReturn[data.id] || 0, 10)
         
         const newQuantity = (item, data, extraQuantity) => {
@@ -38,28 +38,36 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
         setInfo(prev => {
             const itemExits = prev.productsToReturn.find(item => item.itemId === data.id)
             if (itemExits) {
+                if (!remove){
+                    return {
+                        ...prev,
+                        productsToReturn: prev.productsToReturn.map(item => {                        
+                            if (item.itemId !== data.id) return item
+                                
+                                return {
+                                    ...item,
+                                    returnedQuantity: newQuantity(item, data, extraQuantity)
+                                }
+                            
+                        }),
+                        productsData: prev.productsData.map(itemInfo => {
+                            if (itemInfo.id !== data.id) return itemInfo
+                                
+                                return {
+                                    ...itemInfo,
+                                    returnedQuantity: newQuantity(itemInfo, data, extraQuantity),
+                                    total: (newQuantity(itemInfo, data, extraQuantity) * itemInfo.unitPrice).toFixed(2)
+                                }
+                            
+                        }) 
+                    }
+                } 
                 return {
                     ...prev,
-                    productsToReturn: prev.productsToReturn.map(item => {                        
-                        if (item.itemId !== data.id) return item
-                             
-                            return {
-                                ...item,
-                                returnedQuantity: newQuantity(item, data, extraQuantity)
-                            }
+                    productsToReturn: prev.productsToReturn.filter(item => item.itemId !== data.id),
+                    productsData: prev.productsData.filter(itemInfo => itemInfo.id !== data.id)
                         
-                    }),
-                    productsData: prev.productsData.map(itemInfo => {
-                        if (itemInfo.id !== data.id) return itemInfo
-                            
-                            return {
-                                ...itemInfo,
-                                returnedQuantity: newQuantity(itemInfo, data, extraQuantity),
-                                total: (newQuantity(itemInfo, data, extraQuantity) * itemInfo.unitPrice).toFixed(2)
-                            }
-                        
-                    }) 
-                }   
+                }  
             }else {
                 return {
                     ...prev,
@@ -105,9 +113,8 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
                 onChange={setQuantityToReturn}
             />
             
-
             {/* products to return */}
-            <ProductToReturn products={info.productsData} totalToReturn={totalToReturn} />
+            <ProductToReturn products={info.productsData} totalToReturn={totalToReturn} onClick={handleReturnProduct}/>
             
             
             <input type="hidden" 
@@ -115,11 +122,12 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
                 value={JSON.stringify(info.productsToReturn)}
             />
             
-                <input 
-                    type="hidden" 
-                    name="pin"
-                    value="1234"
-                />
+            <input 
+                type="hidden" 
+                name="pin"
+                value="1234"
+            />
+            
             <Button role="submit" type="secondary">
                 {isPending && <OvalLoader/>}   
                 {isPending ? 'Generando...' : 'Generar Nota de crédito'}

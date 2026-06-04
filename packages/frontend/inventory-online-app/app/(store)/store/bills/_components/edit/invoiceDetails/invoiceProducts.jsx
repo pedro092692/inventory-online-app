@@ -70,9 +70,7 @@ export default function InvoiceProducts({ invoice=null, totalProductPages, onCli
                         showDelete={false}
                         showEdit={false}
                         showView={false}
-                        deleteKey={'itemId'}
                         endpoint={'invoice-details'}
-                        deleteMsg={'El producto se ha retornado con éxito'}
                         customClass={styles.tableProducts}
                         cancelSupervisor={true}
                         custonActionButton={(data) => customButton(data)}

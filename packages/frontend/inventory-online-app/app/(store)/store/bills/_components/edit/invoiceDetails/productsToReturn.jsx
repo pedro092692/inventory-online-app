@@ -1,8 +1,25 @@
 import List from '@/app/ui/list/list'
 import { Container } from '@/app/ui/utils/container'
+import { Button } from '@/app/ui/utils/button/buttons'
 import styles from '../invoice.module.css'
-export default function ProductToReturn({products, totalToReturn=0}) {
+export default function ProductToReturn({products, totalToReturn=0, onClick=null}) {
     if (!products ) return null
+
+    const customButton = (data) => {
+        return (
+            <Button 
+                className={styles.returnInput}
+                children={false}
+                showIcon={true}
+                type={'danger'}
+                icon={'trash'}
+                size={[16, 16]}
+                style={{padding: '4px'}}
+                title={'Deshacer'}
+                onClick={() => onClick(data, true)}
+            />
+        )
+    }
     return(
         <>
         {
@@ -23,10 +40,15 @@ export default function ProductToReturn({products, totalToReturn=0}) {
                         'uniPriceDollar': 'Precio unitario ($)',
                         'quantity': 'Unidades a devolver',
                         'total': 'Total credito a devolver',
+                        'actions': 'Acciones'
                     }}
+                    showActions={true}
+                    showDelete={false}
+                    showEdit={false}
+                    showView={false}
+                    custonActionButton={(data) => customButton(data)}
                     customClass={styles.tableReturnedProducts}
                     tableData={products}
-                    showActions={false}
                 />
                 <p className='p1-b'>Total a devolver: {totalToReturn} $</p>
             </Container>
