@@ -8,6 +8,7 @@ import { OvalLoader } from '@/app/ui/loader/spinner'
 import ReturnInvoceItemAction from '@/app/lib/actions/returnProductAction'
 import { useActionState, useState, useMemo } from 'react'
 import InvoiceProducts from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceProducts'
+import InvoiceHeader from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceHeader'
 import styles from './invoice.module.css'
 
 
@@ -21,7 +22,9 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     const initialSte = {message: null, inputs: originalValues, errors: {}}
 
     const inputMsg = 'Cantidad a retornar'
+    
     const productUnitPrice = (product) => invoice?.exchange_rate ? ((product?.unit_price || 0) / invoice.exchange_rate).toFixed(2) : 0
+    
     const returnInput = (product) => <Input name='quantity' key={product?.id}icon='circleArrow' type='number' style={{height: '20px'}} min={1} 
                             max={product?.quantity || 1} placeHolder={inputMsg} 
                             onChange={(e) => { setQuantityToReturn(prev => ({...prev, [product?.id]: e.target.value})) }} 
@@ -42,7 +45,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
         }
     }) || []
     
-    const date = invoice?.date ? new Date(invoice.date).toISOString() : null
+   
    
 
     const handleReturnProductButton = (data) => {
@@ -117,30 +120,8 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     
     return (
         <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
-            <Container
-                width={'100%'}
-                padding={'8px'}
-                direction={'column'}
-                alignItem={'start'}
-                borderRadius={'8px'}
-                backgroundColor={'var(--color-neutralGrey300)'}
-                className='shadow'
-            >   
-                <h2 className='h3'>Gestionar nota de crédito de la factura: #{invoice?.id}</h2>
-                <Container
-                    padding={'0px'}
-                    width={'100%'}
-                    justifyContent={'space-between'}
-                >
-                    <p>Fecha:</p>
-                    <p className='p2'>{new Date(invoice?.date).toLocaleDateString('es-VE', {year: 'numeric', month: 'long', day: 'numeric'})}</p>
-                </Container>
-                <p>Hora: {new Intl.DateTimeFormat('es-VE', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    timeZone: 'UTC'
-                }).format(new Date(date))}</p>
-            </Container>
+            {/* title */}
+            <InvoiceHeader invoice={invoice}/>
             
             {/* seller */}
             <Container
