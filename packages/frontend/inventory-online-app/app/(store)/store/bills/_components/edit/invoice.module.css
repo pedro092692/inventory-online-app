@@ -10,3 +10,18 @@
 .inputNumber {
     user-select: none !important;
 }
+
+.tableProducts td[data-label="quantity"],
+.tableProducts td[data-label="unitPriceBs"],
+.tableProducts td[data-label="unitPriceDollar"] {
+    text-align: right;
+}
+
+.tableProducts {
+    height: 240px;
+    border-radius: 4px
+}
+
+.returnInput {
+    padding: 2px
+}

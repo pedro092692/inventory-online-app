@@ -4,10 +4,10 @@ import { Container } from '@/app/ui/utils/container'
 import List from '@/app/ui/list/list'
 import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
-import Pagination from '@/app/ui/pagination/pagination'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import ReturnInvoceItemAction from '@/app/lib/actions/returnProductAction'
 import { useActionState, useState, useMemo } from 'react'
+import InvoiceProducts from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceProducts'
 import styles from './invoice.module.css'
 
 
@@ -43,19 +43,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     }) || []
     
     const date = invoice?.date ? new Date(invoice.date).toISOString() : null
-    const custonButton = (data) => {
-        return (
-            <Button 
-                children={false}
-                showIcon={true}
-                icon={'trash'}
-                type={'danger'}
-                size={[16, 16]}
-                title={'Devolver producto'}
-                onClick={() => handleReturnProductButton(data)}
-            />
-        )
-    }
+   
 
     const handleReturnProductButton = (data) => {
         const extraQuantity = parseInt(quantityToReturn[data.id] || 0, 10)
@@ -187,39 +175,10 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
             borderRadius={'8px'}
             backgroundColor={'var(--color-neutralGrey300)'}
             className='shadow'
-        >   
-            
-            {
-                invoiceData.length > 0 ?
-                    <>
-                        <List 
-                            tableHead={{
-                                'name': 'Producto',
-                                'quantity': 'Unidades',
-                                'unitPriceBs': 'Precio unitario (Bs)',
-                                'uniPriceDollar': 'Precio unitario ($)',
-                                'unitsToreturn': 'Unidades a devolver',
-                                'actions': 'Acciones'
-                            }}
-                            tableData={invoiceData}
-                            showActions={true}
-                            showDelete={false}
-                            showEdit={false}
-                            showView={false}
-                            deleteKey={'itemId'}
-                            endpoint={'invoice-details'}
-                            deleteMsg={'El producto se ha retornado con éxito'}
-                            userPermissions={[]}
-                            CustomStyles={{height: '280px', borderRadius: '8px'}}
-                            customClass={styles.table}
-                            cancelSupervisor={true}
-                            custonActionButton={(data) => custonButton(data)}
-                        /> 
-                        <Pagination totalPages={totalProductPages} paramName={'pageProducts'}/>
-                    </>
-                    :
-                    <p>Esta order de compra no tienes productos asociados...</p>
-            }
+            >   
+
+                {/* invoice products   */}
+                <InvoiceProducts invoiceData={invoiceData} totalProductPages={totalProductPages} onClick={handleReturnProductButton}/>
             
             </Container>
 
