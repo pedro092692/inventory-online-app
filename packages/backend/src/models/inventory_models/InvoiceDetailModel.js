@@ -27,6 +27,18 @@ class InvoiceDetail extends Model {
             as: 'products'
         }) 
     }
+
+    /**
+     * Creates an association between the InvoiceDetail model and the InvoiceReturn model.
+     * @param {{InvoiceReturn: typeof Model}} model - An object containing the InvoiceDetail model class.
+     * @returns {void} This method does not return a value. 
+     */
+    static associationInvoiceReturn(model) {
+        this.hasMany(model.InvoiceReturn, {
+            foreignKey: 'invoice_detail_id',
+            as: 'invoice_returns'
+        })
+    }
 }
 
 /**

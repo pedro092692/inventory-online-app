@@ -133,6 +133,10 @@ class InvoiceDetailService {
                     {
                         association: 'products',
                         attributes: ['name'],
+                    },
+                    {
+                        association: 'invoice_returns',
+                        attributes: ['quantity', 'amount_returned']
                     }
                 ],
                 where: {

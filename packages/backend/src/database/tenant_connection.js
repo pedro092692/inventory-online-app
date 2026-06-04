@@ -222,6 +222,7 @@ class TenantConnection {
         Invoice.associatePaymentDetail({PaymentDetail})
         InvoiceDetail.associationInvoice({Invoice})
         InvoiceDetail.associationProducts({Product})
+        InvoiceDetail.associationInvoiceReturn({InvoiceReturn})
         Seller.associationSales({Invoice})
         Seller.associationUser({User})
         Product.associationInvoiceDetails({Invoice})
