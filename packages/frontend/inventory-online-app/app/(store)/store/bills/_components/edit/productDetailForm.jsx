@@ -9,6 +9,7 @@ import ReturnInvoceItemAction from '@/app/lib/actions/returnProductAction'
 import { useActionState, useState, useMemo } from 'react'
 import InvoiceProducts from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceProducts'
 import InvoiceHeader from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceHeader'
+import InvoiceBasicDetails from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceBasicDetails'
 import styles from './invoice.module.css'
 
 
@@ -120,48 +121,15 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     
     return (
         <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
-            {/* title */}
+            {/* header */}
             <InvoiceHeader invoice={invoice}/>
             
-            {/* seller */}
-            <Container
-                padding={'0px'}
-            >
-                <h3 className='p2-b'>Vendedor:</h3>
-                <p className='p2-r'>{invoice?.seller?.name || 'No tiene vendedor.'}</p>
-            </Container>
+            {/* invoice basic info */}
+            <InvoiceBasicDetails invoice={invoice}/>
             
-            {/* customer */}
-            <Container
-                padding={'0px'}
-            >
-                <h3 className='p2-b'>Cliente:</h3>
-                <p className='p2-r'>{invoice?.customer?.name || 'Error con el nombre del cliente.'}</p>
-            </Container>
-
-            {/* gran total */}
-            <Container
-                padding={'0px'}
-            >
-                <h3 className='p2-b'>Total:</h3>
-                <p className='p2-r'>{`${invoice?.total} $` || 'Error en el monto.'}</p>
-            </Container>
+            {/* invoice products   */}
+            <InvoiceProducts invoiceData={invoiceData} totalProductPages={totalProductPages} onClick={handleReturnProductButton}/>
             
-            {/* invoice item details */}
-            <Container
-            width={'100%'}
-            padding={'16px'}
-            direction={'column'}
-            alignItem={'start'}
-            borderRadius={'8px'}
-            backgroundColor={'var(--color-neutralGrey300)'}
-            className='shadow'
-            >   
-
-                {/* invoice products   */}
-                <InvoiceProducts invoiceData={invoiceData} totalProductPages={totalProductPages} onClick={handleReturnProductButton}/>
-            
-            </Container>
 
             {/* products to return */}
             {info.productsData.length > 0 &&

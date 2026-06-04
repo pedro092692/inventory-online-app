@@ -1,6 +1,7 @@
 import List from '@/app/ui/list/list'
 import Pagination from '@/app/ui/pagination/pagination'
 import { Button } from '@/app/ui/utils/button/buttons'
+import { Container } from '@/app/ui/utils/container'
 import styles from '../invoice.module.css'
 
 export default function InvoiceProducts({ invoiceData, totalProductPages, onClick=null}) {
@@ -21,7 +22,15 @@ export default function InvoiceProducts({ invoiceData, totalProductPages, onClic
     }
     
     return (
-        <>
+        <Container
+            width={'100%'}
+            padding={'16px'}
+            direction={'column'}
+            alignItem={'start'}
+            borderRadius={'8px'}
+            backgroundColor={'var(--color-neutralGrey300)'}
+            className='shadow'
+        >
             {
                 invoiceData.length > 0 ?
                 <>
@@ -51,6 +60,6 @@ export default function InvoiceProducts({ invoiceData, totalProductPages, onClic
                 :
                 <p>Esta order de compra no tienes productos asociados...</p>
             }
-        </>
+        </Container>
     )
 }
