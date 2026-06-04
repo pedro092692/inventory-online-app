@@ -22,8 +22,12 @@
     border-radius: 4px
 }
 
-
-
 .returnInput {
     padding: 2px
+}
+
+.returnInputError::placeholder {
+    color: var(--color-accentRed400);
+    opacity: 1;
+    font-weight: 700;
 }

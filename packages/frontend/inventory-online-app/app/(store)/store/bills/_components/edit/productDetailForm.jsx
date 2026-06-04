@@ -14,6 +14,7 @@ import styles from './invoice.module.css'
 export default function ProductDetailForm({invoice=null, totalProductPages = 1, queryString = ''}) {
     const [info, setInfo] = useState({productsToReturn: [], productsData: []})
     const [quantityToReturn, setQuantityToReturn] = useState({})
+    const [inputErrors, setInputErrors] = useState({})
     
     const originalValues = {
         products: invoice?.products || []
@@ -33,7 +34,10 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
                 : parseInt(item.returnedQuantity, 10) + extraQuantity
         }
 
-        if (extraQuantity <= 0 ) return 
+        if (extraQuantity <= 0 ) {
+            setInputErrors(prev => ({...prev, [data.id]: true}))
+            return
+        }
 
         setInfo(prev => {
             const itemExits = prev.productsToReturn.find(item => item.itemId === data.id)
@@ -110,7 +114,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
             
             {/* invoice products   */}
             <InvoiceProducts invoice={invoice} totalProductPages={totalProductPages} onClick={handleReturnProduct} 
-                onChange={setQuantityToReturn}
+                onChange={setQuantityToReturn} setErrors={setInputErrors} inputErrors={inputErrors}
             />
             
             {/* products to return */}

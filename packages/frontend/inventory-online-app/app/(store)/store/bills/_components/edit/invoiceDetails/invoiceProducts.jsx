@@ -5,16 +5,24 @@ import { Container } from '@/app/ui/utils/container'
 import { Input } from '@/app/ui/form/input/input'
 import styles from '../invoice.module.css'
 
-export default function InvoiceProducts({ invoice=null, totalProductPages, onClick=null, onChange=null}) {
+export default function InvoiceProducts({ invoice=null, totalProductPages, onClick=null, onChange=null, 
+                                            setErrors=null, inputErrors=null}) {
     if(!invoice) return null
+
     
     const inputMsg = 'Cantidad a retornar'
     const productUnitPrice = (product) => invoice?.exchange_rate ? ((product?.unit_price || 0) / invoice.exchange_rate).toFixed(2) : 0
-    const returnInput = (product) => <Input name='quantity' key={product?.id}icon='circleArrow' type='number' style={{height: '20px'}} min={1} 
-                            max={product?.quantity || 1} placeHolder={inputMsg} 
-                            onChange={(e) => { onChange(prev => ({...prev, [product?.id]: e.target.value})) }} 
-                            required={false}
-                            className={styles.inputNumber} />
+    const returnInput = (product) => <Input name='quantity' 
+                        key={product?.id} 
+                        id={product?.id} 
+                        icon='circleArrow' type='number' 
+                        style={{height: '20px', borderRadius: '0px'}} 
+                        min={1} 
+                        max={product?.quantity || 1} placeHolder={inputMsg} 
+                        onChange={(e) => {  setErrors(prev => ({ ...prev, [product?.id]: false})); 
+                                            onChange(prev => ({...prev, [product?.id]: e.target.value})) }} 
+                        required={false}
+                        className={`${styles.inputNumber} ${inputErrors[product?.id] ? styles.returnInputError : ''}`} />
     
     const invoiceData = invoice?.products.map((product) => {
         return {
