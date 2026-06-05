@@ -1,4 +1,4 @@
-import ServiceErrorHandler from './errors/ServiceErrorHandler.js'
+import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 
 class InvoiceReturnService {
     // new instance of service error handler 

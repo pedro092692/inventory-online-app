@@ -12,6 +12,7 @@ import PayInvoiceRoutes from './routes/PaymentDetailRoutes.js'
 import DollarValueRoutes from './routes/DollarValueRoutes.js'
 import ReportRoutes from './routes/reportRoutes.js'
 import SecurityRoutes from './routes/security/SecurityRoutes.js'
+import InvoiceReturnRoutes from './routes/invoiceReturnRoutes.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 
@@ -65,6 +66,9 @@ class Server {
 
         // invoice detail routes
         this.app.use('/api/invoice-details', new InvoiceDetailRoutes().router)
+
+        // invoice return routes
+        this.app.use('/api/invoice-returns', new InvoiceReturnRoutes().router)
 
         // seller routes
         this.app.use('/api/sellers', new SellerRoutes().router)
