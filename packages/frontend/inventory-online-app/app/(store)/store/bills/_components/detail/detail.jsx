@@ -77,7 +77,7 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                     </Link>
                 }
                 
-                {/* annull payment methods */}
+                {/* anull payment methods */}
                 <Link href={`/store/bills/edit/payment/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
                         <Button type='grey' style={{backgroundColor: 'black', padding: '8px'}}
                             title={'Anular metodos de pago'}

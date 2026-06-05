@@ -29,6 +29,28 @@ export default function InvoiceBasicInfo({invoice}) {
                     { ` ${invoice?.seller.name}` || ' Default Seller'}
                 </span>
             </h3>
+            {/* status */}
+            {invoice?.refund_status !== 'none' && <h3 className='p2-b'>Nota de credito:  
+                 <span className='p2-r'>
+                     {` Esta orden de compra tiene`} <span className='p2-b'>rectificaciones. ⚠️</span>  
+                 </span>
+            </h3> }
+            {invoice?.refund_status === 'full' ?
+                <h3 className='p2-b'>Estado:
+                    <span className='p2-r'>
+                        {` Nota de credito`} <span className='p2-b'>Total. 🚩</span> 
+                    </span>
+                </h3> 
+                :
+                invoice?.refund_status === 'partial' ?
+                <h3 className='p2-b'>Estado:
+                    <span className='p2-r'>
+                        {` Nota de credito`}  <span className='p2-b'> Parcial 🟡</span>
+                    </span>
+                </h3> 
+                :
+                <></>
+            }   
         </Container>
         
         {/* date: */}
