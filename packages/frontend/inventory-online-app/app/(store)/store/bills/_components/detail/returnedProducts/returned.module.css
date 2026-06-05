@@ -1,0 +1,11 @@
+.table td[data-label="amountReturned"],
+.table td[data-label="quantity"],
+.table td[data-label="dateReturned"] {
+    text-align: right;
+
+}
+
+.table {
+    height: auto !important;
+    border-radius: 4px
+}

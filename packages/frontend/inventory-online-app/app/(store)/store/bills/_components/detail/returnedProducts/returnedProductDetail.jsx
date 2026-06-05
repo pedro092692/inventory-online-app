@@ -1,32 +1,67 @@
 import GetItemAction from '@/app/lib/actions/get'
 import { Container } from '@/app/ui/utils/container'
-import CustomerInfo from '@/app/(store)/store/bills/_components/detail/customerDetail/customerDetail'
-import BillStatusDetail from '@/app/(store)/store/bills/_components/detail/status/status'
-import PaymentDetails from '@/app/(store)/store/bills/_components/detail/paymentDetail/paymentDetail'
-import ProductDetails from '@/app/(store)/store/bills/_components/detail/productDetail/productDetail'
-import InvoicePDF from '@/app/(store)/store/bills/_components/pdf/pdf'
-import InvoiceBasicInfo from '@/app/(store)/store/bills/_components/detail/basicInfo/basicInfo'
-import { Button } from '@/app/ui/utils/button/buttons'
-import { Icon } from '@/app/ui/utils/icons/icons'
-import { getCurrentUser } from '@/app/utils/getCurrentUser'
+import List from '@/app/ui/list/list'
 import Pagination from '@/app/ui/pagination/pagination'
-import Link from 'next/link'
+import styles from './returned.module.css'
 
 export default async function ReturnedInvoiceProducts({ id, queryString='', limit = 8, page = 1, totalProductPages = 0 }) {
-    const endpoint = `invoices/${id}`
+    const endpoint = `invoice-returns/returned-products/${id}`
     const params = new URLSearchParams()
-    params.append('limitProducts', limit)
-    params.append('pageProducts', page)
+    params.append('limitReturn', limit)
+    params.append('pageReturn', page)
 
     const url = `${endpoint}?${params.toString()}`
 
     const response = await GetItemAction(url)
-    const currentUser = await getCurrentUser()
     const { data, error } = response
-    const invoice = data?.invoice || null
-
+    const returnedProducts = data?.returnedProducts || null
+    const products = returnedProducts.map(product => {
+        return {
+            name: product?.invoice_detail?.products?.name || 'Undefined',
+            quantity: product?.quantity || 0,
+            amountReturned: `${product?.amount_returned} $` || 0,
+            dateReturned: new Date(product?.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' })
+        }
+    })
+    
     // await new Promise(resolve => setTimeout(resolve, 1000))
     return (
-        <p>Invoice returned products....</p>
+       <>
+       {
+        returnedProducts ?
+        <Container
+            width={'100%'}
+            padding={'16px'}
+            direction={'column'}
+            alignItem={'start'}
+            justifyContent={'start'}
+            borderRadius={'8px'}
+            backgroundColor={'var(--color-neutralGrey300)'}
+            className='shadow'
+        >   
+            <Container
+                padding={'8px'}
+            >
+                
+            <p className='p1-b'>Productos devueltos de la factura: #{id}</p>
+            
+            </Container>
+            <List
+                tableHead={{
+                    'name': 'Producto',
+                    'quantity': 'Cantidad',
+                    'amountReturned': 'Monto devuelto',
+                    'dateReturned': 'Fecha de devolución'
+                }}
+                customClass={styles.table}
+                tableData={products}
+                showActions={false}
+            />
+            <Pagination totalPages={totalProductPages} paramName={'pageReturn'}/>
+        </Container>
+        :
+        <p>Orden no encontrada...</p>
+       }
+       </>
     )
 }

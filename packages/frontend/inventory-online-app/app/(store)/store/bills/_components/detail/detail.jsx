@@ -119,7 +119,7 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                      
             
             {/* products details */}
-            {invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']}/>}
+            {invoice?.['products']?.length > 0 && <ProductDetails productsDetails={invoice['products']} invoice_id={invoice?.id}/>}
             {invoice?.['products']?.length > 0 && <Pagination totalPages={totalProductPages} paramName={'pageProducts'}/>}
             
             {/* payment details */}

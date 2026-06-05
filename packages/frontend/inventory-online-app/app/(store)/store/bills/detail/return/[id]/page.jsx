@@ -6,7 +6,7 @@ import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
 import ReturnedInvoiceProducts from '@/app/(store)/store/bills/_components/detail/returnedProducts/returnedProductDetail'
 import Request from '@/app/utils/request'
 
-export default async function BillDetail({ params, searchParams}) {
+export default async function ReturnedInvoiceDetail({ params, searchParams}) {
     const { id }  = await params
     const ulrParams = await searchParams
     const page = Number(ulrParams?.pageProducts) || 1

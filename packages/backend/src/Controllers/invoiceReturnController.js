@@ -26,9 +26,9 @@ class InvoiceReturnController {
     * error formatting across the application.
     */
     invoiceReturnedProducts = this.#error.handler( async(req, res) => {
-        const id = req.query.id ? parseInt(req.query.id) : null
-        const limit = req.query.limit ? parseInt(req.query.limit) : 8
-        const page = req.query.page ? parseInt(req.query.page) : 1
+        const { id } = req.params || null
+        const limit = req.query.limitReturn ? parseInt(req.query.limitReturn) : 8
+        const page = req.query.pageReturn ? parseInt(req.query.pageReturn) : 1
         const {returnedProducts} = await this.invoiceReturn.invoiceReturnedProducts(id, page, limit)
         res.status(200).json({returnedProducts})
     })

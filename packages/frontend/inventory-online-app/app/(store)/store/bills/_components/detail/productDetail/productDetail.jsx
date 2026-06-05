@@ -1,8 +1,10 @@
 import { Container } from '@/app/ui/utils/container'
 import List from '@/app/ui/list/list'
 import styles from './product.module.css'
+import Link from 'next/link'
+import { Button } from '@/app/ui/utils/button/buttons'
 
-export default function ProductDetails({ productsDetails }){
+export default function ProductDetails({ productsDetails, invoice_id }){
     const products = formatProductsDetails(productsDetails)
     
     function formatProductsDetails(productsDetails) {
@@ -45,7 +47,20 @@ export default function ProductDetails({ productsDetails }){
             />
             
             {productsDetails.filter(product => parseInt(product.total_quantity_returned)).length > 0 && 
-                <p className='p2-r'>Ítem con devolución parcial 🟡 Ítem con devolución completa 🔴</p>
+                <Container
+                        padding={'0px'}
+                        width={'100%'}
+                        justifyContent={'space-between'}
+                    >
+                        <p className='p2-r'>Ítem con devolución parcial 🟡 Ítem con devolución completa 🔴</p>
+                        <Link href={`/store/bills/detail/return/${invoice_id}`}>
+                            <Button type='grey' style={{backgroundColor: 'var(--color-blue700)', padding: '8px'}}
+                                title={'Editar factura'} 
+                            >
+                                <span className={'p2-b'} style={{color: 'var(--color-neutralWhite)'}}>Ver devoluciones</span>
+                            </Button>
+                        </Link>
+                </Container>
             }
         </Container>
     )
