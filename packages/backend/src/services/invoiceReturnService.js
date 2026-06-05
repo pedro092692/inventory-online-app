@@ -47,3 +47,5 @@ class InvoiceReturnService {
         })
     }
 }
+
+export default InvoiceReturnService
