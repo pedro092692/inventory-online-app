@@ -15,6 +15,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     const [info, setInfo] = useState({productsToReturn: [], productsData: []})
     const [quantityToReturn, setQuantityToReturn] = useState({})
     const [inputErrors, setInputErrors] = useState({})
+    const refund_status = invoice?.refund_status || 'full'
     
     const originalValues = {
         products: invoice?.products || [],
@@ -114,41 +115,48 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     }, [state])
 
     return (
-        <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
-            {/* header */}
-            <InvoiceHeader invoice={invoice}/>
-            
-            {/* invoice basic info */}
-            <InvoiceBasicDetails invoice={invoice}/>
-            
-            {/* invoice products   */}
-            <InvoiceProducts invoice={invoice} totalProductPages={totalProductPages} onClick={handleReturnProduct} 
-                onChange={setQuantityToReturn} setErrors={setInputErrors} inputErrors={inputErrors}
-            />
-            
-            {/* products to return */}
-            <ProductToReturn products={info.productsData} totalToReturn={totalToReturn} onClick={handleReturnProduct}/>
-            
-            
-            <input type="hidden" 
-                name="itemsToReturn" 
-                value={JSON.stringify(info.productsToReturn)}
-            />
-            
-            <input 
-                type="hidden" 
-                name="pin"
-                value="1234"
-            />
+        <>
+            {
+                refund_status !== 'full' ?
+                <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
+                    {/* header */}
+                    <InvoiceHeader invoice={invoice}/>
+                    
+                    {/* invoice basic info */}
+                    <InvoiceBasicDetails invoice={invoice}/>
+                    
+                    {/* invoice products   */}
+                    <InvoiceProducts invoice={invoice} totalProductPages={totalProductPages} onClick={handleReturnProduct} 
+                        onChange={setQuantityToReturn} setErrors={setInputErrors} inputErrors={inputErrors}
+                    />
+                    
+                    {/* products to return */}
+                    <ProductToReturn products={info.productsData} totalToReturn={totalToReturn} onClick={handleReturnProduct}/>
+                    
+                    
+                    <input type="hidden" 
+                        name="itemsToReturn" 
+                        value={JSON.stringify(info.productsToReturn)}
+                    />
+                    
+                    <input 
+                        type="hidden" 
+                        name="pin"
+                        value="1234"
+                    />
 
-            {state?.error && <span className='field_error'>{state?.error}</span>}
-            {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
-            
-            <Button role="submit" type="secondary">
-                {isPending && <OvalLoader/>}   
-                {isPending ? 'Generando...' : 'Generar Nota de crédito'}
-            </Button>
-            
-        </Form>    
+                    {state?.error && <span className='field_error'>{state?.error}</span>}
+                    {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
+                    
+                    <Button role="submit" type="secondary">
+                        {isPending && <OvalLoader/>}   
+                        {isPending ? 'Generando...' : 'Generar Nota de crédito'}
+                    </Button>
+                    
+                </Form>
+                :
+                <p className='field_error'>No hay productos para retornar...</p>
+            }
+        </>    
     )
 }

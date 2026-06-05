@@ -86,13 +86,15 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                 </Link>
 
                 {/* return products */}
-                <Link href={`/store/bills/edit/product/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
-                        <Button type='grey' style={{backgroundColor: 'var(--color-accentBlue400)', padding: '8px'}}
-                            title={'Hacer una devolución'}
-                        >
-                            <Icon icon='circleArrow' size={[24, 24]}></Icon>
-                        </Button>
-                </Link>
+                    {invoice?.refund_status !== 'full' &&
+                    <Link href={`/store/bills/edit/product/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
+                            <Button type='grey' style={{backgroundColor: 'var(--color-accentBlue400)', padding: '8px'}}
+                                title={'Hacer una devolución'}
+                            >
+                                <Icon icon='circleArrow' size={[24, 24]}></Icon>
+                            </Button>
+                    </Link>
+                }
             </Container>
 
             {/* date and time of the invoice */}
