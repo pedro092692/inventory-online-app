@@ -3,6 +3,7 @@ import Pagination from '@/app/ui/pagination/pagination'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Container } from '@/app/ui/utils/container'
 import { Input } from '@/app/ui/form/input/input'
+import Link from 'next/link'
 import styles from '../invoice.module.css'
 
 export default function InvoiceProducts({ invoice=null, totalProductPages, onClick=null, onChange=null, 
@@ -26,7 +27,7 @@ export default function InvoiceProducts({ invoice=null, totalProductPages, onCli
                                     style={{height: '20px', borderRadius: '0px'}} 
                                     min={1} 
                                     max={product?.quantity - parseInt(product?.total_quantity_returned) || 1} 
-                                    placeHolder={inputMsg} 
+                                    placeHolder={`${inputMsg} max(${product?.quantity - parseInt(product?.total_quantity_returned) || 1})`} 
                                     onChange={(e) => {  setErrors(prev => ({ ...prev, [product?.id]: false})); 
                                                         onChange(prev => ({...prev, [product?.id]: e.target.value})) }} 
                                     required={false}
@@ -41,7 +42,11 @@ export default function InvoiceProducts({ invoice=null, totalProductPages, onCli
     
     const invoiceData = invoice?.products.map((product) => {
         return {
-            name: product?.products?.name || 'Undefined',
+            name : `${product?.products.name || 'Undefined'}
+                    ${parseInt(product.total_quantity_returned) > 0 ? 
+                      parseInt(product.total_quantity_returned) >= parseInt(product.quantity) ?
+                      '🔴' : '🟡' : ''
+                    }`,
             quantity: product?.quantity || 0,
             unitPriceBs: product?.unit_price || 0,
             unitPriceDollar: productUnitPrice(product),
@@ -100,6 +105,22 @@ export default function InvoiceProducts({ invoice=null, totalProductPages, onCli
                         noRenderKeys={['alredayReturned']}
                     />
                     <Pagination totalPages={totalProductPages} paramName={'pageProducts'}/> 
+                    {invoice?.products.filter(product => parseInt(product.total_quantity_returned)).length > 0 && 
+                    <Container
+                        padding={'0px'}
+                        width={'100%'}
+                        justifyContent={'space-between'}
+                    >
+                        <p className='p2-r'>Ítem con devolución parcial 🟡 Ítem con devolución completa 🔴</p>
+                        <Link href={`/store/bills/detail/return/${invoice?.id}`}>
+                            <Button type='grey' style={{backgroundColor: 'var(--color-blue700)', padding: '8px'}}
+                                title={'Editar factura'} 
+                            >
+                                <span className={'p2-b'} style={{color: 'var(--color-neutralWhite)'}}>Ver devoluciones</span>
+                            </Button>
+                    </Link>
+                    </Container>
+                    }
                 </>
                 :
                 <p>Esta order de compra no tienes productos asociados...</p>
