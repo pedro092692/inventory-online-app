@@ -19,6 +19,8 @@ class InvoiceReturnRoutes {
         this.router.get('/', (req, res) => res.send('Invoices Return Routes'))
         this.router.get('/total-pages', (req, res) => 
             new InvoiceReturnController(req.InvoiceReturn).totalReturnedProductsPages(req, res))
+        this.router.get('/returned-products', (req, res) => 
+            new InvoiceReturnController(req.InvoiceReturn).invoiceReturnedProducts(req, res))
       
     }   
 

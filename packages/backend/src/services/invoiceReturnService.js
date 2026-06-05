@@ -50,7 +50,8 @@ class InvoiceReturnService {
                 },
                 include: [
                     {
-                        association: 'invoice',
+                        association: 'invoice_detail',
+                        attributes: ['id'],
                         include: [
                             {
                                 association: 'products',
