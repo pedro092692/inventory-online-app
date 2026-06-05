@@ -26,4 +26,24 @@ class InvoiceReturnService {
             }
         })
     }
+    
+    /**
+     * Retrieves the total count of returned products associated with a specific invoice.
+     * @param {string|number} invoiceId - The unique identifier of the invoice.
+     * @returns {Promise<number>} A promise that resolves to the total number of products.
+     * @throws {Error} If the database query fails, handled by the internal error handler.
+     */
+    invoiceReturnTotalPages(invoiceId, limit = 8) {
+        return this.#error.handler(['Invoice Return Total Pages'], async() => {
+            const totalPages = await this.InvoiceReturn.count(
+                {
+                    where: {
+                        invoice_id: invoiceId
+                    }
+                }
+            )
+
+            return Math.ceil(totalPages / limit)
+        })
+    }
 }
