@@ -26,6 +26,51 @@ class InvoiceReturnService {
             }
         })
     }
+
+    /**
+    * Retrieves a paginated list of returned products for a specific invoice.
+    *
+    * @param {number|string} invoiceId - The ID of the invoice whose returned products should be fetched.
+    * @param {number} [page=1] - The current page number for pagination.
+    * @param {number} [limit=8] - The maximum number of returned products to retrieve per page.
+    * @returns {Promise<Object>} An object containing the list of returned products.
+    *
+    * @description
+    * This method queries the `InvoiceReturn` table to obtain all returned products
+    * associated with a given invoice. It includes related invoice and product data,
+    * applies pagination (limit and offset), and sorts results by creation date
+    * in descending order.
+    */
+    invoiceReturnedProducts(invoiceId, page=1, limit=8) {
+        return this.#error.handler(['Invoice Returned Products'], async() => {
+            const offset = (page - 1) * limit
+            const returnedProducts = await this.InvoiceReturn.findAll({
+                where: {
+                    invoice_id: invoiceId
+                },
+                include: [
+                    {
+                        association: 'invoice',
+                        include: [
+                            {
+                                association: 'products',
+                                attributes: ['name']
+                            }
+                        ]
+
+                    }
+                ],
+                attributes: ['invoice_id', 'quantity', 'amount_returned', 'created_at'],
+                order: [['created_at', 'DESC']],
+                limit: limit,
+                offset: offset
+            })
+            
+            return {
+                returnedProducts: returnedProducts
+            }
+        })
+    }
     
     /**
      * Retrieves the total count of returned products associated with a specific invoice.
