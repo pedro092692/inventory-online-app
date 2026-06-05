@@ -7,7 +7,7 @@ export function Button(
         type='primary', 
         showIcon=false, 
         icon='person', 
-        size=[200, 200], 
+        size=[20, 20], 
         className='',
         style,
         onClick,
