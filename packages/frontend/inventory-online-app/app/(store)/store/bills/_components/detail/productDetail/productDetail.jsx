@@ -8,7 +8,11 @@ export default function ProductDetails({ productsDetails }){
     function formatProductsDetails(productsDetails) {
         return productsDetails.map(product => {
             return {
-                name : product.products.name,
+                name : `${product.products.name} 
+                    ${parseInt(product.total_quantity_returned) > 0 ? 
+                      parseInt(product.total_quantity_returned) >= parseInt(product.quantity) ?
+                      '🔴' : '🟡' : ''
+                    }`,
                 price: new Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(product.unit_price),
                 quantity: product.quantity,
                 total: Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(
@@ -26,19 +30,22 @@ export default function ProductDetails({ productsDetails }){
         >
             <h3 className='p1-r'>Detalles de productos</h3>
            
-            {
-                <List
-                    tableHead={{
-                        name: 'Nombre',
-                        price: 'Precio Unitario',
-                        quantity: 'Cantidad',
-                        total: 'Total',
-                    }}
-                    tableData={products}
-                    showActions={false}
-                    customClass={styles.table}
-                    CustomStyles={{borderRadius: '0px 0px 8px 8px', height: 'fit-content'}}
-                />
+            
+            <List
+                tableHead={{
+                    name: 'Nombre',
+                    price: 'Precio Unitario',
+                    quantity: 'Cantidad',
+                    total: 'Total',
+                }}
+                tableData={products}
+                showActions={false}
+                customClass={styles.table}
+                CustomStyles={{borderRadius: '0px 0px 8px 8px', height: 'fit-content'}}
+            />
+            
+            {productsDetails.filter(product => parseInt(product.total_quantity_returned)).length > 0 && 
+                <p className='p2-r'>Ítem con devolución parcial 🟡 Ítem con devolución completa 🔴</p>
             }
         </Container>
     )

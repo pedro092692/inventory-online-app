@@ -26,7 +26,6 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
     const invoice = data?.invoice || null
 
     // await new Promise(resolve => setTimeout(resolve, 1000))
-
     return (
         <>
         {invoice ?
