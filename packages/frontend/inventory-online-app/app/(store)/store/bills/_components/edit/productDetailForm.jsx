@@ -127,7 +127,8 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
                     
                     {/* invoice products   */}
                     <InvoiceProducts invoice={invoice} totalProductPages={totalProductPages} onClick={handleReturnProduct} 
-                        onChange={setQuantityToReturn} setErrors={setInputErrors} inputErrors={inputErrors}
+                        onChange={setQuantityToReturn} setErrors={setInputErrors} inputErrors={inputErrors} 
+                        queryString={queryString}
                     />
                     
                     {/* products to return */}

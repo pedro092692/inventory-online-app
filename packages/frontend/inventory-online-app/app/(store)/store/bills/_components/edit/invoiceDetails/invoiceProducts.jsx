@@ -7,7 +7,7 @@ import Link from 'next/link'
 import styles from '../invoice.module.css'
 
 export default function InvoiceProducts({ invoice=null, totalProductPages, onClick=null, onChange=null, 
-                                            setErrors=null, inputErrors=null}) {
+                                            setErrors=null, inputErrors=null, queryString=''}) {
     if(!invoice) return null
 
     
@@ -112,7 +112,7 @@ export default function InvoiceProducts({ invoice=null, totalProductPages, onCli
                         justifyContent={'space-between'}
                     >
                         <p className='p2-r'>Ítem con devolución parcial 🟡 Ítem con devolución completa 🔴</p>
-                        <Link href={`/store/bills/detail/return/${invoice?.id}`}>
+                        <Link href={`/store/bills/detail/return/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
                             <Button type='grey' style={{backgroundColor: 'var(--color-blue700)', padding: '8px'}}
                                 title={'Editar factura'} 
                             >

@@ -4,7 +4,7 @@ import styles from './product.module.css'
 import Link from 'next/link'
 import { Button } from '@/app/ui/utils/button/buttons'
 
-export default function ProductDetails({ productsDetails, invoice_id }){
+export default function ProductDetails({ productsDetails, invoice_id, queryString='' }){
     const products = formatProductsDetails(productsDetails)
     
     function formatProductsDetails(productsDetails) {
@@ -53,7 +53,7 @@ export default function ProductDetails({ productsDetails, invoice_id }){
                         justifyContent={'space-between'}
                     >
                         <p className='p2-r'>Ítem con devolución parcial 🟡 Ítem con devolución completa 🔴</p>
-                        <Link href={`/store/bills/detail/return/${invoice_id}`}>
+                        <Link href={`/store/bills/detail/return/${invoice_id}${queryString ? `?${queryString}` : ''}`}>
                             <Button type='grey' style={{backgroundColor: 'var(--color-blue700)', padding: '8px'}}
                                 title={'Editar factura'} 
                             >
