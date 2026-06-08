@@ -87,8 +87,9 @@ class InvoiceController {
     getInvoice = this.#error.handler( async(req, res) => {
         const limitProducts = req.query.limitProducts ? parseInt(req.query.limitProducts) : 5
         const pageProducts = req.query.pageProducts ? parseInt(req.query.pageProducts) : 1
+        const paginated = req.query.paginated ? req.query.paginated : false
         const { id } = req.params
-        const {invoice} = await this.invoiceService.getInvoice(id, true, pageProducts, limitProducts)
+        const {invoice} = await this.invoiceService.getInvoice(id, true, pageProducts, limitProducts, paginated)
         const permission = userPermissions(req)
         res.status(200).json({invoice, permissions: permission})
     })

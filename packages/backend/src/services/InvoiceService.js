@@ -203,7 +203,7 @@ class InvoiceService {
     * @returns {Object} - invoice with details, customer and seller
     * @throws {NotFoundError} - if invoice not found
     */
-    getInvoice(id, referenceProduct=true, pageProducts=1, limitProducts=5, withDetails=false) {
+    getInvoice(id, referenceProduct=true, pageProducts=1, limitProducts=5, noPaginated=false) {
         const offset = (pageProducts - 1) * limitProducts
         return this.#error.handler(['Read Invoice', id, 'Invoice'], async() => {
             const [invoice, invoiceProducts] = await Promise.all([
@@ -228,10 +228,10 @@ class InvoiceService {
                             
                         ],
                         attributes: ['id', 'amount', 'reference_amount', 'status']
-                    }
+                    },
                 ]
             }),
-                this.InvoiceDetail.getDetailByInvoiceId(id, offset, limitProducts)
+                this.InvoiceDetail.getDetailByInvoiceId(id, !noPaginated ? offset : null,  !noPaginated ? limitProducts : null)
             ])
             
             // if invoice not found throw not found error
