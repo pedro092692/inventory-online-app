@@ -53,7 +53,7 @@ export default function ProductDetails({ productsDetails, invoice_id, queryStrin
                         justifyContent={'space-between'}
                     >
                         <p className='p2-r'>Ítem con devolución parcial 🟡 Ítem con devolución completa 🔴</p>
-                        <Link href={`/store/bills/detail/return/${invoice_id}${queryString ? `?${queryString}` : ''}`}>
+                        <Link href={`/store/bills/detail/return/${invoice_id}${queryString ? `?${queryString}` : ''}&fromInvoice=1`}>
                             <Button type='grey' style={{backgroundColor: 'var(--color-blue700)', padding: '8px'}}
                                 title={'Editar factura'} 
                             >

@@ -10,7 +10,7 @@ export default async function ReturnedInvoiceDetail({ params, searchParams}) {
     const { id }  = await params
     const ulrParams = await searchParams
     const page = Number(ulrParams?.pageProducts) || 1
-    const queryString = buildQueryParams(ulrParams, ['page', 'data'])
+    const queryString = buildQueryParams(ulrParams, ['page', 'data', 'fromInvoice'])
     const response = await Request(`invoice-returns/total-pages?id=${id}`, 'GET', null, 'Hubo un error inesperado intententa nuevamente')
     const {data, error} = response
     const totalProductPages = data?.total || 0
@@ -22,7 +22,7 @@ export default async function ReturnedInvoiceDetail({ params, searchParams}) {
             padding='0px'
             width='100%'
         >
-            <Route path='bills' endpoints={['default', 'detail']} queryString={queryString}/> 
+            <Route path='bills' endpoints={[ulrParams?.fromInvoice ? 'detail' : 'editProduct', 'viewReturnProducts']} queryString={queryString} id={id}/> 
             <Suspense key={id} fallback={<FormSkeleton nFields={5} custonStyle={{width: '100% !important'}}/>}>
                 <ReturnedInvoiceProducts id={id} page={page} totalProductPages={totalProductPages}/>  
             </Suspense>

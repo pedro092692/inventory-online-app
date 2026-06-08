@@ -69,7 +69,7 @@ export default async function Route({path='customers', endpoints=['default', 'ad
             },
             detail: {
                 href: `${endpoint}/detail/${id}${queryString?`?${queryString}`: ''}`,
-                label: 'Detalle de order de compra',
+                label: 'Detalle orden de compra',
                 role: [1,2,3,4]
             },
             edit: {
@@ -85,8 +85,14 @@ export default async function Route({path='customers', endpoints=['default', 'ad
             },
 
             editProduct: {
-                href:`${endpoint}/edit/product/[id]`,
+                href:`${endpoint}/edit/product/${[id]}${queryString?`?${queryString}`: ''}`,
                 label: 'Gestionar productos de la factura',
+                role: [1,2,3,4]
+            },
+
+            viewReturnProducts: {
+                href:`${endpoint}/detail/return/${id}`,
+                label: 'Ver productos de la devolución',
                 role: [1,2,3,4]
             }
         }
