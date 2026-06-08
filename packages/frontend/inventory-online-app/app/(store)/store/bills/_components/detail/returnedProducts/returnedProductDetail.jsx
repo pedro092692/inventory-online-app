@@ -4,7 +4,7 @@ import List from '@/app/ui/list/list'
 import Pagination from '@/app/ui/pagination/pagination'
 import styles from './returned.module.css'
 
-export default async function ReturnedInvoiceProducts({ id, queryString='', limit = 8, page = 1, totalProductPages = 0 }) {
+export default async function ReturnedInvoiceProducts({ id, limit = 8, page = 1, totalProductPages = 0 }) {
     const endpoint = `invoice-returns/returned-products/${id}`
     const params = new URLSearchParams()
     params.append('limitReturn', limit)

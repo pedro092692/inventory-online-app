@@ -9,12 +9,20 @@ import InvoiceHeader from '@/app/(store)/store/bills/_components/edit/invoiceDet
 import InvoiceBasicDetails from '@/app/(store)/store/bills/_components/edit/invoiceDetails/invoiceBasicDetails'
 import ProductToReturn from '@/app/(store)/store/bills/_components/edit/invoiceDetails/productsToReturn'
 import styles from './invoice.module.css'
+import { Container } from '@/app/ui/utils/container'
+import { Input } from '@/app/ui/form/input/input'
+import { Modal } from '@/app/ui/utils/alert/modal'
 
 
-export default function ProductDetailForm({invoice=null, totalProductPages = 1, queryString = ''}) {
+export default function ProductDetailForm({invoice=null, totalProductPages = 1, queryString = '', permissions = []}) {
     const [info, setInfo] = useState({productsToReturn: [], productsData: []})
     const [quantityToReturn, setQuantityToReturn] = useState({})
     const [inputErrors, setInputErrors] = useState({})
+    const [showModal, setShowModal] = useState(false)
+    const [valuePin, setValuePin] = useState('')
+    const [pin, setPin] = useState('')
+    const [noPin, setNoPin] = useState(false)
+    const [noProduct, setNoProduct] = useState(false)
     const refund_status = invoice?.refund_status || 'full'
     
     const originalValues = {
@@ -28,6 +36,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     
     const handleReturnProduct = (data, remove = false) => {
         const extraQuantity = parseInt(quantityToReturn[data.id] || 0, 10)
+        setNoProduct(false)
         
         const newQuantity = (item, data, extraQuantity) => {
             return (parseInt(item.returnedQuantity, 10) + extraQuantity) > data.quantity 
@@ -105,12 +114,48 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
         }, 0).toFixed(2)
     }, [info.productsData])     
 
+    const handleSubmit = (formData) => {
+        if(info.productsData.length < 1) {
+            setNoProduct(true)
+            return
+        }
+        
+        if(!permissions.includes('delete', 'update')) {
+            const pinValue = formData.get('pin')
+            if(!showModal) {
+                setShowModal(true)
+                return
+            }
+            
+            if(!pinValue){
+                setNoPin(true)
+                return
+            }
+            
+            
+            return formAction(formData)
+
+        }
+
+        return formAction(formData)
+    }
+
+    const closeModal = () => {
+        setShowModal(false)
+    }
+
+
     useEffect(() => {
         const success = state?.message
         if (success) {
             setInfo({productsToReturn: [], productsData: []})
             setQuantityToReturn({})
             setInputErrors({})
+            setNoProduct(false)
+            setShowModal(false)
+            setValuePin('')
+            setPin('')
+            setNoPin(false)
         }
     }, [state])
 
@@ -118,43 +163,99 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
         <>
             {
                 refund_status !== 'full' ?
-                <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
-                    {/* header */}
-                    <InvoiceHeader invoice={invoice}/>
-                    
-                    {/* invoice basic info */}
-                    <InvoiceBasicDetails invoice={invoice}/>
-                    
-                    {/* invoice products   */}
-                    <InvoiceProducts invoice={invoice} totalProductPages={totalProductPages} onClick={handleReturnProduct} 
-                        onChange={setQuantityToReturn} setErrors={setInputErrors} inputErrors={inputErrors} 
-                        queryString={queryString}
-                    />
-                    
-                    {/* products to return */}
-                    <ProductToReturn products={info.productsData} totalToReturn={totalToReturn} onClick={handleReturnProduct}/>
-                    
-                    
-                    <input type="hidden" 
-                        name="itemsToReturn" 
-                        value={JSON.stringify(info.productsToReturn)}
-                    />
-                    
-                    <input 
-                        type="hidden" 
-                        name="pin"
-                        value="1234"
-                    />
+                <>
+                    <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={handleSubmit}>
+                        {/* header */}
+                        <InvoiceHeader invoice={invoice}/>
+                        
+                        {/* invoice basic info */}
+                        <InvoiceBasicDetails invoice={invoice}/>
+                        
+                        {/* invoice products   */}
+                        <InvoiceProducts invoice={invoice} totalProductPages={totalProductPages} onClick={handleReturnProduct} 
+                            onChange={setQuantityToReturn} setErrors={setInputErrors} inputErrors={inputErrors} 
+                            queryString={queryString}
+                        />
+                        
+                        {/* products to return */}
+                        <ProductToReturn products={info.productsData} totalToReturn={totalToReturn} onClick={handleReturnProduct}/>
+                        
+                        
+                        <input type="hidden" 
+                            name="itemsToReturn" 
+                            value={JSON.stringify(info.productsToReturn)}
+                        />
+                        
+                        <input 
+                            type="hidden" 
+                            name="pin"
+                            value={pin}
+                        />
 
-                    {state?.error && <span className='field_error'>{state?.error}</span>}
-                    {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
-                    
-                    <Button role="submit" type="secondary">
-                        {isPending && <OvalLoader/>}   
-                        {isPending ? 'Generando...' : 'Generar Nota de crédito'}
-                    </Button>
-                    
-                </Form>
+                        {state?.error && <span className='field_error'>{state?.error}</span>}
+                        {noProduct && <span className='field_error'>No hay productos para retornar...</span>}
+                        {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
+                        
+                        <Button role="submit" type="secondary">
+                            {isPending && <OvalLoader/>}   
+                            {isPending ? 'Generando...' : 'Generar Nota de crédito'}
+                        </Button>
+                        
+                        <Modal 
+                        show={showModal}
+                        title={'Se Require PIN Para Generar Esta Nota De Crédito'}
+                        showIcon={true}
+                        onClose={closeModal}
+                        icon='circleArrow'
+                        iconColor='var(--color-accentRed400)'>
+                            <Container
+                                padding={'0px'}
+                                direction={'column'}
+                                width={'100%'}
+                            >
+                                <Input 
+                                    type={'text'}
+                                    inputMode={'numeric'}
+                                    placeHolder={'Pin de supervisor'}
+                                    icon={'padlock'} 
+                                    autocomplete={'off'}
+                                    name={'pin'}
+                                    value={valuePin}
+                                    onChange={(e) => {
+                                        const v = e.target.value
+                                        if (/^[0-9]*$/.test(v)) {
+                                            setPin(v)
+                                            setValuePin('*'.repeat(v.length))
+                                        } 
+                                        setNoPin(false)
+                                    }}
+                                    className={styles.pinInput}
+                                    required={false}
+                                /> 
+                                { noPin && <p className='errorMsg'>El pin es requerido.</p>}
+                                <Container
+                                    padding={'0px'}
+                                    direction={'row'}
+                                >
+                                    <Button role="submit" type="secondary">
+                                        {isPending && <OvalLoader/>}   
+                                        {isPending ? 'Generando...' : 'Generar'}
+                                    </Button>
+                                    
+                                    <Button
+                                        type={'danger'}
+                                        onClick={closeModal}
+                                    >
+                                        Cancelar
+                                    </Button>
+                                </Container>
+                                    <p className='p2-b success_message'>{state?.message}</p>
+                                    <p className='p2-b field_error'>{state?.error}</p>
+                            </Container>
+                        </Modal>   
+                    </Form>
+                              
+                </>
                 :
                 <p className='field_error'>No hay productos para retornar...</p>
             }

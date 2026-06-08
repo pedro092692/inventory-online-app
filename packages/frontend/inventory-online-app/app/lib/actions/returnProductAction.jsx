@@ -29,7 +29,7 @@ export default async function ReturnInvoceItemAction(path = '', msg = '',  prevS
     if(data?.errors){
         return {
             message: null,
-            error: data.errors?.itemsToReturn || 'Hubo un error inesperado intenta nuevamente'
+            error: data.errors?.itemsToReturn || data?.errors || 'Hubo un error inesperado intenta nuevamente'
         }
     }
 

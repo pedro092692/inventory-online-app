@@ -19,7 +19,9 @@ export default function DeleteModal({
         deleteKey = '',
         deleteMsg = 'Elemento eliminado con éxito',
         cancelSupervisor = false,
-        pin = null
+        pin = null,
+        onChangePin = null,
+        customPin = null
 
     }) {
     const initialState = {message: null, error: null}
@@ -92,7 +94,9 @@ export default function DeleteModal({
                                 value={superVisorPin}
                                 onChange={(e) => {
                                     const v = e.target.value
-                                    if (/^[0-9]*$/.test(v)) setSuperVisorPin(v) 
+                                    if (/^[0-9]*$/.test(v)) {
+                                        onChangePin ? customPin(v) : setSuperVisorPin(v)
+                                    } 
                                     setNoPin(false)
                                 }}
                                 className={styles.pinInput}

@@ -24,7 +24,7 @@ export default async function ReturnedInvoiceDetail({ params, searchParams}) {
         >
             <Route path='bills' endpoints={['default', 'detail']} queryString={queryString}/> 
             <Suspense key={id} fallback={<FormSkeleton nFields={5} custonStyle={{width: '100% !important'}}/>}>
-                <ReturnedInvoiceProducts id={id} queryString={queryString} page={page} totalProductPages={totalProductPages}/>  
+                <ReturnedInvoiceProducts id={id} page={page} totalProductPages={totalProductPages}/>  
             </Suspense>
                    
         </Container>

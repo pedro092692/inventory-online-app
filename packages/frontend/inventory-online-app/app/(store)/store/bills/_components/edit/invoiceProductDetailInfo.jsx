@@ -12,12 +12,15 @@ export default async function InvoiceroductDetailInfo({id, page, totalProductPag
     const response = await GetItemAction(url)
     const { data, error: invoiceError } = response
     const invoice = data?.invoice || null
+    const permissions = data?.permissions || []
 
     // await new Promise(resolve => setTimeout(resolve, 2000))
     if (invoiceError) {
         return <p className='p2-r errorMsg'>{invoiceError}</p>
     }
     return (
-        <ProductDetailForm invoice={invoice} totalProductPages={totalProductPages} queryString={queryString} />
+        <ProductDetailForm invoice={invoice} totalProductPages={totalProductPages} queryString={queryString} 
+            permissions={permissions}
+        />
     )
 }

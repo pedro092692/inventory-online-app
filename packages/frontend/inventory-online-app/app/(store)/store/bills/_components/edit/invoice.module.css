@@ -31,3 +31,8 @@
     opacity: 1;
     font-weight: 700;
 }
+
+.pinInput {
+  -webkit-text-security: disc; 
+  text-security: disc;
+}
