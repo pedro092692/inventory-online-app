@@ -24,7 +24,6 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
     const currentUser = await getCurrentUser()
     const { data, error } = response
     const invoice = data?.invoice || null
-
     // await new Promise(resolve => setTimeout(resolve, 1000))
     return (
         <>
@@ -86,7 +85,7 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                 </Link>
 
                 {/* return products */}
-                    {invoice?.refund_status !== 'full' &&
+                    {invoice?.refund_status !== 'full' && invoice.status === 'paid' &&
                     <Link href={`/store/bills/edit/product/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
                             <Button type='grey' style={{backgroundColor: 'var(--color-accentBlue400)', padding: '8px'}}
                                 title={'Hacer una devolución'}
