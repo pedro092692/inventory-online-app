@@ -60,7 +60,7 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                                           total_reference={invoice?.total_reference}/>
                     }
                     products={invoice?.['products']?.length > 0 && 
-                        <ProductDetails productsDetails={invoice['products']}/>}
+                        <ProductDetails productsDetails={false} getProducts={true} invoice_id={invoice?.id}/>}
                     payments={invoice?.['payments-details']?.length > 0 && 
                         <PaymentDetails  paymentDetails={invoice['payments-details']} pdf={true} />}
                 />
@@ -86,7 +86,7 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
 
                 {/* return products */}
                     {invoice?.refund_status !== 'full' && invoice.status === 'paid' &&
-                    <Link href={`/store/bills/edit/product/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
+                    <Link href={`/store/bills/edit/product/${invoice?.id}${queryString ? `?${queryString}` : ''}?fromInvoice=true`}>
                             <Button type='grey' style={{backgroundColor: 'var(--color-accentBlue400)', padding: '8px'}}
                                 title={'Hacer una devolución'}
                             >
