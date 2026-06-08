@@ -162,7 +162,7 @@ export default function ProductDetailForm({invoice=null, totalProductPages = 1, 
     return (
         <>
             {
-                refund_status !== 'full' ?
+                refund_status !== 'full' && invoice?.status === 'paid' ?
                 <>
                     <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={handleSubmit}>
                         {/* header */}
