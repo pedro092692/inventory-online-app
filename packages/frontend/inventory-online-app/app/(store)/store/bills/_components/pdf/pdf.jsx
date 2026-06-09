@@ -74,44 +74,58 @@ export default function InvoicePDF({invoice=null}) {
                     <section className={styles.section}>
                         <h3>Estatus de orden</h3>
                         <p><strong>Estatus:</strong> {status === 'paid' ? 'Pagada' : 'Pendiente'}</p>
-                        {/* <p><strong>Total USD:</strong> ${total}</p> */}
-                        <p><strong>Total Bs:</strong> Bs.S. {total_reference}</p>
                     </section>
 
                     <section className={styles.section}>
                         <h2>Detalles de productos</h2>
-                        <table className={styles.table}>
-                        <thead>
-                            <tr>
-                            <th>Nombre</th>
-                            <th>Precio Unitario</th>
-                            <th>Cantidad</th>
-                            <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {products.map((p, i) => (
-                            <tr key={i}>
-                                <td>{p?.products?.name || 'Producto'}</td>
-                                <td data-label="unit_price">{ new Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(p?.unit_price) || '0'}</td>
-                                <td data-label="quantity">{p?.quantity || '0'}</td>
-                                <td data-label="total">{ new Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(p.quantity * p.unit_price) || '0'}</td>
-                            </tr>
-                            ))}
-                        </tbody>
-                        </table>
+                        {products &&
+                            <>
+                            <table className={styles.table}>
+                            <thead>
+                                <tr>
+                                <th>Nombre</th>
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {products.map((p, i) => (
+                                <tr key={i}>
+                                    <td>{p?.products?.name || 'Producto'}</td>
+                                    <td data-label="unit_price">{ new Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(p?.unit_price) || '0'}</td>
+                                    <td data-label="quantity">{p?.quantity || '0'}</td>
+                                    <td data-label="total">{ new Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(p.quantity * p.unit_price) || '0'}</td>
+                                </tr>
+                                ))} 
+                            </tbody>
+                            </table>
+                                <div className={styles.totalBlock}>
+                                    <p> <strong>Total Bs:</strong> Bs.S. <span className={'p2-b'}>{total_reference}</span></p>
+                                    {/* <p><strong>Total USD:</strong> ${total}</p> */}
+                                </div>
+                            </>
+                        }
+                        {!products && <p>No hay detalles de productos</p>}
                     </section>
 
                     <section className={styles.section}>
                         <h2>Detalles de pago</h2>
-                        {payments.map((pay, i) => (
+                        <div className={styles.separator}></div>
+                        {payments.length > 0 ? payments.map((pay, i) => (
                         <div key={i} className={styles.paymentBlock}>
                             <p><strong>Método:</strong> {pay?.payments?.name || 'Pago'}</p>
                             <p><strong>Moneda:</strong> {pay?.payments?.currency || 'VES'}</p>
                             <p><strong>Monto:</strong> {pay.amount}</p>
-                            <p><strong>Referencia:</strong> {new Intl.NumberFormat('es-US', {style: 'currency', currency: 'USD'}).format(pay.reference_amount)}</p>
+                            <p><strong>Referencia:</strong> 
+                                {new Intl.NumberFormat('es-US', {style: 'currency', currency: 'USD'}).format(pay.reference_amount)}
+                            </p>
+                            <div className={styles.separator}></div>
                         </div>
-                        ))}
+                        ))
+                        :
+                        <p>No hay detalles de pago</p>
+                        }
                     </section>
                 </div>
             </div>

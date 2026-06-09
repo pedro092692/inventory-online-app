@@ -52,20 +52,6 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                 {/* download pdf */}
                 <InvoicePDF 
                     invoice={invoiceNopaginatedProducts}
-                    // info={<InvoiceBasicInfo invoice={invoice}/>} 
-                    // customer={<CustomerInfo customer={invoice?.customer}/>}
-                    // id={invoice?.id}
-                    // billStatus={
-                    //     <BillStatusDetail status={invoice?.status} 
-                    //                       total_paid={invoice?.total_paid} 
-                    //                       total={invoice?.total} 
-                    //                       total_reference={invoice?.total_reference}/>
-                    // }
-                    // products={invoice?.['products']?.length > 0 && 
-                    //     <ProductDetails productsDetails={false} getProducts={true} invoice_id={invoice?.id}/>}
-                    // payments={invoice?.['payments-details']?.length > 0 && 
-                    //     <PaymentDetails  paymentDetails={invoice['payments-details']} pdf={true} 
-                    //     />}
                 />
                 {/* edit */}
                 {['admin', 'storeOwner', 'storeManager'].includes(currentUser?.role_name) && 
