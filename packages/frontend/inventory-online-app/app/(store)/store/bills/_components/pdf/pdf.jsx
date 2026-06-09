@@ -3,14 +3,28 @@ import { useRef } from 'react'
 import { Container } from '@/app/ui/utils/container'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Icon } from '@/app/ui/utils/icons/icons'
+import styles from './pdf.module.css'
+import { formatDate } from '@/app/(store)/store/bills/_components/detail/basicInfo/basicInfo'
 
-export default function InvoicePDF({info=null, customer=null, billStatus=null, products=null, payments=null, id=null}) {
+export default function InvoicePDF({invoice=null}) {
     const componentRef = useRef(null)
-
+    const {
+        id,
+        date,
+        total,
+        total_reference,
+        total_paid,
+        status,
+        customer,
+        seller,
+        products,
+    } = invoice
+    const payments = invoice['payments-details'] || []
     const handleInvoicePDF = async () => {
         const html2pdf = (await import('html2pdf.js')).default
 
         const element = componentRef.current
+        console.log(element)
 
         const options = {
             margin: 10,
@@ -31,39 +45,76 @@ export default function InvoicePDF({info=null, customer=null, billStatus=null, p
             >
                 <Icon icon='pdf' size={[24, 24]}></Icon>
             </Button>
-        
-        <div style={{display:'none'}}>
-            <div ref={componentRef} >
-                <Container
-                    direction={'column'}
-                    width={'100%'}
-                    flexGrow={'1'}
-                    padding={'24px'}
-                    alignItem={'start'}
-                    borderRadius={'8px'}
-                    className='shadow'
-                    gap={'16px'}
-                    id='invoice'
-                >
-                    {info}
+            <div style={{display: 'none'}}>
+                <div className={styles.pdfContainer} ref={componentRef}>
                     <Container
                         padding={'0px'}
                         direction={'row'}
                         gap={'16px'}
-                        alignItem={'start'}
-                        justifyContent={'start'}
-                        width={'100%'}
+                        justifyContent={'space-between'}
                     >
+                        <header className={styles.header}>
+                            <h2>Factura / Recibo</h2>
+                            <p className='p2-r'>N° Recibo: {id}</p>
+                            <p className='p2-r'>Fecha: {formatDate(date)} — {formatDate(date, true)}</p>
+                            <p className='p2-r'>Vendedor: {seller?.name || 'Vendedor'}</p>
+                        </header>
                         
-                        {customer}
-                        {billStatus}
+                        <section className={styles.header}>
+                            <h2>Detalle del cliente</h2>
+                            <p className='p2-r'><strong>Nombre:</strong> {customer?.name || 'Cliente Desconocido'}</p>
+                            <p className='p2-r'><strong>Cédula:</strong> {customer?.id_number || '0'}</p>
+                            <p className='p2-r'><strong>Teléfono:</strong> {customer?.phone || 'XXX-XXXXXXX'}</p>
+                        </section>
+
+                        
                     </Container>
-                    {products}
-                    {payments}
-                </Container>
-                
+                   
+
+                    <section className={styles.section}>
+                        <h3>Estatus de orden</h3>
+                        <p><strong>Estatus:</strong> {status === 'paid' ? 'Pagada' : 'Pendiente'}</p>
+                        {/* <p><strong>Total USD:</strong> ${total}</p> */}
+                        <p><strong>Total Bs:</strong> Bs.S. {total_reference}</p>
+                    </section>
+
+                    <section className={styles.section}>
+                        <h2>Detalles de productos</h2>
+                        <table className={styles.table}>
+                        <thead>
+                            <tr>
+                            <th>Nombre</th>
+                            <th>Precio Unitario</th>
+                            <th>Cantidad</th>
+                            <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {products.map((p, i) => (
+                            <tr key={i}>
+                                <td>{p?.products?.name || 'Producto'}</td>
+                                <td data-label="unit_price">{ new Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(p?.unit_price) || '0'}</td>
+                                <td data-label="quantity">{p?.quantity || '0'}</td>
+                                <td data-label="total">{ new Intl.NumberFormat('es-VE', {style: 'currency', currency: 'VES'}).format(p.quantity * p.unit_price) || '0'}</td>
+                            </tr>
+                            ))}
+                        </tbody>
+                        </table>
+                    </section>
+
+                    <section className={styles.section}>
+                        <h2>Detalles de pago</h2>
+                        {payments.map((pay, i) => (
+                        <div key={i} className={styles.paymentBlock}>
+                            <p><strong>Método:</strong> {pay?.payments?.name || 'Pago'}</p>
+                            <p><strong>Moneda:</strong> {pay?.payments?.currency || 'VES'}</p>
+                            <p><strong>Monto:</strong> {pay.amount}</p>
+                            <p><strong>Referencia:</strong> {new Intl.NumberFormat('es-US', {style: 'currency', currency: 'USD'}).format(pay.reference_amount)}</p>
+                        </div>
+                        ))}
+                    </section>
+                </div>
             </div>
-        </div>
         </>
     )
  }

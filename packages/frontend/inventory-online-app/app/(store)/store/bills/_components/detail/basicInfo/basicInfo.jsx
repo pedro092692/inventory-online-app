@@ -57,13 +57,13 @@ export default function InvoiceBasicInfo({invoice}) {
         <Container padding={'0px'}>
             <h3 className='p2-b'>Fecha: 
                 <span className='p2-r'>
-                    {` ${invoice?.date ? formaDate(invoice?.date) : ''}`}
+                    {` ${invoice?.date ? formatDate(invoice?.date) : ''}`}
                 </span>
             </h3>
             {/* time */}
             <h3 className='p2-b'>Hora: 
                 <span className='p2-r'>
-                    {` ${invoice?.date ? formaDate(invoice?.date, true) : ''}`}
+                    {` ${invoice?.date ? formatDate(invoice?.date, true) : ''}`}
                 </span>
             </h3>
         </Container>
@@ -71,7 +71,7 @@ export default function InvoiceBasicInfo({invoice}) {
     )
 }
 
-function formaDate(date, time = false) {
+function formatDate(date, time = false) {
     if(!time) {
         return new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' })
     }
@@ -85,3 +85,5 @@ function formaDate(date, time = false) {
     const min = minutes.toString().padStart(2, '0')
     return `${hours}:${min} ${ampm}`
 }
+
+export { formatDate }

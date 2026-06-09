@@ -24,7 +24,8 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
     const currentUser = await getCurrentUser()
     const { data, error } = response
     const invoice = data?.invoice || null
-    // await new Promise(resolve => setTimeout(resolve, 1000))
+    const responseNoPaginatedProducts = await GetItemAction(`invoices/${id}?paginated=false`)
+    const invoiceNopaginatedProducts = responseNoPaginatedProducts?.data?.invoice || []
     return (
         <>
         {invoice ?
@@ -50,19 +51,21 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
             >
                 {/* download pdf */}
                 <InvoicePDF 
-                    info={<InvoiceBasicInfo invoice={invoice}/>} 
-                    customer={<CustomerInfo customer={invoice?.customer}/>}
-                    id={invoice?.id}
-                    billStatus={
-                        <BillStatusDetail status={invoice?.status} 
-                                          total_paid={invoice?.total_paid} 
-                                          total={invoice?.total} 
-                                          total_reference={invoice?.total_reference}/>
-                    }
-                    products={invoice?.['products']?.length > 0 && 
-                        <ProductDetails productsDetails={false} getProducts={true} invoice_id={invoice?.id}/>}
-                    payments={invoice?.['payments-details']?.length > 0 && 
-                        <PaymentDetails  paymentDetails={invoice['payments-details']} pdf={true} />}
+                    invoice={invoiceNopaginatedProducts}
+                    // info={<InvoiceBasicInfo invoice={invoice}/>} 
+                    // customer={<CustomerInfo customer={invoice?.customer}/>}
+                    // id={invoice?.id}
+                    // billStatus={
+                    //     <BillStatusDetail status={invoice?.status} 
+                    //                       total_paid={invoice?.total_paid} 
+                    //                       total={invoice?.total} 
+                    //                       total_reference={invoice?.total_reference}/>
+                    // }
+                    // products={invoice?.['products']?.length > 0 && 
+                    //     <ProductDetails productsDetails={false} getProducts={true} invoice_id={invoice?.id}/>}
+                    // payments={invoice?.['payments-details']?.length > 0 && 
+                    //     <PaymentDetails  paymentDetails={invoice['payments-details']} pdf={true} 
+                    //     />}
                 />
                 {/* edit */}
                 {['admin', 'storeOwner', 'storeManager'].includes(currentUser?.role_name) && 

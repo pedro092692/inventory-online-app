@@ -1,0 +1,40 @@
+.pdfContainer {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  padding: 20px;
+  color: #000;
+}
+
+.header h1 {
+  margin-bottom: 5px;
+  page-break-inside: avoid;
+}
+
+.section {
+  margin-top: 20px;
+  page-break-inside: avoid;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+
+}
+
+.table th, .table td {
+  border: 1px solid #cacaca;
+  padding: 6px;
+  font-size: 12px;
+}
+
+.table td[data-label="unit_price"],
+.table td[data-label="quantity"],
+.table td[data-label="total"] {
+    text-align: right;
+}
+
+.paymentBlock {
+  margin-bottom: 10px;
+  page-break-inside: avoid;
+}
