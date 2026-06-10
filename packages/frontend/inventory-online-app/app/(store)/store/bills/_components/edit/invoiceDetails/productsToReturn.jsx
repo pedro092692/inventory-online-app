@@ -2,7 +2,7 @@ import List from '@/app/ui/list/list'
 import { Container } from '@/app/ui/utils/container'
 import { Button } from '@/app/ui/utils/button/buttons'
 import styles from '../invoice.module.css'
-export default function ProductToReturn({products, totalToReturn=0, onClick=null}) {
+export default function ProductToReturn({ products, totalToReturn=0, onClick=null }) {
     if (!products ) return null
 
     const customButton = (data) => {
