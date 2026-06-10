@@ -14,7 +14,7 @@ export default async function ReturnedInvoiceProducts({ id, limit = 8, page = 1,
 
     const response = await GetItemAction(url)
     const { data, error } = response
-    const returnedProducts = data?.returnedProducts || null
+    const returnedProducts = data?.returnedProducts || []
     const products = returnedProducts.map(product => {
         return {
             name: product?.invoice_detail?.products?.name || 'Undefined',

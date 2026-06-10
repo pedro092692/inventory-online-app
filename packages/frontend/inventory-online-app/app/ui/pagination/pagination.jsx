@@ -3,7 +3,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { Container } from '@/app/ui/utils/container'
 import styles from './pagination.module.css'
 import Link from 'next/link'
-export default function Pagination({totalPages, paramName = 'page', maxVisiblePages = 8}) {
+export default function Pagination({totalPages, paramName = 'page', maxVisiblePages = 8, scroll = true}) {
     
     const pathname = usePathname()
     const searchParams = useSearchParams()
@@ -48,6 +48,7 @@ export default function Pagination({totalPages, paramName = 'page', maxVisiblePa
                 return(
                     <Link href={createPageURL(pageNumber)} 
                         key={index}
+                        scroll={scroll}
                         className={`${styles.page} p2-b` + (pageNumber === currentPage ? ` ${styles.active}` : '')}
                     >
                         {pageNumber} 

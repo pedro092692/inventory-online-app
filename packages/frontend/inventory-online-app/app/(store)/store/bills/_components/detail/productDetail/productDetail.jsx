@@ -73,7 +73,7 @@ export default async function ProductDetails({ productsDetails, invoice_id, quer
                                 Ítem con devolución parcial 🟡 Ítem con devolución completa 🔴
                             </p>
 
-                            <Link href={`/store/bills/detail/return/${invoice_id}${queryString ? `?${queryString}` : ''}&fromInvoice=1`}>
+                            <Link href={`/store/bills/detail/return/${invoice_id}${queryString ? `?${queryString}&fromInvoice=1` : '?&fromInvoice=1'}`}>
                                 <Button
                                     type="grey"
                                     style={{ backgroundColor: 'var(--color-blue700)', padding: '8px' }}
