@@ -23,7 +23,7 @@ export default async function Bills({searchParams}) {
             padding='0px'
             width='100%'
         >
-            <Route path='bills' endpoints={['add', 'default']} queryString={queryString}/>
+            <Route path='sell' endpoints={['add', 'default']} queryString={queryString}/>
             <Search placeHolder="Buscar factura por # número, Nombre del cliente o Cédula del cliente" />
             <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={7} />}>
                 <Invoices page={currentPage} query={query} queryString={queryString}/>

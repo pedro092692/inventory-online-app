@@ -95,6 +95,21 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 label: 'Ver productos de la devolución',
                 role: [1,2,3,4]
             }
+        },
+
+        sell: {
+            default: {
+                href: withParams(endpoint),
+                label: 'Ordenes de compra',
+                role: [1,2,3,4]
+
+            },
+            
+            add: {
+                 href: `${endpoint}${queryString?`?${queryString}`: ''}`,
+                label: 'Nueva Venta',
+                role: [1,2,3,4]
+            },
         }
     }
     
