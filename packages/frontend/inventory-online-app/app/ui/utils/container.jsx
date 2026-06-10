@@ -17,7 +17,9 @@ export function Container(
         onMouseLeave,
         borderRadius,
         listContiner=false,
-        id=null
+        id=null,
+        position=null,
+        marginLeft=null,
     }) {
 
         const styles = {
@@ -31,6 +33,8 @@ export function Container(
             flexGrow: flexGrow,
             backgroundColor: backgroundColor,
             borderRadius: borderRadius,
+            position: position,
+            marginLeft: marginLeft
         }
     return (
         <div ref={ref} className={`container ${className} ${listContiner ? 'container-list' : ''}`} style={styles} 

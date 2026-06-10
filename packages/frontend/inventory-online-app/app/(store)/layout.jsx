@@ -3,12 +3,14 @@ import { Panel } from '../ui/dashboard/panel/panel'
 export default function Dashboard({children, }) {
     return (
         <Container
+            marginLeft={'15%'}
             flexGrow='1'
             alignItem='start'
             justifyContent='start'
             direction='row'
             padding='0'
             gap='0px'
+
         >
             {/* panel */}
             <Panel />
