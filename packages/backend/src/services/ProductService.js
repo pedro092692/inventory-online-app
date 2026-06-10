@@ -171,7 +171,12 @@ class ProductService{
      */
     searchProducts(query, page = 1, limit = 10, includePurchasePrice = true) {
         const offset = (page - 1) * limit
-        let attributes  = ['id', 'barcode', 'name', 'selling_price','stock']
+        const terms = query
+            .toLowerCase()
+            .split(" ")
+            .filter(t => t.trim() !== "")
+        
+            let attributes  = ['id', 'barcode', 'name', 'selling_price','stock']
         if (includePurchasePrice) {
             attributes.push('purchase_price')
         }
@@ -179,7 +184,11 @@ class ProductService{
             const results = await this.Product.findAndCountAll({
                 where: {
                     [Op.or]: [
-                        { name: {[Op.substring]: query.toLowerCase()} },
+                        { 
+                            [Op.and]: terms.map(term => ({
+                                name: {[Op.substring]: term}
+                            }))
+                        },
                         { barcode: {[Op.substring]: query.toLowerCase()} }
                     ]
                 },
