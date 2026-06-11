@@ -1,6 +1,6 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
-import { Op, ValidationError } from 'sequelize'
+import { Op, ValidationError, fn, col } from 'sequelize'
 
 class CustomerService {
 
@@ -80,9 +80,30 @@ class CustomerService {
                         limit: limitInvoices,
                         offset: offsetInvoices,
                         order: [['id', 'DESC']]
-                    }
+                    },
+                    {
+                        association: 'credits',
+                        attributes: [],
+                        where: {
+                            status: 'active'
+                        }
+                    },
                 ],
+                attributes: [
+                    'id',
+                    'id_number',
+                    'name',
+                    'phone',
+                    [
+                        fn('COALESCE', fn('SUM', col('credits.amount')), 0),
+                        'total_credits'
+                    ]
+                ],
+                group: [
+                    'Customer.id',
+                ]
             })
+            
             if (!customer) {
                 throw new NotFoundError()
             }
