@@ -13,6 +13,18 @@ class Customer extends Model {
             as: 'invoices'
         })
     }
+
+    /**
+     * Creates an association between the Customer model and the Customer Credit model.
+     * @param {{ CreditCustomer: typeof Model }} model - An object containing the Invoice Credit model class.
+     * @returns {void} This method does not return a value.
+     */
+    static associateCredit(model) {
+        this.hasMany(model.CustomerCredit, {
+            foreignKey: 'customer_id',
+            as: 'credits'
+        })
+    }
 }
 
 /**

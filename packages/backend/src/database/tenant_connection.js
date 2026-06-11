@@ -214,6 +214,7 @@ class TenantConnection {
      */
     async initializeTenantAssociations() {
         Customer.associate({Invoice})
+        Customer.associateCredit({CustomerCredit})
         Invoice.associate({Customer})
         Invoice.associateDetail({InvoiceDetail})
         Invoice.associationSeller({Seller})
