@@ -5,7 +5,7 @@ import { useDebouncedCallback } from 'use-debounce'
 import { Container } from '@/app/ui/utils/container'
 import InputWithIcon from '@/app/ui/customers/searchAndSelect/input/inputWithIcon'
 import SearchCustomerInput from '@/app/ui/customers/searchAndSelect/input/searchInput'
-import SearchResultsContainer from '@/app/ui/customers/searchAndSelect/results/searchResults'
+import ProductResultContainer from '@/app/(store)/store/sell/_components/product/productContainer'
 
 export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras'}) {
     const [query, setQuery] = useState('')
@@ -37,17 +37,19 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         }
     }, 300)
 
+    console.log(results)
     return (
         <>
             {/* input search */}
             <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder}/>
-            <div>
+            <ProductResultContainer/>
+            {/* <div>
                 {results.length > 0 && results.map(product => {
                     return (
                         <p key={product.id}>{product.name} - {product.selling_price}$</p>
                     )
                 })}
-            </div>
+            </div> */}
         </>
     )
 }   
