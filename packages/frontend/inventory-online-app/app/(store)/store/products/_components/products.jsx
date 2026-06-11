@@ -82,7 +82,7 @@ export default async function Products({ limit = 10, page = 1, query = null, que
             deleteMsg='Producto eliminado con éxito'
             showView={false}
             customClass={styles.table}
-            
+            rowClassName={(rowData) => rowData.stock === 0 ? styles.notStockRow : rowData.stock <= 5 ? styles.lowStockRow : ''}
         />
     )
 }

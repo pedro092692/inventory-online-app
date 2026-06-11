@@ -10,3 +10,12 @@
   cursor: default;
   font-size: 1.2em;
 }
+
+
+.lowStockRow{
+  background-color: var(--color-accentOrange200) !important; 
+}
+
+.notStockRow{
+  background-color: var(--color-accentRed400) !important; 
+}
