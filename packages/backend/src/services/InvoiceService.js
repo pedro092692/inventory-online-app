@@ -37,6 +37,12 @@ class InvoiceService {
             
             // verify details if details is empty or not an array throw error
             verifyDetails(details)
+
+            // check for product stock
+            const produtscStock = await this.Product.getProductStock(details)
+
+            // validate stock for each product
+            this.validateStockProduct(produtscStock, details)
             
             // create new invoice
             const newInvoice = await this.Invoice.create({
@@ -58,9 +64,6 @@ class InvoiceService {
         return this.#error.handler(['Add invoices details'], async() => {
             // verify details if details is empty or not an array throw error
             verifyDetails(details)
-
-            // check for product stock
-            const produtscStock = await this.Product.getProductStock(details)
             
             // get product unit price 
             const productsUnitPrice = await this.Product.getProductUnitPrice(details)
@@ -76,10 +79,6 @@ class InvoiceService {
                 }
                 detail.unit_price = product.selling_price
             })
-
-            
-            // validate stock for each product
-            this.validateStockProduct(produtscStock, details)
 
             // subtract stock from products table
             await this.Product.updateStock(details)
@@ -605,7 +604,7 @@ class InvoiceService {
         for(const detail of details) {
             const product = produtscStock.find(p => p.id === detail.product_id)
             if(!product || product.stock < detail.quantity) {
-                throw new Error(`Not enougth stock for this product: ${product.id}, Avaliale stock: ${product.stock}`)
+                throw new Error(`Not enougth stock for this product: ${product.name}, Avaliale stock: ${product.stock}`)
             }
         }
     }

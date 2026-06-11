@@ -283,7 +283,7 @@ class ProductService{
         return this.#error.handler(['Read Stock Product'], async() => {
             const products = await this.Product.findAll({
                 where: { id: details.map(detail => detail.product_id) },
-                attributes: ['id', 'stock']
+                attributes: ['id', 'stock', 'name']
             })
             return products
         })
