@@ -13,12 +13,6 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     const [selected, setSelected] = useState(null)
     const showResultsRef = useRef(null)
 
-    const sum = (n1, n2) => {
-        return n1 + n2
-    } 
-
-    sum(1, 2)
-
     const endpoint = `products/search`
     const params = new URLSearchParams()
     
@@ -26,6 +20,7 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     params.append('data', query)
     params.append('limit', 8)
     params.append('page', 1)
+    params.append('stock', true)
     const url = `${endpoint}?${params.toString()}`
     
     const handleInputChange = (e) => {
@@ -51,6 +46,11 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         }
     }
 
+    const handleClick = (product) => {
+        console.log('product', product)
+        alert('you click on product', product.name)
+    }
+
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside)
         
@@ -63,7 +63,7 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         <>
             {/* input search */}
             <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder}/>
-            { results.length > 0 && <ProductResultContainer ref={showResultsRef} results={results}/> }
+            { results.length > 0 && <ProductResultContainer ref={showResultsRef} results={results} onClick={handleClick}/> }
         </>
     )
 }   

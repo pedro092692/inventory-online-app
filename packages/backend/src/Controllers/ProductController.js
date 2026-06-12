@@ -73,8 +73,9 @@ class ProductController{
         const { data } = req.query
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
+        const stock = req.query.stock ? req.query.stock : false
         const permissions = userPermissions(req)
-        const { products } = await this.ProductService.searchProducts(data, page, limit, includePurchasePrice)
+        const { products } = await this.ProductService.searchProducts(data, page, limit, includePurchasePrice, stock)
         res.status(200).json( { products, permissions } )
     })
 

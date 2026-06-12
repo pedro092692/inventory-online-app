@@ -2,7 +2,7 @@ import { Container } from "@/app/ui/utils/container"
 import styles from './productSelector.module.css'
 
 
-export default function ProductResultContainer({results = [], ref}) {
+export default function ProductResultContainer({results = [], ref, onClick=() => ''}) {
     
     return (
         
@@ -33,7 +33,7 @@ export default function ProductResultContainer({results = [], ref}) {
             <Container className={styles.resultsContainer}>
                 {results.map((product, index) => {
                     return (
-                        <Container key={index} className={styles.result}>
+                        <Container key={index} className={styles.result} onClick={() => onClick(product)}>
                             <div className={styles.resultCOD}>
                                 <p className={'p2-b'}>
                                     {product.id}

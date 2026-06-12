@@ -169,7 +169,7 @@ class ProductService{
      * @return {Promise<Object>} - A promise that resolves to an object containing search results and pagination info.
      * @throws {ServiceError} - If an error occurs during the search.
      */
-    searchProducts(query, page = 1, limit = 10, includePurchasePrice = true) {
+    searchProducts(query, page = 1, limit = 10, includePurchasePrice = true, stock = true) {
         const offset = (page - 1) * limit
         const terms = query
             .toLowerCase()
@@ -183,6 +183,7 @@ class ProductService{
         return this.#error.handler(['Search Products', query, 'Product'], async () => {
             const results = await this.Product.findAndCountAll({
                 where: {
+    
                     [Op.or]: [
                         { 
                             [Op.and]: terms.map(term => ({
@@ -191,7 +192,9 @@ class ProductService{
                         },
                         { barcode: {[Op.substring]: query.toLowerCase()} },
                         { id: parseInt(query) ? parseInt(query) : null} 
-                    ]
+                    ],
+                    
+                    stock: stock ? {[Op.gt]: 0} : {[Op.gte]: 0},
                 },
                 attributes: attributes,
                 order: [['id', 'DESC']],
