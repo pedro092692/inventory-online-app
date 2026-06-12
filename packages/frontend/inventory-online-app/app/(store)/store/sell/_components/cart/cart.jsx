@@ -30,12 +30,12 @@ export default function Cart({items=[]}) {
                 </div>
             </Container>
             <Container className={styles.cartContent}>
-                {/* {Array.from({length: 20}).map((item, index) => {
+                {items.map((item, index) => {
                     return (
                         <Container key={index} className={styles.cartRow}>
                             <div className={styles.itemNameContainer}>
                                 <p className={`${styles.itemName} p2-r`}>
-                                    acido acetilsalicilico 81mg x 10 tab caja x 10 blister drotafarma
+                                   {`${item.name.length > 76 ? item.name.slice(0, 76) + '...' : item.name}`}
                                 </p>
                                 <Button 
                                     icon={'trash'} 
@@ -48,20 +48,26 @@ export default function Cart({items=[]}) {
                             </div>
                             
                             <div className={styles.itemPriceContainer}>
-                                <p className={'p2-r'}>1.020,00</p>
+                                <p className={'p2-r'}>
+                                    {new Intl.NumberFormat('es-Ve').format(item.reference_selling_price)}
+                                </p>
                             </div>
                             
                             <div className={styles.itemQuantityContainer}>
-                                <p className={'p2-r'}>1</p>
+                                <p className={'p2-r'}>
+                                    {item.quantity}
+                                </p>
                             </div>
                             
                             <div className={styles.itemTotalContainer}>
-                                <p className={'p2-r'}>1.020,00</p>
+                                <p className={'p2-r'}>
+                                    {new Intl.NumberFormat('es-Ve').format(item.quantity * item.reference_selling_price)}
+                                </p>
                             </div>
                         </Container>
                         
                     )
-                })} */}
+                })}
 
                 {items.length < 1 && <p className={'p2-r'} style={{padding: '16px'}}>No hay productos agregados...</p>}
             </Container>

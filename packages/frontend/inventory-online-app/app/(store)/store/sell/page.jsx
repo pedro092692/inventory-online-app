@@ -7,6 +7,7 @@ import { useState } from 'react'
 
 export default function Sell() {
     const [show, setShow] = useState(false)
+    const [items, setItems] = useState([])
 
     const handleGoCustomer = () => {
         setShow(!show)
@@ -15,11 +16,11 @@ export default function Sell() {
     return (
         <div className={styles.mainContainer}>
             <div className={styles.searchContainer}>
-                <ProductSelector />
+                <ProductSelector  setItems={setItems} />
             </div>
 
             <div className={styles.cartContainer}>
-                 <Cart />
+                 <Cart items={items} />
             </div>
         </div>
 

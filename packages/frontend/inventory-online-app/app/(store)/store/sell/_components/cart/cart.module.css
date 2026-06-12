@@ -28,8 +28,6 @@
 
 .headerNAME{
     width: 50%;
-    /* background: yellow; */
-
 }
 
 .headerPRICE{
@@ -66,6 +64,7 @@
 }
 
 .cartRow{
+    min-width: 0;
     padding: 8px;
     gap: 0px;
     width: 100%;
@@ -80,8 +79,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-right: 8px;
-    /* background-color: yellow; */
+    width: 50%;
+    min-width: 0;
 }
 
 .itemPriceContainer{
@@ -100,12 +99,13 @@
     display: flex;
     justify-content: flex-end;
     width: 15%;
-
 }
 
 .itemName{
-    width: 80%;
+    flex: 1;
+    min-width: 0; 
 }
+
 
 @media screen and (max-width: 1600px){
     .itemNameContainer{

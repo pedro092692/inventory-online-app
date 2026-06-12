@@ -7,10 +7,9 @@ import InputWithIcon from '@/app/ui/customers/searchAndSelect/input/inputWithIco
 import SearchCustomerInput from '@/app/ui/customers/searchAndSelect/input/searchInput'
 import ProductResultContainer from '@/app/(store)/store/sell/_components/product/productContainer'
 
-export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras'}) {
+export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras', setItems=() => ''}) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
-    const [selected, setSelected] = useState(null)
     const showResultsRef = useRef(null)
 
     const endpoint = `products/search`
@@ -47,8 +46,11 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     }
 
     const handleClick = (product) => {
-        console.log('product', product)
-        alert('you click on product', product.name)
+        product['quantity'] = 1
+        console.log(product)
+        setItems(prev => [...prev, product])
+        setResults([])
+        setQuery('')
     }
 
     useEffect(() => {
