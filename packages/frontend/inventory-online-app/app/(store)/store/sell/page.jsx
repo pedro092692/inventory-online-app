@@ -1,5 +1,6 @@
 'use client'
 import ProductSelector from "@/app/(store)/store/sell/_components/product/productSelector"
+import Cart from "@/app/(store)/store/sell/_components/cart/cart"
 import { Container } from "@/app/ui/utils/container"
 import styles from './sell.module.css'
 import { useState } from 'react'
@@ -12,47 +13,57 @@ export default function Sell() {
     }
 
     return (
-        <Container
-            className={styles.mainContainer}
-        >
-            <Container
-                    className={`${styles.container} ${!show ? styles.show : styles.hide}`}
-            >
-                    <Container
-                        className={styles.searchContainer}
-                    >
-                        <ProductSelector />
-                        <button
-                            onClick={handleGoCustomer}
-                        >
-                            Seleccionar cliente
-                        </button>
+        <div className={styles.mainContainer}>
+            <div className={styles.searchContainer}>
+                <ProductSelector />
+            </div>
 
-                    </Container>
-                    <Container
-                        className={styles.cartContainer}
-                    >
-                        <p>Products in the cart</p>
-                        <p>Manage cart</p>
-                    </Container>
+            <div className={styles.cartContainer}>
+                 <Cart />
+            </div>
+        </div>
 
-            </Container>
+        // <Container
+        //     className={styles.mainContainer}
+        // >
+        //     <Container
+        //             className={`${styles.container} ${!show ? styles.show : styles.hide}`}
+        //     >
+        //             <Container
+        //                 className={styles.searchContainer}
+        //             >
+        //                 <ProductSelector />
+        //                 <button
+        //                     onClick={handleGoCustomer}
+        //                 >
+        //                     Seleccionar cliente
+        //                 </button>
 
-            <Container
-                    className={`${styles.container} ${show ? styles.show : styles.hide}`}
-            >
-                    <Container
-                        className={styles.customerContainer}
-                    >
-                        <p>Selecciona a un cliente</p>
-                        <button
-                            onClick={handleGoCustomer}
-                        >
-                            Volver
-                        </button>
-                    </Container>
+        //             </Container>
+                    
+        //             <Container
+        //                 className={styles.cartContainer}
+        //             >
+        //                 <Cart />
+        //             </Container>
 
-            </Container>    
-        </Container>
+        //     </Container>
+
+        //     <Container
+        //             className={`${styles.container} ${show ? styles.show : styles.hide}`}
+        //     >
+        //             <Container
+        //                 className={styles.customerContainer}
+        //             >
+        //                 <p>Selecciona a un cliente</p>
+        //                 <button
+        //                     onClick={handleGoCustomer}
+        //                 >
+        //                     Volver
+        //                 </button>
+        //             </Container>
+
+        //     </Container>    
+        // </Container>
     )
 }

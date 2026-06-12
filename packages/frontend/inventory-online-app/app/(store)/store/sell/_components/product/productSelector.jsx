@@ -13,6 +13,12 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     const [selected, setSelected] = useState(null)
     const showResultsRef = useRef(null)
 
+    const sum = (n1, n2) => {
+        return n1 + n2
+    } 
+
+    sum(1, 2)
+
     const endpoint = `products/search`
     const params = new URLSearchParams()
     

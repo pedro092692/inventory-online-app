@@ -10,8 +10,9 @@ export default function SearchCustomerInput({query, onChange, placeHolder}) {
                 backgroundColor={'var(--color-neutralGrey300)'}
                 width='100%'
                 gap={'0px'}
-                borderRadius='8px'
-                justifyContent='start'
+                borderRadius={'8px'}
+                justifyContent={'start'}
+                className={'shadow-bottom-sm'}
             >
                 <Icon icon={'search'} color='black'/>
                 <input 

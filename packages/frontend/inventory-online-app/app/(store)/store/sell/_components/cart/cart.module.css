@@ -1,0 +1,114 @@
+.cartContainer{
+    padding: 0;
+    width: 100%;
+    height: auto;
+    max-height: 776px;
+    overflow-y: auto;
+    border-radius: 8px;
+    background-color: var(--color-neutralGrey300);
+    justify-content: start;
+    align-items: start;
+    flex-direction: column;
+    gap: 0px;
+}
+
+.cartHeader{
+    padding: 8px 16px;
+    width: 100%;
+    background-color: var(--color-blue400);
+    border-radius: 8px 8px 0px 0px;
+    justify-content: start;
+    gap: 0px;
+}
+
+.headerCOD{
+    width: 5%;
+    /* background: red; */
+}
+
+.headerNAME{
+    width: 50%;
+    /* background: yellow; */
+
+}
+
+.headerPRICE{
+    width: 20%;
+    display: flex;
+    justify-content: flex-end;
+    /* background:pink; */
+}
+
+.headerQUANTITY{
+    width: 15%;
+    display: flex;
+    justify-content: flex-end;
+    /* background: grey; */
+    
+}
+
+.headerTOTAL{
+    width: 15%;
+    display: flex;
+    justify-content: flex-end;
+    /* background: green; */
+}
+
+.cartContent{
+    padding: 8px 16px;
+    flex-direction: column;
+    padding: 0px;
+    width: 100%;
+    justify-content: start;
+    align-items: start;
+    gap: 0px;
+    /* background: yellow; */
+}
+
+.cartRow{
+    padding: 8px;
+    gap: 0px;
+    width: 100%;
+    justify-content: start;
+}
+
+.cartRow:hover{
+    background-color: rgba(165, 164, 164, 0.15);
+}
+
+.itemNameContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 8px;
+    /* background-color: yellow; */
+}
+
+.itemPriceContainer{
+    display: flex;
+    justify-content: flex-end;
+    width: 20%;
+}
+
+.itemQuantityContainer{
+    display: flex;
+    justify-content: flex-end;
+    width: 15%;
+}
+
+.itemTotalContainer{
+    display: flex;
+    justify-content: flex-end;
+    width: 15%;
+
+}
+
+.itemName{
+    width: 80%;
+}
+
+@media screen and (max-width: 1600px){
+    .itemNameContainer{
+        width: 50%;
+    }
+}

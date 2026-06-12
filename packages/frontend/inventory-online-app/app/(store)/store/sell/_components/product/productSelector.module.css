@@ -5,7 +5,7 @@
     padding: 0px;
     justify-content: start;
     border-radius: 0px 0px 8px 8px;
-    margin-top: -14px;
+    margin-top: -8px;
     z-index: 1;
     background-color: white;
     box-shadow: 0px 11px 7px -7px rgba(0,0,0,0.59);
@@ -56,11 +56,7 @@
     /* background: yellow; */
 }
 
-.name {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis
-}
+
 
 .resultPrice, .resultPriceBs{
     width: 15%;
@@ -76,7 +72,6 @@
     align-items: center;
     width: 100%;
     padding: 8px 16px;
-    border-radius: 4px;
 
 }
 
