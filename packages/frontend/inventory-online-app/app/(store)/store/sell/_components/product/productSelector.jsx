@@ -11,12 +11,7 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
     const [selected, setSelected] = useState(null)
-
-    const handleInputChange = (e) => {
-        const value = e.target.value
-        setQuery(value)
-        handleSearch(value)
-    }
+    const showResultsRef = useRef(null)
 
     const endpoint = `products/search`
     const params = new URLSearchParams()
@@ -26,6 +21,12 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     params.append('limit', 8)
     params.append('page', 1)
     const url = `${endpoint}?${params.toString()}`
+    
+    const handleInputChange = (e) => {
+        const value = e.target.value
+        setQuery(value)
+        handleSearch(value)
+    }
 
     const handleSearch = useDebouncedCallback(async (term) => {
         if(term) {
@@ -37,19 +38,26 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         }
     }, 300)
 
-    console.log(results)
+    const handleClickOutside = (event) => {
+        if (showResultsRef.current && !showResultsRef.current.contains(event.target)) {
+            setResults([])
+            setQuery('')
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside)
+        
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
+
     return (
         <>
             {/* input search */}
             <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder}/>
-            <ProductResultContainer/>
-            {/* <div>
-                {results.length > 0 && results.map(product => {
-                    return (
-                        <p key={product.id}>{product.name} - {product.selling_price}$</p>
-                    )
-                })}
-            </div> */}
+            { results.length > 0 && <ProductResultContainer ref={showResultsRef} results={results}/> }
         </>
     )
 }   

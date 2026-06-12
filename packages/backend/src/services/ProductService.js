@@ -189,7 +189,8 @@ class ProductService{
                                 name: {[Op.substring]: term}
                             }))
                         },
-                        { barcode: {[Op.substring]: query.toLowerCase()} }
+                        { barcode: {[Op.substring]: query.toLowerCase()} },
+                        { id: parseInt(query) ? parseInt(query) : null} 
                     ]
                 },
                 attributes: attributes,

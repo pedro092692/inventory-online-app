@@ -1,0 +1,73 @@
+.headerContainer{
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    padding: 16px;
+    justify-content: start;
+    border-radius: 0px 0px 8px 8px;
+    margin-top: -14px;
+    z-index: 1;
+    background-color: white;
+    box-shadow: 0px 11px 7px -7px rgba(0,0,0,0.59);
+
+}
+
+.header{
+    padding: 0px;
+    justify-content: start;
+    width: 100%;
+    gap: 0px;
+}
+
+.resultsContainer{
+    width: 100%;
+    flex-direction: column;
+    padding: 0px;
+    cursor: pointer;
+}
+
+
+.headerCOD, .resultCOD{
+    width: 10%;
+    /* background-color: red; */
+}
+
+.headerName, .resultName{
+    width: 60%;
+    /* background-color: yellow; */
+}
+
+.headerPrice, .resultPrice, .headerPriceBs, .resultPriceBs{
+    width: 15%;
+    display: flex;
+    justify-content: flex-end;
+    /* background-color: green; */
+}
+
+
+.resultName {
+    max-width: 433px;
+}
+
+.name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+
+
+.result{
+    gap: 0px;
+    /* background-color: orange; */
+    justify-content: start;
+    align-items: start;
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+
+}
+
+.result:hover{
+    background-color: rgba(165, 164, 164, 0.15);
+}
