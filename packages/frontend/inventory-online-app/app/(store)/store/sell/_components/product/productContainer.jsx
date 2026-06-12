@@ -8,10 +8,26 @@ export default function ProductResultContainer({results = [], ref}) {
         
         <Container className={`${styles.headerContainer}`} ref={ref}>
             <Container className={styles.header}>
-                    <div className={styles.headerCOD}>COD</div>
-                    <div className={styles.headerName}>NOMBRE</div>
-                    <div className={styles.headerPrice}>PRECIO $</div>
-                    <div className={styles.headerPriceBs}>PRECIO Bs</div>
+                    <div className={styles.headerCOD}>
+                        <p className={'p3-b'}>
+                            COD
+                        </p>
+                    </div>
+                    <div className={styles.headerName}>
+                        <p className={'p3-b'}>
+                            NOMBRE
+                        </p>
+                    </div>
+                    <div className={styles.headerPrice}>
+                        <p className={'p3-b'}>
+                            PRECIO $
+                        </p>
+                    </div>
+                    <div className={styles.headerPriceBs}>
+                        <p className={'p3-b'}>
+                            PRECIO Bs
+                        </p>
+                    </div>
             </Container>
             
             <Container className={styles.resultsContainer}>
@@ -30,12 +46,12 @@ export default function ProductResultContainer({results = [], ref}) {
                             </div>
                             <div className={styles.resultPrice}>
                                 <p className={'p2-b'}>
-                                    {product.selling_price}
+                                    {new Intl.NumberFormat('es-Ve').format(product.selling_price)}
                                 </p>
                             </div>
                             <div className={styles.resultPriceBs}>
                                 <p className={'p2-b'}>
-                                    {product.reference_selling_price}
+                                    {new Intl.NumberFormat('es-Ve').format(product.reference_selling_price)}
                                 </p>
                             </div>
                         </Container>

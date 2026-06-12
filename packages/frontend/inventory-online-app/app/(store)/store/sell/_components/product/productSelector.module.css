@@ -1,8 +1,8 @@
 .headerContainer{
     flex-direction: column;
-    gap: 8px;
+    gap: 0px;
     width: 100%;
-    padding: 16px;
+    padding: 0px;
     justify-content: start;
     border-radius: 0px 0px 8px 8px;
     margin-top: -14px;
@@ -13,10 +13,11 @@
 }
 
 .header{
-    padding: 0px;
+    padding:  8px 16px;
     justify-content: start;
     width: 100%;
     gap: 0px;
+    background-color: var(--color-blue400);
 }
 
 .resultsContainer{
@@ -24,29 +25,35 @@
     flex-direction: column;
     padding: 0px;
     cursor: pointer;
+    gap: 0px
 }
 
-
-.headerCOD, .resultCOD{
+.headerCOD {
     width: 10%;
-    /* background-color: red; */
+    /* background: red; */
+
 }
 
-.headerName, .resultName{
+.headerName {
     width: 60%;
-    /* background-color: yellow; */
+    /* background: yellow; */
 }
 
-.headerPrice, .resultPrice, .headerPriceBs, .resultPriceBs{
+.headerPrice, .headerPriceBs{
     width: 15%;
     display: flex;
     justify-content: flex-end;
-    /* background-color: green; */
+    /* background: green; */
 }
 
+.resultCOD{
+    width: 10%;
+    /* background: red; */
+}
 
 .resultName {
-    max-width: 433px;
+    width: 60%;
+    /* background: yellow; */
 }
 
 .name {
@@ -55,15 +62,20 @@
     text-overflow: ellipsis
 }
 
+.resultPrice, .resultPriceBs{
+    width: 15%;
+    display: flex;
+    justify-content: flex-end;
+    /* background: green; */
 
+}
 
 .result{
     gap: 0px;
-    /* background-color: orange; */
     justify-content: start;
-    align-items: start;
+    align-items: center;
     width: 100%;
-    padding: 8px;
+    padding: 8px 16px;
     border-radius: 4px;
 
 }
