@@ -12,27 +12,26 @@ export default function Cart({items=[], setItems}) {
         setItems(prev => [...prev.filter(item => item.id !== id)])
     }
 
-    const handleQuantityChange = (id, quantity) => {
-        console.log(id, quantity)
-        setItems(prev => [...prev.map(item => {
-            if(item.id === id) {
-                if(quantity > item.stock) {
-                    item.quantity = item.stock
+    const handleQuantityChange = (id, rawValue) => {
+        setItems(prev =>
+            prev.map(item => {
+                if (item.id !== id ) return item
+
+                if (rawValue === "") {
+                    return {...item, quantity: ""}
+                }
+
+                const quantity = parseInt(rawValue)
+
+                if (isNaN(quantity)) {
                     return item
                 }
 
-                if(quantity < 1 || isNaN(quantity)) {
-                    item.quantity = 1
-                    return item
-                }
+                const safeQuantity = Math.max(1, Math.min(quantity, item.stock))
 
-                item.quantity = quantity
-                return item
-                
-            }
-
-            return item
-        })])
+                return {...item, quantity: safeQuantity}
+            })
+        )
     }
     
     return (
@@ -89,14 +88,17 @@ export default function Cart({items=[], setItems}) {
                                     {item.quantity}
                                 </p> */}
                                 <input type="number" value={item.quantity} min="1" max={item.stock} 
-                                    onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value))}
+                                    onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                                     
                                 />
                             </div>
                             
                             <div className={styles.itemTotalContainer}>
                                 <p className={'p2-r'}>
-                                    {new Intl.NumberFormat('es-Ve').format(item.quantity * item.reference_selling_price)}
+                                    {new Intl.NumberFormat('es-Ve').format(
+                                        isNaN(item.quantity) ? 0 :
+                                        item.quantity * item.reference_selling_price
+                                    )}
                                 </p>
                             </div>
                         </Container>

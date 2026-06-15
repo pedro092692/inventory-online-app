@@ -29,6 +29,7 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     }
 
     const handleSearch = useDebouncedCallback(async (term) => {
+        checkZeroQuantityProducts()
         if(term) {
            const response = await GetItemAction(url)
            const {data, error} = response
@@ -49,14 +50,14 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         // check if item no exits..
         const item = items.find(item => item.id === product.id)
         if (item) {
-            
             const newQuantity = item.quantity + 1 > product.stock
                 ? product.stock
-                : item.quantity + 1
+                : item.quantity + 1 
 
-            item.quantity = newQuantity
-
-            setItems(prev => [...prev.filter(item => item.id !== product.id), item])
+            setItems(prev => prev.map(item => {
+                if (item.id !== product.id ) return item
+                return {...item, quantity: newQuantity}
+            }))
             setResults([])
             setQuery('')
             return
@@ -68,6 +69,17 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         setQuery('')
     }
 
+    const checkZeroQuantityProducts = () => {
+        const productsNoQuantity = items.filter(item => item.quantity === "")
+        if (productsNoQuantity.length > 0) {
+            setItems(prev => prev.map(item => {
+                if (item.quantity === "") return {...item, quantity: 1}
+                return item
+            
+            }))
+        }
+    }
+    
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside)
         
