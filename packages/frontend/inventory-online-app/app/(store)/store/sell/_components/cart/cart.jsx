@@ -6,7 +6,7 @@ import { useState } from 'react'
 
 
 
-export default function Cart({items=[], setItems}) {
+export default function Cart({items=[], setItems, total = 0}) {
 
     const handleRemoveItem = (id) => {
         setItems(prev => [...prev.filter(item => item.id !== id)])
@@ -105,7 +105,15 @@ export default function Cart({items=[], setItems}) {
                         
                     )
                 })}
-
+                
+                {items.length > 0 && (
+                    <Container
+                        className={styles.totalContainer}
+                    >
+                        <p className={'p2-r'}>Total $: <span className={'p2-b'}>{total?.total_usd || 0}</span></p>
+                        <p className={'p2-r'}>Total Bs: <span className={'p2-b'}>{total?.total_bs || 0}</span></p>
+                    </Container>
+                )}
                 {items.length < 1 && <p className={'p2-r'} style={{padding: '16px'}}>No hay productos agregados...</p>}
             </Container>
         </Container>
