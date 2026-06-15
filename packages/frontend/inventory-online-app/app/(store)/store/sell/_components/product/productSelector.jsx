@@ -10,6 +10,7 @@ import ProductResultContainer from '@/app/(store)/store/sell/_components/product
 export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras', setItems=() => '', items=[]}) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
+    const [highlightedIndex, setHighlightedIndex] = useState(-1)
     const showResultsRef = useRef(null)
 
     const endpoint = `products/search`
@@ -79,6 +80,30 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
             }))
         }
     }
+
+    const handleKeyDown = (e) => {
+        if (results.length === 0) return 
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault()
+            setHighlightedIndex(prev => 
+                prev < results.length - 1 ? prev + 1 : 0
+            )
+        }
+
+        if (e.key === 'ArrowUp') {
+            e.preventDefault()
+            setHighlightedIndex(prev => 
+                prev > 0 ? prev - 1 : results.length - 1
+            )
+        }
+
+        if (e.key === 'Enter' && highlightedIndex >=0) {
+            e.preventDefault()
+            setHighlightedIndex(-1)
+            handleClick(results[highlightedIndex])
+        }
+    }
     
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside)
@@ -91,8 +116,13 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     return (
         <>
             {/* input search */}
-            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder}/>
-            { results.length > 0 && <ProductResultContainer ref={showResultsRef} results={results} onClick={handleClick}/> }
+            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} onKeyDown={handleKeyDown}/>
+            { results.length > 0 && <ProductResultContainer 
+                ref={showResultsRef} 
+                results={results} 
+                onClick={handleClick}
+                highlightedIndex={highlightedIndex}
+                /> }
         </>
     )
 }   

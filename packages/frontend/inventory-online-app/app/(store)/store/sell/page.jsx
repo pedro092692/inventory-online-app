@@ -1,7 +1,6 @@
 'use client'
 import ProductSelector from "@/app/(store)/store/sell/_components/product/productSelector"
 import Cart from "@/app/(store)/store/sell/_components/cart/cart"
-import { Container } from "@/app/ui/utils/container"
 import styles from './sell.module.css'
 import { useState, useMemo } from 'react'
 

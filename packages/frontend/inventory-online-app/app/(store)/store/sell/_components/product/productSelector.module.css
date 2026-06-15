@@ -75,6 +75,6 @@
 
 }
 
-.result:hover{
+.result:hover, .active{
     background-color: rgba(165, 164, 164, 0.15);
 }

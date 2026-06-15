@@ -2,7 +2,7 @@ import { Container } from "@/app/ui/utils/container"
 import styles from './productSelector.module.css'
 
 
-export default function ProductResultContainer({results = [], ref, onClick=() => ''}) {
+export default function ProductResultContainer({results = [], ref, onClick=() => '', highlightedIndex}) {
     
     return (
         
@@ -32,8 +32,9 @@ export default function ProductResultContainer({results = [], ref, onClick=() =>
             
             <Container className={styles.resultsContainer}>
                 {results.map((product, index) => {
+                    const isActive = index === highlightedIndex
                     return (
-                        <Container key={index} className={styles.result} onClick={() => onClick(product)}>
+                        <Container key={index} className={`${styles.result} ${isActive && styles.active}`} onClick={() => onClick(product)}>
                             <div className={styles.resultCOD}>
                                 <p className={'p2-b'}>
                                     {product.id}
