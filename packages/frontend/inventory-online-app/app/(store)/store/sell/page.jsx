@@ -8,12 +8,11 @@ import { useState } from 'react'
 export default function Sell() {
     const [show, setShow] = useState(false)
     const [items, setItems] = useState([])
-    console.log(items)
 
     return (
         <div className={styles.mainContainer}>
             <div className={styles.searchContainer}>
-                <ProductSelector  setItems={setItems} />
+                <ProductSelector  setItems={setItems} items={items}/>
             </div>
 
             <div className={styles.cartContainer}>

@@ -1,13 +1,13 @@
 'use client'
 import GetItemAction from '@/app/lib/actions/get'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { Container } from '@/app/ui/utils/container'
 import InputWithIcon from '@/app/ui/customers/searchAndSelect/input/inputWithIcon'
 import SearchCustomerInput from '@/app/ui/customers/searchAndSelect/input/searchInput'
 import ProductResultContainer from '@/app/(store)/store/sell/_components/product/productContainer'
 
-export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras', setItems=() => ''}) {
+export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras', setItems=() => '', items=[]}) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
     const showResultsRef = useRef(null)
@@ -46,6 +46,22 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     }
 
     const handleClick = (product) => {
+        // check if item no exits..
+        const item = items.find(item => item.id === product.id)
+        if (item) {
+            
+            const newQuantity = item.quantity + 1 > product.stock
+                ? product.stock
+                : item.quantity + 1
+
+            item.quantity = newQuantity
+
+            setItems(prev => [...prev.filter(item => item.id !== product.id), item])
+            setResults([])
+            setQuery('')
+            return
+        }
+
         product['quantity'] = 1
         setItems(prev => [...prev, product])
         setResults([])
