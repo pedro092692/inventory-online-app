@@ -5,7 +5,7 @@ import styles from './sell.module.css'
 import { useState, useMemo } from 'react'
 
 export default function Sell() {
-    const [show, setShow] = useState(false)
+    const [activeScreen, setActiveSreen] = useState('products')
     const [items, setItems] = useState([])
 
     const total = useMemo(() => {
@@ -24,16 +24,29 @@ export default function Sell() {
             total_usd: new Intl.NumberFormat('es-Ve').format(result.total_usd.toFixed(2))
         }
     }, [items])
+
     
     return (
         <div className={styles.mainContainer}>
-            <div className={styles.searchContainer}>
+            {/* products */}
+            <div className={`${styles.searchContainer} ${activeScreen !== 'products' ? styles.hide : ''}`}>
                 <ProductSelector  setItems={setItems} items={items}/>
+                <button onClick={() => setActiveSreen('customer')} disabled={items.length === 0}>Seleccionar cliente
+
+                </button>
             </div>
 
+            {/* customer */}
+            <div className={`${styles.searchContainer} ${activeScreen !== 'customer' ? styles.hide : ''}`}>
+                <button onClick={() => setActiveSreen('products')}>Agregar productos</button>
+            </div>
+
+
+            {/* cart */}
             <div className={styles.cartContainer}>
                  <Cart items={items} setItems={setItems} total={total}/>
             </div>
+            
         </div>
     )
 }
