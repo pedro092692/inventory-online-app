@@ -185,13 +185,14 @@ class ProductService{
                 where: {
     
                     [Op.or]: [
+                        { id: parseInt(query) ? parseInt(query) : null}, 
+                        { barcode: query.toLowerCase() },
                         { 
                             [Op.and]: terms.map(term => ({
                                 name: {[Op.substring]: term}
                             }))
                         },
-                        { barcode: {[Op.substring]: query.toLowerCase()} },
-                        { id: parseInt(query) ? parseInt(query) : null} 
+                        
                     ],
                     
                     stock: stock ? {[Op.gt]: 0} : {[Op.gte]: 0},

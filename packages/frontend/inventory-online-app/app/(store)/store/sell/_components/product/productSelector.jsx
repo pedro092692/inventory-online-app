@@ -11,6 +11,8 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
     const [highlightedIndex, setHighlightedIndex] = useState(-1)
+    const [isScanning, setIsScanning] = useState(false)
+    const lastKeyTime = useRef(0)
     const showResultsRef = useRef(null)
 
     const endpoint = `products/search`
@@ -24,8 +26,20 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     const url = `${endpoint}?${params.toString()}`
     
     const handleInputChange = (e) => {
+        const now = Date.now()
+        const delta = now - lastKeyTime.current
         const value = e.target.value
+
+        if (delta < 30) {
+            setIsScanning(true)
+        }else {
+            setIsScanning(false)
+        }
+        
+        lastKeyTime.current = now
+        
         setQuery(value)
+        
         handleSearch(value)
     }
 
@@ -33,8 +47,16 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         checkZeroQuantityProducts()
         if(term) {
            const response = await GetItemAction(url)
+           
            const {data, error} = response
+           
            setResults(data?.products || [])
+           
+           if (data?.products.length == 1 && isScanning) handleClick(data?.products[0])
+           
+            if (highlightedIndex == -1) {
+                setHighlightedIndex(0)
+           }
         }else{
             setResults([])
         }
