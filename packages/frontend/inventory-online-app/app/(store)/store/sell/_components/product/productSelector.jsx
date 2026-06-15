@@ -29,13 +29,14 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         const now = Date.now()
         const delta = now - lastKeyTime.current
         const value = e.target.value
-
+        // check if time is less than 30ms 
         if (delta < 30) {
             setIsScanning(true)
         }else {
             setIsScanning(false)
         }
         
+        // update last key time
         lastKeyTime.current = now
         
         setQuery(value)
@@ -44,19 +45,21 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     }
 
     const handleSearch = useDebouncedCallback(async (term) => {
+        // check if there is products with zero quantity
         checkZeroQuantityProducts()
+        
         if(term) {
-           const response = await GetItemAction(url)
-           
-           const {data, error} = response
-           
-           setResults(data?.products || [])
-           
-           if (data?.products.length == 1 && isScanning) handleClick(data?.products[0])
-           
+            const response = await GetItemAction(url)
+            const {data, error} = response
+            setResults(data?.products || [])
+            
+            // check if product is scanning and add it to cart automatically
+            if (data?.products.length == 1 && isScanning) handleClick(data?.products[0])
+            
+            // highligh first result 
             if (highlightedIndex == -1) {
                 setHighlightedIndex(0)
-           }
+            }
         }else{
             setResults([])
         }
