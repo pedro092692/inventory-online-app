@@ -6,8 +6,8 @@
     overflow-y: auto;
     border-radius: 8px;
     background-color: var(--color-neutralGrey300);
-    justify-content: start;
-    align-items: start;
+    justify-content: flex-start;
+    align-items: flex-start;
     flex-direction: column;
     gap: 0px;
 }
@@ -17,7 +17,7 @@
     width: 100%;
     background-color: var(--color-blue400);
     border-radius: 8px 8px 0px 0px;
-    justify-content: start;
+    justify-content: flex-start;
     gap: 0px;
 }
 
@@ -57,18 +57,17 @@
     flex-direction: column;
     padding: 0px;
     width: 100%;
-    justify-content: start;
-    align-items: start;
+    justify-content: flex-start;
+    align-items: flex-start;
     gap: 0px;
-    /* background: yellow; */
 }
 
 .cartRow{
     min-width: 0;
-    padding: 8px;
+    padding: 8px 16px;
     gap: 0px;
     width: 100%;
-    justify-content: start;
+    justify-content: flex-start;
 }
 
 .cartRow:hover{
@@ -104,6 +103,7 @@
 .itemName{
     flex: 1;
     min-width: 0; 
+    max-width: 90%;
 }
 
 

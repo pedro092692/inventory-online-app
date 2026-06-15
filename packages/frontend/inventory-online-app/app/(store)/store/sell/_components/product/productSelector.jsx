@@ -47,7 +47,6 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
 
     const handleClick = (product) => {
         product['quantity'] = 1
-        console.log(product)
         setItems(prev => [...prev, product])
         setResults([])
         setQuery('')

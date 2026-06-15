@@ -2,9 +2,39 @@
 import { Container} from '@/app/ui/utils/container'
 import styles from './cart.module.css'
 import { Button } from '@/app/ui/utils/button/buttons'
+import { useState } from 'react'
 
 
-export default function Cart({items=[]}) {
+
+export default function Cart({items=[], setItems}) {
+
+    const handleRemoveItem = (id) => {
+        setItems(prev => [...prev.filter(item => item.id !== id)])
+    }
+
+    const handleQuantityChange = (id, quantity) => {
+        console.log(id, quantity)
+        setItems(prev => [...prev.map(item => {
+            if(item.id === id) {
+                if(quantity > item.stock) {
+                    item.quantity = item.stock
+                    return item
+                }
+
+                if(quantity < 1 || isNaN(quantity)) {
+                    item.quantity = 1
+                    return item
+                }
+
+                item.quantity = quantity
+                return item
+                
+            }
+
+            return item
+        })])
+    }
+    
     return (
         <Container className={`${styles.cartContainer} shadow`}>
             <Container className={styles.cartHeader}>
@@ -44,6 +74,7 @@ export default function Cart({items=[]}) {
                                     type='danger' 
                                     size={[12, 12]} 
                                     style={{padding: '8px'}}
+                                    onClick={() => handleRemoveItem(item.id)}
                                 />
                             </div>
                             
@@ -54,9 +85,13 @@ export default function Cart({items=[]}) {
                             </div>
                             
                             <div className={styles.itemQuantityContainer}>
-                                <p className={'p2-r'}>
+                                {/* <p className={'p2-r'}>
                                     {item.quantity}
-                                </p>
+                                </p> */}
+                                <input type="number" value={item.quantity} min="1" max={item.stock} 
+                                    onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value))}
+                                    
+                                />
                             </div>
                             
                             <div className={styles.itemTotalContainer}>
