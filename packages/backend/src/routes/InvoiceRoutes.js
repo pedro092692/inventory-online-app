@@ -20,19 +20,26 @@ class InvoiceRoutes {
         this.router.get('/search', (req, res) => new InvoiceController(req.Invoice).searchInvoicesbyId(req, res))
         this.router.get('/search-query', (req, res) => new InvoiceController(req.Invoice).searchInvoices(req, res))
         this.router.get('/total-pages', (req, res) => new InvoiceController(req.Invoice).totalPages(req, res))
-        this.router.get('/:id', (req, res) => new InvoiceController(req.Invoice, req.InvoiceDetail, null, req.Dollar).getInvoice(req, res))
-        this.router.get('/send-whatsapp/:id', (req, res) => new InvoiceController(req.Invoice, null, null, req.Dollar).sendWhatsappInvoice(req, res))
-        this.router.post('/', (req, res) => new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).createInvoice(req, res))
-        this.router.patch('/:id', (req, res) => new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).updateInvoice(req, res))
-        this.router.delete('/', (req, res) => new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).deleteInvoice(req, res))
-        this.router.delete('/detail', (req, res) => new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).deleteInvoiceDetail(req, res))
+        this.router.get('/:id', (req, res) => 
+            new InvoiceController(req.Invoice, req.InvoiceDetail, null, req.Dollar).getInvoice(req, res))
+        this.router.get('/send-whatsapp/:id', (req, res) => 
+            new InvoiceController(req.Invoice, null, null, req.Dollar).sendWhatsappInvoice(req, res))
+        this.router.post('/', (req, res) => 
+            new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar, null, req.Seller).createInvoice(req, res))
+        this.router.patch('/:id', (req, res) => 
+            new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).updateInvoice(req, res))
+        this.router.delete('/', (req, res) => 
+            new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).deleteInvoice(req, res))
+        this.router.delete('/detail', (req, res) => 
+            new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).deleteInvoiceDetail(req, res))
     }   
 
     /**
-     * Middleware to attach the `Invoice`, `Product`, `Dollar`, `InvoiceDetail` models from the tenant-specific models to the request object.
+     * Middleware to attach the `Invoice`, `Product`, `Dollar`, `InvoiceDetail`, `Seller` 
+     * models from the tenant-specific models to the request object.
      *
      * This method extracts the `Invoice`, `Product`, `Dollar`, `InvoiceDetail` models from `req.tenantModels` 
-     * and assigns it to `req.Invoice`, `req.Product`, `req.Dollar`.
+     * and assigns it to `req.Invoice`, `req.Product`, `req.Dollar`, `req.Seller`.
      * If any of the models are missing, it responds with a 400 Bad Request.
      * Otherwise, it passes control to the next middleware.
      *
@@ -42,8 +49,8 @@ class InvoiceRoutes {
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {Invoice, Product, Dollar, InvoiceDetail, Customer} = req.tenantModels
-        if(!Dollar || !Invoice || !Product || !InvoiceDetail || !Customer) {
+        const {Invoice, Product, Dollar, InvoiceDetail, Customer, Seller} = req.tenantModels
+        if(!Dollar || !Invoice || !Product || !InvoiceDetail || !Customer || !Seller) {
             return res.status(400).json({ message: 'All models are required' })
         }
         req.Invoice = Invoice
@@ -51,6 +58,7 @@ class InvoiceRoutes {
         req.InvoiceDetail = InvoiceDetail
         req.Dollar = Dollar
         req.Customer = Customer
+        req.Seller = Seller
 
         next()
     }

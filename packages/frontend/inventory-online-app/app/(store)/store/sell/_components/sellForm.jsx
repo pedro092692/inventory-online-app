@@ -5,25 +5,29 @@ import styles from './sell.module.css'
 import SelectCustomer from "@/app/(store)/store/sell/_components/customer/customer"
 import SelectObject from '@/app/utils/selectObject'
 import Select from '@/app/ui/select/select'
-import { useState, useMemo } from 'react'
+import CreateInvoiceAction from "@/app/lib/actions/createInvoice"
+import { useState, useMemo, useActionState } from 'react'
 
 export default function SellForm({paymentMethods=[]}) {
     const [activeScreen, setActiveScreen] = useState('products')
     const [items, setItems] = useState([])
     const paymentOptions = SelectObject(paymentMethods, 'id', 'name')
+    const initialState = {message: null, errors: {}}
+    const createInvoice = CreateInvoiceAction.bind(null, 'Factura creada con éxito')
+    const [state, formAction, isPending] = useActionState(createInvoice, initialState)
     
     const handlePay = (formData) => {
-        const customer = formData.get('customer_id')
-        const payment_method_id = formData.get('payment_method_id')
-        const amount = formData.get('amount')
+        
         formData.append('details', JSON.stringify(items.map(item => {
             return {
                 product_id: item.id,
                 quantity: item.quantity
             }
         })))
-       
+        
+        return formAction(formData)
     }
+    
     const total = useMemo(() => {
         const result = items.reduce((acc, item) => {
             const bs = item.quantity * parseFloat(item.reference_selling_price)
@@ -48,7 +52,7 @@ export default function SellForm({paymentMethods=[]}) {
                 {/* products */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'products' ? styles.hide : ''}`}>
                     <ProductSelector  setItems={setItems} items={items}/>
-                    <button onClick={() => setActiveScreen('customer')} disabled={items.length === 0}>Seleccionar cliente
+                    <button type="button" onClick={() => setActiveScreen('customer')} disabled={items.length === 0}>Seleccionar cliente
 
                     </button>
                 </div>
@@ -56,16 +60,16 @@ export default function SellForm({paymentMethods=[]}) {
                 {/* customer */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'customer' ? styles.hide : ''}`}>
                     <SelectCustomer />
-                    <button onClick={(e) => {e.preventDefault(); setActiveScreen('products')}}>Agregar productos</button>
-                    <button onClick={(e) => {setActiveScreen('pay')}}>Pagar</button>
+                    <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
+                    <button type="button" onClick={() => {setActiveScreen('pay')}}>Pagar</button>
                 </div>
 
                 {/* pay */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'pay' ? styles.hide : ''}`}>
-                    <Select name='payment_method_id' options={paymentOptions} defaultValue={'Punto de venta'}/>
+                    <Select name='payment_method_id' options={paymentOptions} selectKey={1} defaultValue={'Punto de venta'}/>
                     <input type="number" name="amount" placeholder="Monto" min="1" step="0.1"></input>
-                    <button onClick={(e) => {e.preventDefault(); setActiveScreen('products')}}>Agregar productos</button>
-                    <button onClick={(e) => {e.preventDefault(); setActiveScreen('customer')}}>Seleccionar cliente</button>
+                    <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
+                    <button type="button" onClick={() => {setActiveScreen('customer')}}>Seleccionar cliente</button>
                     <button type='submit'>Pagar</button>
                 </div>
 

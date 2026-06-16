@@ -65,6 +65,7 @@ function initializeUser(sequelize) {
                     key: 'id'
                 }
             },
+            
             tenant_id: {
                 type: DataTypes.INTEGER,
                 allowNull: true

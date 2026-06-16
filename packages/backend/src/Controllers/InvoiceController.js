@@ -6,8 +6,8 @@ import { userPermissions } from './CustomerController.js'
 class InvoiceController {
     // error controller new instace 
     #error = new ControllerErrorHandler()
-    constructor(model, detailModel=null, productModel=null, dollarModel=null, customerModel=null) {
-        this.invoiceService = new InvoiceService(model, detailModel, productModel, dollarModel, customerModel)
+    constructor(model, detailModel=null, productModel=null, dollarModel=null, customerModel=null, sellerModel=null) {
+        this.invoiceService = new InvoiceService(model, detailModel, productModel, dollarModel, customerModel, sellerModel)
         this.#error
     }
     
@@ -21,18 +21,21 @@ class InvoiceController {
      * @returns {Promise<void>} - returns a success status in the response if invoice is created.
      */
     createInvoice = this.#error.handler( async(req, res) => {
+        
         const {customer_id, seller_id } = req.body
+        const {id: user_id} = req.user
         const details = req.body.details
+        
         // validate required fields
-        if(!customer_id || !seller_id || !details) {
-            throw new Error('Customer ID, Seller ID and Details are required')
+        if(!customer_id || !user_id || !details) {
+            throw new Error('Customer ID, User ID and Details are required')
         }
         
         if(!details || details.length == 0) {
             throw new Error('Details is required, or Details must be a non-empty array')
         }
 
-        const newInvoice = await this.invoiceService.createInvoice(customer_id, seller_id, details)
+        const newInvoice = await this.invoiceService.createInvoice(customer_id, user_id, details)
         
         // add invoice_id to details 
         for(const detail of details) {

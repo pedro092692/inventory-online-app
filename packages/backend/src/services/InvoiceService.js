@@ -11,12 +11,13 @@ class InvoiceService {
     // instance of error handler 
     #error = new ServiceErrorHandler()
 
-    constructor(model, detailModel=null, productModel=null, dollarModel=null, customerModel=null) {
+    constructor(model, detailModel=null, productModel=null, dollarModel=null, customerModel=null, sellerModel=null) {
         this.Invoice = model
         this.InvoiceDetail = new InvoiceDetailService(detailModel)
         this.Product = new ProductService(productModel, dollarModel)
         this.dollarValue = new DollarValueService(dollarModel)
         this.Customer = customerModel
+        this.Seller = sellerModel
         this.#error
     }
 
@@ -26,7 +27,7 @@ class InvoiceService {
     * @param {number} seller_id - id of the seller 
     * @returns {Object} - new invoice created   
     */  
-    createInvoice(customer_id, seller_id, details) {
+    createInvoice(customer_id, user_id, details) {
         return this.#error.handler(['Create Invoice'], async() => {
             // get dollar value 
             const dollar_value = await this.dollarValue.getLastValue()
@@ -35,6 +36,15 @@ class InvoiceService {
                 throw new Error('A valid dollar value is required please update dollar value.')
             }
             
+            // Get seller ID 
+            const seller = await this.Seller.findOne({
+                where: {
+                    user_id: user_id
+                }
+            })
+            
+            const seller_id = seller?.id || null
+
             // verify details if details is empty or not an array throw error
             verifyDetails(details)
 
@@ -51,6 +61,7 @@ class InvoiceService {
                 seller_id: seller_id, 
                 total: 0
             })
+            
             return newInvoice
         })
     }
