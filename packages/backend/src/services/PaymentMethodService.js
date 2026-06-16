@@ -63,7 +63,9 @@ class PaymentMethodService {
                 offset: offset
             })
 
-            return allMethods
+            return {
+                paymentMethods: allMethods
+            }
         })
     }
 
