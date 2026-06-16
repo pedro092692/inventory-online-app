@@ -6,13 +6,13 @@ export default async function Sell() {
     const endpoint = 'payment-methods/all'
     const response = await GetItemAction(endpoint)
     const { data, error } = response
-    const pyamentsMethods = data?.paymentMethods || []
+    const paymentMethods = data?.paymentMethods || []
     
     if (error) {
         return <p className='p2-r errorMsg'>{error}</p>
     }
 
     return (
-        <SellForm />
+        <SellForm paymentMethods={paymentMethods}/>
     )
 }
