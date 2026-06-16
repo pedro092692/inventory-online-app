@@ -3,7 +3,7 @@ import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import inputStyles from '@/app/ui/customers/searchAndSelect/input.module.css'
 
-export default function SearchCustomerInput({query, onChange, placeHolder, onKeyDown}) {
+export default function SearchCustomerInput({query, onChange, placeHolder, onKeyDown = () => ''}) {
     return (
         <Container
                 padding={'0px 0px 0px 16px'}

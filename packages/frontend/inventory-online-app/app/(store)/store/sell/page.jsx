@@ -2,10 +2,11 @@
 import ProductSelector from "@/app/(store)/store/sell/_components/product/productSelector"
 import Cart from "@/app/(store)/store/sell/_components/cart/cart"
 import styles from './sell.module.css'
+import SelectCustomer from "@/app/(store)/store/sell/_components/customer/customer"
 import { useState, useMemo } from 'react'
 
 export default function Sell() {
-    const [activeScreen, setActiveSreen] = useState('products')
+    const [activeScreen, setActiveScreen] = useState('products')
     const [items, setItems] = useState([])
 
     const total = useMemo(() => {
@@ -31,14 +32,24 @@ export default function Sell() {
             {/* products */}
             <div className={`${styles.searchContainer} ${activeScreen !== 'products' ? styles.hide : ''}`}>
                 <ProductSelector  setItems={setItems} items={items}/>
-                <button onClick={() => setActiveSreen('customer')} disabled={items.length === 0}>Seleccionar cliente
+                <button onClick={() => setActiveScreen('customer')} disabled={items.length === 0}>Seleccionar cliente
 
                 </button>
             </div>
 
             {/* customer */}
             <div className={`${styles.searchContainer} ${activeScreen !== 'customer' ? styles.hide : ''}`}>
-                <button onClick={() => setActiveSreen('products')}>Agregar productos</button>
+                <SelectCustomer />
+                <button onClick={() => setActiveScreen('products')}>Agregar productos</button>
+                <button onClick={() => setActiveScreen('pay')}>Pagar</button>
+            </div>
+
+            {/* pay */}
+            <div className={`${styles.searchContainer} ${activeScreen !== 'pay' ? styles.hide : ''}`}>
+                pagar factura
+                <button onClick={() => setActiveScreen('products')}>Agregar productos</button>
+                <button onClick={() => setActiveScreen('customer')}>Seleccionar cliente</button>
+                <button onClick={() => setActiveScreen('pay')}>Pagar</button>
             </div>
 
 
