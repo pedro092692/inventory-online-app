@@ -12,19 +12,27 @@ export default async function CreateInvoiceAction(
     const details = formData.get('details')
     const body = {}
     const createInvoiceEndpoint = 'invoices'
+    const payInvoiceEndpoint = 'pay-invoice'
     
     const createInvoiceBody = {
         customer_id: customer,
         details: JSON.parse(details),
     } 
     
+    const payInvoiceBody = {
+        invoice_id: null,
+        payment_id: parseInt(payment_method_id),
+        amount: parseFloat(amount)
+    }
 
 
     const response = await Request(createInvoiceEndpoint, 'POST', createInvoiceBody)
     
+    const payInvoiceResponse = async (body, endpoint) => {
+        return await Request(endpoint, 'POST', body)
+    }
+    
     const {data, error} = response 
-
-    // console.log(response)
     
     if (data?.errors) {
         return {
@@ -41,6 +49,24 @@ export default async function CreateInvoiceAction(
             errors: {error: 'Hubo un error inesperado intenta nuevamente'},
             inputs: body
         }
+    }
+
+    if (data?.invoice) {
+        // pay invoice
+        payInvoiceBody.invoice_id = data.invoice?.id || null
+        const resPayInvoice = await payInvoiceResponse(payInvoiceBody, payInvoiceEndpoint)
+        const {data: dataPayInvoice, error: errorPayInvoice} = resPayInvoice
+        const invoiceData  = dataPayInvoice?.invoice || null
+        if (invoiceData && invoiceData.status === 'paid') {
+            revalidatePath(`/store/${createInvoiceEndpoint}`)
+            return {
+                message: msg,
+                errors: {},
+                inputs: {}
+            }
+        }
+    
+
     }
 
     return {

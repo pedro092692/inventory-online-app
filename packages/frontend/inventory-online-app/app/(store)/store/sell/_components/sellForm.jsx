@@ -6,7 +6,7 @@ import SelectCustomer from "@/app/(store)/store/sell/_components/customer/custom
 import SelectObject from '@/app/utils/selectObject'
 import Select from '@/app/ui/select/select'
 import CreateInvoiceAction from "@/app/lib/actions/createInvoice"
-import { useState, useMemo, useActionState } from 'react'
+import { useState, useMemo, useActionState, useEffect } from 'react'
 
 export default function SellForm({paymentMethods=[]}) {
     const [activeScreen, setActiveScreen] = useState('products')
@@ -17,6 +17,8 @@ export default function SellForm({paymentMethods=[]}) {
     const [state, formAction, isPending] = useActionState(createInvoice, initialState)
     
     const handlePay = (formData) => {
+        const amount = formData.get('amount')
+        if (!amount) return 
         
         formData.append('details', JSON.stringify(items.map(item => {
             return {
@@ -45,6 +47,13 @@ export default function SellForm({paymentMethods=[]}) {
         }
     }, [items])
 
+    useEffect(() => {
+        const success = state?.message
+        if (success) {
+            setItems([])
+            setActiveScreen('products')
+        }
+    }, [state])
     
     return (
         <div className={styles.mainContainer}>
@@ -67,7 +76,7 @@ export default function SellForm({paymentMethods=[]}) {
                 {/* pay */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'pay' ? styles.hide : ''}`}>
                     <Select name='payment_method_id' options={paymentOptions} selectKey={1} defaultValue={'Punto de venta'}/>
-                    <input type="number" name="amount" placeholder="Monto" min="1" step="0.1"></input>
+                    <input type="number" name="amount" placeholder="Monto" min="1" step="0.1" required></input>
                     <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
                     <button type="button" onClick={() => {setActiveScreen('customer')}}>Seleccionar cliente</button>
                     <button type='submit'>Pagar</button>

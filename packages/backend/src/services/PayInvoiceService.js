@@ -53,8 +53,8 @@ class PayInvoiceService {
 
     
                 
-            if (paymentId < 1 || paymentId > 7) {
-                throw new Error('Payment Id must be between 1 and 7')
+            if (paymentId < 1 || paymentId > 8) {
+                throw new Error('Payment Id must be between 1 and 8')
             }
 
             // set reference value, status and change 
@@ -89,6 +89,15 @@ class PayInvoiceService {
 
             if(change){
                 updatedInvoice.dataValues.change = change
+            }
+            
+            if (updatedInvoice?.invoice?.status == 'unpaid') {
+                updatedInvoice.invoice.dataValues.total_to_pay_reference = 
+
+                    (parseFloat(updatedInvoice.invoice.dataValues.total_to_pay_dollar) * 
+                    parseFloat(updatedInvoice.invoice.dataValues.exchange_rate)).toFixed(2)
+ 
+                   
             }
             
             return updatedInvoice
