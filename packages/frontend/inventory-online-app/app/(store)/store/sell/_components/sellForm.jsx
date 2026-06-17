@@ -11,6 +11,7 @@ import { useState, useMemo, useActionState, useEffect } from 'react'
 export default function SellForm({paymentMethods=[]}) {
     const [activeScreen, setActiveScreen] = useState('products')
     const [items, setItems] = useState([])
+    const [customer, setCustomer] = useState(null)
     const paymentOptions = SelectObject(paymentMethods, 'id', 'name')
     const initialState = {message: null, errors: {}}
     const createInvoice = CreateInvoiceAction.bind(null, 'Factura creada con éxito')
@@ -52,6 +53,7 @@ export default function SellForm({paymentMethods=[]}) {
         if (success) {
             setItems([])
             setActiveScreen('products')
+            setCustomer(null)
         }
     }, [state])
     
@@ -68,7 +70,7 @@ export default function SellForm({paymentMethods=[]}) {
 
                 {/* customer */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'customer' ? styles.hide : ''}`}>
-                    <SelectCustomer />
+                    <SelectCustomer customer={customer} setCustomer={setCustomer} />
                     <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
                     <button type="button" onClick={() => {setActiveScreen('pay')}}>Pagar</button>
                 </div>
@@ -80,6 +82,7 @@ export default function SellForm({paymentMethods=[]}) {
                     <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
                     <button type="button" onClick={() => {setActiveScreen('customer')}}>Seleccionar cliente</button>
                     <button type='submit'>Pagar</button>
+                    {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
                 </div>
 
                 {/* cart */}

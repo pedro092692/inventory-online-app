@@ -17,10 +17,14 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
     }
 
     //add id to customer object 
-    invoice.customer['id'] = invoice['customer_id']
+    const initialCustomer = {
+        ...invoice?.customer,
+        id: invoice?.customer_id
+    }
     const date = new Date(invoice?.date).toISOString()
     
     const [sellerId, setSellerId] = useState(invoice?.seller_id || '')
+    const [customer, setCustomer] = useState(initialCustomer || null)
     const sellerOptions = SelectObject(sellers, 'id', 'name') || []
     
 
@@ -32,9 +36,18 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
 
 
     useEffect(() => {
-        const success = state?.message 
         setSellerId(invoice?.seller_id || '')
-    }, [state, invoice?.seller_id, invoice?.customer_id]) 
+        
+        setCustomer(
+            invoice?.customer
+            ? {
+                ...invoice?.customer,
+                id: invoice?.customer_id
+            }
+            : null
+        )
+        
+    }, [invoice]) 
 
     return (
         <Form className={styles.form} style={{padding: '16px', flexGrow: '0'}} action={formAction}>
@@ -69,7 +82,7 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
             
             {/* customer */}
             <label>Cliente</label>
-            <SelectedCustomer customer={invoice.customer}/>
+            <SelectedCustomer customer={customer} setCustomer={setCustomer}/>
 
             {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
             <Button role="submit" type="secondary">

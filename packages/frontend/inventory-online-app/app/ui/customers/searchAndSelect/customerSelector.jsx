@@ -12,7 +12,6 @@ import SearchResultsContainer from '@/app/ui/customers/searchAndSelect/results/s
 export default function CustomerSelector({value, onChange, placeHolder='Buscar cliente por Nombre, Cédula'}) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
-    const [selected, setSelected] = useState(null)
     const [error, setError] = useState(null)
     const showResultsRef = useRef(null)
 
@@ -45,7 +44,6 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
 
     const handleClick = (selectedValue) => {
         onChange(selectedValue) 
-        setSelected(selectedValue) 
         setResults([])
         setQuery('') 
     }
@@ -63,7 +61,7 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
         }
-    }, [])
+    }, [value])
 
     return (
         <Container
@@ -83,11 +81,11 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
             
             {error &&  <p className='p2-r errorMsg'>{error}</p>}
             
-            {(value || selected) && (
+            {value && (
                 <>
-                    <InputWithIcon value={selected?.name ?? value.name} icon="person" name={'name'}/>
-                    <InputWithIcon value={selected?.id_number ?? value.id_number} icon="id" name={'id_number'}/>
-                    <InputWithIcon value={selected?.phone ?? value.phone} icon="phone" name={'phone'}/>
+                    <InputWithIcon value={value.name} icon="person" name={'name'}/>
+                    <InputWithIcon value={value.id_number} icon="id" name={'id_number'}/>
+                    <InputWithIcon value={value.phone} icon="phone" name={'phone'}/>
                 </>
                 )
             }
