@@ -4,15 +4,22 @@ import GetItemAction from '@/app/lib/actions/get'
 
 export default async function Sell() {
     const endpoint = 'payment-methods/all'
-    const response = await GetItemAction(endpoint)
-    const { data, error } = response
+    const [response, exchangeRateResponse] = await Promise.all([
+        GetItemAction(endpoint),
+        GetItemAction('dollar-value/latest'),
+        GetItemAction('payment-methods/all')
+    ])
+    const {data, error} = response
+    const {data: exchangeRateData, error: exchangeRateError} = exchangeRateResponse
+
     const paymentMethods = data?.paymentMethods || []
-    
-    if (error) {
-        return <p className='p2-r errorMsg'>{error}</p>
+    const exchangeRate = parseFloat(exchangeRateData?.lastValue?.value) || null
+
+    if (error || exchangeRateError) {
+        return <p className='p2-r errorMsg'>{error || exchangeRateError}</p>
     }
 
     return (
-        <SellForm paymentMethods={paymentMethods}/>
+        <SellForm paymentMethods={paymentMethods} exchangeRate={exchangeRate}/>
     )
 }

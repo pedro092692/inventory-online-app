@@ -8,29 +8,17 @@ import Select from '@/app/ui/select/select'
 import CreateInvoiceAction from "@/app/lib/actions/createInvoice"
 import { useState, useMemo, useActionState, useEffect } from 'react'
 
-export default function SellForm({paymentMethods=[]}) {
+export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const [activeScreen, setActiveScreen] = useState('products')
     const [items, setItems] = useState([])
     const [customer, setCustomer] = useState(null)
+    const [payments, setPayments] = useState([])
     const paymentOptions = SelectObject(paymentMethods, 'id', 'name')
     const initialState = {message: null, errors: {}}
-    const createInvoice = CreateInvoiceAction.bind(null, 'Factura creada con éxito')
+    
+    const createInvoice = CreateInvoiceAction.bind(null, 'Factura creada con éxito', false, null)
     const [state, formAction, isPending] = useActionState(createInvoice, initialState)
-    
-    const handlePay = (formData) => {
-        const amount = formData.get('amount')
-        if (!amount) return 
         
-        formData.append('details', JSON.stringify(items.map(item => {
-            return {
-                product_id: item.id,
-                quantity: item.quantity
-            }
-        })))
-        
-        return formAction(formData)
-    }
-    
     const total = useMemo(() => {
         const result = items.reduce((acc, item) => {
             const bs = item.quantity * parseFloat(item.reference_selling_price)
@@ -43,20 +31,70 @@ export default function SellForm({paymentMethods=[]}) {
         }, {total_bs: 0, total_usd: 0})
 
         return {
-            total_bs: new Intl.NumberFormat('es-Ve').format(result.total_bs.toFixed(2)),
-            total_usd: new Intl.NumberFormat('es-Ve').format(result.total_usd.toFixed(2))
+            total_bs: new Intl.NumberFormat('es-Ve').format(result.total_bs),
+            total_usd: new Intl.NumberFormat('es-Ve').format(result.total_usd)
         }
     }, [items])
+    console.log(items)
+    const totalPaid = useMemo(() => {
+        const result = payments.reduce((acc, item) => {
+            const paymentMethod = paymentMethods.find(pm => pm.id === parseInt(item.payment_method_id))
+            
+            if (!paymentMethod) return acc
+            
+            const total = paymentMethod.currency != 'Bolivar Digital' && paymentMethod.currency != 'Undefined' ?
+                parseFloat(item.amount) : parseFloat(item.amount) / parseFloat(exchangeRate)
+
+            return acc + total
+        }, 0)
+        return result
+    }, [payments])
+  
+    const handlePay = (formData) => {
+        // set amount and payment_method_id
+        const amount = formData.get('amount')
+        const payment_method_id = formData.get('payment_method_id')
+        
+        // add amount and payment_method_id to payments array.
+        const newPayments = [
+            ...payments,
+            {
+                payment_method_id: payment_method_id,
+                amount: amount,
+                name: paymentMethods.find(pm => pm.id === parseInt(payment_method_id)).name || 'Undefined',
+                currency: paymentMethods.find(pm => pm.id === parseInt(payment_method_id)).currency || 'Undefined',
+            }
+        ]
+        
+        setPayments(newPayments)
+
+        // add details to form data.
+        formData.append('details', JSON.stringify(items.map(item => {
+            return {
+                product_id: item.id,
+                quantity: item.quantity
+            }
+        })))
+
+        // add payments details to form data.
+        formData.append('payments', JSON.stringify(newPayments))
+        
+        if (totalPaid < total) return
+
+        return formAction(formData)
+    }
 
     useEffect(() => {
         const success = state?.message
         if (success) {
             setItems([])
-            setActiveScreen('products')
+            // setActiveScreen('products')
             setCustomer(null)
         }
     }, [state])
     
+
+
     return (
         <div className={styles.mainContainer}>
             <form className={styles.mainContainer} action={handlePay}>
@@ -82,7 +120,15 @@ export default function SellForm({paymentMethods=[]}) {
                     <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
                     <button type="button" onClick={() => {setActiveScreen('customer')}}>Seleccionar cliente</button>
                     <button type='submit'>Pagar</button>
-                    {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
+                    <div>
+                        <p>Total Pagado: {totalPaid.toFixed(2)} $ / {totalPaid * exchangeRate} Bs</p>
+                        <p>Resta por pagar {(items.reduce((acc, item) => acc + (item.quantity * parseFloat(item.reference_selling_price)), 0) / exchangeRate - totalPaid).toFixed(2)} $ / {items.reduce((acc, item) => acc + (item.quantity * parseFloat(item.reference_selling_price)), 0) - (totalPaid * exchangeRate)} $</p>
+                    </div>
+                </div>
+
+                {/* review alter pay */}
+                <div>
+
                 </div>
 
                 {/* cart */}

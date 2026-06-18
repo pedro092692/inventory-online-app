@@ -4,15 +4,23 @@ import { revalidatePath } from 'next/cache'
 
 export default async function CreateInvoiceAction(
         msg = 'Operacion realizada con éxito',
+        invoiceStatus = false,
+        invoiceId = null,
         preStave, formData) {
 
     const customer = formData.get('customer_id')
     const payment_method_id = formData.get('payment_method_id')
     const amount = formData.get('amount')
     const details = formData.get('details')
+    const payments = formData.get('payments')
+    console.log('hi pedro', payments)
+    return
     const body = {}
     const createInvoiceEndpoint = 'invoices'
     const payInvoiceEndpoint = 'pay-invoice'
+    let payInvoiceResponse = null
+    let payResponse = null
+    let payError = null
     
     const createInvoiceBody = {
         customer_id: customer,
@@ -20,19 +28,32 @@ export default async function CreateInvoiceAction(
     } 
     
     const payInvoiceBody = {
-        invoice_id: null,
+        invoice_id: invoiceId || null,
         payment_id: parseInt(payment_method_id),
         amount: parseFloat(amount)
     }
 
 
-    const response = await Request(createInvoiceEndpoint, 'POST', createInvoiceBody)
-    
-    const payInvoiceResponse = async (body, endpoint) => {
-        return await Request(endpoint, 'POST', body)
-    }
+    const response = await Request(invoiceStatus ? payInvoiceEndpoint : createInvoiceEndpoint, 
+                                        'POST',  invoiceStatus ? payInvoiceBody : createInvoiceBody)
     
     const {data, error} = response 
+
+    if (!invoiceStatus && data?.invoice) {
+        payInvoiceBody.invoice_id = data.invoice.id
+        payInvoiceResponse = await Request(payInvoiceEndpoint, 'POST', payInvoiceBody)
+        payResponse = payInvoiceResponse.data
+        payError = payInvoiceResponse.error
+        
+        if(payError) {
+            return {
+                message: null,
+                errors: {error: 'Hubo un error con el pago intenta nuevamente'},
+                inputs: body
+            }
+        }
+    }
+    
     
     if (data?.errors) {
         return {
@@ -51,23 +72,50 @@ export default async function CreateInvoiceAction(
         }
     }
 
-    if (data?.invoice) {
-        // pay invoice
-        payInvoiceBody.invoice_id = data.invoice?.id || null
-        const resPayInvoice = await payInvoiceResponse(payInvoiceBody, payInvoiceEndpoint)
-        const {data: dataPayInvoice, error: errorPayInvoice} = resPayInvoice
-        const invoiceData  = dataPayInvoice?.invoice || null
-        if (invoiceData && invoiceData.status === 'paid') {
+
+    if(!invoiceStatus) {
+        if (payResponse?.invoice?.status === 'paid') {
             revalidatePath(`/store/${createInvoiceEndpoint}`)
             return {
                 message: msg,
+                invoice: {},
                 errors: {},
                 inputs: {}
             }
         }
-    
-
+        
+        if (payResponse?.invoice?.status != 'paid') {
+            return {
+                errors: {},
+                invoice: data.invoice,
+                inputs: {}
+            }
+        }
+        
     }
+    
+    if (data?.invoice) {
+        
+        if (data?.invoice.status === 'paid') {
+            revalidatePath(`/store/${createInvoiceEndpoint}`)
+            return {
+                message: msg,
+                invoice: {},
+                errors: {},
+                inputs: {}
+            }
+        }
+
+        if (payResponse.invoice.status != 'paid') {
+            return {
+                errors: {},
+                invoice: data.invoice,
+                inputs: {}
+            }
+        }
+        
+    }
+
 
     return {
         message: msg,

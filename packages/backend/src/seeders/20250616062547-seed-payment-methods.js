@@ -30,7 +30,7 @@ export default {
         },
         {
           name: 'Efectivo Bolivares',
-          currency: 'Bolivares'
+          currency: 'Bolivar Digital'
         },
         { 
           name: 'Efectivo Dolares',
