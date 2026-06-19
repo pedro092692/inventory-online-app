@@ -31,11 +31,11 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         }, {total_bs: 0, total_usd: 0})
 
         return {
-            total_bs: new Intl.NumberFormat('es-Ve').format(result.total_bs),
-            total_usd: new Intl.NumberFormat('es-Ve').format(result.total_usd)
+            total_bs: result.total_bs,
+            total_usd: result.total_usd
         }
     }, [items])
-    console.log(items)
+
     const totalPaid = useMemo(() => {
         const result = payments.reduce((acc, item) => {
             const paymentMethod = paymentMethods.find(pm => pm.id === parseInt(item.payment_method_id))
@@ -49,7 +49,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         }, 0)
         return result
     }, [payments])
-  
+    
     const handlePay = (formData) => {
         // set amount and payment_method_id
         const amount = formData.get('amount')
@@ -79,9 +79,33 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         // add payments details to form data.
         formData.append('payments', JSON.stringify(newPayments))
         
-        if (totalPaid < total) return
+        
+        
+        const newTotalPaid = newPayments.reduce((acc, item) => {
+            const paymentMethod = paymentMethods.find(
+            pm => pm.id === parseInt(item.payment_method_id))
 
+            if (!paymentMethod) return acc
+
+            const total =
+                paymentMethod.currency !== 'Bolivar Digital' &&
+                paymentMethod.currency !== 'Undefined'
+                    ? parseFloat(item.amount)
+                    : parseFloat(item.amount) / parseFloat(exchangeRate)
+            return acc + total
+        }, 0)
+        
+        const isPaid = Math.abs(total.total_usd - newTotalPaid) < 0.001 ? true : false
+        
+        if (!isPaid) return
+        
         return formAction(formData)
+    }
+
+    const toPaid = (items) => {
+        return items.reduce((acc, item) => {
+            return Math.abs((acc + item.quantity * parseFloat(item.selling_price)) - totalPaid)
+        }, 0)
     }
 
     useEffect(() => {
@@ -116,13 +140,13 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                 {/* pay */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'pay' ? styles.hide : ''}`}>
                     <Select name='payment_method_id' options={paymentOptions} selectKey={1} defaultValue={'Punto de venta'}/>
-                    <input type="number" name="amount" placeholder="Monto" min="1" step="0.1" required></input>
+                    <input type="number" name="amount" placeholder="Monto" min="1" step="0.01" required></input>
                     <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
                     <button type="button" onClick={() => {setActiveScreen('customer')}}>Seleccionar cliente</button>
                     <button type='submit'>Pagar</button>
                     <div>
-                        <p>Total Pagado: {totalPaid.toFixed(2)} $ / {totalPaid * exchangeRate} Bs</p>
-                        <p>Resta por pagar {(items.reduce((acc, item) => acc + (item.quantity * parseFloat(item.reference_selling_price)), 0) / exchangeRate - totalPaid).toFixed(2)} $ / {items.reduce((acc, item) => acc + (item.quantity * parseFloat(item.reference_selling_price)), 0) - (totalPaid * exchangeRate)} $</p>
+                        <p>Total Pagado: {totalPaid.toFixed(2)} $ / {Math.round(totalPaid * exchangeRate * 100) / 100} Bs</p>
+                        <p>Resta por pagar: {toPaid(items).toFixed(2)} $ / {Math.round(toPaid(items) * exchangeRate * 100) / 100 } Bs</p>
                     </div>
                 </div>
 

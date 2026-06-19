@@ -13,15 +13,14 @@ export default async function CreateInvoiceAction(
     const amount = formData.get('amount')
     const details = formData.get('details')
     const payments = formData.get('payments')
-    console.log('hi pedro', payments)
-    return
-    const body = {}
     const createInvoiceEndpoint = 'invoices'
     const payInvoiceEndpoint = 'pay-invoice'
     let payInvoiceResponse = null
     let payResponse = null
     let payError = null
-    
+
+    console.log(payments)
+    return
     const createInvoiceBody = {
         customer_id: customer,
         details: JSON.parse(details),
@@ -40,18 +39,22 @@ export default async function CreateInvoiceAction(
     const {data, error} = response 
 
     if (!invoiceStatus && data?.invoice) {
-        payInvoiceBody.invoice_id = data.invoice.id
-        payInvoiceResponse = await Request(payInvoiceEndpoint, 'POST', payInvoiceBody)
-        payResponse = payInvoiceResponse.data
-        payError = payInvoiceResponse.error
-        
-        if(payError) {
+        payInvoiceBody.invoice_id = data.invoice.id  
+        for(const payment of JSON.parse(payments)) {
+            payInvoiceResponse = await Request(payInvoiceEndpoint, 'POST', payment)
+            payResponse = payInvoiceResponse.data
+            payError = payInvoiceResponse.error
+            if(payError) {
             return {
                 message: null,
                 errors: {error: 'Hubo un error con el pago intenta nuevamente'},
                 inputs: body
+                }
             }
         }
+        
+        
+        
     }
     
     
