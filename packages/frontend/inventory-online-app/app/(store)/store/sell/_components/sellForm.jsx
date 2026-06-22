@@ -14,6 +14,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const [customer, setCustomer] = useState(null)
     const [payments, setPayments] = useState([])
     const [resetKey, setResetKey] = useState(0)
+    const [isPaid, setIsPay] = useState(false)
     const paymentOptions = SelectObject(paymentMethods, 'id', 'name')
     const initialState = {message: null, errors: {}}
     
@@ -37,7 +38,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         }
     }, [items])
 
-    const totalPaid = useMemo(() => {
+    let totalPaid = useMemo(() => {
         const result = payments.reduce((acc, item) => {
             const paymentMethod = paymentMethods.find(pm => pm.id === parseInt(item.payment_method_id))
             
@@ -97,19 +98,32 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
             return acc + total
         }, 0)
         
-        const isPaid = Math.abs(total.total_usd - newTotalPaid) < 0.001 ? true : false
-        
         if (!isPaid) return
-        
+
         return formAction(formData)
     }
 
     const toPaid = (items) => {
-        const total = items.reduce((acc, item) => {
+        let total = items.reduce((acc, item) => {
             return acc + item.quantity * parseFloat(item.selling_price)
             
         }, 0)
-        return total - totalPaid
+        
+        const EPSILON = 0.01
+
+        if (Math.abs(total - totalPaid) < EPSILON) {
+            return 0
+        }
+        return Math.abs(total - totalPaid) 
+    }
+
+    const totalBs = (items) => {
+        
+        const total = items.reduce((acc, item) => {
+            return acc + item.quantity * parseFloat(item.reference_selling_price)
+        }, 0)
+       
+        return total
     }
 
     useEffect(() => {
@@ -122,6 +136,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
             setResetKey(prev => prev + 1)
         }
     }, [state])
+
+   
     
 
 
@@ -151,8 +167,20 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     <button type="button" onClick={() => {setActiveScreen('customer')}}>Seleccionar cliente</button>
                     <button type='submit'>Pagar</button>
                     <div>
-                        <p>Total Pagado: {totalPaid.toFixed(2)} $ / {Math.round(totalPaid * exchangeRate * 100) / 100} Bs</p>
+                        <p>Total Pagado: {totalPaid.toFixed(2)} $ / {toPaid(items) != 0 ? Math.round(totalPaid * exchangeRate * 100) / 100 : totalBs(items)} Bs</p>
                         <p>Resta por pagar: {toPaid(items).toFixed(2)} $ / {Math.round(toPaid(items) * exchangeRate * 100) / 100 } Bs</p>
+                    </div>
+
+                    {/* payments */}
+                    <div>
+                        Pagos:
+                        {payments.length > 0 && (
+                            payments.map((payment, index) => {
+                                return (
+                                    <p key={index}>{payment.name} | {payment.amount} | {payment.currency}</p>
+                                )
+                            })
+                        )}
                     </div>
                 </div>
 
