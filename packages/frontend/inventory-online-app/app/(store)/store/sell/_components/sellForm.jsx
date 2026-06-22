@@ -140,7 +140,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                 {/* pay */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'pay' ? styles.hide : ''}`}>
                     <Select name='payment_method_id' options={paymentOptions} selectKey={1} defaultValue={'Punto de venta'}/>
-                    <input type="number" name="amount" placeholder="Monto" min="1" step="0.01" required></input>
+                    <input type="number" name="amount" placeholder="Monto" min="0.1" step="0.01" required></input>
                     <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
                     <button type="button" onClick={() => {setActiveScreen('customer')}}>Seleccionar cliente</button>
                     <button type='submit'>Pagar</button>
