@@ -4,12 +4,12 @@ import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import styles from './select.module.css'
 
-export default function Select({options=[], defaultValue=null, selectKey='', name='select_name'}) {
+export default function Select({options=[], defaultValue=null, selectKey='', name='select_name', resetKey=null}) {
     const [value, setValue] = useState(defaultValue)
     const [key, setKey] = useState(selectKey || '')
     const [open, setOpen] = useState(false)
     const selectRef = useRef(null)
-
+    
     const handleOptionClick = (option) => {
         setValue(option.label)
         setKey(option.value)
@@ -28,6 +28,12 @@ export default function Select({options=[], defaultValue=null, selectKey='', nam
             document.removeEventListener('mousedown', handleClickOutside)
         }
     }, [])
+
+    useEffect(() => {
+        setValue(defaultValue)
+        setKey(selectKey)
+        setOpen(false)
+    }, [resetKey])
 
     return (
         <Container

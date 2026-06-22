@@ -13,6 +13,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const [items, setItems] = useState([])
     const [customer, setCustomer] = useState(null)
     const [payments, setPayments] = useState([])
+    const [resetKey, setResetKey] = useState(0)
     const paymentOptions = SelectObject(paymentMethods, 'id', 'name')
     const initialState = {message: null, errors: {}}
     
@@ -49,6 +50,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         }, 0)
         return result
     }, [payments])
+
     
     const handlePay = (formData) => {
         // set amount and payment_method_id
@@ -103,17 +105,21 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     }
 
     const toPaid = (items) => {
-        return items.reduce((acc, item) => {
-            return Math.abs((acc + item.quantity * parseFloat(item.selling_price)) - totalPaid)
+        const total = items.reduce((acc, item) => {
+            return acc + item.quantity * parseFloat(item.selling_price)
+            
         }, 0)
+        return total - totalPaid
     }
 
     useEffect(() => {
         const success = state?.message
         if (success) {
             setItems([])
-            // setActiveScreen('products')
+            setActiveScreen('products')
             setCustomer(null)
+            setPayments([])
+            setResetKey(prev => prev + 1)
         }
     }, [state])
     
@@ -139,7 +145,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
 
                 {/* pay */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'pay' ? styles.hide : ''}`}>
-                    <Select name='payment_method_id' options={paymentOptions} selectKey={1} defaultValue={'Punto de venta'}/>
+                    <Select name='payment_method_id' options={paymentOptions} selectKey={1} defaultValue={'Punto de venta'} resetKey={resetKey}/>
                     <input type="number" name="amount" placeholder="Monto" min="0.1" step="0.01" required></input>
                     <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
                     <button type="button" onClick={() => {setActiveScreen('customer')}}>Seleccionar cliente</button>
