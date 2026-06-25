@@ -108,7 +108,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         )
     }
 
-    const handleSubmitInvoice = () => {
+    const handleSubmitInvoice = (formData) => {
 
         if (remainingToPayUSD > 0.01) {
             return alert(`Falta por completar el pago. Restan: ${remainingToPayUSD.toFixed(2)} $`)
@@ -117,8 +117,6 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         if (items.length < 1) {
             return alert('La factura tiene que tener productos')
         }
-
-        const formData = new FormData()
 
         // Customer data and totals are adjusted
         formData.append('customer_id', customer?.id || '')
@@ -198,7 +196,15 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         placeholder="Monto" 
                         min="0.1" 
                         step="0.01" 
-                        required />
+                        onKeyDown={
+                            (e) => {
+                                if (e.key === 'Enter'){
+                                    e.preventDefault();
+                                    handleAddPayment();
+                                }   
+                            }
+                        }
+                        />
                     
                     <button type="button" onClick={handleAddPayment}>Agregar Pago</button>
                     <hr />
