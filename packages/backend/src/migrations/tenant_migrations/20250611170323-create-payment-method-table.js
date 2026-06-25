@@ -38,6 +38,11 @@ export default {
           validate: {
             notEmpty: true
           }
+        },
+        allow_change: {
+          type: Sequelize.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
         }
       },
       {

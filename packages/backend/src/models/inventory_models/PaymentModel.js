@@ -54,6 +54,12 @@ function initializePayment(sequelize, schema) {
                         msg: 'A valid currency name is required.'
                     }
                 }
+            },
+
+            allow_change: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
             }
         },
         {
