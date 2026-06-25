@@ -19,12 +19,13 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const [currentAmount, setCurrentAmount] = useState('')
     const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState('')
     const paymentOptions = SelectObject(paymentMethods, 'id', 'name')
-    
+
+    // form action
     const initialState = {message: null, errors: {}}
     const createInvoice = CreateInvoiceAction.bind(null, 'Factura creada con éxito', false, null)
     const [state, formAction, isPending] = useActionState(createInvoice, initialState)
     
-    // order total usd and bs 
+    // total order amount in USD and Bs
     const total = useMemo(() => {
         return items.reduce((acc, item) => {
             const bs = item.quantity * parseFloat(item.reference_selling_price || 0)
@@ -36,20 +37,20 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         }, {total_bs: 0, total_usd: 0})
     }, [items])
 
-    // total payed converted in usd
+    // total paid converted in usd
     const totalPaidUSD = useMemo(() => {
         return payments.reduce((acc, payment) => {
             return acc + payment.amountInUSD
         }, 0)
     }, [payments])
 
-    // remaing to paid
+    // remaining to paid
     const remainingToPayUSD = useMemo(() => {
         const remaining = total.total_usd - totalPaidUSD
         return remaining > 0 ? remaining : 0
     }, [total.total_usd, totalPaidUSD])
 
-    // change 
+    // cash change if it the case
     const changeDueUSD = useMemo(() => {
         const change = totalPaidUSD - total.total_usd
         return change > 0 ? change : 0
@@ -70,18 +71,18 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         
         const isBolivar = paymentMethod.currency === 'Bolivar Digital'
         
-        // se convierte el monto ingresado a USD 
+        // The amount entered is converted to USD
         const amountInUSD = isBolivar ? inputAmount / parseFloat(exchangeRate) : inputAmount
 
-        // regla 1 y 2 validar si excede el restante
+        // Rules 1 and 2 validate if it exceeds the remaining amount
         const isCash = paymentMethod.name.toLowerCase().includes('efectivo')
         if (!isCash && amountInUSD > (remainingToPayUSD + 0.01)) {
             const maxAllowed = isBolivar ? (remainingToPayUSD * exchangeRate).toFixed(2) + "Bs" : remainingToPayUSD.toFixed(2) + "$"
             return alert(`Los pagos electronicos no pueden exceder el total. Monto maximo permitido en este metodo de pago: ${maxAllowed}`)
         }
 
-        setPayments([
-            ...payments,
+        setPayments(prev => [
+            ...prev,
             {
                 payment_method_id: methodId,
                 name: paymentMethod.name,
@@ -90,8 +91,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                 amountInUSD: amountInUSD
             }
         ])
-
-        setCurrentAmount(0)
+       
+        setCurrentAmount('')
     }
 
     const handleSubmitInvoice = () => {
@@ -102,26 +103,25 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
 
         const formData = new FormData()
 
-        // se ajusta datos del cliente y totales 
+        // Customer data and totals are adjusted
         formData.append('customer_id', customer?.id || '')
         formData.append('total_usd', total.total_usd)
         formData.append('total_bs', total.total_bs)
         formData.append('change_usd', changeDueUSD)
 
-        // detalles de productos
+        // Product details
         formData.append('details', JSON.stringify(items.map(item => ({
             product_id: item.id,
             quantity: item.quantity
         }))))
 
-        // detalles de pagos 
+        // Payments details
         formData.append('payments', JSON.stringify(payments))
 
-        // se ejecuta el formulario
+        // send form to formAction
         return formAction(formData)
     }
-
-    
+   
     useEffect(() => {
         if (state?.message) {
             setItems([])
@@ -133,25 +133,35 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         }
     }, [state])
 
+    useEffect(() => {
+        if(items.length < 1) {
+            setActiveScreen('products')
+        }
+    }, [items])
+
     return (
         <div className={styles.mainContainer}>
             <form className={styles.mainContainer} action={handleSubmitInvoice}>
-                {/* products */}
+                {/* products section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'products' ? styles.hide : ''}`}>
                     <ProductSelector  setItems={setItems} items={items}/>
-                    <button type="button" onClick={() => setActiveScreen('customer')} disabled={items.length === 0}>Seleccionar cliente
-
+                    <button type="button" onClick={() => setActiveScreen('customer')} disabled={items.length === 0}>
+                        Seleccionar cliente
                     </button>
                 </div>
 
-                {/* customer */}
+                {/* customer section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'customer' ? styles.hide : ''}`}>
                     <SelectCustomer customer={customer} setCustomer={setCustomer} />
-                    <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
-                    <button type="button" onClick={() => {setActiveScreen('pay')}} disabled={!customer}>Pagar</button>
+                    <button type="button" onClick={() => {setActiveScreen('products')}}>
+                        Agregar productos
+                    </button>
+                    <button type="button" onClick={() => {setActiveScreen('pay')}} disabled={!customer}>
+                        Pagar
+                    </button>
                 </div>
 
-                {/* pay */}
+                {/* pay section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'pay' ? styles.hide : ''}`}>
                     <Select 
                         name='payment_method_id' 
@@ -163,7 +173,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     />
                     <input 
                         type="number" 
-                        name={currentAmount} 
+                        name="amount"
+                        value={currentAmount} 
                         onChange={(e) => setCurrentAmount(e.target.value)}
                         placeholder="Monto" 
                         min="0.1" 
@@ -213,7 +224,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     </div>
                 </div>
 
-                {/* cart */}
+                {/* cart section */}
                 <div className={styles.cartContainer}>
                     <Cart items={items} setItems={setItems} total={total}/>
                 </div>
