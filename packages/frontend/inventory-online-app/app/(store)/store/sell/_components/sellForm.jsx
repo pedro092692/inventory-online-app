@@ -69,20 +69,19 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         
         const inputAmount = parseFloat(currentAmount)
         
-        const isBolivar = paymentMethod.allow_change 
-        console.log(isBolivar)
+        const isBolivar = paymentMethod.currency === 'Bolivar Digital'
         
         // The amount entered is converted to USD
         const amountInUSD = Number(
-            (
-                isBolivar
-                    ? inputAmount / exchangeRate
-                    : inputAmount
-            ).toFixed(6)
+            
+            isBolivar
+                ? inputAmount / exchangeRate
+                : inputAmount
+            
         )
 
         // Rules 1 and 2 validate if it exceeds the remaining amount
-        const isCash = paymentMethod.name.toLowerCase().includes('efectivo')
+        const isCash = paymentMethod.allow_change
         if (!isCash && amountInUSD > (remainingToPayUSD + 0.01)) {
             const maxAllowed = isBolivar ? (remainingToPayUSD * exchangeRate).toFixed(2) + "Bs" : remainingToPayUSD.toFixed(2) + "$"
             return alert(`Los pagos electronicos no pueden exceder el total. Monto maximo permitido en este metodo de pago: ${maxAllowed}`)
@@ -115,6 +114,10 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
             return alert(`Falta por completar el pago. Restan: ${remainingToPayUSD.toFixed(2)} $`)
         }
 
+        if (items.length < 1) {
+            return alert('La factura tiene que tener productos')
+        }
+
         const formData = new FormData()
 
         // Customer data and totals are adjusted
@@ -137,15 +140,16 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     }
    
     useEffect(() => {
-        if (state?.message) {
-            setItems([])
-            setActiveScreen('products')
-            setCustomer(null)
-            setPayments([])
-            setCurrentAmount('')
-            setResetKey(prev => prev + 1)
-            setSelectedPaymentMethodId('')
-        }
+        if (!state?.message) return
+        
+        setItems([])
+        setActiveScreen('products')
+        setCustomer(null)
+        setPayments([])
+        setCurrentAmount('')
+        setResetKey(prev => prev + 1)
+        setSelectedPaymentMethodId('')
+        
     }, [state])
 
     useEffect(() => {
@@ -187,7 +191,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         onChange={(payment) => setSelectedPaymentMethodId(payment.value)}
                     />
                     <input 
-                        type="number"
+                        type="number" 
+                        name="amount"
                         value={currentAmount} 
                         onChange={(e) => setCurrentAmount(e.target.value)}
                         placeholder="Monto" 
