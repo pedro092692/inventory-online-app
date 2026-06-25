@@ -18,35 +18,43 @@ export default {
       [
         {
           name: 'Punto de venta',
-          currency: 'Bolivar Digital'
+          currency: 'Bolivar Digital',
+          allow_change: false
         },
         {
           name: 'Pago Movil',
-          currency: 'Bolivar Digital'
+          currency: 'Bolivar Digital',
+          allow_change: false
         },
         { 
           name: 'Transferencia',
-          currency: 'Bolivar Digital'
+          currency: 'Bolivar Digital',
+          allow_change: false
         },
         {
           name: 'Efectivo Bolivares',
-          currency: 'Bolivar Digital'
+          currency: 'Bolivar Digital',
+          allow_change: true
         },
         { 
           name: 'Efectivo Dolares',
-          currency: 'Dolares'
+          currency: 'Dolares',
+          allow_change: true
         },
         {
           name: 'Transferencia Dolares',
-          currency: 'Dolares'
+          currency: 'Dolares',
+          allow_change: false
         },
         {
           name: 'Cripto',
-          currency: 'Criptomonedas'
+          currency: 'Criptomonedas',
+          allow_change: false
         },
         {
           name: 'Nota de Credito',
-          currency: 'Saldo tienda'
+          currency: 'Saldo tienda',
+          allow_change: false
         }
       ]
     )

@@ -69,7 +69,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         
         const inputAmount = parseFloat(currentAmount)
         
-        const isBolivar = paymentMethod.currency === 'Bolivar Digital'
+        const isBolivar = paymentMethod.allow_change 
+        console.log(isBolivar)
         
         // The amount entered is converted to USD
         const amountInUSD = Number(
@@ -186,8 +187,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         onChange={(payment) => setSelectedPaymentMethodId(payment.value)}
                     />
                     <input 
-                        type="number" 
-                        name="amount"
+                        type="number"
                         value={currentAmount} 
                         onChange={(e) => setCurrentAmount(e.target.value)}
                         placeholder="Monto" 
