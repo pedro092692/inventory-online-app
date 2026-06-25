@@ -72,7 +72,13 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         const isBolivar = paymentMethod.currency === 'Bolivar Digital'
         
         // The amount entered is converted to USD
-        const amountInUSD = isBolivar ? inputAmount / parseFloat(exchangeRate) : inputAmount
+        const amountInUSD = Number(
+            (
+                isBolivar
+                    ? inputAmount / exchangeRate
+                    : inputAmount
+            ).toFixed(6)
+        )
 
         // Rules 1 and 2 validate if it exceeds the remaining amount
         const isCash = paymentMethod.name.toLowerCase().includes('efectivo')
@@ -192,7 +198,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     
                     <div>
                         <p>Total Factura: {total.total_usd.toFixed(2)} $ / {total.total_bs.toFixed(2)} Bs</p>
-                        <p>Total Abonado: {totalPaidUSD.toFixed(2)} $</p>
+                        <p>Total Abonado: {totalPaidUSD.toFixed(2)} $ / {(totalPaidUSD * exchangeRate).toFixed(2)} Bs</p>
                         <p>Resta por pagar: {remainingToPayUSD.toFixed(2)} $ /
                             {(remainingToPayUSD * exchangeRate).toFixed(2)} Bs
                         </p>
@@ -214,8 +220,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         {payments.length > 0 ? (
                             payments.map((payment, index) => (
                                 <p key={index}>
-                                    • {payment.name}: {payment.amount} {payment.currenty}
-                                    {payment.currency === 'Bolivar Digital' && `(~${payment.amountInUSD.toFixed(2)} $)`}
+                                    • {payment.name}: {payment.amount} {payment.currency}
+                                    {payment.currency === 'Bolivar Digital' && ` (~${payment.amountInUSD.toFixed(2)} $)`}
                                 </p>
                                 
                             ))
