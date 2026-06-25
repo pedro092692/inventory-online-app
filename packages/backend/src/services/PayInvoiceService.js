@@ -88,7 +88,8 @@ class PayInvoiceService {
             })
 
             if(change){
-                updatedInvoice.dataValues.change = change
+                
+                updatedInvoice.invoice.dataValues.change = change
             }
             
             if (updatedInvoice?.invoice?.status == 'unpaid') {

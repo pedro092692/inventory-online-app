@@ -4,7 +4,7 @@ import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import styles from './select.module.css'
 
-export default function Select({options=[], defaultValue=null, selectKey='', name='select_name', resetKey=null}) {
+export default function Select({options=[], defaultValue=null, selectKey='', name='select_name', resetKey=null, onChange = () => ''}) {
     const [value, setValue] = useState(defaultValue)
     const [key, setKey] = useState(selectKey || '')
     const [open, setOpen] = useState(false)
@@ -83,7 +83,9 @@ export default function Select({options=[], defaultValue=null, selectKey='', nam
                                 alignItem={'start'}
                                 key={option.value}
                             >
-                                <p className={`${styles.item} p2-r`} onClick={() => handleOptionClick(option)}>
+                                <p className={`${styles.item} p2-r`} 
+                                    onClick={ onChange ? () => {onChange(option); handleOptionClick(option)} 
+                                    : () => handleOptionClick(option)}>
                                     {option.label}
                                 </p>
                             </Container>

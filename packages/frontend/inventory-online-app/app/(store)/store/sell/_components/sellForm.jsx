@@ -14,136 +14,128 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const [customer, setCustomer] = useState(null)
     const [payments, setPayments] = useState([])
     const [resetKey, setResetKey] = useState(0)
-    const [isPaid, setIsPay] = useState(false)
+
+    // local state to control actual amount
+    const [currentAmount, setCurrentAmount] = useState('')
+    const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState('')
     const paymentOptions = SelectObject(paymentMethods, 'id', 'name')
-    const initialState = {message: null, errors: {}}
     
+    const initialState = {message: null, errors: {}}
     const createInvoice = CreateInvoiceAction.bind(null, 'Factura creada con éxito', false, null)
     const [state, formAction, isPending] = useActionState(createInvoice, initialState)
-        
+    
+    // order total usd and bs 
     const total = useMemo(() => {
-        const result = items.reduce((acc, item) => {
-            const bs = item.quantity * parseFloat(item.reference_selling_price)
-            const usd = item.quantity * parseFloat(item.selling_price)
-
+        return items.reduce((acc, item) => {
+            const bs = item.quantity * parseFloat(item.reference_selling_price || 0)
+            const usd = item.quantity * parseFloat(item.selling_price || 0)
             return {
                 total_bs: acc.total_bs + bs,
-                total_usd: acc.total_usd + usd
+                total_usd: acc.total_usd + usd,
             }
         }, {total_bs: 0, total_usd: 0})
-
-        return {
-            total_bs: result.total_bs,
-            total_usd: result.total_usd
-        }
     }, [items])
 
-    let totalPaid = useMemo(() => {
-        const result = payments.reduce((acc, item) => {
-            const paymentMethod = paymentMethods.find(pm => pm.id === parseInt(item.payment_method_id))
-            
-            if (!paymentMethod) return acc
-            
-            const total = paymentMethod.currency != 'Bolivar Digital' && paymentMethod.currency != 'Undefined' ?
-                parseFloat(item.amount) : parseFloat(item.amount) / parseFloat(exchangeRate)
-
-            return acc + total
+    // total payed converted in usd
+    const totalPaidUSD = useMemo(() => {
+        return payments.reduce((acc, payment) => {
+            return acc + payment.amountInUSD
         }, 0)
-        return result
     }, [payments])
 
-    
-    const handlePay = (formData) => {
-        // set amount and payment_method_id
-        const amount = formData.get('amount')
-        const payment_method_id = formData.get('payment_method_id')
+    // remaing to paid
+    const remainingToPayUSD = useMemo(() => {
+        const remaining = total.total_usd - totalPaidUSD
+        return remaining > 0 ? remaining : 0
+    }, [total.total_usd, totalPaidUSD])
+
+    // change 
+    const changeDueUSD = useMemo(() => {
+        const change = totalPaidUSD - total.total_usd
+        return change > 0 ? change : 0
+    }, [total.total_usd, totalPaidUSD])
+
+    // function to add payment method to payment list 
+    const handleAddPayment = () => {
+        if (!currentAmount || parseFloat(currentAmount) <=0) {
+            return alert('Por favor ingresa un monto valido...')
+        }
+
+        const methodId = selectedPaymentMethodId || (paymentOptions[0]?.value)
+        const paymentMethod = paymentMethods.find(pm => pm.id === parseInt(methodId))
+
+        if (!paymentMethod) return alert('Metodo de pago no seleccionado')
         
-        // add amount and payment_method_id to payments array.
-        const newPayments = [
+        const inputAmount = parseFloat(currentAmount)
+        
+        const isBolivar = paymentMethod.currency === 'Bolivar Digital'
+        
+        // se convierte el monto ingresado a USD 
+        const amountInUSD = isBolivar ? inputAmount / parseFloat(exchangeRate) : inputAmount
+
+        // regla 1 y 2 validar si excede el restante
+        const isCash = paymentMethod.name.toLowerCase().includes('efectivo')
+        if (!isCash && amountInUSD > (remainingToPayUSD + 0.01)) {
+            const maxAllowed = isBolivar ? (remainingToPayUSD * exchangeRate).toFixed(2) + "Bs" : remainingToPayUSD.toFixed(2) + "$"
+            return alert(`Los pagos electronicos no pueden exceder el total. Monto maximo permitido en este metodo de pago: ${maxAllowed}`)
+        }
+
+        setPayments([
             ...payments,
             {
-                payment_method_id: payment_method_id,
-                amount: amount,
-                name: paymentMethods.find(pm => pm.id === parseInt(payment_method_id)).name || 'Undefined',
-                currency: paymentMethods.find(pm => pm.id === parseInt(payment_method_id)).currency || 'Undefined',
+                payment_method_id: methodId,
+                name: paymentMethod.name,
+                currency: paymentMethod.currency,
+                amount: inputAmount,
+                amountInUSD: amountInUSD
             }
-        ]
-        
-        setPayments(newPayments)
+        ])
 
-        // add details to form data.
-        formData.append('details', JSON.stringify(items.map(item => {
-            return {
-                product_id: item.id,
-                quantity: item.quantity
-            }
-        })))
+        setCurrentAmount(0)
+    }
 
-        // add payments details to form data.
-        formData.append('payments', JSON.stringify(newPayments))
-        
-        
-        
-        const newTotalPaid = newPayments.reduce((acc, item) => {
-            const paymentMethod = paymentMethods.find(
-            pm => pm.id === parseInt(item.payment_method_id))
+    const handleSubmitInvoice = () => {
 
-            if (!paymentMethod) return acc
+        if (remainingToPayUSD > 0.01) {
+            return alert(`Falta por completar el pago. Restan: ${remainingToPayUSD.toFixed(2)} $`)
+        }
 
-            const total =
-                paymentMethod.currency !== 'Bolivar Digital' &&
-                paymentMethod.currency !== 'Undefined'
-                    ? parseFloat(item.amount)
-                    : parseFloat(item.amount) / parseFloat(exchangeRate)
-            return acc + total
-        }, 0)
-        
-        if (!isPaid) return
+        const formData = new FormData()
 
+        // se ajusta datos del cliente y totales 
+        formData.append('customer_id', customer?.id || '')
+        formData.append('total_usd', total.total_usd)
+        formData.append('total_bs', total.total_bs)
+        formData.append('change_usd', changeDueUSD)
+
+        // detalles de productos
+        formData.append('details', JSON.stringify(items.map(item => ({
+            product_id: item.id,
+            quantity: item.quantity
+        }))))
+
+        // detalles de pagos 
+        formData.append('payments', JSON.stringify(payments))
+
+        // se ejecuta el formulario
         return formAction(formData)
     }
 
-    const toPaid = (items) => {
-        let total = items.reduce((acc, item) => {
-            return acc + item.quantity * parseFloat(item.selling_price)
-            
-        }, 0)
-        
-        const EPSILON = 0.01
-
-        if (Math.abs(total - totalPaid) < EPSILON) {
-            return 0
-        }
-        return Math.abs(total - totalPaid) 
-    }
-
-    const totalBs = (items) => {
-        
-        const total = items.reduce((acc, item) => {
-            return acc + item.quantity * parseFloat(item.reference_selling_price)
-        }, 0)
-       
-        return total
-    }
-
+    
     useEffect(() => {
-        const success = state?.message
-        if (success) {
+        if (state?.message) {
             setItems([])
             setActiveScreen('products')
             setCustomer(null)
             setPayments([])
+            setCurrentAmount('')
             setResetKey(prev => prev + 1)
         }
     }, [state])
 
-   
-    
-
-
     return (
         <div className={styles.mainContainer}>
-            <form className={styles.mainContainer} action={handlePay}>
+            <form className={styles.mainContainer} action={handleSubmitInvoice}>
                 {/* products */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'products' ? styles.hide : ''}`}>
                     <ProductSelector  setItems={setItems} items={items}/>
@@ -156,37 +148,69 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                 <div className={`${styles.searchContainer} ${activeScreen !== 'customer' ? styles.hide : ''}`}>
                     <SelectCustomer customer={customer} setCustomer={setCustomer} />
                     <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
-                    <button type="button" onClick={() => {setActiveScreen('pay')}}>Pagar</button>
+                    <button type="button" onClick={() => {setActiveScreen('pay')}} disabled={!customer}>Pagar</button>
                 </div>
 
                 {/* pay */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'pay' ? styles.hide : ''}`}>
-                    <Select name='payment_method_id' options={paymentOptions} selectKey={1} defaultValue={'Punto de venta'} resetKey={resetKey}/>
-                    <input type="number" name="amount" placeholder="Monto" min="0.1" step="0.01" required></input>
+                    <Select 
+                        name='payment_method_id' 
+                        options={paymentOptions} 
+                        selectKey={1} 
+                        defaultValue={'Punto de Venta'} 
+                        resetKey={resetKey}
+                        onChange={(payment) => setSelectedPaymentMethodId(payment.value)}
+                    />
+                    <input 
+                        type="number" 
+                        name={currentAmount} 
+                        onChange={(e) => setCurrentAmount(e.target.value)}
+                        placeholder="Monto" 
+                        min="0.1" 
+                        step="0.01" 
+                        required />
+                    
+                    <button type="button" onClick={handleAddPayment}>Agregar Pago</button>
+                    <hr />
                     <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
                     <button type="button" onClick={() => {setActiveScreen('customer')}}>Seleccionar cliente</button>
-                    <button type='submit'>Pagar</button>
+                    
+                    <button type='submit' disabled={isPending}>
+                        {isPending ? 'Procesando...' : 'Finalizar Factura'}
+                    </button>
+                    
                     <div>
-                        <p>Total Pagado: {totalPaid.toFixed(2)} $ / {toPaid(items) != 0 ? Math.round(totalPaid * exchangeRate * 100) / 100 : totalBs(items)} Bs</p>
-                        <p>Resta por pagar: {toPaid(items).toFixed(2)} $ / {Math.round(toPaid(items) * exchangeRate * 100) / 100 } Bs</p>
+                        <p>Total Factura: {total.total_usd.toFixed(2)} $ / {total.total_bs.toFixed(2)} Bs</p>
+                        <p>Total Abonado: {totalPaidUSD.toFixed(2)} $</p>
+                        <p>Resta por pagar: {remainingToPayUSD.toFixed(2)} $ /
+                            {(remainingToPayUSD * exchangeRate).toFixed(2)} Bs
+                        </p>
+                        {
+                            changeDueUSD > 0 && (
+                                <p style={{color: 'green', fontWeight: 'bold'}}> 
+                                    Cambio (Vuelto): {changeDueUSD.toFixed(2)} $ / 
+                                    {(changeDueUSD * exchangeRate).toFixed(2)} Bs
+                                </p>
+                            )
+                        }
+                        {/* <p>Total Pagado: {totalPaid.toFixed(2)} $ / {toPaid(items) != 0 ? Math.round(totalPaid * exchangeRate * 100) / 100 : totalBs(items)} Bs</p> */}
+                        {/* <p>Resta por pagar: {toPaid(items).toFixed(2)} $ / {Math.round(toPaid(items) * exchangeRate * 100) / 100 } Bs</p> */}
                     </div>
 
                     {/* payments */}
                     <div>
-                        Pagos:
-                        {payments.length > 0 && (
-                            payments.map((payment, index) => {
-                                return (
-                                    <p key={index}>{payment.name} | {payment.amount} | {payment.currency}</p>
-                                )
-                            })
-                        )}
+                        <h4>Pagos Registrados:</h4>
+                        {payments.length > 0 ? (
+                            payments.map((payment, index) => (
+                                <p key={index}>
+                                    • {payment.name}: {payment.amount} {payment.currenty}
+                                    {payment.currency === 'Bolivar Digital' && `(~${payment.amountInUSD.toFixed(2)} $)`}
+                                </p>
+                                
+                            ))
+                        ) : 
+                        <p>No hay pagos agregados aun.</p>}
                     </div>
-                </div>
-
-                {/* review alter pay */}
-                <div>
-
                 </div>
 
                 {/* cart */}
