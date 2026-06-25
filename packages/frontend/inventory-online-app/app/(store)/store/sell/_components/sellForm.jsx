@@ -143,6 +143,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
             setPayments([])
             setCurrentAmount('')
             setResetKey(prev => prev + 1)
+            setSelectedPaymentMethodId('')
         }
     }, [state])
 
