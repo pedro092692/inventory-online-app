@@ -101,6 +101,13 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         setCurrentAmount('')
     }
 
+    // function to handle remove mistake payment
+    const removePayment = (index) => {
+       setPayments(prev => 
+            prev.filter((_, i) => i !== index)
+        )
+    }
+
     const handleSubmitInvoice = () => {
 
         if (remainingToPayUSD > 0.01) {
@@ -210,8 +217,6 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                                 </p>
                             )
                         }
-                        {/* <p>Total Pagado: {totalPaid.toFixed(2)} $ / {toPaid(items) != 0 ? Math.round(totalPaid * exchangeRate * 100) / 100 : totalBs(items)} Bs</p> */}
-                        {/* <p>Resta por pagar: {toPaid(items).toFixed(2)} $ / {Math.round(toPaid(items) * exchangeRate * 100) / 100 } Bs</p> */}
                     </div>
 
                     {/* payments */}
@@ -222,6 +227,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                                 <p key={index}>
                                     • {payment.name}: {payment.amount} {payment.currency}
                                     {payment.currency === 'Bolivar Digital' && ` (~${payment.amountInUSD.toFixed(2)} $)`}
+                                    <span onClick={() => removePayment(index)}>🗑️</span>
                                 </p>
                                 
                             ))
