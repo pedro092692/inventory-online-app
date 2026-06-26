@@ -84,6 +84,7 @@ class CustomerService {
                     {
                         association: 'credits',
                         attributes: [],
+                        required: false,
                         where: {
                             status: 'active'
                         }
@@ -103,7 +104,7 @@ class CustomerService {
                     'Customer.id',
                 ]
             })
-            
+
             if (!customer) {
                 throw new NotFoundError()
             }
