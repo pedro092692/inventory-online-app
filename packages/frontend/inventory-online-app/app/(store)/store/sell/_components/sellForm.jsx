@@ -217,7 +217,10 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     
                     <div>
                         <p>Total Factura: {total.total_usd.toFixed(2)} $ / {total.total_bs.toFixed(2)} Bs</p>
-                        <p>Total Abonado: {totalPaidUSD.toFixed(2)} $ / {(totalPaidUSD * exchangeRate).toFixed(2)} Bs</p>
+                        {totalPaidUSD > 0 && (
+                            <p>Total Abonado: {totalPaidUSD.toFixed(2)} $ / {(totalPaidUSD * exchangeRate).toFixed(2)} Bs</p>
+                        )}
+                        
                         <p>Resta por pagar: {remainingToPayUSD.toFixed(2)} $ /
                             {(remainingToPayUSD * exchangeRate).toFixed(2)} Bs
                         </p>
