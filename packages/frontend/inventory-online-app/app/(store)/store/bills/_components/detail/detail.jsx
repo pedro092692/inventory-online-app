@@ -6,6 +6,7 @@ import PaymentDetails from '@/app/(store)/store/bills/_components/detail/payment
 import ProductDetails from '@/app/(store)/store/bills/_components/detail/productDetail/productDetail'
 import InvoicePDF from '@/app/(store)/store/bills/_components/pdf/pdf'
 import InvoiceBasicInfo from '@/app/(store)/store/bills/_components/detail/basicInfo/basicInfo'
+import GenerateWhatsLink from '@/app/(store)/store/bills/_components/detail/whatsappLink/whatsappLink'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
@@ -26,6 +27,7 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
     const invoice = data?.invoice || null
     const responseNoPaginatedProducts = await GetItemAction(`invoices/${id}?paginated=false`)
     const invoiceNopaginatedProducts = responseNoPaginatedProducts?.data?.invoice || []
+
     return (
         <>
         {invoice ?
@@ -49,6 +51,9 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                 direction={'row'}
                 justifyContent={'end'}
             >
+                
+                <GenerateWhatsLink invoice_id={id} />
+
                 {/* download pdf */}
                 <InvoicePDF 
                     invoice={invoiceNopaginatedProducts}

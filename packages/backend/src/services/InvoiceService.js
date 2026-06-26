@@ -660,7 +660,6 @@ class InvoiceService {
      */
     invoiceDataForWhatsapp(invoice) {
         return this.#error.handler(['Create invoice data for whatsapp'], async() => {
-            console.log(invoice)
             const date = invoice.date.toLocaleDateString('es-VE')
             const hours = `${invoice.date.getHours()}:${invoice.date.getMinutes()}`
             const invoiceNumber = invoice.id.toString().padStart(8, '0');
