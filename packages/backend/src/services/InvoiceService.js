@@ -660,22 +660,41 @@ class InvoiceService {
      */
     invoiceDataForWhatsapp(invoice) {
         return this.#error.handler(['Create invoice data for whatsapp'], async() => {
+            console.log(invoice)
             const date = invoice.date.toLocaleDateString('es-VE')
             const hours = `${invoice.date.getHours()}:${invoice.date.getMinutes()}`
             const invoiceNumber = invoice.id.toString().padStart(8, '0');
             const customer = invoice.customer.name
             const products = invoice.dataValues.products.map(product => {
-                return { name: product.name, quantity: product.invoice_details.dataValues.quantity, price: product.invoice_details.dataValues.unit_price }
+                return { name: product.products.name, quantity: product.quantity, price: product.unit_price }
             })
             const product_list = products.map(product => `${product.name} (${product.quantity}) x ${product.price} Bs `).join('\n')
             const total = invoice.total_reference
             const phone = invoice.customer.phone
             
-            const data = `Pededido N°: ${invoiceNumber}\nFecha: ${date},  Hora: ${hours}\nCliente: ${customer}\n\nContenido:\n${product_list}\n\nTotal: ${total}`
+            const formattedProducts = product_list
+                .split('\n')
+                .filter(line => line.trim() !== '')
+                .map((line, index) => `${index + 1}. ${line.trim()}`)
+                .join('\n')
 
-            const encoded_data = encodeURIComponent(data)
-            const waLink = `https://wa.me/${phone}?text=${encoded_data}`;
+            const data = `*PEDIDO #${invoiceNumber}*
+ *Cliente:* ${customer.toUpperCase()}
+ *Fecha:* ${date}
+ *Hora:* ${hours}
+━━━━━━━━━━━━━━━━━━━━━━
+ *PRODUCTOS*
+${formattedProducts}
+━━━━━━━━━━━━━━━━━━━━━━
+ *TOTAL NETO:* ${total} Bs
+ *TOTAL A PAGAR:*
+*${total} Bs*
+━━━━━━━━━━━━━━━━━━━━━━
+ ¡Muchas gracias por su compra!
+ Esperamos atenderle nuevamente.`
             
+            const encodedData = encodeURIComponent(data)
+            const waLink = `https://wa.me/${phone.replace('+', '')}?text=${encodedData}`
             return waLink
         })
     }

@@ -149,9 +149,9 @@ class InvoiceController {
     sendWhatsappInvoice = this.#error.handler( async(req, res) => {
         const { id } = req.params
         // get invoice information 
-        const invoice = await this.invoiceService.getInvoice(id)
+        const {invoice} = await this.invoiceService.getInvoice(id)
         // create data to be send
-        const waLink = await this.invoiceService.invoiceDataForWhatsapp(invoice.invoice)
+        const waLink = await this.invoiceService.invoiceDataForWhatsapp(invoice)
         res.status(200).json({ link: waLink})
     })
 
