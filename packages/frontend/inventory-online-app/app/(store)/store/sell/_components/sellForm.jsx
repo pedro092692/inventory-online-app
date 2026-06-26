@@ -1,12 +1,14 @@
 'use client'
-import ProductSelector from "@/app/(store)/store/sell/_components/product/productSelector"
-import Cart from "@/app/(store)/store/sell/_components/cart/cart"
+import ProductSelector from '@/app/(store)/store/sell/_components/product/productSelector'
+import Cart from '@/app/(store)/store/sell/_components/cart/cart'
 import styles from './sell.module.css'
-import SelectCustomer from "@/app/(store)/store/sell/_components/customer/customer"
+import SelectCustomer from '@/app/(store)/store/sell/_components/customer/customer'
 import SelectObject from '@/app/utils/selectObject'
 import Select from '@/app/ui/select/select'
-import CreateInvoiceAction from "@/app/lib/actions/createInvoice"
+import CreateInvoiceAction from '@/app/lib/actions/createInvoice'
+import { Button } from '@/app/ui/utils/button/buttons'
 import { useState, useMemo, useActionState, useEffect } from 'react'
+
 
 export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const [activeScreen, setActiveScreen] = useState('products')
@@ -162,9 +164,10 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                 {/* products section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'products' ? styles.hide : ''}`}>
                     <ProductSelector  setItems={setItems} items={items}/>
-                    <button type="button" onClick={() => setActiveScreen('customer')} disabled={items.length === 0}>
+                    <Button type={items.length === 0 ? 'grey' : 'secondary'} onClick={() => setActiveScreen('customer')} 
+                        disabled={items.length === 0 ? true : false}>
                         Seleccionar cliente
-                    </button>
+                    </Button>
                 </div>
 
                 {/* customer section */}

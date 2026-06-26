@@ -13,7 +13,7 @@ export function Button(
         onClick,
         role='button',
         title='',
-        disable=false,
+        disabled=false,
     }) {
     const textStyle = {
         primary: 'p1-b',
@@ -37,7 +37,7 @@ export function Button(
 
     return (
         <button onClick={onClick} type={role} className={`${styles.button} ${styles[type]} ${textStyle[type]} ${className}`}
-            style={style} title={title} disabled={disable}
+            style={style} title={title} disabled={disabled}
         >
             {showIcon && <Icon icon={icon} color={color} size={size}/>}
             {children}
