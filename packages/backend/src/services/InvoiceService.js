@@ -647,10 +647,6 @@ class InvoiceService {
             return product
         })
         return productReferencePrice
-        // return products.map(product => {
-        //     product.invoice_details.dataValues.unit_price = (product.invoice_details.dataValues.unit_price * dollarvalue.value).toFixed(2)
-        //     product.unit_price = (product.unit_price * dollarvalue.value).toFixed(2)
-        // })
     }
 
     /**
@@ -677,17 +673,17 @@ class InvoiceService {
                 .map((line, index) => `${index + 1}. ${line.trim()}`)
                 .join('\n')
 
-            const data = `*PEDIDO #${invoiceNumber}*
- *Cliente:* ${customer.toUpperCase()}
- *Fecha:* ${date}
- *Hora:* ${hours}
+            const data = `PEDIDO #${invoiceNumber}
+Cliente: ${customer.toUpperCase()}
+Fecha: ${date}
+Hora: ${hours}
 ━━━━━━━━━━━━━━━━━━━━━━
- *PRODUCTOS*
+PRODUCTOS
 ${formattedProducts}
 ━━━━━━━━━━━━━━━━━━━━━━
- *TOTAL NETO:* ${total} Bs
- *TOTAL A PAGAR:*
-*${total} Bs*
+TOTAL NETO: ${total} Bs
+TOTAL A PAGAR:
+${total} Bs
 ━━━━━━━━━━━━━━━━━━━━━━
  ¡Muchas gracias por su compra!
  Esperamos atenderle nuevamente.`
