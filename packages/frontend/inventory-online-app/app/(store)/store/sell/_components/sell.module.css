@@ -13,8 +13,12 @@
 .searchContainer, 
 .cartContainer {
     flex: 0 0 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     max-width: 50%;
     height: 100%;
+    z-index: 0;
 }
 
 .hide {

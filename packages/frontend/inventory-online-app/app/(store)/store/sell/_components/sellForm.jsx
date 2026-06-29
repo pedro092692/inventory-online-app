@@ -6,7 +6,7 @@ import SelectCustomer from '@/app/(store)/store/sell/_components/customer/custom
 import SelectObject from '@/app/utils/selectObject'
 import Select from '@/app/ui/select/select'
 import CreateInvoiceAction from '@/app/lib/actions/createInvoice'
-import { Button } from '@/app/ui/utils/button/buttons'
+import InvoiceActionButtons from '@/app/(store)/store/sell/_components/buttons/buttons'
 import { useState, useMemo, useActionState, useEffect } from 'react'
 
 
@@ -163,26 +163,33 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
             <form className={styles.mainContainer} action={handleSubmitInvoice}>
                 {/* products section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'products' ? styles.hide : ''}`}>
+                    <InvoiceActionButtons items={items} 
+                        screen={setActiveScreen} 
+                        activeScreen={activeScreen}
+                        customer={customer}
+                    />
+            
                     <ProductSelector  setItems={setItems} items={items}/>
-                    <Button type={items.length === 0 ? 'grey' : 'secondary'} onClick={() => setActiveScreen('customer')} 
-                        disabled={items.length === 0 ? true : false}>
-                        Seleccionar cliente
-                    </Button>
                 </div>
 
                 {/* customer section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'customer' ? styles.hide : ''}`}>
-                    <SelectCustomer customer={customer} setCustomer={setCustomer} />
-                    <button type="button" onClick={() => {setActiveScreen('products')}}>
-                        Agregar productos
-                    </button>
-                    <button type="button" onClick={() => {setActiveScreen('pay')}} disabled={!customer}>
-                        Pagar
-                    </button>
+                    <InvoiceActionButtons items={items} 
+                        screen={setActiveScreen} 
+                        activeScreen={activeScreen}
+                        customer={customer}
+                    />
+
+                    <SelectCustomer customer={customer} setCustomer={setCustomer} showResult={false} />
                 </div>
 
                 {/* pay section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'pay' ? styles.hide : ''}`}>
+                    <InvoiceActionButtons items={items} 
+                        screen={setActiveScreen} 
+                        activeScreen={activeScreen}
+                        customer={customer}
+                    />
                     <Select 
                         name='payment_method_id' 
                         options={paymentOptions} 
@@ -191,6 +198,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         resetKey={resetKey}
                         onChange={(payment) => setSelectedPaymentMethodId(payment.value)}
                     />
+                    
                     <input 
                         type="number" 
                         name="amount"

@@ -52,3 +52,12 @@
     background-color: var(--color-neutralGrey300);
     color: var(--color-neturaBlack);
 }
+
+.disabled {
+    background-color: #E5E5E5;
+    color: #ADADAD;
+}
+
+.nonActive {
+    background-color: #9EB2CC;
+}

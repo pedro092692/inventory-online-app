@@ -15,6 +15,7 @@ export function Button(
         title='',
         disabled=false,
     }) {
+    
     const textStyle = {
         primary: 'p1-b',
         secondary: 'p1-r',
@@ -23,7 +24,9 @@ export function Button(
         danger: 'p1-b',
         warning: 'p1-b',
         simple: 'p2-r',
-        grey: 'p2-r'
+        grey: 'p2-r',
+        disabled: 'p1-r',
+        nonActive: 'p1-r'
     }
 
     if(!textStyle[type]) {
@@ -31,8 +34,13 @@ export function Button(
     }
 
     let color = 'white'
+    
     if(['outline', 'simple', 'grey'].includes(type)) {
         color = 'var(--color-neutralBlack)'
+    }
+
+    if(type === 'disabled') {
+        color = '#ADADAD'
     }
 
     return (

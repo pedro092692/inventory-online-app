@@ -9,7 +9,7 @@ import SearchCustomerInput from '@/app/ui/customers/searchAndSelect/input/search
 import SearchResultsContainer from '@/app/ui/customers/searchAndSelect/results/searchResults'
 
 
-export default function CustomerSelector({value, onChange, placeHolder='Buscar cliente por Nombre, Cédula'}) {
+export default function CustomerSelector({value, onChange, placeHolder='Buscar cliente por Nombre, Cédula', showResult=true}) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
     const [error, setError] = useState(null)
@@ -81,7 +81,7 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
             
             {error &&  <p className='p2-r errorMsg'>{error}</p>}
             
-            {value && (
+            {value && showResult &&(
                 <>
                     <InputWithIcon value={value.name} icon="person" name={'name'}/>
                     <InputWithIcon value={value.id_number} icon="id" name={'id_number'}/>
