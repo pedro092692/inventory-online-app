@@ -138,7 +138,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         // send form to formAction
         return formAction(formData)
     }
-   
+    
+    // reset function
     useEffect(() => {
         if (!state?.message) return
         
@@ -152,6 +153,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         
     }, [state])
 
+    // reset screen on delete all items
     useEffect(() => {
         if(items.length < 1) {
             setActiveScreen('products')

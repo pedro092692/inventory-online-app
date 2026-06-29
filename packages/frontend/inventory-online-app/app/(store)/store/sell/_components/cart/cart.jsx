@@ -84,12 +84,19 @@ export default function Cart({items=[], setItems, total = 0}) {
                             </div>
                             
                             <div className={styles.itemQuantityContainer}>
-                                {/* <p className={'p2-r'}>
-                                    {item.quantity}
-                                </p> */}
-                                <input type="number" value={item.quantity} min="1" max={item.stock} 
+                                <input type='number' 
+                                    className={styles.inputQuantity}
+                                    value={item.quantity} 
+                                    min='1' 
+                                    max={item.stock} 
                                     onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                                    
+                                    onKeyDown={
+                                        (e) => {
+                                            if (e.key === 'Enter'){
+                                                e.preventDefault();
+                                            }
+                                        }
+                                    }
                                 />
                             </div>
                             
