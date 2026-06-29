@@ -221,8 +221,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     
                     <button type="button" onClick={handleAddPayment}>Agregar Pago</button>
                     <hr />
-                    <button type="button" onClick={() => {setActiveScreen('products')}}>Agregar productos</button>
-                    <button type="button" onClick={() => {setActiveScreen('customer')}}>Seleccionar cliente</button>
+                   
                     
                     <button type='submit' disabled={isPending}>
                         {isPending ? 'Procesando...' : 'Finalizar Factura'}
