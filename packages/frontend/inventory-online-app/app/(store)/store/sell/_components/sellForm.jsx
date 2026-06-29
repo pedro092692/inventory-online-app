@@ -7,6 +7,7 @@ import SelectObject from '@/app/utils/selectObject'
 import Select from '@/app/ui/select/select'
 import CreateInvoiceAction from '@/app/lib/actions/createInvoice'
 import InvoiceActionButtons from '@/app/(store)/store/sell/_components/buttons/buttons'
+import InputAddPay from '@/app/(store)/store/sell/_components/payInputButton/payInputButton'
 import { useState, useMemo, useActionState, useEffect } from 'react'
 
 
@@ -201,26 +202,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         onChange={(payment) => setSelectedPaymentMethodId(payment.value)}
                     />
                     
-                    <input 
-                        type="number" 
-                        name="amount"
-                        value={currentAmount} 
-                        onChange={(e) => setCurrentAmount(e.target.value)}
-                        placeholder="Monto" 
-                        min="0.1" 
-                        step="0.01" 
-                        onKeyDown={
-                            (e) => {
-                                if (e.key === 'Enter'){
-                                    e.preventDefault();
-                                    handleAddPayment();
-                                }   
-                            }
-                        }
-                        />
-                    
-                    <button type="button" onClick={handleAddPayment}>Agregar Pago</button>
-                    <hr />
+                    <InputAddPay setAmount={setCurrentAmount} addPayment={handleAddPayment} amount={currentAmount}/>
                    
                     
                     <button type='submit' disabled={isPending}>

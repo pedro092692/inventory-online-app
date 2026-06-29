@@ -1,0 +1,27 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.amountInput {
+    padding: 8px;
+    border: 1px solid grey;
+    text-align: right;
+    font-family: var(--sfui-font), sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    border-radius: 8px;
+    background-color: transparent;
+}
+
+.amountInput::-webkit-inner-spin-button,
+.amountInput::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.amountInput {
+    appearance: textfield;
+}
