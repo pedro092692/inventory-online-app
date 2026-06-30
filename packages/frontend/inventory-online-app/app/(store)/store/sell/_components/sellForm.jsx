@@ -8,6 +8,7 @@ import Select from '@/app/ui/select/select'
 import CreateInvoiceAction from '@/app/lib/actions/createInvoice'
 import InvoiceActionButtons from '@/app/(store)/store/sell/_components/buttons/buttons'
 import InputAddPay from '@/app/(store)/store/sell/_components/payInputButton/payInputButton'
+import TotaInfo from '@/app/(store)/store/sell/_components/totalInfo/totalInfo'
 import { useState, useMemo, useActionState, useEffect } from 'react'
 
 
@@ -204,29 +205,18 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     
                     <InputAddPay setAmount={setCurrentAmount} addPayment={handleAddPayment} amount={currentAmount}/>
     
-                    
+                    <div className={`${styles.dividingLine} shadow`}></div>
                     {/* <button type='submit' disabled={isPending}>
                         {isPending ? 'Procesando...' : 'Finalizar Factura'}
                     </button> */}
                     
-                    <div>
-                        <p>Total Factura: {total.total_usd.toFixed(2)} $ / {total.total_bs.toFixed(2)} Bs</p>
-                        {totalPaidUSD > 0 && (
-                            <p>Total Abonado: {totalPaidUSD.toFixed(2)} $ / {(totalPaidUSD * exchangeRate).toFixed(2)} Bs</p>
-                        )}
-                        
-                        <p>Resta por pagar: {remainingToPayUSD.toFixed(2)} $ /
-                            {(remainingToPayUSD * exchangeRate).toFixed(2)} Bs
-                        </p>
-                        {
-                            changeDueUSD > 0 && (
-                                <p style={{color: 'green', fontWeight: 'bold'}}> 
-                                    Cambio (Vuelto): {changeDueUSD.toFixed(2)} $ / 
-                                    {(changeDueUSD * exchangeRate).toFixed(2)} Bs
-                                </p>
-                            )
-                        }
-                    </div>
+                    <TotaInfo 
+                        total={total} 
+                        totalPaidUSD={totalPaidUSD} 
+                        exchangeRate={exchangeRate} 
+                        remainingToPayUSD={remainingToPayUSD}
+                        changeDueUSD={changeDueUSD}
+                    />
 
                     {/* payments */}
                     <div>

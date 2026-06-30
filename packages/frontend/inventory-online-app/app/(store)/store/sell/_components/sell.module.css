@@ -25,6 +25,11 @@
     display: none;
 }
 
+.dividingLine{
+    height: 4px;
+    border-radius: 8px;
+}
+
 @media screen and (max-width: 1220px){
     .mainContainer {
         flex-direction: column;
