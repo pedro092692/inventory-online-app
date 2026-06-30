@@ -1,7 +1,7 @@
 .cartContainer{
     padding: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
     max-height: 776px;
     overflow-y: auto;
     border-radius: 8px;
@@ -55,11 +55,21 @@
 .cartContent{
     padding: 8px 16px;
     flex-direction: column;
+    flex-grow: 1;
     padding: 0px;
     width: 100%;
     justify-content: flex-start;
     align-items: flex-start;
     gap: 0px;
+}
+
+.cartItems{
+    padding: 0px;
+    width: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-grow: 1;
 }
 
 .cartRow{
