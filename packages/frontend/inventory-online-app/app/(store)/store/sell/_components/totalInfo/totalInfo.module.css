@@ -1,0 +1,39 @@
+.infoContainer {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: white;
+    gap: 24px;
+}
+
+.payInfo{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    border: 1px solid rgba(128, 128, 128, 0.473);
+    border-radius: 8px;
+    /* background-color: blue; */
+}
+
+.total, .totalPaid, .totalToPaid, .totalPaidChange{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: right;
+    /* color: green; */
+}
+
+.totalPaid{
+    color: green;
+}
+
+.totalToPaid{
+    color: var(--color-accentRed400);
+}
+
+.totalPaidChange{
+    color: var(--color-accentOrange400);
+}
