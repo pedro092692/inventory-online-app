@@ -183,7 +183,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         customer={customer}
                     />
 
-                    <SelectCustomer customer={customer} setCustomer={setCustomer} showResult={false} />
+                    <SelectCustomer customer={customer} setCustomer={setCustomer} showResult={false} bgColor={'white'}/>
                 </div>
 
                 {/* pay section */}

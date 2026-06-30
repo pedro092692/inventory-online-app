@@ -13,6 +13,7 @@ export default function InvoiceActionButtons({items=[], screen=() => '', activeS
                     onClick={() => screen('products')}
                     title={'Seleccionar Productos'}
                     children={''}
+                    className={activeScreen == 'products' ? 'shadow' : 'shadow-sm'}
                 />
                     
                 <Button type={items.length === 0 ? 'disabled' : activeScreen == 'customer' ? 'secondary' : 'nonActive'} 
@@ -23,6 +24,7 @@ export default function InvoiceActionButtons({items=[], screen=() => '', activeS
                     style={{padding: '8px'}}
                     title={'Seleccionar cliente'}
                     children={''}
+                    className={activeScreen == 'customer' ? 'shadow' : 'shadow-sm'}
                 />
                 
                 <Button 
@@ -35,6 +37,7 @@ export default function InvoiceActionButtons({items=[], screen=() => '', activeS
                     title={'Getionar Pagos'}
                     onClick={() => screen('pay')}
                     children={''}
+                    className={activeScreen == 'pay' ? 'shadow' : 'shadow-sm'}
                 />
             </div>  
             <h2>Nueva Venta</h2>

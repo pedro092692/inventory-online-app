@@ -141,7 +141,9 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     return (
         <>
             {/* input search */}
-            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} onKeyDown={handleKeyDown}/>
+            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} onKeyDown={handleKeyDown}
+                bgColor='white'
+            />
             { results.length > 0 && <ProductResultContainer 
                 ref={showResultsRef} 
                 results={results} 
