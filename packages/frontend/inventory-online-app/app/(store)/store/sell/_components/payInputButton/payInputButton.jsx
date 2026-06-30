@@ -5,7 +5,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
     return (
         <div className={styles.container}>
             <input 
-            className={styles.amountInput}
+            className={`${styles.amountInput} shadow-sm`}
             autoComplete='off'
             type="number" 
             name="amount"
@@ -31,6 +31,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     size={[24, 24]}
                     title={'Agregar Pago'}
                     children={'Agregar'}
+                    className='shadow-sm'
             />        
             {/* <button type="button" onClick={addPayment}>Agregar Pago</button> */}
             

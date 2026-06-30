@@ -203,11 +203,11 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     />
                     
                     <InputAddPay setAmount={setCurrentAmount} addPayment={handleAddPayment} amount={currentAmount}/>
-                   
+    
                     
-                    <button type='submit' disabled={isPending}>
+                    {/* <button type='submit' disabled={isPending}>
                         {isPending ? 'Procesando...' : 'Finalizar Factura'}
-                    </button>
+                    </button> */}
                     
                     <div>
                         <p>Total Factura: {total.total_usd.toFixed(2)} $ / {total.total_bs.toFixed(2)} Bs</p>
