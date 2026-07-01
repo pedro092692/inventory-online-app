@@ -37,3 +37,7 @@
 .totalPaidChange{
     color: var(--color-accentOrange400);
 }
+
+.title {
+    color: var(--color-neutralBlack);
+}

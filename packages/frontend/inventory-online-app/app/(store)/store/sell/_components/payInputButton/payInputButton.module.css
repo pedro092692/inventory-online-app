@@ -16,6 +16,16 @@
     background-color: transparent;
 }
 
+
+.disabledInput{
+    background-color: #E5E5E5;
+}
+
+.disabledInput::placeholder{
+    color: #ADADAD;
+}
+
+
 .amountInput::-webkit-inner-spin-button,
 .amountInput::-webkit-outer-spin-button {
     -webkit-appearance: none;

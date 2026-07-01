@@ -203,12 +203,14 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         onChange={(payment) => setSelectedPaymentMethodId(payment.value)}
                     />
                     
-                    <InputAddPay setAmount={setCurrentAmount} addPayment={handleAddPayment} amount={currentAmount}/>
+                    <InputAddPay setAmount={setCurrentAmount} 
+                                 addPayment={handleAddPayment} 
+                                 amount={currentAmount}
+                                 remainingToPayUSD={remainingToPayUSD}
+                                 isPending={isPending}
+                                 />
     
                     <div className={`${styles.dividingLine} shadow`}></div>
-                    {/* <button type='submit' disabled={isPending}>
-                        {isPending ? 'Procesando...' : 'Finalizar Factura'}
-                    </button> */}
                     
                     <TotaInfo 
                         total={total} 

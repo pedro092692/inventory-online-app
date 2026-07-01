@@ -4,7 +4,7 @@ export default function totaInfo({total={total_usd: 0, total_bs: 0}, totalPaidUS
     return (
         <div className={`${styles.infoContainer} shadow-bottom-sm`}>
             <div className={`${styles.payInfo} shadow`}>
-                <h2>Total A Pagar:</h2>
+                <h2 className={styles.title}>Total A Pagar:</h2>
                 <p className={styles.total}>
                     {new Intl.NumberFormat('en-US').format(total?.total_usd.toFixed(2) || 0)} $
                 </p>
@@ -17,7 +17,7 @@ export default function totaInfo({total={total_usd: 0, total_bs: 0}, totalPaidUS
              {
                 totalPaidUSD !=0 && remainingToPayUSD > 0.01 && (
                     <div className={`${styles.payInfo} shadow`}>
-                        <h2>Por pagar:</h2>
+                        <h2 className={styles.title}>Por pagar:</h2>
                         <p className={styles.totalToPaid}>
                             {new Intl.NumberFormat('en-US').format(remainingToPayUSD.toFixed(2) || 0)} $ 
                         </p>
@@ -32,7 +32,7 @@ export default function totaInfo({total={total_usd: 0, total_bs: 0}, totalPaidUS
             {
                 totalPaidUSD > 0 && (
                     <div className={`${styles.payInfo} shadow`}>
-                        <h2>Total Abonado:</h2>
+                        <h2 className={styles.title}>Total Abonado:</h2>
                         <p className={styles.totalPaid}>
                             {new Intl.NumberFormat('en-US').format(totalPaidUSD.toFixed(2) || 0)} $ 
                         </p>
@@ -47,7 +47,7 @@ export default function totaInfo({total={total_usd: 0, total_bs: 0}, totalPaidUS
             {
                 changeDueUSD > 0 && (
                     <div className={`${styles.payInfo} shadow`}>
-                        <h2>Cambio (Vuelto):</h2>
+                        <h2 className={styles.title}>Cambio (Vuelto):</h2>
                         <p className={styles.totalPaidChange}>
                             {new Intl.NumberFormat('en-US').format(changeDueUSD.toFixed(2) || 0)} $ 
                         </p>
