@@ -1,21 +1,67 @@
 import styles from './payments.module.css'
+import { Container} from '@/app/ui/utils/container'
+import { Button } from '@/app/ui/utils/button/buttons'
+import { Icon } from '@/app/ui/utils/icons/icons'
 
 export default function Payments({payments=[], removePayment=()=>''}) {
     return (
         
         <div className={`${styles.container} shadow-bottom-sm`}>
-            <h4>Pagos Registrados:</h4>
+            
             {payments.length > 0 ? (
-                payments.map((payment, index) => (
-                    <p key={index}>
-                        • {payment.name}: {payment.amount} {payment.currency}
-                        {payment.currency === 'Bolivar Digital' && ` (~${payment.amountInUSD.toFixed(2)} $)`}
-                        <span onClick={() => removePayment(index)}>🗑️</span>
-                    </p>
-                    
-                ))
-            ) : 
-            <p>No hay pagos agregados aun.</p>}
+                <>
+                    <Container className={styles.paymentHeader}>
+                        <div className={styles.headerName}>
+                            <p className={'p3-b'}>
+                                Método
+                            </p>
+                        </div>
+                            <div className={styles.headerAmount}>
+                            <p className={'p3-b'}>
+                                Monto
+                            </p>
+                        </div>
+                        <div className={styles.headerCurrency}>
+                            <p className={'p3-b'}>
+                                Moneda
+                            </p>
+                        </div>
+                    </Container>
+                    {
+                        payments.map((payment, index) => (
+                            <Container className={styles.paymentContent} key={index}>
+                                <Container className={styles.paymentRow}>
+                                    <div className={styles.paymentMethod}>
+                                        <Icon icon={'creditCard'} size={[24, 24]} color={'var(--color-neutralBlack)'}/>
+                                        <p className={'p1-r'}>{payment.name}</p>
+                                    </div>
+
+                                    <div className={styles.paymentAmount}>
+                                        <p className={'p1-r'}>{new Intl.NumberFormat('es-VE').format(payment.amount)}</p>
+                                    </div>
+
+                                    <div className={styles.paymentCurrency}>
+                                        <p className={'p1-r'}>{payment.currency}</p>
+                                        <Button 
+                                        icon={'trash'} 
+                                        children={''} 
+                                        showIcon={true} 
+                                        type='danger' 
+                                        size={[12, 12]} 
+                                        style={{padding: '8px'}}
+                                        onClick={() => removePayment(index)}
+                                    />
+                                    </div>
+                                </Container>
+                            </Container>
+                            )
+                        )
+                    }
+                </>
+            ) 
+            : 
+                <p className='p1-r'>No hay pagos agregados aun. Agrega un pago</p>
+            }
         </div>
     )
 }

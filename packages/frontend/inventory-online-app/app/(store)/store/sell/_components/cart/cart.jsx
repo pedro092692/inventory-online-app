@@ -2,8 +2,6 @@
 import { Container} from '@/app/ui/utils/container'
 import styles from './cart.module.css'
 import { Button } from '@/app/ui/utils/button/buttons'
-import { useState } from 'react'
-
 
 
 export default function Cart({items=[], setItems, total = 0}) {

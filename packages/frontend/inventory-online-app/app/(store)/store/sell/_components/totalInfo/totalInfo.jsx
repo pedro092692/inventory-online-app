@@ -17,7 +17,7 @@ export default function totaInfo({total={total_usd: 0, total_bs: 0}, totalPaidUS
              {
                 totalPaidUSD !=0 && remainingToPayUSD > 0.01 && (
                     <div className={`${styles.payInfo} shadow`}>
-                        <h2 className={styles.title}>Por pagar:</h2>
+                        <h2 className={styles.title}>Por Pagar:</h2>
                         <p className={styles.totalToPaid}>
                             {new Intl.NumberFormat('en-US').format(remainingToPayUSD.toFixed(2) || 0)} $ 
                         </p>
