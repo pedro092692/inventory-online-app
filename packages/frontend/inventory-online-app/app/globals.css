@@ -297,6 +297,10 @@ a {
   animation: shimmer 1.5s linear infinite;
 }
 
+.textCapitalize{
+  text-transform: capitalize;
+}
+
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }

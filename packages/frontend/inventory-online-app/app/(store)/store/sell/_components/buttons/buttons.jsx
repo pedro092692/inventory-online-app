@@ -40,7 +40,39 @@ export default function InvoiceActionButtons({items=[], screen=() => '', activeS
                     className={activeScreen == 'pay' ? 'shadow' : 'shadow-sm'}
                 />
             </div>  
-            <h2>Nueva Venta</h2>
+            <div className={`${styles.customerInfo} shadow-bottom-sm`}>
+                {!customer ? 
+                    <div className={styles.customerContainer}>
+                            <p className={'p3-r'}>Nueva Venta:</p>
+                            <p className={'p2-b'}>
+                                {activeScreen == 'customer' ? 'Seleccione un cliente' : 'Seleccine un producto'}
+                            </p>
+                    </div>
+                    :
+                    <>
+                        <div className={styles.customerContainer}>
+                            <p className={'p3-r'}>Cliente:</p>
+                            <p className={'p2-b textCapitalize'}>
+                                {customer.name}
+                            </p>
+                        </div>
+                        
+                        <div className={styles.customerContainer}>
+                            <p className={'p3-r'}>Cédula:</p>
+                            <p className={'p2-b'}>
+                                {new Intl.NumberFormat('es-Ve').format(customer.id_number)}
+                            </p>
+                        </div>
+
+                        <div className={styles.customerContainer}>
+                            <p className={'p3-r'}>Teléfono:</p>
+                            <p className={'p2-b'}>
+                                {customer.phone.replace('+58', '')}
+                            </p>
+                        </div>
+                    </>
+                }
+            </div>
         </div>
     )
 }
