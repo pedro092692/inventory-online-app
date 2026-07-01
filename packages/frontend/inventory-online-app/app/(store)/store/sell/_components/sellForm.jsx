@@ -211,7 +211,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                                  isPending={isPending}
                                  />
     
-                    <div className={`${styles.dividingLine} shadow`}></div>
+                    <div className={`divider`}></div>
                     
                     <TotaInfo 
                         total={total} 
@@ -220,6 +220,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         remainingToPayUSD={remainingToPayUSD}
                         changeDueUSD={changeDueUSD}
                     />
+
+                    <div className={`divider`}></div>
 
                     {/* payments */}
                     <Pyaments payments={payments} removePayment={removePayment}/>

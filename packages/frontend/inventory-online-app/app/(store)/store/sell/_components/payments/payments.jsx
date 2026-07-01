@@ -1,6 +1,9 @@
+import styles from './payments.module.css'
+
 export default function Payments({payments=[], removePayment=()=>''}) {
     return (
-        <div>
+        
+        <div className={`${styles.container} shadow-bottom-sm`}>
             <h4>Pagos Registrados:</h4>
             {payments.length > 0 ? (
                 payments.map((payment, index) => (
