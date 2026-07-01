@@ -30,6 +30,19 @@
     border-radius: 8px;
 }
 
+.modalContent {
+    max-width: 430px;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 24px;
+}
+
+.modalContent p {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;;
+}
+
 @media screen and (max-width: 1220px){
     .mainContainer {
         flex-direction: column;

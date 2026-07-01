@@ -10,6 +10,9 @@ import InvoiceActionButtons from '@/app/(store)/store/sell/_components/buttons/b
 import InputAddPay from '@/app/(store)/store/sell/_components/payInputButton/payInputButton'
 import TotaInfo from '@/app/(store)/store/sell/_components/totalInfo/totalInfo'
 import Pyaments from '@/app/(store)/store/sell/_components/payments/payments'
+import { Modal } from '@/app/ui/utils/alert/modal'
+import { Button } from '@/app/ui/utils/button/buttons'
+import { Container } from '@/app/ui/utils/container'
 import { useState, useMemo, useActionState, useEffect } from 'react'
 
 
@@ -24,12 +27,20 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const [currentAmount, setCurrentAmount] = useState('')
     const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState('')
     const paymentOptions = SelectObject(paymentMethods, 'id', 'name')
+    const [showModal, setShowModal] = useState(false)
+    const [modalMessage, setModalMessage] = useState('')
 
     // form action
     const initialState = {message: null, errors: {}}
     const createInvoice = CreateInvoiceAction.bind(null, 'Factura creada con éxito', false, null)
     const [state, formAction, isPending] = useActionState(createInvoice, initialState)
     
+    //modal
+    const closeModal = () => {
+        setShowModal(false)
+        setModalMessage('')
+    }
+
     // total order amount in USD and Bs
     const total = useMemo(() => {
         return items.reduce((acc, item) => {
@@ -64,13 +75,19 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     // function to add payment method to payment list 
     const handleAddPayment = () => {
         if (!currentAmount || parseFloat(currentAmount) <=0) {
-            return alert('Por favor ingresa un monto valido...')
+            setModalMessage('Por favor ingresa un monto valido...')
+            setShowModal(true)
+            return
         }
 
         const methodId = selectedPaymentMethodId || (paymentOptions[0]?.value)
         const paymentMethod = paymentMethods.find(pm => pm.id === parseInt(methodId))
 
-        if (!paymentMethod) return alert('Metodo de pago no seleccionado')
+        if (!paymentMethod) {
+            setModalMessage('Metodo de pago no seleccionado')
+            setShowModal(true)
+            return
+        } 
         
         const inputAmount = parseFloat(currentAmount)
         
@@ -89,7 +106,9 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         const isCash = paymentMethod.allow_change
         if (!isCash && amountInUSD > (remainingToPayUSD + 0.01)) {
             const maxAllowed = isBolivar ? (remainingToPayUSD * exchangeRate).toFixed(2) + "Bs" : remainingToPayUSD.toFixed(2) + "$"
-            return alert(`Los pagos electronicos no pueden exceder el total. Monto maximo permitido en este metodo de pago: ${maxAllowed}`)
+            setModalMessage(`Los pagos electronicos no pueden exceder el total. Monto maximo permitido en este metodo de pago: ${maxAllowed}`)
+            setShowModal(true)
+            return 
         }
 
         setPayments(prev => [
@@ -116,11 +135,15 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const handleSubmitInvoice = (formData) => {
 
         if (remainingToPayUSD > 0.01) {
-            return alert(`Falta por completar el pago. Restan: ${remainingToPayUSD.toFixed(2)} $`)
+            setModalMessage(`Falta por completar el pago. Restan: ${remainingToPayUSD.toFixed(2)} $`)
+            setShowModal(true)
+            return
         }
 
         if (items.length < 1) {
-            return alert('La factura tiene que tener productos')
+            setModalMessage('La factura tiene que tener productos')
+            setShowModal(true)
+            return
         }
 
         // Customer data and totals are adjusted
@@ -165,6 +188,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
 
     return (
         <div className={styles.mainContainer}>
+              
             <form className={styles.mainContainer} action={handleSubmitInvoice}>
                 {/* products section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'products' ? styles.hide : ''}`}>
@@ -233,6 +257,30 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     <Cart items={items} setItems={setItems} total={total}/>
                 </div>
             </form>
+            
+            {/* modal for alert messages */}
+            <Modal 
+                show={showModal}
+                title={'No se puede realizar esta acción'}
+                showIcon={true}
+                onClose={closeModal}
+                icon='warning'
+                iconColor='var(--color-accentRed400)'>
+                    <Container 
+                        className={styles.modalContent}
+                        direction={'column'}
+                        width={'100%'}
+                    >
+                        <p>{modalMessage}</p>
+                    </Container>
+                    <Button
+                            type={'danger'}
+                            onClick={closeModal}
+                            style={{marginTop: '24px', width: '80%'}}
+                        >
+                            Aceptar
+                    </Button>
+            </Modal>
         </div>
     )
 }
