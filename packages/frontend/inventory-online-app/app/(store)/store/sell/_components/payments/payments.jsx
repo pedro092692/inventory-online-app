@@ -4,8 +4,33 @@ import { Button } from '@/app/ui/utils/button/buttons'
 import { Icon } from '@/app/ui/utils/icons/icons'
 
 export default function Payments({payments=[], removePayment=()=>''}) {
+    const icon = (paymentName) => {
+        switch (paymentName) {
+            case 'Punto de venta':
+                return 'creditCard'
+            break;
+            case 'Efectivo Bolivares':
+                return 'cash'
+            break;
+            case 'Efectivo Dolares':
+                return 'cash'
+            break;
+            case 'Pago Movil':
+                return 'phone'
+            break;
+            case 'Cripto':
+                return 'crypto'
+            break;
+            case 'Nota de Credito':
+                return 'store'
+            break;
+            default:
+                return 'transfer'
+            
+        }
+    }
+
     return (
-        
         <div className={`${styles.container} shadow-bottom-sm`}>
             
             {payments.length > 0 ? (
@@ -32,7 +57,7 @@ export default function Payments({payments=[], removePayment=()=>''}) {
                             <Container className={styles.paymentContent} key={index}>
                                 <Container className={styles.paymentRow}>
                                     <div className={styles.paymentMethod}>
-                                        <Icon icon={'creditCard'} size={[24, 24]} color={'var(--color-neutralBlack)'}/>
+                                        <Icon icon={icon(payment.name)} size={[24, 24]} color={'var(--color-neutralBlack)'}/>
                                         <p className={'p1-r'}>{payment.name}</p>
                                     </div>
 
