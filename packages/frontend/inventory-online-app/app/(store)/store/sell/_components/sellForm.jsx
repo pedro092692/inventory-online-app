@@ -169,13 +169,13 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     useEffect(() => {
         if (!state?.message) return
         
-        setItems([])
-        setActiveScreen('products')
-        setCustomer(null)
-        setPayments([])
-        setCurrentAmount('')
-        setResetKey(prev => prev + 1)
-        setSelectedPaymentMethodId('')
+        // setItems([])
+        // setActiveScreen('products')
+        // setCustomer(null)
+        // setPayments([])
+        // setCurrentAmount('')
+        // setResetKey(prev => prev + 1)
+        // setSelectedPaymentMethodId('')
         
     }, [state])
 
@@ -252,9 +252,15 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
 
                 </div>
 
+                {state?.message && (
+                    <div>
+                        <p>{state.message}</p>
+                    </div>
+                )}
+
                 {/* cart section */}
                 <div className={styles.cartContainer}>
-                    <Cart items={items} setItems={setItems} total={total}/>
+                    <Cart items={items} setItems={setItems} total={total} state={state}/>
                 </div>
             </form>
             

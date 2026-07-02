@@ -4,13 +4,15 @@ import styles from './cart.module.css'
 import { Button } from '@/app/ui/utils/button/buttons'
 
 
-export default function Cart({items=[], setItems, total = 0}) {
+export default function Cart({items=[], setItems, total=0, state={}}) {
 
     const handleRemoveItem = (id) => {
+        if(state?.message) return 
         setItems(prev => [...prev.filter(item => item.id !== id)])
     }
 
     const handleQuantityChange = (id, rawValue) => {
+        if(state?.message) return
         setItems(prev =>
             prev.map(item => {
                 if (item.id !== id ) return item
@@ -69,7 +71,7 @@ export default function Cart({items=[], setItems, total = 0}) {
                                     icon={'trash'} 
                                     children={''} 
                                     showIcon={true} 
-                                    type='danger' 
+                                    type={state?.message ? 'disabled' : 'danger'} 
                                     size={[12, 12]} 
                                     style={{padding: '8px'}}
                                     onClick={() => handleRemoveItem(item.id)}
@@ -96,6 +98,7 @@ export default function Cart({items=[], setItems, total = 0}) {
                                             }
                                         }
                                     }
+                                    disabled={state?.message ? true : false}
                                 />
                             </div>
                             
