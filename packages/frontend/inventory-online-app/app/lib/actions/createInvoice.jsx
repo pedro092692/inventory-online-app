@@ -7,6 +7,8 @@ export default async function CreateInvoiceAction(
         invoiceStatus = false,
         invoiceId = null,
         preStave, formData) {
+    
+   
 
     const customer = formData.get('customer_id')
     const payment_method_id = formData.get('payment_method_id')
@@ -18,6 +20,14 @@ export default async function CreateInvoiceAction(
     let payInvoiceResponse = null
     let payResponse = null
     let payError = null
+
+    if(formData.get('reset') === 'true'){
+        return {
+            message: null,
+            errors: {},
+            invoice: null,
+        }
+    }
 
     const createInvoiceBody = {
         customer_id: customer,
@@ -70,9 +80,7 @@ export default async function CreateInvoiceAction(
                 errors: {},
                 inputs: {}
             }
-        }
-        
-        
+        }  
         
     }
     

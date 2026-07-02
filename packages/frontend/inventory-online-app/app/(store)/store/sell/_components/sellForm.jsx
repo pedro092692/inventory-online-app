@@ -14,7 +14,7 @@ import SuccessInfo from '@/app/(store)/store/sell/_components/success/success'
 import { Modal } from '@/app/ui/utils/alert/modal'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Container } from '@/app/ui/utils/container'
-import { useState, useMemo, useActionState, useEffect } from 'react'
+import { useState, useMemo, useActionState, useEffect, startTransition } from 'react'
 
 
 export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
@@ -174,6 +174,13 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         setCurrentAmount('')
         setResetKey(prev => prev + 1)
         setSelectedPaymentMethodId('')
+        const fd = new FormData()
+        fd.append('reset', 'true')
+        
+        startTransition(() => {
+            formAction(fd)
+        })
+
     }
 
     // reset function
@@ -277,7 +284,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
 
                 {/* cart section */}
                 <div className={styles.cartContainer}>
-                    <Cart items={items} setItems={setItems} total={total} state={state}/>
+                    <Cart items={items} setItems={setItems} total={total} state={state} totalPaidUSD={totalPaidUSD}/>
                 </div>
             </form>
             

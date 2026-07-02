@@ -4,7 +4,7 @@ import styles from './cart.module.css'
 import { Button } from '@/app/ui/utils/button/buttons'
 
 
-export default function Cart({items=[], setItems, total=0, state={}}) {
+export default function Cart({items=[], setItems, total=0, state={}, totalPaidUSD}) {
 
     const handleRemoveItem = (id) => {
         if(state?.message) return 
@@ -13,6 +13,9 @@ export default function Cart({items=[], setItems, total=0, state={}}) {
 
     const handleQuantityChange = (id, rawValue) => {
         if(state?.message) return
+        if(totalPaidUSD > 0 || !rawValue) {
+             return
+        }
         setItems(prev =>
             prev.map(item => {
                 if (item.id !== id ) return item
