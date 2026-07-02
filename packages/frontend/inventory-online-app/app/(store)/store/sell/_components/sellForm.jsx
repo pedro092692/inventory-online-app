@@ -196,6 +196,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         screen={setActiveScreen} 
                         activeScreen={activeScreen}
                         customer={customer}
+                        state={state}
                     />
             
                     <ProductSelector  setItems={setItems} items={items}/>
@@ -207,6 +208,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         screen={setActiveScreen} 
                         activeScreen={activeScreen}
                         customer={customer}
+                        state={state}
                     />
 
                     <SelectCustomer customer={customer} setCustomer={setCustomer} showResult={false} bgColor={'white'}/>
@@ -218,6 +220,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         screen={setActiveScreen} 
                         activeScreen={activeScreen}
                         customer={customer}
+                        state={state}
                     />
                     <Select 
                         name='payment_method_id' 

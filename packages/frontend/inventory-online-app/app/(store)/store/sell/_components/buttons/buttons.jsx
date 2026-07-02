@@ -1,12 +1,14 @@
 import { Button } from '@/app/ui/utils/button/buttons'
 import styles from './buttons.module.css'
 
-export default function InvoiceActionButtons({items=[], screen=() => '', activeScreen=null, customer=null}) {
+export default function InvoiceActionButtons({items=[], screen=() => '', activeScreen=null, customer=null, state={}}) {
     return (
         <div className={styles.container}>
             <div className={styles.buttonsContainer}>
-                <Button type={activeScreen == 'products' ? 'secondary' : 'nonActive'}
+                {/* products */}
+                <Button type={state?.message ? 'disabled' : activeScreen == 'products' ? 'secondary' : 'nonActive'}
                     showIcon={true}
+                    disabled={state?.message ? true : false}
                     icon={'product'}
                     size={[24, 24]}
                     style={{padding: '8px'}}
@@ -15,10 +17,11 @@ export default function InvoiceActionButtons({items=[], screen=() => '', activeS
                     children={''}
                     className={activeScreen == 'products' ? 'shadow' : 'shadow-sm'}
                 />
-                    
-                <Button type={items.length === 0 ? 'disabled' : activeScreen == 'customer' ? 'secondary' : 'nonActive'} 
+
+                {/* customer */}
+                <Button type={items.length === 0 || state?.message ? 'disabled' : activeScreen == 'customer' ? 'secondary' : 'nonActive'} 
                     onClick={() => screen('customer')} 
-                    disabled={items.length === 0 ? true : false}
+                    disabled={items.length === 0 || state?.message ? true : false}
                     showIcon={true}
                     size={[24, 24]}
                     style={{padding: '8px'}}
@@ -27,6 +30,7 @@ export default function InvoiceActionButtons({items=[], screen=() => '', activeS
                     className={activeScreen == 'customer' ? 'shadow' : 'shadow-sm'}
                 />
                 
+                {/* pay */}
                 <Button 
                     type={!customer || items.length < 1 ? 'disabled' : activeScreen == 'pay' ? 'secondary' : 'nonActive'}
                     disabled={!customer || items.length < 1 ? true : false}
