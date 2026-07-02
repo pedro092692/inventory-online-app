@@ -2,7 +2,7 @@ import { Button } from '@/app/ui/utils/button/buttons'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import styles from './payInputButton.module.css'
 
-export default function InputAddPay({setAmount=() => '', addPayment=() => '', amount='', remainingToPayUSD=1, isPending=true}) {
+export default function InputAddPay({setAmount=() => '', addPayment=() => '', amount='', remainingToPayUSD=1, isPending=true, state={}}) {
     return (
         <div className={styles.container}>
             <input 
@@ -49,12 +49,12 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                         icon={'creditCard'}
                         size={[24, 24]}
                         title={'Procesar Factura'}
-                        // children={isPending ? 'Procesando...' : 'Procesar Factura'}
                         className='shadow-sm' 
-                        disabled={isPending}     
+                        disabled={isPending || state?.message ? true : false}     
                     >
                         {isPending && <OvalLoader/>}
-                        {isPending ? 'Procesando...' : 'Procesar Factura'}
+                        {isPending ? 'Procesando...' : state?.message ? 'Venta Registrada' : 'Procesar Factura'}
+                        
                     </Button>
                 )
             }

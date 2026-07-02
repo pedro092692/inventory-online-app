@@ -4,7 +4,7 @@ import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import styles from './select.module.css'
 
-export default function Select({options=[], defaultValue=null, selectKey='', name='select_name', resetKey=null, onChange = () => ''}) {
+export default function Select({options=[], defaultValue=null, selectKey='', name='select_name', resetKey=null, onChange = () => '', disabled=false}) {
     const [value, setValue] = useState(defaultValue)
     const [key, setKey] = useState(selectKey || '')
     const [open, setOpen] = useState(false)
@@ -52,7 +52,7 @@ export default function Select({options=[], defaultValue=null, selectKey='', nam
                 borderRadius={'8px'}
                 backgroundColor={'white'}
                 className={`${styles.parent} shadow`}
-                onClick={() => setOpen(!open)}
+                onClick={() => !disabled && setOpen(!open)}
             >
 
 

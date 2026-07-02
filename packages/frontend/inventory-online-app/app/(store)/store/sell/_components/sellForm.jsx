@@ -229,6 +229,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         defaultValue={'Punto de Venta'} 
                         resetKey={resetKey}
                         onChange={(payment) => setSelectedPaymentMethodId(payment.value)}
+                        disabled={state?.message ? true : false}    
+                        
                     />
                     
                     <InputAddPay setAmount={setCurrentAmount} 
@@ -236,6 +238,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                                  amount={currentAmount}
                                  remainingToPayUSD={remainingToPayUSD}
                                  isPending={isPending}
+                                 state={state}
                                  />
     
                     <div className={`divider`}></div>
