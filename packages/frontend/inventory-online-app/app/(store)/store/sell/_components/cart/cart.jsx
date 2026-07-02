@@ -117,22 +117,18 @@ export default function Cart({items=[], setItems, total=0, state={}}) {
                 
                     {items.length < 1 && <p className={'p2-r'} style={{padding: '16px'}}>No hay productos agregados...</p>}
                 </Container>
-                
-                
-                <Container
-                    className={styles.totalContainer}
-                >
-                    <p className={'p1-b'}>Total $: <span className={'p1-r'}>
-                        { new Intl.NumberFormat('en-US').format(total?.total_usd.toFixed(2) || 0)}
-                        </span>
-                    </p>
-                    <p className={'p1-b'}>Total Bs: <span className={'p1-r'}>
-                        { new Intl.NumberFormat('es-VE').format(total?.total_bs.toFixed(2) || 0)}
-                        </span>
-                    </p>
-                </Container>
-                
-                
+            </Container>
+            <Container
+                className={styles.totalContainer}
+            >
+                <p className={'p1-b'}>Total $: <span className={'p1-r'}>
+                    { new Intl.NumberFormat('en-US').format(total?.total_usd.toFixed(2) || 0)}
+                    </span>
+                </p>
+                <p className={'p1-b'}>Total Bs: <span className={'p1-r'}>
+                    { new Intl.NumberFormat('es-VE').format(total?.total_bs.toFixed(2) || 0)}
+                    </span>
+                </p>
             </Container>
         </Container>
     )
