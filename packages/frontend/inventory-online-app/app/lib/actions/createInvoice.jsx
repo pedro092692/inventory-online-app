@@ -3,7 +3,7 @@ import Request from '@/app/utils/request'
 import { revalidatePath } from 'next/cache'
 
 export default async function CreateInvoiceAction(
-        msg = 'Operacion realizada con éxito',
+        msg = 'Operacion realizada con éxito 🤑',
         invoiceStatus = false,
         invoiceId = null,
         preStave, formData) {
@@ -60,9 +60,13 @@ export default async function CreateInvoiceAction(
 
         if(payResponse?.data?.invoice?.status == 'paid') {
             revalidatePath(`/store/${createInvoiceEndpoint}`)
+            // create whatslink to send invoice
+            const {data: linkResponse, error: linkError} = await Request(`invoices/send-whatsapp/${payInvoiceBody.invoice_id}`, 'GET')
+            
             return {
                 message: msg,
-                invoice: {},
+                invoice: payResponse.data.invoice,
+                ws_link: linkResponse?.link || '',
                 errors: {},
                 inputs: {}
             }
@@ -72,72 +76,4 @@ export default async function CreateInvoiceAction(
         
     }
     
-    
-    // if (data?.errors) {
-    //     return {
-    //         message: null,
-    //         errors: data.errors,
-    //         inputs: body
-    //     }
-    // }
-
-    
-    // if (error) {
-    //     return {
-    //         message: null, 
-    //         errors: {error: 'Hubo un error inesperado intenta nuevamente'},
-    //         inputs: body
-    //     }
-    // }
-
-
-    // if(!invoiceStatus) {
-    //     if (payResponse?.invoice?.status === 'paid') {
-    //         revalidatePath(`/store/${createInvoiceEndpoint}`)
-    //         return {
-    //             message: msg,
-    //             invoice: {},
-    //             errors: {},
-    //             inputs: {}
-    //         }
-    //     }
-        
-    //     if (payResponse?.invoice?.status != 'paid') {
-    //         return {
-    //             errors: {},
-    //             invoice: data.invoice,
-    //             inputs: {}
-    //         }
-    //     }
-        
-    // }
-    
-    // if (data?.invoice) {
-        
-    //     if (data?.invoice.status === 'paid') {
-    //         revalidatePath(`/store/${createInvoiceEndpoint}`)
-    //         return {
-    //             message: msg,
-    //             invoice: {},
-    //             errors: {},
-    //             inputs: {}
-    //         }
-    //     }
-
-    //     if (payResponse.invoice.status != 'paid') {
-    //         return {
-    //             errors: {},
-    //             invoice: data.invoice,
-    //             inputs: {}
-    //         }
-    //     }
-        
-    // }
-
-
-    // return {
-    //     message: msg,
-    //     errors: {},
-    //     inputs: {}
-    // }
  }

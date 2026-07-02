@@ -10,6 +10,7 @@ import InvoiceActionButtons from '@/app/(store)/store/sell/_components/buttons/b
 import InputAddPay from '@/app/(store)/store/sell/_components/payInputButton/payInputButton'
 import TotaInfo from '@/app/(store)/store/sell/_components/totalInfo/totalInfo'
 import Pyaments from '@/app/(store)/store/sell/_components/payments/payments'
+import SuccessInfo from '@/app/(store)/store/sell/_components/success/success'
 import { Modal } from '@/app/ui/utils/alert/modal'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Container } from '@/app/ui/utils/container'
@@ -165,6 +166,16 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         return formAction(formData)
     }
     
+    const handleReset = () => {
+        setItems([])
+        setActiveScreen('products')
+        setCustomer(null)
+        setPayments([])
+        setCurrentAmount('')
+        setResetKey(prev => prev + 1)
+        setSelectedPaymentMethodId('')
+    }
+
     // reset function
     useEffect(() => {
         if (!state?.message) return
@@ -243,6 +254,9 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     
                     <div className={`divider`}></div>
                     
+                    {/* success info */}
+                    { state?.message && <SuccessInfo state={state} onClick={handleReset}/> }
+
                     <TotaInfo 
                         total={total} 
                         totalPaidUSD={totalPaidUSD} 
@@ -254,15 +268,12 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     <div className={`divider`}></div>
 
                     {/* payments */}
-                    <Pyaments payments={payments} removePayment={removePayment}/>
+                    {
+                        !state.message && <Pyaments payments={payments} removePayment={removePayment}/>
+                    }
+                    
 
                 </div>
-
-                {state?.message && (
-                    <div>
-                        <p>{state.message}</p>
-                    </div>
-                )}
 
                 {/* cart section */}
                 <div className={styles.cartContainer}>
