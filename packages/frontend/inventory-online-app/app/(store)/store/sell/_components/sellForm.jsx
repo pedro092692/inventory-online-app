@@ -26,7 +26,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
 
     // local state to control actual amount
     const [currentAmount, setCurrentAmount] = useState('')
-    const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState('')
+    const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(1)
     const paymentOptions = SelectObject(paymentMethods, 'id', 'name')
     const [showModal, setShowModal] = useState(false)
     const [modalMessage, setModalMessage] = useState('')
@@ -291,6 +291,9 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                                  isPending={isPending}
                                  state={state}
                                  activeScreen={activeScreen}
+                                 paymentMethodId={selectedPaymentMethodId}
+                                 paymentMethods={paymentMethods}
+                                 total={total}
                                  />
     
                     <div className={`divider`}></div>

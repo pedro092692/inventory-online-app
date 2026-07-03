@@ -5,7 +5,11 @@ import { useRef, useEffect } from 'react'
 import styles from './payInputButton.module.css'
 
 export default function InputAddPay({setAmount=() => '', addPayment=() => '', amount='', remainingToPayUSD=1, isPending=true, state={}, 
-                    activeScreen=null}) {
+                    activeScreen=null,
+                    paymentMethodId=null,
+                    paymentMethods=[],
+                    total=null
+                    }) {
     
     const inputRef = useRef(null)
 
@@ -14,6 +18,25 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             inputRef.current?.focus()
         }
     }, [activeScreen])
+
+    useEffect(() => {
+        const setTotalAmount = (event) => {
+            const key = event.key.toLowerCase()
+
+            if(key == 'end'){
+                event.preventDefault()
+                const payment = paymentMethods[paymentMethodId - 1]
+                const total_amount = payment.currency != 'Dolares' ? total.total_bs : total.total_usd
+                setAmount(total_amount)
+            }
+        }
+        if (activeScreen == 'pay') {
+            
+            window.addEventListener('keydown', setTotalAmount)
+            return () => window.removeEventListener('keydown', setTotalAmount)
+        }
+    }, [activeScreen, paymentMethodId])
+
 
     return (
         <div className={styles.container}>
@@ -38,7 +61,6 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                 }
             }
             />
-            
             {
                 remainingToPayUSD > 0.01 && (
                     <Button type={'secondary'} 
