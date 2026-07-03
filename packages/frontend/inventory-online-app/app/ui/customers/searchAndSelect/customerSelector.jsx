@@ -13,6 +13,7 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
     const [error, setError] = useState(null)
+    const [highlightedIndex, setHighlightedIndex] = useState(-1)
     const showResultsRef = useRef(null)
     const inputRef = useRef(null)
 
@@ -56,6 +57,30 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
         }
     }
 
+    const handleKeyDown = (e) => {
+        if (results.length === 0) return 
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault()
+            setHighlightedIndex(prev => 
+                prev < results.length - 1 ? prev + 1 : 0
+            )
+        }
+
+        if (e.key === 'ArrowUp') {
+            e.preventDefault()
+            setHighlightedIndex(prev => 
+                prev > 0 ? prev - 1 : results.length - 1
+            )
+        }
+
+        if (e.key === 'Enter' && highlightedIndex >=0) {
+            e.preventDefault()
+            setHighlightedIndex(-1)
+            handleClick(results[highlightedIndex])
+        }
+    }
+
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside)
         
@@ -80,10 +105,11 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
             className={inputStyles.father}
         >
             {/* input search */}
-            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} bgColor={bgColor} inputRef={inputRef}/>
+            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} bgColor={bgColor} onKeyDown={handleKeyDown} 
+            inputRef={inputRef}/>
 
             {/* show results  */}
-            <SearchResultsContainer ref={showResultsRef} results={results} onClick={handleClick}/>
+            <SearchResultsContainer ref={showResultsRef} results={results} onClick={handleClick} highlightedIndex={highlightedIndex}/>
             
             
             {error &&  <p className='p2-r errorMsg'>{error}</p>}

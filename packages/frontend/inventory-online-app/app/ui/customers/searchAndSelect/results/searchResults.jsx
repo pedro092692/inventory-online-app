@@ -1,8 +1,9 @@
 
 import { Container } from '@/app/ui/utils/container'
 import inputStyles from '@/app/ui/customers/searchAndSelect/input.module.css'
+import styles from '@/app/(store)/store/sell/_components/product/productSelector.module.css'
 
-export default function SearchResultsContainer({results=[], onClick, ref}) {
+export default function SearchResultsContainer({results=[], onClick, ref, highlightedIndex=null}) {
     return (
         <>
         {results.length > 0 && 
@@ -14,10 +15,11 @@ export default function SearchResultsContainer({results=[], onClick, ref}) {
                 className={inputStyles.results}
                 ref={ref}
             >
-                {results.map((customer) => {
+                {results.map((customer, index) => {
+                    const isActive = index === highlightedIndex
                     return (
                         <p 
-                            className={`p2-b ${inputStyles.result}`}
+                            className={`p2-b ${inputStyles.result} ${isActive && styles.active}`}
                             key={customer.id}
                             onClick={() => onClick(customer) }
                         >
