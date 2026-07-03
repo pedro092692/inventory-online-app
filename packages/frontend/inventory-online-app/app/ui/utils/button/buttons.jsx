@@ -14,6 +14,7 @@ export function Button(
         role='button',
         title='',
         disabled=false,
+        ref=null,
     }) {
     
     const textStyle = {
@@ -45,7 +46,7 @@ export function Button(
 
     return (
         <button onClick={onClick} type={role} className={`${styles.button} ${styles[type]} ${textStyle[type]} ${className}`}
-            style={style} title={title} disabled={disabled}
+            style={style} title={title} disabled={disabled} ref={ref}
         >
             {showIcon && <Icon icon={icon} color={color} size={size}/>}
             {children}

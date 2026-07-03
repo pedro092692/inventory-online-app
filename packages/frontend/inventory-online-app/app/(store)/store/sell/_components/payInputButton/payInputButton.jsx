@@ -12,31 +12,32 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     }) {
     
     const inputRef = useRef(null)
+    const submitRef = useRef(null)
 
     useEffect(() => {
         if (activeScreen === 'pay') {
             inputRef.current?.focus()
         }
-    }, [activeScreen])
+    }, [activeScreen, paymentMethodId])
 
     useEffect(() => {
         const setTotalAmount = (event) => {
             const key = event.key.toLowerCase()
-
+            
             if(key == 'end'){
+                if (remainingToPayUSD < 0.01) return submitRef.current?.click()
                 event.preventDefault()
-                const payment = paymentMethods[paymentMethodId - 1]
-                const total_amount = payment.currency != 'Dolares' ? total.total_bs : total.total_usd
+                const payment = paymentMethods[paymentMethodId || 1 - 1]
+                const total_amount = payment.currency != 'Bolivar Digital' || '' ? total.total_usd : total.total_bs
                 setAmount(total_amount)
+                inputRef.current?.focus()
             }
         }
-        if (activeScreen == 'pay') {
-            
+        if (activeScreen == 'pay') {      
             window.addEventListener('keydown', setTotalAmount)
             return () => window.removeEventListener('keydown', setTotalAmount)
         }
-    }, [activeScreen, paymentMethodId])
-
+    }, [activeScreen, paymentMethodId, remainingToPayUSD])
 
     return (
         <div className={styles.container}>
@@ -78,6 +79,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             {
                 remainingToPayUSD <= 0.01 && (
                     <Button type={'primary'} 
+                        ref={submitRef}
                         style={{backgroundColor: '#3E7C42'}}
                         role={'submit'}
                         showIcon={isPending ? false : true}
