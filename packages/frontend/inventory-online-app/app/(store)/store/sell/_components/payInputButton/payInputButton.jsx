@@ -1,11 +1,24 @@
+'use client'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { OvalLoader } from '@/app/ui/loader/spinner'
+import { useRef, useEffect } from 'react'
 import styles from './payInputButton.module.css'
 
-export default function InputAddPay({setAmount=() => '', addPayment=() => '', amount='', remainingToPayUSD=1, isPending=true, state={}}) {
+export default function InputAddPay({setAmount=() => '', addPayment=() => '', amount='', remainingToPayUSD=1, isPending=true, state={}, 
+                    activeScreen=null}) {
+    
+    const inputRef = useRef(null)
+
+    useEffect(() => {
+        if (activeScreen === 'pay') {
+            inputRef.current?.focus()
+        }
+    }, [activeScreen])
+
     return (
         <div className={styles.container}>
             <input 
+            ref={inputRef}
             className={`${styles.amountInput} ${remainingToPayUSD <= 0.01 ? styles.disabledInput : ''} shadow-sm`}
             autoComplete='off'
             type="number" 

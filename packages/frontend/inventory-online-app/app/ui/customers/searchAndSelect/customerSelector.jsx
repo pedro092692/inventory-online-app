@@ -9,11 +9,12 @@ import SearchCustomerInput from '@/app/ui/customers/searchAndSelect/input/search
 import SearchResultsContainer from '@/app/ui/customers/searchAndSelect/results/searchResults'
 
 
-export default function CustomerSelector({value, onChange, placeHolder='Buscar cliente por Nombre, Cédula', showResult=true, bgColor}) {
+export default function CustomerSelector({value, onChange, placeHolder='Buscar cliente por Nombre, Cédula', showResult=true, bgColor, activeScreen=null}) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
     const [error, setError] = useState(null)
     const showResultsRef = useRef(null)
+    const inputRef = useRef(null)
 
     const endpoint = `customers/search`
     const params = new URLSearchParams()
@@ -63,6 +64,12 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
         }
     }, [value])
 
+    useEffect(() => {
+        if (activeScreen === 'customer') {
+            inputRef.current?.focus()
+        }
+    }, [activeScreen])
+
     return (
         <Container
             padding={'0px'}
@@ -73,7 +80,7 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
             className={inputStyles.father}
         >
             {/* input search */}
-            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} bgColor={bgColor}/>
+            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} bgColor={bgColor} inputRef={inputRef}/>
 
             {/* show results  */}
             <SearchResultsContainer ref={showResultsRef} results={results} onClick={handleClick}/>

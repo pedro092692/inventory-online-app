@@ -7,13 +7,14 @@ import InputWithIcon from '@/app/ui/customers/searchAndSelect/input/inputWithIco
 import SearchCustomerInput from '@/app/ui/customers/searchAndSelect/input/searchInput'
 import ProductResultContainer from '@/app/(store)/store/sell/_components/product/productContainer'
 
-export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras', setItems=() => '', items=[]}) {
+export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras', setItems=() => '', items=[], activeScreen=null}) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
     const [highlightedIndex, setHighlightedIndex] = useState(-1)
     const [isScanning, setIsScanning] = useState(false)
     const lastKeyTime = useRef(0)
     const showResultsRef = useRef(null)
+    const inputRef = useRef(null)
 
     const endpoint = `products/search`
     const params = new URLSearchParams()
@@ -138,10 +139,17 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         }
     }, [])
 
+    useEffect(() => {
+        if (activeScreen === 'products') {
+            inputRef.current?.focus()
+        }
+    }, [activeScreen])
+
     return (
         <>
             {/* input search */}
             <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} onKeyDown={handleKeyDown}
+                inputRef={inputRef}
                 bgColor='white'
             />
             { results.length > 0 && <ProductResultContainer 

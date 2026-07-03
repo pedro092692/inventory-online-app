@@ -3,7 +3,7 @@ import { Button } from '@/app/ui/utils/button/buttons'
 import localStyles from './sucess.module.css'
 import GenerateLinkButton from '@/app/(store)/store/bills/_components/detail/whatsappLink/generateButton'
 
-export default function SuccessInfo({state={}, onClick=() => ''}) {
+export default function SuccessInfo({state={}, onClick=() => '', time=null}) {
     const link = state?.ws_link || null
     
     return (
@@ -15,7 +15,7 @@ export default function SuccessInfo({state={}, onClick=() => ''}) {
                     type={'primary'} 
                     showIcon={'true'} 
                     icon={'sell'}
-                    children={'Nueva Venta'}
+                    children={time ? `Nueva Venta en ${time}s` :'Nueva Venta'}
                     onClick={onClick}
                 />
             </div>        

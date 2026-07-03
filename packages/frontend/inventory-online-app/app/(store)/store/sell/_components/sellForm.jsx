@@ -30,6 +30,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const paymentOptions = SelectObject(paymentMethods, 'id', 'name')
     const [showModal, setShowModal] = useState(false)
     const [modalMessage, setModalMessage] = useState('')
+    const [resetTime, SetResetTime] = useState(15)
 
     // form action
     const initialState = {message: null, errors: {}}
@@ -174,6 +175,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         setCurrentAmount('')
         setResetKey(prev => prev + 1)
         setSelectedPaymentMethodId('')
+        SetResetTime(10)
         const fd = new FormData()
         fd.append('reset', 'true')
         
@@ -186,16 +188,21 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     // reset function
     useEffect(() => {
         if (!state?.message) return
+                
+        const intervalId = setInterval(() => {
+            SetResetTime(seconds => seconds -1)
+        }, 1000)        
         
-        // setItems([])
-        // setActiveScreen('products')
-        // setCustomer(null)
-        // setPayments([])
-        // setCurrentAmount('')
-        // setResetKey(prev => prev + 1)
-        // setSelectedPaymentMethodId('')
+        return () => clearInterval(intervalId)     
         
     }, [state])
+
+    // reset on time 0
+    useEffect(() => {
+        if (resetTime === 0) {
+            handleReset()
+        }
+    }, [resetTime])
 
     // reset screen on delete all items
     useEffect(() => {
@@ -203,6 +210,32 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
             setActiveScreen('products')
         }
     }, [items])
+
+    //Keyboard shortcuts
+    useEffect(() => {
+        const shortcut = (event) => {
+            if(state?.message) return
+
+            const shortcuts = ['f1', 'f2', 'f3']
+            const key = event.key.toLowerCase()
+            
+            const screens = {
+                f1: 'products',
+                f2: 'customer',
+                f3: 'pay'
+            }
+            
+            if (shortcuts.includes(key)) {
+                event.preventDefault()
+                if (key === 'f2' && items.length < 1 ) return
+                if (key === 'f3' && !customer ) return 
+                setActiveScreen(screens[key])
+            }
+            
+        }
+        window.addEventListener('keydown', shortcut)
+        return () => window.removeEventListener('keydown', shortcut)
+    }, [items, customer, state])
 
     return (
         <div className={styles.mainContainer}>
@@ -217,7 +250,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         state={state}
                     />
             
-                    <ProductSelector  setItems={setItems} items={items}/>
+                    <ProductSelector  setItems={setItems} items={items} activeScreen={activeScreen}/>
                 </div>
 
                 {/* customer section */}
@@ -229,7 +262,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         state={state}
                     />
 
-                    <SelectCustomer customer={customer} setCustomer={setCustomer} showResult={false} bgColor={'white'}/>
+                    <SelectCustomer customer={customer} setCustomer={setCustomer} showResult={false} bgColor={'white'} activeScreen={activeScreen}/>
                 </div>
 
                 {/* pay section */}
@@ -257,12 +290,13 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                                  remainingToPayUSD={remainingToPayUSD}
                                  isPending={isPending}
                                  state={state}
+                                 activeScreen={activeScreen}
                                  />
     
                     <div className={`divider`}></div>
                     
                     {/* success info */}
-                    { state?.message && <SuccessInfo state={state} onClick={handleReset}/> }
+                    { state?.message && <SuccessInfo state={state} onClick={handleReset} time={resetTime}/> }
 
                     <TotaInfo 
                         total={total} 
@@ -278,8 +312,6 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     {
                         !state.message && <Pyaments payments={payments} removePayment={removePayment}/>
                     }
-                    
-
                 </div>
 
                 {/* cart section */}
