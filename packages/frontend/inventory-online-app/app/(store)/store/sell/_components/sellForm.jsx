@@ -43,6 +43,50 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         setModalMessage('')
     }
 
+    // load data from localStore at amount component
+    useEffect(() => {
+        const storedItems = localStorage.getItem('pos_invoice_items')
+        const storedCustomer = localStorage.getItem('pos_invoice_customer')
+        const storedPayments = localStorage.getItem('pos_invoice_payments')
+
+        if (storedItems) setItems(JSON.parse(storedItems))
+        if (storedCustomer) setCustomer(JSON.parse(storedCustomer))
+        if (storedPayments) setPayments(JSON.parse(storedPayments))
+    }, [])
+
+    // save data automatilly in localStorage
+    useEffect(() => {
+        // Solo guardamos si hay elementos para evitar sobreescribir con arrays vacíos al inicializar
+        if (items.length > 0) {
+            localStorage.setItem('pos_invoice_items', JSON.stringify(items))
+        } else {
+            localStorage.removeItem('pos_invoice_items')
+        }
+    }, [items])
+
+    useEffect(() => {
+        if (customer) {
+            localStorage.setItem('pos_invoice_customer', JSON.stringify(customer))
+        } else {
+            localStorage.removeItem('pos_invoice_customer')
+        }
+    }, [customer])
+
+    useEffect(() => {
+        if (payments.length > 0) {
+            localStorage.setItem('pos_invoice_payments', JSON.stringify(payments))
+        } else {
+            localStorage.removeItem('pos_invoice_payments')
+        }
+    }, [payments])
+
+    // aux functon clear localStorage
+    const clearInvoiceStorage = () => {
+        localStorage.removeItem('pos_invoice_items')
+        localStorage.removeItem('pos_invoice_customer')
+        localStorage.removeItem('pos_invoice_payments')
+    }
+
     // total order amount in USD and Bs
     const total = useMemo(() => {
         return items.reduce((acc, item) => {
@@ -176,6 +220,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         setResetKey(prev => prev + 1)
         setSelectedPaymentMethodId('')
         SetResetTime(10)
+        clearInvoiceStorage()
         const fd = new FormData()
         fd.append('reset', 'true')
         
@@ -313,7 +358,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
 
                     {/* payments */}
                     {
-                        !state.message && <Pyaments payments={payments} removePayment={removePayment}/>
+                        !state?.message && <Pyaments payments={payments} removePayment={removePayment}/>
                     }
                 </div>
 

@@ -6,6 +6,7 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
     const endpoint =  query ? `invoices/search-query` : 'invoices/all'
     const params = new URLSearchParams()
     const rawParams = params.toString()
+    // await new Promise(resolve => setTimeout(resolve, 2000))
     if(query){
         params.append('data', query)
         params.append('limitResults', limit)
