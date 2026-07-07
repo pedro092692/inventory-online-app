@@ -28,7 +28,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                 if (remainingToPayUSD < 0.01) return submitRef.current?.click()
                 event.preventDefault()
                 const payment = paymentMethods[paymentMethodId || 1 - 1]
-                const total_amount = payment.currency != 'Bolivar Digital' || '' ? remainingToPayUSD : (remainingToPayUSD * exchangeRate).toFixed(2)
+                const total_amount = payment.currency != 'Bolivar Digital' || '' ? remainingToPayUSD.toFixed(2) : (remainingToPayUSD * exchangeRate).toFixed(2)
                 setAmount(total_amount)
                 inputRef.current?.focus()
             }

@@ -19,8 +19,9 @@ class PayInvoiceController {
      * @returns {Promise<void>} - returns the created payment detail in the response
      */
     createPaymentInvoiceDetail = this.#error.handler( async(req, res) => {
-        let { invoice_id, payment_id, amount } = req.body
-        const newPaymentDetail = await this.PayInvoice.createPaymentDetail(invoice_id, payment_id, amount)
+        let invoice_id = req.body.invoice_id || null
+        let payments = req.body.payments || []
+        const newPaymentDetail = await this.PayInvoice.createPaymentDetail(invoice_id, payments)
         res.status(201).json(newPaymentDetail)
     })
 

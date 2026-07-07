@@ -3,25 +3,14 @@ import Request from '@/app/utils/request'
 import { revalidatePath } from 'next/cache'
 
 export default async function CreateInvoiceAction(
-        msg = 'Operacion realizada con éxito 🤑',
-        invoiceStatus = false,
-        invoiceId = null,
-        preStave, formData) {
-    
-   
-
-    const customer = formData.get('customer_id')
-    const payment_method_id = formData.get('payment_method_id')
-    const amount = formData.get('amount')
-    const details = formData.get('details')
-    const payments = formData.get('payments')
-    const createInvoiceEndpoint = 'invoices'
-    const payInvoiceEndpoint = 'pay-invoice'
-    let payInvoiceResponse = null
-    let payResponse = null
-    let payError = null
-
-    if(formData.get('reset') === 'true'){
+    msg = 'Operación realizada con éxito 🤑',
+    invoiceStatus = false, // true = credit existing invoice, false = create new invoice
+    invoiceId = null,
+    preState, 
+    formData
+) {
+    // 1. Form Reset Handling
+    if (formData.get('reset') === 'true') {
         return {
             message: null,
             errors: {},
@@ -29,59 +18,104 @@ export default async function CreateInvoiceAction(
         }
     }
 
-    const createInvoiceBody = {
-        customer_id: customer,
-        details: JSON.parse(details),
-    } 
-    
-    const payInvoiceBody = {
-        invoice_id: invoiceId || null,
-        payment_id: parseInt(payment_method_id),
-        amount: parseFloat(amount)
-    }
+    const createInvoiceEndpoint = 'invoices'
+    const payInvoiceEndpoint = 'pay-invoice'
 
+    // --- CASE 1: CREATE A NEW INVOICE WITH YOUR PAYMENTS ---
+    if (!invoiceStatus) {
+        const customer = formData.get('customer_id')
+        const details = formData.get('details')
+        const paymentsRaw = formData.get('payments')
 
-    const response = await Request(invoiceStatus ? payInvoiceEndpoint : createInvoiceEndpoint, 
-                                        'POST',  invoiceStatus ? payInvoiceBody : createInvoiceBody)
-    
-    const {data, error} = response 
+        // Parse the payments coming from the frontend and adapt them to the backend keys
+        const paymentsArray = JSON.parse(paymentsRaw || '[]').map(p => ({
+            paymentId: parseInt(p.payment_method_id),
+            amount: parseFloat(p.amount)
+        }))
 
-    if (!invoiceStatus && data?.invoice) {
-        payInvoiceBody.invoice_id = data?.invoice.id
-        
-        for(let payment of JSON.parse(payments)) {
-            payInvoiceBody.invoice_id = parseInt(data.invoice.id)
-            payInvoiceBody.payment_id = parseInt(payment.payment_method_id)
-            payInvoiceBody.amount = parseFloat(payment.amount)
+        const createInvoiceBody = {
+            customer_id: customer,
+            details: JSON.parse(details || '[]'),
+        }
 
-          
-            payResponse = await Request(payInvoiceEndpoint, 'POST', payInvoiceBody)
+        // A. Create the invoice first
+        const response = await Request(createInvoiceEndpoint, 'POST', createInvoiceBody)
+        const { data, error } = response
 
-            const {data: payData, error: payError} = payResponse
+        if (error || !data?.invoice) {
+            return {
+                message: null,
+                errors: error || data?.errors || 'Error al crear la factura.',
+                invoice: null
+            }
+        }
+        const newInvoiceId = data.invoice.id
 
-            if (payError || payData?.errors) {
-                return {
-                    message: null,
-                    errors: data?.errors || payError || 'Hubo un error inesperado intenta nuevamente',
-                    inputs: payInvoiceBody
-                }
+        // B. Send all payments together request to the service.
+        const payResponse = await Request(payInvoiceEndpoint, 'POST', {
+            invoice_id: newInvoiceId,
+            payments: paymentsArray 
+        })
+
+        const { data: payData, error: payError } = payResponse
+
+        if (payError || payData?.errors) {
+            return {
+                message: null,
+                errors: payError || payData?.errors || 'La factura se creó pero hubo un problema al registrar los pagos.',
+                invoice: data.invoice 
             }
         }
 
-        if(payResponse?.data?.invoice?.status == 'paid') {
-            revalidatePath(`/store/${createInvoiceEndpoint}`)
-            // create whatslink to send invoice
-            const {data: linkResponse, error: linkError} = await Request(`invoices/send-whatsapp/${payInvoiceBody.invoice_id}`, 'GET')
-            
-            return {
-                message: msg,
-                invoice: payResponse.data.invoice,
-                ws_link: linkResponse?.link || '',
-                errors: {},
-                inputs: {}
-            }
-        }  
+        // C. Actions after success (Revalidation and WhatsApp Link)
+        revalidatePath(`/store/${createInvoiceEndpoint}`)
         
+        const { data: linkResponse } = await Request(`invoices/send-whatsapp/${newInvoiceId}`, 'GET')
+
+        return {
+            message: msg,
+            invoice: payData.invoice, 
+            ws_link: linkResponse?.link || '',
+            errors: {},
+            inputs: {}
+        }
     }
-    
- }
+
+    // --- CASE 2: PAY AN EXISTING INVOICE (invoiceStatus === true) ---
+    if (invoiceStatus && invoiceId) {
+        const payment_method_id = formData.get('payment_method_id')
+        const amount = formData.get('amount')
+
+        // If payment is made individually from a subscription screen, we send an array of a single element
+        const payInvoiceBody = {
+            invoiceId: parseInt(invoiceId),
+            payments: [
+                {
+                    paymentId: parseInt(payment_method_id),
+                    amount: parseFloat(amount)
+                }
+            ]
+        }
+
+        const payResponse = await Request(payInvoiceEndpoint, 'POST', payInvoiceBody)
+        const { data: payData, error: payError } = payResponse
+
+        if (payError || payData?.errors) {
+            return {
+                message: null,
+                errors: payError || payData?.errors || 'Hubo un error al procesar el pago.',
+                invoice: null
+            }
+        }
+
+        revalidatePath(`/store/${createInvoiceEndpoint}`)
+
+        return {
+            message: msg,
+            invoice: payData.invoice,
+            ws_link: '',
+            errors: {},
+            inputs: {}
+        }
+    }
+}
