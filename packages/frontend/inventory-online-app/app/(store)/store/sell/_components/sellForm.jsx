@@ -338,7 +338,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                                  activeScreen={activeScreen}
                                  paymentMethodId={selectedPaymentMethodId}
                                  paymentMethods={paymentMethods}
-                                 total={total}
+                                 exchangeRate={exchangeRate}
                                  />
     
                     <div className={`divider`}></div>

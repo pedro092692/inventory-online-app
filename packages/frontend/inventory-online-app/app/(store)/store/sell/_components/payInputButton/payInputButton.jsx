@@ -8,7 +8,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     activeScreen=null,
                     paymentMethodId=null,
                     paymentMethods=[],
-                    total=null
+                    exchangeRate=0
                     }) {
     
     const inputRef = useRef(null)
@@ -28,7 +28,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                 if (remainingToPayUSD < 0.01) return submitRef.current?.click()
                 event.preventDefault()
                 const payment = paymentMethods[paymentMethodId || 1 - 1]
-                const total_amount = payment.currency != 'Bolivar Digital' || '' ? total.total_usd : total.total_bs
+                const total_amount = payment.currency != 'Bolivar Digital' || '' ? remainingToPayUSD : (remainingToPayUSD * exchangeRate).toFixed(2)
                 setAmount(total_amount)
                 inputRef.current?.focus()
             }
