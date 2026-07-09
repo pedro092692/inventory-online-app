@@ -284,7 +284,6 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
 
     return (
         <div className={styles.mainContainer}>
-              
             <form className={styles.mainContainer} action={handleSubmitInvoice}>
                 {/* products section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'products' ? styles.hide : ''}`}>
@@ -367,7 +366,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     <Cart items={items} setItems={setItems} total={total} state={state} totalPaidUSD={totalPaidUSD}/>
                 </div>
             </form>
-            
+         
             {/* modal for alert messages */}
             <Modal 
                 show={showModal}

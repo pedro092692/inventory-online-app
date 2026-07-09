@@ -8,7 +8,8 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     activeScreen=null,
                     paymentMethodId=null,
                     paymentMethods=[],
-                    exchangeRate=0
+                    exchangeRate=0,
+                    changeDueUSD=1
                     }) {
     
     const inputRef = useRef(null)
@@ -77,7 +78,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             }       
             
             {
-                remainingToPayUSD <= 0.01 && (
+                remainingToPayUSD <= 0.01 && !changeDueUSD &&(
                     <Button type={'primary'} 
                         ref={submitRef}
                         style={{backgroundColor: '#3E7C42'}}
@@ -93,6 +94,20 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                         {isPending ? 'Procesando...' : state?.message ? 'Venta Registrada' : 'Procesar Factura'}
                         
                     </Button>
+                )
+            }
+
+            {
+                changeDueUSD > 0.01 && (
+                    <Button type={'secondary'} 
+                        onClick={addPayment}
+                        showIcon={true}
+                        icon={'sell'}
+                        size={[24, 24]}
+                        title={'Gestionar Vuelto'}
+                        children={'Gestionar Vuelto'}
+                        className='shadow-sm'      
+                    />
                 )
             }
             
