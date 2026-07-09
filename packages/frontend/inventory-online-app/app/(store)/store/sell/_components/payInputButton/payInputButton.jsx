@@ -2,6 +2,7 @@
 import { Button } from '@/app/ui/utils/button/buttons'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useRef, useEffect } from 'react'
+import ManageChange from '@/app/(store)/store/sell/_components/manageChange/manageChange'
 import styles from './payInputButton.module.css'
 
 export default function InputAddPay({setAmount=() => '', addPayment=() => '', amount='', remainingToPayUSD=1, isPending=true, state={}, 
@@ -9,7 +10,9 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     paymentMethodId=null,
                     paymentMethods=[],
                     exchangeRate=0,
-                    changeDueUSD=null
+                    changeDueUSD=null,
+                    setActiveChange= () => '',
+                    activeChange=false
                     }) {
     
     const inputRef = useRef(null)
@@ -44,7 +47,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
         <div className={styles.container}>
             <input 
             ref={inputRef}
-            className={`${styles.amountInput} ${remainingToPayUSD <= 0.01 ? styles.disabledInput : ''} shadow-sm`}
+            className={`${styles.amountInput} ${remainingToPayUSD <= 0.01 ? activeChange ? '' : styles.disabledInput : ''} shadow-sm`}
             autoComplete='off'
             type="number" 
             name="amount"
@@ -53,7 +56,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             placeholder="Monto" 
             min="0.1" 
             step="0.01" 
-            disabled={remainingToPayUSD <= 0.01 || isPending}
+            disabled={(remainingToPayUSD <= 0.01 || isPending) && !activeChange}
             onKeyDown={
                 (e) => {
                     if (e.key === 'Enter'){
@@ -101,10 +104,11 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                 changeDueUSD > 0.01 && (
                     <Button type={'secondary'} 
                         showIcon={true}
-                        icon={'cash_change'}
+                        onClick={() => setActiveChange(!activeChange)}
+                        icon={activeChange ? 'circleArrow' : 'cash_change'}
                         size={[24, 24]}
                         title={'Gestionar Vuelto'}
-                        children={'Gestionar Vuelto'}
+                        children={activeChange ? 'Regresar' : 'Gestionar Vuelto'}
                         className='shadow-sm'      
                     />
                 )

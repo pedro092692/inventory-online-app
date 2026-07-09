@@ -23,6 +23,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const [customer, setCustomer] = useState(null)
     const [payments, setPayments] = useState([])
     const [resetKey, setResetKey] = useState(0)
+    const [activeChange, setActiveChange] = useState(false)
 
     // local state to control actual amount
     const [currentAmount, setCurrentAmount] = useState('')
@@ -339,6 +340,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                                  paymentMethods={paymentMethods}
                                  exchangeRate={exchangeRate}
                                  changeDueUSD={changeDueUSD}
+                                 setActiveChange={setActiveChange}
+                                 activeChange={activeChange}
                                  />
     
                     <div className={`divider`}></div>
@@ -346,19 +349,21 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     {/* success info */}
                     { state?.message && <SuccessInfo state={state} onClick={handleReset} time={resetTime}/> }
 
-                    <TotaInfo 
-                        total={total} 
-                        totalPaidUSD={totalPaidUSD} 
-                        exchangeRate={exchangeRate} 
-                        remainingToPayUSD={remainingToPayUSD}
-                        changeDueUSD={changeDueUSD}
-                    />
+                    { !activeChange &&
+                        <TotaInfo 
+                            total={total} 
+                            totalPaidUSD={totalPaidUSD} 
+                            exchangeRate={exchangeRate} 
+                            remainingToPayUSD={remainingToPayUSD}
+                            changeDueUSD={changeDueUSD}
+                        />
+                    }
 
                     <div className={`divider`}></div>
 
                     {/* payments */}
                     {
-                        !state?.message && <Pyaments payments={payments} removePayment={removePayment}/>
+                        !state?.message && !activeChange && <Pyaments payments={payments} removePayment={removePayment}/>
                     }
                 </div>
 
