@@ -18,11 +18,11 @@ class CashMovements extends Model {
 
      /**
      * Creates an association between Payment model and the CashMovements model.
-     * @param {{Payemnt: typeof Model}} model - An object containing Payment model.
+     * @param {{Payment: typeof Model}} model - An object containing Payment model.
      * @return {void} Thid method does not return a value.
      */
     static associationPaymentMehotd(model) {
-        this.belongsTo(model.Payemnt, {
+        this.belongsTo(model.Payment, {
             foreignKey: 'payment_method_id',
             as: 'payments'
         })

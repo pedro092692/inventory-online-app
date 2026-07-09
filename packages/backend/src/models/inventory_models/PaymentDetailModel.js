@@ -17,7 +17,7 @@ class PaymentDetail extends Model {
 
     /**
      * Creates an association between PaymentDetail model and the Payment model.
-     * @param {{Payemnt: typeof Model}} model - An object containing Payment model.
+     * @param {{Payment: typeof Model}} model - An object containing Payment model.
      * @return {void} Thid method does not return a value.
      */
     static associationPaymentMethod(model) {
