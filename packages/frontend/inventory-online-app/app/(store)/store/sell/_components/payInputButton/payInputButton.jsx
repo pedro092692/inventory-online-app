@@ -100,9 +100,8 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             {
                 changeDueUSD > 0.01 && (
                     <Button type={'secondary'} 
-                        onClick={addPayment}
                         showIcon={true}
-                        icon={'sell'}
+                        icon={'cash_change'}
                         size={[24, 24]}
                         title={'Gestionar Vuelto'}
                         children={'Gestionar Vuelto'}
