@@ -54,7 +54,7 @@ export default {
         },
 
         type: {
-            type: Sequelize.EMUM('in', 'out'),
+            type: Sequelize.ENUM('in', 'out'),
             allowNull: false
         },
 
