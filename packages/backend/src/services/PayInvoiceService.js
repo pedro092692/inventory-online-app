@@ -11,12 +11,20 @@ class PayInvoiceService {
     // instace of error handler
     #error = new ServiceErrorHandler()
 
-    constructor(model, dollarValueModel=null, invoiceModel=null, sellerModel=null, auditLogModel=null, invoiceDetailModel=null) {
+    constructor(model, 
+                dollarValueModel=null, 
+                invoiceModel=null, 
+                sellerModel=null, 
+                auditLogModel=null, 
+                invoiceDetailModel=null, 
+                cashMovementsModel=null) 
+        {
         this.PaymentDetail = model,
         this.dollarValue = new DollarValueService(dollarValueModel)
         this.invoiceService = new InvoiceService(invoiceModel, invoiceDetailModel, null, dollarValueModel)
         this.sellerService = new SellerService(sellerModel)
         this.auditLogService = new AuditLogService(auditLogModel)
+        this.cashMovements = cashMovementsModel 
         this.#error
     }
 
@@ -31,98 +39,136 @@ class PayInvoiceService {
     createPaymentDetail(invoiceId, payments = []) {
         return this.#error.handler(['Create Payment'], async() => {
 
-            //1 check if invoice exists
-            const invoice = await this._getInvoice(invoiceId)
+            // create transaction 
+            const t = await sequelize.transaction()
 
-            //2 check if invoice is already paid
-            if(invoice.status == 'paid') {
-                throw new Error('Invoice is already paid')
-            }
+            try {
+                //1 check if invoice exists
+                const invoice = await this._getInvoice(invoiceId)
 
-            //3 check if payment array is not empty
-            if (!payments || payments.length === 0) {
-                throw new Error('No pyaments provided')
-            }
-
-            const total = parseFloat(invoice.total)
-            let total_paid = parseFloat(invoice.total_paid) || 0.00
-            let total_reference = 0
-            let total_change = 0
-
-            const dollarValue = await this.dollarValue.getLastValue()
-            const detailsToCreate = []
-
-            // iterate over each payment
-            for (const payment of payments) {
-                const { paymentId, amount } = payment
-
-                if (paymentId < 1 || paymentId > 8) {
-                    throw new Error(`Payment Id must be between 1 and 8. Received: ${paymentId}`)
+                //2 check if invoice is already paid
+                if(invoice.status == 'paid') {
+                    throw new Error('Invoice is already paid')
                 }
 
-                // Dynamically recalculate the remaining balance to be paid in USD in this iteration
-                let total_to_pay = parseFloat((total - total_paid).toFixed(2))
-            
-                // If for some reason the total was already covered in a previous loop, ignore or handle extra change
-                if (total_to_pay <= 0) total_to_pay = 0
-
-                // Evaluate the current payment method and calculate reference amounts/changes.
-                const { reference_amount, change, detailAmount } = this._checkPaymentMethod(
-                    paymentId, 
-                    dollarValue, 
-                    parseFloat(amount), 
-                    total_to_pay
-                )
-
-                // Collect the change if the method generated one (e.g., cash)
-                if (change) {
-                    total_change = parseFloat((total_change + parseFloat(change)).toFixed(2))
+                //3 check if payment array is not empty
+                if (!payments || payments.length === 0) {
+                    throw new Error('No pyaments provided')
                 }
 
-                // Accumulate the amount paid in dollars cleanly
-                total_paid = parseFloat((total_paid + reference_amount).toFixed(2))
+                const total = parseFloat(invoice.total)
+                let total_paid = parseFloat(invoice.total_paid) || 0.00
+                let total_reference = 0
+                let total_change = 0
 
-                // Save data in memory for later storage
-                detailsToCreate.push({
-                    invoice_id: invoiceId,
-                    payment_id: paymentId,
-                    amount: detailAmount,
-                    reference_amount: reference_amount
-                })
-            }
+                const dollarValue = await this.dollarValue.getLastValue()
+                
+                const detailsToCreate = []
+                const cashMovementsToCreate = []
+
+                // iterate over each payment
+                for (const payment of payments) {
+                    const { paymentId, amount } = payment
+
+                    if (paymentId < 1 || paymentId > 8) {
+                        throw new Error(`Payment Id must be between 1 and 8. Received: ${paymentId}`)
+                    }
+
+                    // Dynamically recalculate the remaining balance to be paid in USD in this iteration
+                    let total_to_pay = parseFloat((total - total_paid).toFixed(2))
+                
+                    // If for some reason the total was already covered in a previous loop, ignore or handle extra change
+                    if (total_to_pay <= 0) total_to_pay = 0
+
+                    // Evaluate the current payment method and calculate reference amounts/changes.
+                    const { reference_amount, change, detailAmount, movementAmount } = this._checkPaymentMethod(
+                        paymentId, 
+                        dollarValue, 
+                        parseFloat(amount), 
+                        total_to_pay,
+                    )
+
+                    cashMovementsToCreate.push({
+                        invoice_id: invoiceId,
+                        payment_method_id: paymentId,
+                        type: 'in',
+                        amount: amount,
+                        amount_ref: movementAmount,
+                        exchange_rate: dollarValue.value,
+                        description: `Pago de factura #${invoiceId}`
+                    })
+
+                    // Collect the change if the method generated one (e.g., cash)
+                    if (change) {
+                        const numericChange = parseFloat(change)
+                        total_change = parseFloat((total_change + numericChange).toFixed(2))
+                        
+                        cashMovementsToCreate.push({
+                            invoice_id: invoiceId,
+                            payment_method_id: paymentId, 
+                            type: 'out',
+                            amount: numericChange, 
+                            amount_ref: numericChange, 
+                            exchange_rate: dollarValue.value,
+                            description: `Vuelto de factura #${invoiceId}`
+                        })
+                    }
+
+                    // Accumulate the amount paid in dollars cleanly
+                    total_paid = parseFloat((total_paid + reference_amount).toFixed(2))
+
+                    // Save data in memory for later storage
+                    detailsToCreate.push({
+                        invoice_id: invoiceId,
+                        payment_id: paymentId,
+                        amount: detailAmount,
+                        reference_amount: reference_amount
+                    })
+                }
+                
+                //4. Determine the final invoice status after processing all payments
+                let status = 'unpaid'
+                if (total_paid >= total) {
+                    status = 'paid'
+                    total_reference = (total * parseFloat(dollarValue.value)).toFixed(2)
+                }
+
+                // 5. Register all details in the database, either in bulk or one by one.
+                for (const detail of detailsToCreate) {
+                    await this.PaymentDetail.create(detail, {transaction: t})
+                }
+
+                // registar cash movements
+                for (const movement of cashMovementsToCreate) {
+                    await this.cashMovements.create(movement, {transaction: t})
+                }
+
+                // 6. Update paid amount and invoice final status.
+                    const updatedInvoice = await this._updateInvoice(invoiceId, {
+                    total_paid: total_paid,
+                    total_reference: total_reference,
+                    status: status
+                }, t)
+
+                // 7. If there was a return, attach it to the response for the Frontend.
+                if (total_change > 0) {
+                    updatedInvoice.invoice.dataValues.change = total_change.toFixed(2)
+                }  
+                
+                // 8. If it remains unpaid, calculate how much is still owed in the reference currency (Bs)
+                if (updatedInvoice?.invoice?.status == 'unpaid') {
+                    updatedInvoice.invoice.dataValues.total_to_pay_reference = (
+                    parseFloat(updatedInvoice.invoice.dataValues.total_to_pay_dollar) * parseFloat(updatedInvoice.invoice.dataValues.exchange_rate)
+                    ).toFixed(2)
+                }
+
+                await t.commit()
+                return updatedInvoice
             
-            //4. Determine the final invoice status after processing all payments
-            let status = 'unpaid'
-            if (total_paid >= total) {
-                status = 'paid'
-                total_reference = (total * parseFloat(dollarValue.value)).toFixed(2)
+            }catch(error) {
+                await t.rollback()
+                throw error
             }
-
-            // 5. Register all details in the database, either in bulk or one by one.
-            for (const detail of detailsToCreate) {
-                await this.PaymentDetail.create(detail)
-            }
-
-            // 6. Update paid amount and invoice final status.
-                const updatedInvoice = await this._updateInvoice(invoiceId, {
-                total_paid: total_paid,
-                total_reference: total_reference,
-                status: status
-            })
-
-            // 7. If there was a return, attach it to the response for the Frontend.
-            if (total_change > 0) {
-                updatedInvoice.invoice.dataValues.change = total_change.toFixed(2)
-            }  
-            
-            // 8. If it remains unpaid, calculate how much is still owed in the reference currency (Bs)
-            if (updatedInvoice?.invoice?.status == 'unpaid') {
-                updatedInvoice.invoice.dataValues.total_to_pay_reference = (
-                parseFloat(updatedInvoice.invoice.dataValues.total_to_pay_dollar) * parseFloat(updatedInvoice.invoice.dataValues.exchange_rate)
-                ).toFixed(2)
-            }
-
-            return updatedInvoice
         })
     }
 
@@ -360,6 +406,7 @@ class PayInvoiceService {
         let change = 0
         let payment_type = null
         let dollar = dollarValue.toJSON().value
+        let movementAmount = amount
 
         /**
          * Table of payment methods:
@@ -377,6 +424,7 @@ class PayInvoiceService {
             // calculate reference amount
             reference_amount = parseFloat((amount / dollar).toFixed(2))
             detailAmount = amount
+            movementAmount = reference_amount
 
             // set payment type to bolivars 
             payment_type = 'bolivars'
@@ -395,12 +443,14 @@ class PayInvoiceService {
                 change = parseFloat((reference_amount - total_to_pay).toFixed(2))
                 // set reference amount in total pay
                 reference_amount = total_to_pay
+                movementAmount = reference_amount
                 
                 // if payment is in bolivar set amount and change in bolivar 
                 if(payment_type == 'bolivars') {
                     change = parseFloat((amount - (total_to_pay * dollar)).toFixed(2))
                     detailAmount = parseFloat((total_to_pay * dollar).toFixed(2))
                     reference_amount = parseFloat((detailAmount / dollar).toFixed(2))
+                    movementAmount = (amount / dollar).toFixed(2)
                 }
             }else {
                 // no calcule change 
@@ -416,7 +466,8 @@ class PayInvoiceService {
         return {
             reference_amount: reference_amount,
             change: change,
-            detailAmount: detailAmount
+            detailAmount: detailAmount,
+            movementAmount: movementAmount
         }
        
     }

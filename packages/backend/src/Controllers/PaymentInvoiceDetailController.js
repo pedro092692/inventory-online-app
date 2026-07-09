@@ -5,9 +5,16 @@ class PayInvoiceController {
     // Error hanlder instance 
     #error = new ControllerErrorHandler()
 
-    constructor(model, dollarValueModel=null, invoiceModel=null, sellerModel=null, auditLogModel=null, invoiceDetailModel=null) {
+    constructor(model, 
+                dollarValueModel=null, 
+                invoiceModel=null, 
+                sellerModel=null, 
+                auditLogModel=null, 
+                invoiceDetailModel=null, 
+                cashMovements=null) 
+        {
         this.PayInvoice = new PayInvoiceService
-            (model, dollarValueModel, invoiceModel, sellerModel, auditLogModel, invoiceDetailModel)
+            (model, dollarValueModel, invoiceModel, sellerModel, auditLogModel, invoiceDetailModel, cashMovements)
         this.#error
     }
 
