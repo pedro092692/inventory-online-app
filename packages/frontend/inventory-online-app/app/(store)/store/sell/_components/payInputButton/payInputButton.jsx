@@ -9,7 +9,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     paymentMethodId=null,
                     paymentMethods=[],
                     exchangeRate=0,
-                    changeDueUSD=1
+                    changeDueUSD=null
                     }) {
     
     const inputRef = useRef(null)
