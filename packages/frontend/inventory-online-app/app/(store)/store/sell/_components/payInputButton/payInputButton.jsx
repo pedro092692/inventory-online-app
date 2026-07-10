@@ -43,6 +43,12 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
         }
     }, [activeScreen, paymentMethodId, remainingToPayUSD])
 
+    useEffect(() => {
+        if (!activeChange) {
+            setAmount('')
+        }
+    }, [activeChange])
+
     return (
         <div className={styles.container}>
             <input 
@@ -59,7 +65,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             disabled={(remainingToPayUSD <= 0.01 || isPending) && !activeChange}
             onKeyDown={
                 (e) => {
-                    if (e.key === 'Enter'){
+                    if (e.key === 'Enter' && !activeChange){
                         e.preventDefault();
                         addPayment();
                     }   
@@ -78,7 +84,21 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                         className='shadow-sm'      
                     />
                 )
-            }       
+            } 
+
+            {
+                activeChange && (
+                    <Button type={'terteary'} 
+                        // onClick={addPayment}
+                        showIcon={true}
+                        icon={'sell'}
+                        size={[24, 24]}
+                        title={'Agregar Vuelto'}
+                        children={'Agregar Vuelto'}
+                        className='shadow-sm'      
+                    />
+                )
+            }      
             
             {
                 remainingToPayUSD <= 0.01 && !changeDueUSD &&(

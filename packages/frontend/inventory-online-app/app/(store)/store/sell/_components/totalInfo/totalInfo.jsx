@@ -1,21 +1,32 @@
 import styles from './totalInfo.module.css'
 
-export default function totaInfo({total={total_usd: 0, total_bs: 0}, totalPaidUSD=0, exchangeRate=1, remainingToPayUSD=0, changeDueUSD=0}) {
+export default function totaInfo({
+        total={total_usd: 0, total_bs: 0}, 
+        totalPaidUSD=0, 
+        exchangeRate=1, 
+        remainingToPayUSD=0, 
+        changeDueUSD=0,
+        activeChange=false
+    }) {
     return (
         <div className={`${styles.infoContainer} shadow-bottom-sm`}>
-            <div className={`${styles.payInfo} shadow`}>
-                <h2 className={styles.title}>Total A Pagar:</h2>
-                <p className={styles.total}>
-                    {new Intl.NumberFormat('en-US').format(total?.total_usd.toFixed(2) || 0)} $
-                </p>
-                <div className='divider'></div>
-                <p className={styles.total}>
-                    {new Intl.NumberFormat('es-VE').format(total?.total_bs.toFixed(2) || 0)} Bs
-                </p>
-            </div>
+            {
+                !activeChange && (
+                <div className={`${styles.payInfo} shadow`}>
+                    <h2 className={styles.title}>Total A Pagar:</h2>
+                    <p className={styles.total}>
+                        {new Intl.NumberFormat('en-US').format(total?.total_usd.toFixed(2) || 0)} $
+                    </p>
+                    <div className='divider'></div>
+                    <p className={styles.total}>
+                        {new Intl.NumberFormat('es-VE').format(total?.total_bs.toFixed(2) || 0)} Bs
+                    </p>
+                </div>
+                )
+            }
 
              {
-                totalPaidUSD !=0 && remainingToPayUSD > 0.01 && (
+                totalPaidUSD !=0 && remainingToPayUSD > 0.01 && !activeChange && (
                     <div className={`${styles.payInfo} shadow`}>
                         <h2 className={styles.title}>Por Pagar:</h2>
                         <p className={styles.totalToPaid}>
@@ -30,7 +41,7 @@ export default function totaInfo({total={total_usd: 0, total_bs: 0}, totalPaidUS
             }
             
             {
-                totalPaidUSD > 0 && (
+                totalPaidUSD > 0 && !activeChange && (
                     <div className={`${styles.payInfo} shadow`}>
                         <h2 className={styles.title}>Total Abonado:</h2>
                         <p className={styles.totalPaid}>
@@ -45,7 +56,7 @@ export default function totaInfo({total={total_usd: 0, total_bs: 0}, totalPaidUS
             }
             
             {
-                changeDueUSD > 0 && (
+                changeDueUSD > 0.01 && (
                     <div className={`${styles.payInfo} shadow`}>
                         <h2 className={styles.title}>Cambio (Vuelto):</h2>
                         <p className={styles.totalPaidChange}>

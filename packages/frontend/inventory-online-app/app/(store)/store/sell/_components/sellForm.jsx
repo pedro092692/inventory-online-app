@@ -22,6 +22,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const [items, setItems] = useState([])
     const [customer, setCustomer] = useState(null)
     const [payments, setPayments] = useState([])
+    const [changes, setChanges] = useState([])
     const [resetKey, setResetKey] = useState(0)
     const [activeChange, setActiveChange] = useState(false)
 
@@ -49,10 +50,12 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         const storedItems = localStorage.getItem('pos_invoice_items')
         const storedCustomer = localStorage.getItem('pos_invoice_customer')
         const storedPayments = localStorage.getItem('pos_invoice_payments')
+        const storedChanges = localStorage.getItem('pos_invoice_changes')
 
         if (storedItems) setItems(JSON.parse(storedItems))
         if (storedCustomer) setCustomer(JSON.parse(storedCustomer))
         if (storedPayments) setPayments(JSON.parse(storedPayments))
+        if (storedChanges) setChanges(JSON.parse(storedChanges))
     }, [])
 
     // save data automatilly in localStorage
@@ -81,11 +84,20 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         }
     }, [payments])
 
+    useEffect(() => {
+        if (changes.length > 0) {
+            localStorage.setItem('pos_invoice_changes', JSON.stringify(changes))
+        } else {
+            localStorage.removeItem('pos_invoice_changes')
+        }
+    }, [changes])
+
     // aux functon clear localStorage
     const clearInvoiceStorage = () => {
         localStorage.removeItem('pos_invoice_items')
         localStorage.removeItem('pos_invoice_customer')
         localStorage.removeItem('pos_invoice_payments')
+        localStorage.removeItem('pos_invoice_changes')
     }
 
     // total order amount in USD and Bs
@@ -172,11 +184,69 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         setCurrentAmount('')
     }
 
+    // function to add change 
+    const handleAddChange = () => {
+        if (!currentAmount || parseFloat(currentAmount) <= 0) {
+            setModalMessage('Por favor ingresa un monto válido para el vuelto...')
+            setShowModal(true)
+            return
+        }
+
+        const methodId = selectedPaymentMethodId || (paymentOptions[0]?.value)
+        const paymentMethod = paymentMethods.find(pm => pm.id === parseInt(methodId))
+
+        if (!paymentMethod) {
+            setModalMessage('Método de pago no seleccionado')
+            setShowModal(true)
+            return
+        }
+
+        const inputAmount = parseFloat(currentAmount)
+        const isBolivar = paymentMethod.currency === 'Bolivar Digital'
+
+        // Conversion of the change entered to reference USD
+        const amountInUSD = Number(
+            isBolivar ? inputAmount / exchangeRate : inputAmount
+        )
+
+        // Calculate how much change has already been broken down/allocated by the cashier
+        const totalChangesAllocatedUSD = changes.reduce((acc, c) => acc + c.amountInUSD, 0)
+        const remainingChangeUSD = Number((changeDueUSD - totalChangesAllocatedUSD).toFixed(2))
+
+        // Critical validation: That the cashier does not try to give more change than the actual amount.
+        if (amountInUSD > (remainingChangeUSD + 0.01)) {
+            const maxAllowed = isBolivar 
+                ? (remainingChangeUSD * exchangeRate).toFixed(2) + " Bs" 
+                : remainingChangeUSD.toFixed(2) + " $"
+            setModalMessage(`El monto indicado supera el vuelto restante por entregar. Máximo permitido: ${maxAllowed}`)
+            setShowModal(true)
+            return
+        }
+
+        setChanges(prev => [
+            ...prev,
+            {
+                payment_method_id: methodId,
+                name: paymentMethod.name,
+                currency: paymentMethod.currency,
+                amount: inputAmount,
+                amountInUSD: amountInUSD
+            }
+        ])
+
+        setCurrentAmount('')
+    }
+
     // function to handle remove mistake payment
     const removePayment = (index) => {
        setPayments(prev => 
             prev.filter((_, i) => i !== index)
         )
+    }
+
+    // Delete an incorrect change breakdown
+    const removeChange = (index) => {
+        setChanges(prev => prev.filter((_, i) => i !== index))
     }
 
     const handleSubmitInvoice = (formData) => {
@@ -185,6 +255,17 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
             setModalMessage(`Falta por completar el pago. Restan: ${remainingToPayUSD.toFixed(2)} $`)
             setShowModal(true)
             return
+        }
+
+        // Validation: If change is due, require it to be fully itemized.
+        if (changeDueUSD > 0.01) {
+            const totalChangesAllocatedUSD = changes.reduce((acc, c) => acc + c.amountInUSD, 0)
+            if (Math.abs(changeDueUSD - totalChangesAllocatedUSD) > 0.01) {
+                const pendingUSD = (changeDueUSD - totalChangesAllocatedUSD).toFixed(2)
+                setModalMessage(`Falta por desglosar la totalidad del vuelto. Restan por asignar: ${pendingUSD} $`)
+                setShowModal(true)
+                return
+            }
         }
 
         if (items.length < 1) {
@@ -207,6 +288,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
 
         // Payments details
         formData.append('payments', JSON.stringify(payments))
+        formData.append('changes', JSON.stringify(changes))
 
         // send form to formAction
         return formAction(formData)
@@ -217,6 +299,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         setActiveScreen('products')
         setCustomer(null)
         setPayments([])
+        setChanges([])
+        setActiveChange(false)
         setCurrentAmount('')
         setResetKey(prev => prev + 1)
         setSelectedPaymentMethodId('')
@@ -349,15 +433,16 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     {/* success info */}
                     { state?.message && <SuccessInfo state={state} onClick={handleReset} time={resetTime}/> }
 
-                    { !activeChange &&
-                        <TotaInfo 
-                            total={total} 
-                            totalPaidUSD={totalPaidUSD} 
-                            exchangeRate={exchangeRate} 
-                            remainingToPayUSD={remainingToPayUSD}
-                            changeDueUSD={changeDueUSD}
-                        />
-                    }
+                    
+                    <TotaInfo 
+                        total={total} 
+                        totalPaidUSD={totalPaidUSD} 
+                        exchangeRate={exchangeRate} 
+                        remainingToPayUSD={remainingToPayUSD}
+                        changeDueUSD={changeDueUSD}
+                        activeChange={activeChange}
+                    />
+                    
 
                     <div className={`divider`}></div>
 
