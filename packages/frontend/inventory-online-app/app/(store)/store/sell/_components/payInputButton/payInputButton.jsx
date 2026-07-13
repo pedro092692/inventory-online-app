@@ -12,11 +12,13 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     exchangeRate=0,
                     changeDueUSD=null,
                     setActiveChange= () => '',
-                    activeChange=false
+                    activeChange=false,
+                    addChange=() => ''
                     }) {
     
     const inputRef = useRef(null)
     const submitRef = useRef(null)
+
 
     useEffect(() => {
         if (activeScreen === 'pay') {
@@ -58,7 +60,9 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             type="number" 
             name="amount"
             value={amount} 
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={
+                (e) => setAmount(e.target.value)
+            }
             placeholder="Monto" 
             min="0.1" 
             step="0.01" 
@@ -68,7 +72,12 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     if (e.key === 'Enter' && !activeChange){
                         e.preventDefault();
                         addPayment();
+                    }
+                    if (e.key === 'Enter' && activeChange){
+                        e.preventDefault();
+                        addChange();
                     }   
+
                 }
             }
             />
@@ -89,7 +98,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             {
                 activeChange && (
                     <Button type={'terteary'} 
-                        // onClick={addPayment}
+                        onClick={addChange}
                         showIcon={true}
                         icon={'sell'}
                         size={[24, 24]}

@@ -6,7 +6,8 @@ export default function totaInfo({
         exchangeRate=1, 
         remainingToPayUSD=0, 
         changeDueUSD=0,
-        activeChange=false
+        activeChange=false,
+        remaningChangeDue=0
     }) {
     return (
         <div className={`${styles.infoContainer} shadow-bottom-sm`}>
@@ -65,6 +66,36 @@ export default function totaInfo({
                         <div className='divider'></div>
                         <p className={styles.totalPaidChange}>
                             {new Intl.NumberFormat('en-US').format((changeDueUSD * exchangeRate || 0).toFixed(2))} Bs
+                        </p>
+                    </div>
+                )
+            }
+
+            {
+                remaningChangeDue > 0.01 && (
+                    <div className={`${styles.payInfo} shadow`}>
+                        <h2 className={styles.title}>Total Vuelto Pagao:</h2>
+                        <p className={styles.totalPaid}>
+                            {new Intl.NumberFormat('en-US').format(remaningChangeDue.toFixed(2) || 0)} $ 
+                        </p>
+                        <div className='divider'></div>
+                        <p className={styles.totalPaid}>
+                            {new Intl.NumberFormat('en-US').format((remaningChangeDue * exchangeRate || 0).toFixed(2))} Bs
+                        </p>
+                    </div>
+                )
+            }
+
+            {
+                remaningChangeDue !=0 && activeChange && (
+                    <div className={`${styles.payInfo} shadow`}>
+                        <h2 className={styles.title}>Por Pagar (Vuelto):</h2>
+                        <p className={styles.totalToPaid}>
+                            {new Intl.NumberFormat('en-US').format((changeDueUSD - remaningChangeDue).toFixed(2) || 0)} $ 
+                        </p>
+                        <div className='divider'></div>
+                        <p className={styles.totalToPaid}>
+                            {new Intl.NumberFormat('en-US').format(((changeDueUSD * exchangeRate) - (remaningChangeDue * exchangeRate)).toFixed(2))} Bs
                         </p>
                     </div>
                 )

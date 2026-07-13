@@ -131,6 +131,11 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         return change > 0 ? change : 0
     }, [total.total_usd, totalPaidUSD])
 
+    const remaningChangeDue = useMemo(() => {
+        const remaining = changes.reduce((acc, c) => acc + c?.amountInUSD || 0, 0)
+        return remaining > 0 ? remaining: 0
+    }, [changes])
+
     // function to add payment method to payment list 
     const handleAddPayment = () => {
         if (!currentAmount || parseFloat(currentAmount) <=0) {
@@ -209,6 +214,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
             isBolivar ? inputAmount / exchangeRate : inputAmount
         )
 
+        
         // Calculate how much change has already been broken down/allocated by the cashier
         const totalChangesAllocatedUSD = changes.reduce((acc, c) => acc + c.amountInUSD, 0)
         const remainingChangeUSD = Number((changeDueUSD - totalChangesAllocatedUSD).toFixed(2))
@@ -426,6 +432,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                                  changeDueUSD={changeDueUSD}
                                  setActiveChange={setActiveChange}
                                  activeChange={activeChange}
+                                 addChange={handleAddChange}
                                  />
     
                     <div className={`divider`}></div>
@@ -441,6 +448,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         remainingToPayUSD={remainingToPayUSD}
                         changeDueUSD={changeDueUSD}
                         activeChange={activeChange}
+                        remaningChangeDue={remaningChangeDue}
                     />
                     
 
@@ -449,6 +457,12 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     {/* payments */}
                     {
                         !state?.message && !activeChange && <Pyaments payments={payments} removePayment={removePayment}/>
+                    }
+
+                    {/* changes */}
+
+                    {
+                        !state?.message && activeChange && <Pyaments payments={changes} removePayment={removeChange}/>
                     }
                 </div>
 
