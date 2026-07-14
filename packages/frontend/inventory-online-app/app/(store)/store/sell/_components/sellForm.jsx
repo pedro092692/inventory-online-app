@@ -385,7 +385,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         state={state}
                     />
             
-                    <ProductSelector  setItems={setItems} items={items} activeScreen={activeScreen}/>
+                    <ProductSelector  setItems={setItems} items={items} activeScreen={activeScreen} changes={changes} setChanges={setChanges}/>
                 </div>
 
                 {/* customer section */}
@@ -433,6 +433,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                                  setActiveChange={setActiveChange}
                                  activeChange={activeChange}
                                  addChange={handleAddChange}
+                                 remaningChangeDue={remaningChangeDue}
                                  />
     
                     <div className={`divider`}></div>

@@ -7,7 +7,14 @@ import InputWithIcon from '@/app/ui/customers/searchAndSelect/input/inputWithIco
 import SearchCustomerInput from '@/app/ui/customers/searchAndSelect/input/searchInput'
 import ProductResultContainer from '@/app/(store)/store/sell/_components/product/productContainer'
 
-export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras', setItems=() => '', items=[], activeScreen=null}) {
+export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras', 
+    setItems=() => '', 
+    items=[], 
+    activeScreen=null,
+    changes=[],
+    setChanges=() => ''
+    
+    }) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
     const [highlightedIndex, setHighlightedIndex] = useState(-1)
@@ -87,6 +94,9 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
             }))
             setResults([])
             setQuery('')
+            if(changes.length > 0) {
+                setChanges([])
+            }
             return
         }
 

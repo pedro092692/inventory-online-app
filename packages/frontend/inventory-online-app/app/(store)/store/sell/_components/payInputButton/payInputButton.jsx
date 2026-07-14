@@ -13,12 +13,12 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     changeDueUSD=null,
                     setActiveChange= () => '',
                     activeChange=false,
-                    addChange=() => ''
+                    addChange=() => '',
+                    remaningChangeDue=null
                     }) {
     
     const inputRef = useRef(null)
     const submitRef = useRef(null)
-
 
     useEffect(() => {
         if (activeScreen === 'pay') {
@@ -55,7 +55,9 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
         <div className={styles.container}>
             <input 
             ref={inputRef}
-            className={`${styles.amountInput} ${remainingToPayUSD <= 0.01 ? activeChange ? '' : styles.disabledInput : ''} shadow-sm`}
+            className={`${styles.amountInput} ${remainingToPayUSD <= 0.01 ? activeChange ? '' : styles.disabledInput : ''}
+                ${(remaningChangeDue >= (changeDueUSD - 0.01) && activeChange) ? styles.disabledInput : ''}
+            shadow-sm`}
             autoComplete='off'
             type="number" 
             name="amount"
@@ -66,7 +68,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             placeholder="Monto" 
             min="0.1" 
             step="0.01" 
-            disabled={(remainingToPayUSD <= 0.01 || isPending) && !activeChange}
+            disabled={((remainingToPayUSD <= 0.01 || isPending) && !activeChange) || ( activeChange && remaningChangeDue >= (changeDueUSD - 0.01))}
             onKeyDown={
                 (e) => {
                     if (e.key === 'Enter' && !activeChange){
@@ -96,7 +98,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             } 
 
             {
-                activeChange && (
+                activeChange && remaningChangeDue.toFixed(2) < changeDueUSD && (
                     <Button type={'terteary'} 
                         onClick={addChange}
                         showIcon={true}
@@ -110,7 +112,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             }      
             
             {
-                remainingToPayUSD <= 0.01 && !changeDueUSD &&(
+                remainingToPayUSD <= 0.01 && (!changeDueUSD || remaningChangeDue >= (changeDueUSD - 0.01) ) &&(
                     <Button type={'primary'} 
                         ref={submitRef}
                         style={{backgroundColor: '#3E7C42'}}

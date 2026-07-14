@@ -91,11 +91,11 @@ export default function totaInfo({
                     <div className={`${styles.payInfo} shadow`}>
                         <h2 className={styles.title}>Por Pagar (Vuelto):</h2>
                         <p className={styles.totalToPaid}>
-                            {new Intl.NumberFormat('en-US').format((changeDueUSD - remaningChangeDue).toFixed(2) || 0)} $ 
+                            {new Intl.NumberFormat('en-US').format((Math.abs(changeDueUSD - remaningChangeDue)).toFixed(2) || 0)} $ 
                         </p>
                         <div className='divider'></div>
                         <p className={styles.totalToPaid}>
-                            {new Intl.NumberFormat('en-US').format(((changeDueUSD * exchangeRate) - (remaningChangeDue * exchangeRate)).toFixed(2))} Bs
+                            {new Intl.NumberFormat('en-US').format(Math.abs(((changeDueUSD * exchangeRate) - (remaningChangeDue * exchangeRate))).toFixed(2))} Bs
                         </p>
                     </div>
                 )
