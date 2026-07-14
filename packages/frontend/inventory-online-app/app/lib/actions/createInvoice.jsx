@@ -26,12 +26,16 @@ export default async function CreateInvoiceAction(
         const customer = formData.get('customer_id')
         const details = formData.get('details')
         const paymentsRaw = formData.get('payments')
+        const changesRaw = formData.get('changes')
 
         // Parse the payments coming from the frontend and adapt them to the backend keys
         const paymentsArray = JSON.parse(paymentsRaw || '[]').map(p => ({
             paymentId: parseInt(p.payment_method_id),
             amount: parseFloat(p.amount)
         }))
+        
+        
+        const changesArray = JSON.parse(changesRaw || '[]')
 
         const createInvoiceBody = {
             customer_id: customer,
@@ -54,7 +58,8 @@ export default async function CreateInvoiceAction(
         // B. Send all payments together request to the service.
         const payResponse = await Request(payInvoiceEndpoint, 'POST', {
             invoice_id: newInvoiceId,
-            payments: paymentsArray 
+            payments: paymentsArray,
+            changes: changesArray
         })
 
         const { data: payData, error: payError } = payResponse

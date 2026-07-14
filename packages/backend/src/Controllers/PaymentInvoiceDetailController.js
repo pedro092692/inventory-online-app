@@ -28,7 +28,8 @@ class PayInvoiceController {
     createPaymentInvoiceDetail = this.#error.handler( async(req, res) => {
         let invoice_id = req.body.invoice_id || null
         let payments = req.body.payments || []
-        const newPaymentDetail = await this.PayInvoice.createPaymentDetail(invoice_id, payments)
+        let changes = req.body.changes || []
+        const newPaymentDetail = await this.PayInvoice.createPaymentDetail(invoice_id, payments, changes)
         res.status(201).json(newPaymentDetail)
     })
 

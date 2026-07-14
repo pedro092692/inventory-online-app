@@ -36,7 +36,7 @@ class PayInvoiceService {
      * @return {Promise<Object>} - A promise that resolves to an object of created invoice payment detail.
      * @throws {ServiceError} - If an error occurs during invoice detail creation.
      */
-    createPaymentDetail(invoiceId, payments = []) {
+    createPaymentDetail(invoiceId, payments = [], explicitChanges = []) {
         return this.#error.handler(['Create Payment'], async() => {
 
             // create transaction 
@@ -59,8 +59,10 @@ class PayInvoiceService {
                 const total = parseFloat(invoice.total)
                 let total_paid = parseFloat(invoice.total_paid) || 0.00
                 let total_reference = 0
-                let total_change = 0
+                let has_change = false
+                
 
+                let total_change = explicitChanges.reduce((acc, current) => acc + parseFloat(current.amountInUSD), 0)
                 const dollarValue = await this.dollarValue.getLastValue()
                 
                 const detailsToCreate = []
@@ -100,18 +102,19 @@ class PayInvoiceService {
 
                     // Collect the change if the method generated one (e.g., cash)
                     if (change) {
-                        const numericChange = parseFloat(change)
-                        total_change = parseFloat((total_change + numericChange).toFixed(2))
+                        has_change = change
+                        // const numericChange = parseFloat(change)
+                        // total_change = parseFloat((total_change + numericChange).toFixed(2))
                         
-                        cashMovementsToCreate.push({
-                            invoice_id: invoiceId,
-                            payment_method_id: paymentId, 
-                            type: 'out',
-                            amount: numericChange, 
-                            amount_ref: numericChange, 
-                            exchange_rate: dollarValue.value,
-                            description: `Vuelto de factura #${invoiceId}`
-                        })
+                        // cashMovementsToCreate.push({
+                        //     invoice_id: invoiceId,
+                        //     payment_method_id: paymentId, 
+                        //     type: 'out',
+                        //     amount: numericChange, 
+                        //     amount_ref: numericChange, 
+                        //     exchange_rate: dollarValue.value,
+                        //     description: `Vuelto de factura #${invoiceId}`
+                        // })
                     }
 
                     // Accumulate the amount paid in dollars cleanly
@@ -126,6 +129,29 @@ class PayInvoiceService {
                     })
                 }
                 
+                if( has_change ) {
+                    const invoice_change = has_change
+                    
+                    if (total_change.toFixed(2) != invoice_change.toFixed(2)) {
+                        throw new Error('El vuelto es incorrecto')
+                    }
+                    
+                    for (const changeOut of explicitChanges) {
+                        const { payment_method_id, amount, amountInUSD } = changeOut
+
+                        cashMovementsToCreate.push({
+                            invoice_id: invoiceId,
+                            payment_method_id: payment_method_id, 
+                            type: 'out',
+                            amount: amount, 
+                            amount_ref: amountInUSD, 
+                            exchange_rate: dollarValue.value,
+                            description: `Vuelto de factura #${invoiceId}`
+                        })
+                    }
+                }
+                
+
                 //4. Determine the final invoice status after processing all payments
                 let status = 'unpaid'
                 if (total_paid >= total) {
