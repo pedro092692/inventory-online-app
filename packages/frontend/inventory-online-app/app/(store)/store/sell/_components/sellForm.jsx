@@ -60,7 +60,6 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
 
     // save data automatilly in localStorage
     useEffect(() => {
-        // Solo guardamos si hay elementos para evitar sobreescribir con arrays vacíos al inicializar
         if (items.length > 0) {
             localStorage.setItem('pos_invoice_items', JSON.stringify(items))
         } else {
@@ -68,6 +67,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         }
     }, [items])
 
+    // save customer data automatilly in localStorage
     useEffect(() => {
         if (customer) {
             localStorage.setItem('pos_invoice_customer', JSON.stringify(customer))
@@ -76,6 +76,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         }
     }, [customer])
 
+    // save payment data automatilly in localStorage
     useEffect(() => {
         if (payments.length > 0) {
             localStorage.setItem('pos_invoice_payments', JSON.stringify(payments))
@@ -84,6 +85,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         }
     }, [payments])
 
+    // sabe changes data automatilly in localStorage
     useEffect(() => {
         if (changes.length > 0) {
             localStorage.setItem('pos_invoice_changes', JSON.stringify(changes))
@@ -91,31 +93,6 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
             localStorage.removeItem('pos_invoice_changes')
         }
     }, [changes])
-
-    useEffect(() => {
-        if (customer) {
-            const totalCredits = parseFloat(customer?.total_credits || 0)
-            const hasCredits = totalCredits > 0
-
-            const creditMethod = paymentMethods.find(pm => 
-            pm.name.toLowerCase().includes('credito') || pm.name.toLowerCase().includes('crédito'))
-
-            const posMethod = paymentMethods.find(pm => 
-            pm.name.toLowerCase().includes('punto') || pm.name.toLowerCase().includes('venta'))
-
-            if (hasCredits && creditMethod) {
-                setSelectedPaymentMethodId(creditMethod.id)
-            } else if (posMethod) {
-                setSelectedPaymentMethodId(posMethod.id)
-            } else {
-                setSelectedPaymentMethodId(paymentMethods[0]?.id || '')
-            }
-        }else {
-            const posMethod = paymentMethods.find(pm => 
-            pm.name.toLowerCase().includes('punto') || pm.name.toLowerCase().includes('venta'))
-            setSelectedPaymentMethodId(posMethod?.id || paymentMethods[0]?.id || '')
-        }
-    }, [customer, paymentMethods])
 
     // aux functon clear localStorage
     const clearInvoiceStorage = () => {
@@ -160,7 +137,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         const remaining = changes.reduce((acc, c) => acc + c?.amountInUSD || 0, 0)
         return remaining > 0 ? remaining: 0
     }, [changes])
-
+    
     // function to add payment method to payment list 
     const handleAddPayment = () => {
         if (!currentAmount || parseFloat(currentAmount) <=0) {
@@ -198,6 +175,35 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
             setModalMessage(`Los pagos electronicos no pueden exceder el total. Monto maximo permitido en este metodo de pago: ${maxAllowed}`)
             setShowModal(true)
             return 
+        }
+
+        const isCreditMethod = paymentMethod.name.toLowerCase().includes('credito') || 
+                           paymentMethod.name.toLowerCase().includes('crédito')
+
+        if (isCreditMethod) {
+            
+            if (!customer) {
+                setModalMessage('Debes seleccionar un cliente para poder utilizar el Crédito de Tienda.')
+                setShowModal(true)
+                return
+            }
+
+            const creditAlreadyUsedUSD = payments
+            .filter(p => p.name.toLowerCase().includes('credito') || p.name.toLowerCase().includes('crédito'))
+            .reduce((sum, p) => sum + p.amountInUSD, 0)
+
+            const availableCreditUSD = (parseFloat(customer.total_credits) || 0) - creditAlreadyUsedUSD
+
+            if (amountInUSD > (availableCreditUSD + 0.01)) {
+           
+                const maxAllowedFormatted = isBolivar 
+                    ? (availableCreditUSD * exchangeRate).toFixed(2) + " Bs" 
+                    : availableCreditUSD.toFixed(2) + " $"
+
+                setModalMessage(`Crédito insuficiente. El cliente dispone de ${maxAllowedFormatted} de crédito restante, pero estás intentando ingresar ${inputAmount} ${isBolivar ? 'Bs' : '$'}.`)
+                setShowModal(true)
+                return
+            }
         }
 
         setPayments(prev => [
@@ -346,6 +352,55 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
 
     }
 
+    // function to load store credits if it is available
+    useEffect(() => {
+        if (customer) {
+            const totalCredits = parseFloat(customer?.total_credits || 0)
+            const hasCredits = totalCredits > 0
+
+            const creditMethod = paymentMethods.find(pm => 
+            pm.name.toLowerCase().includes('credito') || pm.name.toLowerCase().includes('crédito'))
+
+            const posMethod = paymentMethods.find(pm => 
+            pm.name.toLowerCase().includes('punto') || pm.name.toLowerCase().includes('venta'))
+
+            if (hasCredits && creditMethod) {
+                setSelectedPaymentMethodId(creditMethod.id)
+            } else if (posMethod) {
+                setSelectedPaymentMethodId(posMethod.id)
+            } else {
+                setSelectedPaymentMethodId(paymentMethods[0]?.id || '')
+            }
+        }else {
+            const posMethod = paymentMethods.find(pm => 
+            pm.name.toLowerCase().includes('punto') || pm.name.toLowerCase().includes('venta'))
+            setSelectedPaymentMethodId(posMethod?.id || paymentMethods[0]?.id || '')
+        }
+    }, [customer, paymentMethods])
+    
+    //function to complete amount when store credit is selected
+    useEffect(() => {
+        if (!customer) return 
+
+        const availableCredit = parseFloat(customer?.total_credits || 0)
+
+        const selectedMethod = paymentMethods.find(pm => pm.id === selectedPaymentMethodId)
+        const isCredit = selectedMethod?.name.toLowerCase().includes('credito') ||
+                         selectedMethod?.name.toLowerCase().includes('crédito')
+        
+        
+
+        if (isCredit && availableCredit > 0) {
+            const totalInvoice = parseFloat(total.total_usd || 0)
+            if (availableCredit < totalInvoice) {
+                setCurrentAmount(availableCredit.toFixed(2))
+            } else {
+                setCurrentAmount(totalInvoice.toFixed(2))
+            }
+        }
+
+    }, [selectedPaymentMethodId, customer, total, paymentMethods])
+
     // reset function
     useEffect(() => {
         if (!state?.message) return
@@ -398,7 +453,36 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         window.addEventListener('keydown', shortcut)
         return () => window.removeEventListener('keydown', shortcut)
     }, [items, customer, state])
-    console.log(customer)
+    
+
+    // handle credit info message 
+    const creditMessage = () => {
+        if (!customer) return 
+        
+        const availableCredit = parseFloat(customer?.total_credits || 0)
+        const selectedMethod = paymentMethods.find(pm => pm.id === selectedPaymentMethodId)
+        const isCredit = selectedMethod?.name.toLowerCase().includes('credito') || 
+                         selectedMethod?.name.toLowerCase().includes('crédito')
+        
+        if (!isCredit || availableCredit <= 0) return null
+
+        const totalInvoice = parseFloat(total.total_usd || 0)
+        
+        if (availableCredit < totalInvoice) {
+            return (
+                <div style={{ marginTop: '8px', color: '#d97706', fontSize: '14px', fontWeight: '500' }}>
+                    ⚠️ Se aplicará el saldo máximo disponible: <strong>{availableCredit.toFixed(2)}$</strong> de Crédito Tienda.
+                </div>
+            )
+        }
+
+        return (
+            <div style={{ marginTop: '8px', color: '#16a34a', fontSize: '14px', fontWeight: '500' }}>
+                ✅ Usar <strong>{totalInvoice.toFixed(2)}$</strong> de los <strong>{availableCredit.toFixed(2)}$</strong> disponibles en su Crédito Tienda.
+            </div>
+        )
+    }
+    
     return (
         <div className={styles.mainContainer}>
             <form className={styles.mainContainer} action={handleSubmitInvoice}>
@@ -410,7 +494,6 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         customer={customer}
                         state={state}
                     />
-            
                     <ProductSelector  setItems={setItems} items={items} activeScreen={activeScreen} changes={changes} setChanges={setChanges}/>
                 </div>
 
@@ -422,7 +505,6 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         customer={customer}
                         state={state}
                     />
-
                     <SelectCustomer customer={customer} setCustomer={setCustomer} showResult={false} bgColor={'white'} activeScreen={activeScreen}/>
                 </div>
 
@@ -435,7 +517,6 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         state={state}
                     /> 
                    
-                    
                     <Select 
                         name='payment_method_id' 
                         options={paymentOptions}
@@ -445,7 +526,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         disabled={state?.message ? true : false}
                         customer={customer}
                     />
-                    
+                    {creditMessage()}
                     <InputAddPay setAmount={setCurrentAmount} 
                                  addPayment={handleAddPayment} 
                                  amount={currentAmount}
