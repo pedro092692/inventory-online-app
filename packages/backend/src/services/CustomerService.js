@@ -147,24 +147,58 @@ class CustomerService {
             .filter(t => t.trim() !== "")
 
         return this.#error.handler(['Search Customers', query, 'Customer'], async () => {
-            const results = await this.Customer.findAndCountAll({
-                where: {
-                    [Op.or]: [
-                        {
-                            [Op.and]: terms.map(term => ({
-                                name: { [Op.substring]: term }
-                            }))
-                        },
-                        { id_number: {[Op.eq]: !isNaN(query) ? parseInt(query) : null} }
+            const orConditions = []
+
+            if (terms.length > 0) {
+                orConditions.push({
+                    [Op.and]: terms.map(term => ({
+                        name: { [Op.substring]: term }
+                    }))
+                })
+            }   
+
+            const numericQuery = parseInt(query)
+            if (!isNaN(numericQuery)) {
+                orConditions.push({ id_number: numericQuery })
+            }
+
+            const whereClause = orConditions.length > 0 ? { [Op.or]: orConditions } : {}
+            const results = await this.Customer.findAll({
+                where: whereClause,
+                include: [
+                    {
+                        association: 'credits',
+                        attributes: [],
+                        required: false,
+                        where: {
+                            status: 'active'
+                        }
+                    }
+                ],
+                
+                attributes: [
+                    'id',
+                    'id_number',
+                    'name',
+                    'phone',
+                    [
+                        fn('COALESCE', fn('SUM', col('credits.amount')), 0),
+                        'total_credits'
                     ]
-                },
+                ],
+                
+                group: [
+                    'Customer.id',
+                ],
+                
                 order: [['id', 'DESC']],
                 distinct: true,
+                subQuery: false,
                 limit: limitResults,
                 offset: offsetResults
             })
             return {
-                customers: results.rows,
+                customers: results
             }
         })
     }

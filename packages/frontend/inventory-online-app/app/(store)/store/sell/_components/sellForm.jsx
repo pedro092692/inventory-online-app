@@ -373,7 +373,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         window.addEventListener('keydown', shortcut)
         return () => window.removeEventListener('keydown', shortcut)
     }, [items, customer, state])
-
+    
     return (
         <div className={styles.mainContainer}>
             <form className={styles.mainContainer} action={handleSubmitInvoice}>
