@@ -181,7 +181,7 @@ class ProductService{
             attributes.push('purchase_price')
         }
         return this.#error.handler(['Search Products', query, 'Product'], async () => {
-            const results = await this.Product.findAndCountAll({
+            const results = await this.Product.findAll({
                 where: {
     
                     [Op.or]: [
@@ -204,7 +204,7 @@ class ProductService{
             })
 
             // add selleing bs price
-            const productsSellingPriceBs = await this.setSellingPriceBs(results.rows)
+            const productsSellingPriceBs = await this.setSellingPriceBs(results)
             return {
                 products: productsSellingPriceBs,
             }
