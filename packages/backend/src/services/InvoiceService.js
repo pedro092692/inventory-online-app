@@ -341,14 +341,25 @@ class InvoiceService {
         const offesetResults = (page  - 1) * limitResults
         
         return this.#error.handler(['Search Invoices', query, 'Invoices'], async() => {
-            
+            const terms = query
+                .toLowerCase()
+                .split(" ")
+                .filter(t => t.trim() !== "")
 
-            const results = await this.Invoice.findAndCountAll({
+            const nameTermsCondition = terms.length > 0 
+                ? {
+                    [Op.and]: terms.map(term =>
+                        where(col('customer.name'), { [Op.like]: `%${term}%` })
+                    )
+                }
+                : null
+
+            const results = await this.Invoice.findAll({
                 where: {
                     [Op.or]: [
                         where(cast(col('Invoice.id'), 'VARCHAR'), { [Op.eq]: query.replace(/^0+/, '')}),
                         where(cast(col('customer.id_number'), 'VARCHAR'), {[Op.eq]: query}),
-                        where(col('customer.name'), { [Op.like]: `%${query}%` }),
+                        ...(nameTermsCondition ? [nameTermsCondition] : [])
                     ]
                 },
                 include: [
@@ -370,7 +381,7 @@ class InvoiceService {
                 offset: offesetResults,
                 
             })
-            const invoicesWithExchangeRate = await this.calculateExchangeRate(results.rows, false)
+            const invoicesWithExchangeRate = await this.calculateExchangeRate(results, false)
             return {
                 invoices: invoicesWithExchangeRate
             }
