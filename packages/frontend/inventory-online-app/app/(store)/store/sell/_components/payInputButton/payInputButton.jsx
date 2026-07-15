@@ -50,7 +50,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             setAmount('')
         }
     }, [activeChange])
-
+    
     return (
         <div className={styles.container}>
             <input 
@@ -98,7 +98,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             } 
 
             {
-                activeChange && remaningChangeDue.toFixed(2) < changeDueUSD && (
+                activeChange && remaningChangeDue.toFixed(2) < changeDueUSD.toFixed(2) && (
                     <Button type={'terteary'} 
                         onClick={addChange}
                         showIcon={true}
