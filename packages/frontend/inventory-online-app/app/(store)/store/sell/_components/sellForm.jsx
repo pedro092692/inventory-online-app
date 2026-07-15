@@ -92,6 +92,31 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         }
     }, [changes])
 
+    useEffect(() => {
+        if (customer) {
+            const totalCredits = parseFloat(customer?.total_credits || 0)
+            const hasCredits = totalCredits > 0
+
+            const creditMethod = paymentMethods.find(pm => 
+            pm.name.toLowerCase().includes('credito') || pm.name.toLowerCase().includes('crédito'))
+
+            const posMethod = paymentMethods.find(pm => 
+            pm.name.toLowerCase().includes('punto') || pm.name.toLowerCase().includes('venta'))
+
+            if (hasCredits && creditMethod) {
+                setSelectedPaymentMethodId(creditMethod.id)
+            } else if (posMethod) {
+                setSelectedPaymentMethodId(posMethod.id)
+            } else {
+                setSelectedPaymentMethodId(paymentMethods[0]?.id || '')
+            }
+        }else {
+            const posMethod = paymentMethods.find(pm => 
+            pm.name.toLowerCase().includes('punto') || pm.name.toLowerCase().includes('venta'))
+            setSelectedPaymentMethodId(posMethod?.id || paymentMethods[0]?.id || '')
+        }
+    }, [customer, paymentMethods])
+
     // aux functon clear localStorage
     const clearInvoiceStorage = () => {
         localStorage.removeItem('pos_invoice_items')
@@ -373,7 +398,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
         window.addEventListener('keydown', shortcut)
         return () => window.removeEventListener('keydown', shortcut)
     }, [items, customer, state])
-    
+    console.log(customer)
     return (
         <div className={styles.mainContainer}>
             <form className={styles.mainContainer} action={handleSubmitInvoice}>
@@ -408,16 +433,17 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                         activeScreen={activeScreen}
                         customer={customer}
                         state={state}
-                    />
+                    /> 
+                   
+                    
                     <Select 
                         name='payment_method_id' 
-                        options={paymentOptions} 
-                        selectKey={1} 
-                        defaultValue={'Punto de Venta'} 
+                        options={paymentOptions}
+                        value={selectedPaymentMethodId}
                         resetKey={resetKey}
                         onChange={(payment) => setSelectedPaymentMethodId(payment.value)}
-                        disabled={state?.message ? true : false}    
-                        
+                        disabled={state?.message ? true : false}
+                        customer={customer}
                     />
                     
                     <InputAddPay setAmount={setCurrentAmount} 

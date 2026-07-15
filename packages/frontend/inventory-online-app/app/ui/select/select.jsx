@@ -4,15 +4,24 @@ import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import styles from './select.module.css'
 
-export default function Select({options=[], defaultValue=null, selectKey='', name='select_name', resetKey=null, onChange = () => '', disabled=false}) {
-    const [value, setValue] = useState(defaultValue)
-    const [key, setKey] = useState(selectKey || '')
+export default function Select({
+        options = [],
+        value = '',
+        name = 'select_name',
+        resetKey = null, 
+        onChange = () => {}, 
+        disabled = false, 
+        customer = null
+    }) {
+    
     const [open, setOpen] = useState(false)
     const selectRef = useRef(null)
+
+    const selectedOption = options.find(option => String(option.value) === String(value))
+    const displayLabel = selectedOption ? selectedOption.label : (options[0]?.label || 'Seleccionar...')
     
     const handleOptionClick = (option) => {
-        setValue(option.label)
-        setKey(option.value)
+        onChange(option) 
         setOpen(false)
     }
 
@@ -30,8 +39,6 @@ export default function Select({options=[], defaultValue=null, selectKey='', nam
     }, [])
 
     useEffect(() => {
-        setValue(defaultValue)
-        setKey(selectKey)
         setOpen(false)
     }, [resetKey])
 
@@ -56,7 +63,7 @@ export default function Select({options=[], defaultValue=null, selectKey='', nam
             >
 
 
-                <p className='p2-b'>{value}</p>
+                <p className='p2-b'>{displayLabel}</p>
                 <Icon icon='playArrow' color='var(--color-neutralGrey900)' style={{ rotate: open ? '90deg' : '0deg' }}/>
 
             
@@ -74,7 +81,12 @@ export default function Select({options=[], defaultValue=null, selectKey='', nam
                     alignItem={'start'}
                     className={`${styles.child}`}
                 >
-                    {options.map(option => {
+                    {options.map((option, index) => {
+                        const isCreditOption = option.label.toLowerCase().includes('credito') || option.label.toLowerCase().includes('crédito')
+                        const totalCredits = parseFloat(customer?.total_credits || 0)
+                        if (isCreditOption && totalCredits <= 0) {
+                            return null
+                        }
                         return (
                             <Container
                                 padding={'0px'}
@@ -94,7 +106,7 @@ export default function Select({options=[], defaultValue=null, selectKey='', nam
                 </Container>
                 )
             }
-            <input type='hidden' name={name} value={key} />
+            <input type='hidden' name={name} value={value} />
         </Container>
 
         
