@@ -4,8 +4,11 @@ import DollarValueService from './DollarValueService.js'
 import SellerService from './SellerService.js'
 import InvoiceService from './InvoiceService.js'
 import AuditLogService from './AuditLogService.js'
+import CustomerCreditService from './CustomerCreditService.js'
 import { sequelize } from '../database/database.js'
 import hasPassword from '../utils/encrypt.js'
+import process from 'process'
+import { Customer } from '../models/inventory_models/CustomerModel.js'
 
 class PayInvoiceService {
     // instace of error handler
@@ -17,14 +20,18 @@ class PayInvoiceService {
                 sellerModel=null, 
                 auditLogModel=null, 
                 invoiceDetailModel=null, 
-                cashMovementsModel=null) 
+                cashMovementsModel=null,
+                customerCreditsModel=null
+            ) 
         {
         this.PaymentDetail = model,
         this.dollarValue = new DollarValueService(dollarValueModel)
         this.invoiceService = new InvoiceService(invoiceModel, invoiceDetailModel, null, dollarValueModel)
         this.sellerService = new SellerService(sellerModel)
         this.auditLogService = new AuditLogService(auditLogModel)
-        this.cashMovements = cashMovementsModel 
+        this.customerCreditService = new CustomerCreditService(customerCreditsModel)
+        this.cashMovements = cashMovementsModel,
+        this.credit_method_id = process.env.CREDIT_METHOD_ID || 8
         this.#error
     }
 
@@ -55,6 +62,59 @@ class PayInvoiceService {
                 if (!payments || payments.length === 0) {
                     throw new Error('No pyaments provided')
                 }
+
+                const creditPayments = payments.filter(p => p.paymentId === parseInt(this.credit_method_id))
+                const totalCreditUsed = creditPayments.reduce((acc, p) => acc + parseFloat(p.amount), 0)
+
+                if (totalCreditUsed > 0) {
+                    if (!invoice.customer_id) throw new Error ('No se puede pagar con crédito porque esta factura no tiene un cliente asociado.')
+
+                    const activeCredits = await this.customerCreditService.CustomerCredit.findAll({
+                        where: {
+                            customer_id: invoice.customer_id,
+                            status: 'active'
+                        },
+                        order: [['id', 'ASC']],
+                        transaction: t
+                    })
+
+                    
+
+                    const totalActiveCreditAvailable = activeCredits.reduce((sum, credit) => sum + parseFloat(credit.amount), 0)
+
+                    if (totalActiveCreditAvailable < totalCreditUsed) {
+                        throw new Error(`Crédito insuficiente. Disponible: $${totalActiveCreditAvailable.toFixed(2)}, Intentado usar: $${totalCreditUsed.toFixed(2)}`);
+                    }
+
+                    let creditNeeded = totalCreditUsed
+
+                    for (const creditRow of activeCredits) {
+                        if (creditNeeded <= 0) break
+
+                        const creditAmount = parseFloat(creditRow.amount)
+
+                        if (creditAmount <= creditNeeded) {
+                            await creditRow.update({ status: 'used'}, { transaction: t })
+                            creditNeeded = parseFloat((creditNeeded - creditAmount).toFixed(2))
+                        } else {
+                            const remainder = parseFloat((creditAmount - creditNeeded).toFixed(2))
+
+                            await creditRow.update({ status: 'used' }, { transaction: t })
+
+                            await this.customerCreditService.CustomerCredit.create({
+                                customer_id: invoice.customer_id,
+                                payment_method_id: this.credit_method_id,
+                                amount: remainder,
+                                status: 'active',
+                                origin_invoice_id: creditRow.origin_invoice_id 
+                            }, { transaction: t })
+
+                            creditNeeded = 0
+                        }
+                    }
+                }
+            
+
 
                 const total = parseFloat(invoice.total)
                 let total_paid = parseFloat(invoice.total_paid) || 0.00

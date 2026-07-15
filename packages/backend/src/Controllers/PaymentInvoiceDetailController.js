@@ -11,10 +11,12 @@ class PayInvoiceController {
                 sellerModel=null, 
                 auditLogModel=null, 
                 invoiceDetailModel=null, 
-                cashMovements=null) 
+                cashMovements=null,
+                customerCreditsModel=null
+            ) 
         {
         this.PayInvoice = new PayInvoiceService
-            (model, dollarValueModel, invoiceModel, sellerModel, auditLogModel, invoiceDetailModel, cashMovements)
+            (model, dollarValueModel, invoiceModel, sellerModel, auditLogModel, invoiceDetailModel, cashMovements, customerCreditsModel)
         this.#error
     }
 
