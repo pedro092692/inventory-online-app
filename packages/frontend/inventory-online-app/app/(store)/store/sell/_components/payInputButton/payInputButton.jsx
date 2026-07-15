@@ -14,7 +14,8 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     setActiveChange= () => '',
                     activeChange=false,
                     addChange=() => '',
-                    remaningChangeDue=null
+                    remaningChangeDue=null,
+                    selectedPaymentMethodId=null
                     }) {
     
     const inputRef = useRef(null)
@@ -29,12 +30,24 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
     useEffect(() => {
         const setTotalAmount = (event) => {
             const key = event.key.toLowerCase()
-            
+        
             if(key == 'end'){
                 if (remainingToPayUSD < 0.01) return submitRef.current?.click()
                 event.preventDefault()
-                const payment = paymentMethods[paymentMethodId || 1 - 1]
-                const total_amount = payment.currency != 'Bolivar Digital' || '' ? remainingToPayUSD.toFixed(2) : (remainingToPayUSD * exchangeRate).toFixed(2)
+                const methodIdToSearch = selectedPaymentMethodId || paymentMethods[0]?.id
+                const payment = paymentMethods.find(pm => pm.id === parseInt(methodIdToSearch))
+                
+                if (!payment) {
+                    console.warn('No se pudo determinar el método de pago seleccionado.')
+                    return
+                }
+
+                const isBolivar = payment.currency === 'Bolivar Digital'
+                
+                const total_amount = isBolivar 
+                    ? (remainingToPayUSD * exchangeRate).toFixed(2)
+                    : remainingToPayUSD.toFixed(2);
+                
                 setAmount(total_amount)
                 inputRef.current?.focus()
             }
@@ -43,7 +56,7 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             window.addEventListener('keydown', setTotalAmount)
             return () => window.removeEventListener('keydown', setTotalAmount)
         }
-    }, [activeScreen, paymentMethodId, remainingToPayUSD])
+    }, [activeScreen, selectedPaymentMethodId, remainingToPayUSD, paymentMethods, exchangeRate])
 
     useEffect(() => {
         if (!activeChange) {

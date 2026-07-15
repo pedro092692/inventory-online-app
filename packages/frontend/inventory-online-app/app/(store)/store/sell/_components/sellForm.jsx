@@ -542,6 +542,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                                  activeChange={activeChange}
                                  addChange={handleAddChange}
                                  remaningChangeDue={remaningChangeDue}
+                                 selectedPaymentMethodId={selectedPaymentMethodId}
                                  />
     
                     <div className={`divider`}></div>
