@@ -344,6 +344,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     useEffect(() => {
         if(items.length < 1) {
             setActiveScreen('products')
+            setChanges([])
         }
     }, [items])
 
