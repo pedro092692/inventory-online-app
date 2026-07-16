@@ -23,6 +23,6 @@ export default async function Sell() {
     }
 
     return (
-        <SellForm paymentMethods={paymentMethods} exchangeRate={exchangeRate} permissions={permissions}/>
+        <SellForm paymentMethods={paymentMethods} exchangeRate={exchangeRate} currentUser={permissions}/>
     )
 }

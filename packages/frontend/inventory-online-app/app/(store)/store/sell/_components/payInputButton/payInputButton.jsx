@@ -15,11 +15,15 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     activeChange=false,
                     addChange=() => '',
                     remaningChangeDue=null,
-                    selectedPaymentMethodId=null
+                    selectedPaymentMethodId=null,
+                    currentUser=null,
+                    isCredit=false,
+                    setIsCredit= () => ''
                     }) {
     
     const inputRef = useRef(null)
     const submitRef = useRef(null)
+    const creditRef = useRef(null)
 
     useEffect(() => {
         if (activeScreen === 'pay') {
@@ -63,41 +67,48 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
             setAmount('')
         }
     }, [activeChange])
+
+    const handleCredit = () => {
+        setIsCredit(true)
+    }
     
     return (
         <div className={styles.container}>
-            <input 
-            ref={inputRef}
-            className={`${styles.amountInput} ${remainingToPayUSD <= 0.01 ? activeChange ? '' : styles.disabledInput : ''}
-                ${(remaningChangeDue >= (changeDueUSD - 0.01) && activeChange) ? styles.disabledInput : ''}
-            shadow-sm`}
-            autoComplete='off'
-            type="number" 
-            name="amount"
-            value={amount} 
-            onChange={
-                (e) => setAmount(e.target.value)
-            }
-            placeholder="Monto" 
-            min="0.1" 
-            step="0.01" 
-            disabled={((remainingToPayUSD <= 0.01 || isPending) && !activeChange) || ( activeChange && remaningChangeDue >= (changeDueUSD - 0.01))}
-            onKeyDown={
-                (e) => {
-                    if (e.key === 'Enter' && !activeChange){
-                        e.preventDefault();
-                        addPayment();
-                    }
-                    if (e.key === 'Enter' && activeChange){
-                        e.preventDefault();
-                        addChange();
-                    }   
-
-                }
-            }
-            />
             {
-                remainingToPayUSD > 0.01 && (
+                !isCredit &&
+                <input 
+                    ref={inputRef}
+                    className={`${styles.amountInput} ${remainingToPayUSD <= 0.01 ? activeChange ? '' : styles.disabledInput : ''}
+                        ${(remaningChangeDue >= (changeDueUSD - 0.01) && activeChange) ? styles.disabledInput : ''}
+                        shadow-sm`}
+                    autoComplete='off'
+                    type="number" 
+                    name="amount"
+                    value={amount} 
+                    onChange={
+                        (e) => setAmount(e.target.value)
+                    }
+                    placeholder="Monto" 
+                    min="0.1" 
+                    step="0.01" 
+                    disabled={((remainingToPayUSD <= 0.01 || isPending) && !activeChange) || ( activeChange && remaningChangeDue >= (changeDueUSD - 0.01))}
+                    onKeyDown={
+                        (e) => {
+                            if (e.key === 'Enter' && !activeChange){
+                                e.preventDefault();
+                                addPayment();
+                            }
+                            if (e.key === 'Enter' && activeChange){
+                                e.preventDefault();
+                                addChange();
+                            }   
+                        }
+                    }
+                />
+            }
+            
+            {
+                remainingToPayUSD > 0.01 && !isCredit && (
                     <Button type={'secondary'} 
                         onClick={addPayment}
                         showIcon={true}
@@ -157,7 +168,33 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     />
                 )
             }
+
+            { isCredit && (
+                    <Button 
+                        type={'primary'} 
+                        ref={creditRef}
+                        style={{backgroundColor: '#3E7C42'}}
+                        onClick={handleCredit}
+                        role={'submit'}
+                        showIcon={isPending ? false : true}
+                        icon={'creditCard'}
+                        size={[24, 24]}
+                        title={'Hacer Factura Paga Despues'}
+                        className='shadow-sm' 
+                        disabled={isPending || state?.message ? true : false}     
+                    >
+                            {isPending && <OvalLoader/>}
+                            {isPending ? 'Procesando...' : state?.message ? 'Venta Registrada' : 'Hacer Venta Y Pagar Despues'}
+                        
+                    </Button>
+                )
+            }
             
+            <input
+                type="hidden"
+                name="isCredit"
+                value={isCredit}
+            />
         </div>
     )
 }

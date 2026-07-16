@@ -17,7 +17,7 @@ import { Container } from '@/app/ui/utils/container'
 import { useState, useMemo, useActionState, useEffect, startTransition } from 'react'
 
 
-export default function SellForm({ paymentMethods=[], exchangeRate=null, permissions=null}) {
+export default function SellForm({ paymentMethods=[], exchangeRate=null, currentUser=null}) {
     const [activeScreen, setActiveScreen] = useState('products')
     const [items, setItems] = useState([])
     const [customer, setCustomer] = useState(null)
@@ -25,6 +25,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, permiss
     const [changes, setChanges] = useState([])
     const [resetKey, setResetKey] = useState(0)
     const [activeChange, setActiveChange] = useState(false)
+    const [isCredit, setIsCredit] = useState(false)
 
     // local state to control actual amount
     const [currentAmount, setCurrentAmount] = useState('')
@@ -288,7 +289,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, permiss
 
     const handleSubmitInvoice = (formData) => {
 
-        if (remainingToPayUSD > 0.01) {
+        if (remainingToPayUSD > 0.01 && !isCredit) {
             setModalMessage(`Falta por completar el pago. Restan: ${remainingToPayUSD.toFixed(2)} $`)
             setShowModal(true)
             return
@@ -329,6 +330,17 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, permiss
 
         // send form to formAction
         return formAction(formData)
+    }
+
+    //function to activate credit mode
+    const handleCredit = () => {
+        const permissions = currentUser.permissions
+        if (!permissions.includes('update')) {
+            setModalMessage('No tienes permisos para hacer una factura a credito')
+            setShowModal(true)
+            return
+        }
+        setIsCredit(!isCredit)
     }
     
     const handleReset = () => {
@@ -543,6 +555,9 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, permiss
                                  addChange={handleAddChange}
                                  remaningChangeDue={remaningChangeDue}
                                  selectedPaymentMethodId={selectedPaymentMethodId}
+                                 currentUser={currentUser}
+                                 isCredit={isCredit}
+                                 setIsCredit={setIsCredit}
                                  />
     
                     <div className={`divider`}></div>
@@ -578,7 +593,26 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, permiss
                     {
                         !state?.message && activeChange && <Pyaments payments={changes} removePayment={removeChange}/>
                     }
+                    
+                    <Container
+                        justifyContent={'end'}
+                        padding={'0px'}
+                    >
+                        <Button 
+                            type={'danger'} 
+                            onClick={handleCredit}
+                            showIcon={true}
+                            icon={'coins'}
+                            size={[24, 24]}
+                            title={'Procesar Factura A Crédito'}
+                            className='shadow-sm' 
+                            disabled={isPending || state?.message ? true : false}  
+                            children={isCredit ? 'Cancelar Venta Por A Crédito' : 'Procesar Factura A Crédito'}   
+                        />
+                                    
+                    </Container>
                 </div>
+
 
                 {/* cart section */}
                 <div className={styles.cartContainer}>
