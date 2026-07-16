@@ -21,7 +21,7 @@ export default async function CreateInvoiceAction(
     const createInvoiceEndpoint = 'invoices'
     const payInvoiceEndpoint = 'pay-invoice'
 
-    // --- CASE 1: CREATE A NEW INVOICE WITH YOUR PAYMENTS ---
+    // --- CASE 1: CREATE A NEW INVOICE (IMMEDIATE PAYMENTS OR AS CREDIT) ---
     if (!invoiceStatus) {
         const customer = formData.get('customer_id')
         const details = formData.get('details')
@@ -29,14 +29,10 @@ export default async function CreateInvoiceAction(
         const changesRaw = formData.get('changes')
 
         // Parse the payments coming from the frontend and adapt them to the backend keys
-        const paymentsArray = JSON.parse(paymentsRaw || '[]').map(p => ({
-            paymentId: parseInt(p.payment_method_id),
-            amount: parseFloat(p.amount)
-        }))
-        
-        
-        const changesArray = JSON.parse(changesRaw || '[]')
+        const paymentsParsed = JSON.parse(paymentsRaw || '[]')
 
+        const isCredit = formData.get('is_credit') === 'true' || paymentsParsed.length === 0
+        
         const createInvoiceBody = {
             customer_id: customer,
             details: JSON.parse(details || '[]'),
@@ -54,34 +50,48 @@ export default async function CreateInvoiceAction(
                 invoice: null
             }
         }
+        
         const newInvoiceId = data.invoice.id
+        let finalInvoice = data.invoice
+        
+        if (!isCredit) {
+            const paymentsArray = paymentsParsed.map(p => ({
+                paymentId: parseInt(p.payment_method_id),
+                amount: parseFloat(p.amount)
+            }))
 
-        // B. Send all payments together request to the service.
-        const payResponse = await Request(payInvoiceEndpoint, 'POST', {
-            invoice_id: newInvoiceId,
-            payments: paymentsArray,
-            changes: changesArray
-        })
+            const changesArray = JSON.parse(changesRaw || '[]')
 
-        const { data: payData, error: payError } = payResponse
+            // B. Send all payments together request to the service.
+            const payResponse = await Request(payInvoiceEndpoint, 'POST', {
+                invoice_id: newInvoiceId,
+                payments: paymentsArray,
+                changes: changesArray
+            })
 
-        if (payError || payData?.errors) {
-            return {
-                message: null,
-                error: payError == 'Something went wrong' ? 'La factura se creó pero hubo un problema al registrar los pagos.' : payError || payData?.errors 
-                || 'La factura se creó pero hubo un problema al registrar los pagos.',
-                invoice: data.invoice 
+            const { data: payData, error: payError } = payResponse
+
+            if (payError || payData?.errors) {
+                return {
+                    message: null,
+                    error: payError == 'Something went wrong' ? 'La factura se creó pero hubo un problema al registrar los pagos.' : 
+                    payError || payData?.errors 
+                    || 'La factura se creó pero hubo un problema al registrar los pagos.',
+                    invoice: data.invoice 
+                }
             }
-        }
 
+            finalInvoice = payData.invoice
+        }
+                
         // C. Actions after success (Revalidation and WhatsApp Link)
         revalidatePath(`/store/${createInvoiceEndpoint}`)
         
         const { data: linkResponse } = await Request(`invoices/send-whatsapp/${newInvoiceId}`, 'GET')
 
         return {
-            message: msg,
-            invoice: payData.invoice, 
+            message: isCredit ? 'Factura a crédito registrada con éxito 📝' : msg,
+            invoice: finalInvoice, 
             ws_link: linkResponse?.link || '',
             errors: {},
             inputs: {}
