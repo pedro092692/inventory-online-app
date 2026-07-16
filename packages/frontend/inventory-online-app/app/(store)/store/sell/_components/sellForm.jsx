@@ -589,6 +589,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                 showIcon={true}
                 onClose={closeModal}
                 icon='warning'
+                ignoreEnter={true}
                 iconColor='var(--color-accentRed400)'>
                     <Container 
                         className={styles.modalContent}

@@ -1,6 +1,6 @@
 'use client'
 import { Container } from '@/app/ui/utils/container'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import styles from './modal.module.css'
 import { Button } from '@/app/ui/utils/button/buttons'
@@ -12,10 +12,12 @@ export function Modal({
         showIcon=false, 
         icon='person',
         iconColor='black', 
-        children
+        children,
+        ignoreEnter=false,
     }) {
     
-    
+   const ignoreFirstEnter = useRef(true)
+   
    const handleClose = () => {
         onClose(false)
     }
@@ -28,20 +30,30 @@ export function Modal({
             return
         }
 
+        ignoreFirstEnter.current = true
         
         document.body.style.overflow = 'hidden'
         
-        const handleEsc = (event) => {
+        const handleKeyDown = (event) => {
             if (event.key === 'Escape') {
-                 onClose(false)
-                
+                onClose(false)
             }
-        }
-        window.addEventListener('keydown', handleEsc)
+
+            if (event.key === 'Enter') {
+                if (ignoreFirstEnter.current && ignoreEnter) {
+                    ignoreFirstEnter.current = false
+                    return 
+                }
+                event.preventDefault()
+                onClose(false)
+            }
+        }   
+
+        window.addEventListener('keydown', handleKeyDown)
         
         return () => {
             document.body.style.overflow = 'unset'
-            window.removeEventListener('keydown', handleEsc)
+            window.removeEventListener('keydown', handleKeyDown)
         }
 
         
