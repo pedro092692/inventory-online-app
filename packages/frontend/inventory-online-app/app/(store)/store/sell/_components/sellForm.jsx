@@ -17,7 +17,7 @@ import { Container } from '@/app/ui/utils/container'
 import { useState, useMemo, useActionState, useEffect, startTransition } from 'react'
 
 
-export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
+export default function SellForm({ paymentMethods=[], exchangeRate=null, permissions=null}) {
     const [activeScreen, setActiveScreen] = useState('products')
     const [items, setItems] = useState([])
     const [customer, setCustomer] = useState(null)
