@@ -24,6 +24,10 @@ function validateFields(rule) {
             check('itemsToReturn').isArray({ min: 1 }).withMessage('Debe haber al menos un ítem para devolver.'),
             check('itemsToReturn.*.itemId').isInt().withMessage('El id del detalle de la factura debe ser un número entero.'),
             check('itemsToReturn.*.returnedQuantity').isInt({ min: 1 }).withMessage('La cantidad debe ser un número entero mayor que cero.')
+        ],
+
+        authorizedSeller: [
+            check('pin').isLength({ min: 4 }).withMessage('El pin al menos debe tener 4 caracteres').isString().withMessage('El pin tiene debe ser una cadena de texto.')
         ]
     }
 

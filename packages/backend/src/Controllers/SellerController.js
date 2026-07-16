@@ -1,6 +1,7 @@
 import SellerService from '../services/SellerService.js'
 import UserService from '../services/admin/UserService.js'
 import controllerErrorHandler from '../errors/controllerErrorHandler.js'
+import hasPassword from '../utils/encrypt.js'
 
 class SellerController {
     // new instance of controller error handler
@@ -27,6 +28,30 @@ class SellerController {
         const seller = await this.sellerService.createSeller(id_number, name, last_name, address)
         
         res.status(201).json({seller, user})
+    })
+    
+    /**
+     * Authorizes a seller based on a PIN provided in the request body.
+     *
+     * This controller extracts the `pin` from the incoming request,
+     * validates it through the SellerService, and returns the seller
+     * information that authorized the action.
+     *
+     * @async
+     * @function authorizedBySeller
+     * @param {import('express').Request} req - Express request object.
+     * @param {import('express').Response} res - Express response object.
+     * @returns {Promise<void>} Sends a JSON response with the authorized seller.
+     *
+     * @throws {Error} If the seller cannot be authorized or the service fails.
+     */
+    authorizedBySeller = this.#error.handler( async(req, res) => {
+        // get pin from req body
+        const { pin } = req.body
+        const tenant_id = req?.user?.tenant_id || null
+        const hashedPin = hasPassword(pin, String(tenant_id))
+        const seller = await this.sellerService.authorizeSeller(hashedPin)
+        res.status(200).json({authorizedBy: seller})
     })
 
     /**

@@ -2,9 +2,11 @@ import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import InvoiceDetailService from './InvoiceDestailService.js'
 import ProductService from './ProductService.js'
 import DollarValueService from './DollarValueService.js'
+import SellerService from './SellerService.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import verifyDetails from '../utils/VerifiyDetails.js'
 import { Op, cast, where, col, ValidationError } from 'sequelize'
+import hasPassword from '../utils/encrypt.js'
 
 class InvoiceService {
     
@@ -18,6 +20,7 @@ class InvoiceService {
         this.dollarValue = new DollarValueService(dollarModel)
         this.Customer = customerModel
         this.Seller = sellerModel
+        this.sellerService = new SellerService(sellerModel)
         this.#error
     }
 
@@ -27,7 +30,7 @@ class InvoiceService {
     * @param {number} seller_id - id of the seller 
     * @returns {Object} - new invoice created   
     */  
-    createInvoice(customer_id, user_id, details) {
+    createInvoice(customer_id, user_id, details, pin, user) {
         return this.#error.handler(['Create Invoice'], async() => {
             // get dollar value 
             const dollar_value = await this.dollarValue.getLastValue()
@@ -35,6 +38,17 @@ class InvoiceService {
             if(!dollar_value) {
                 throw new Error('A valid dollar value is required please update dollar value.')
             }
+
+            // check is credit invoice 
+            if (pin) {
+                const hashedPin = hasPassword(pin, String(user.tenant_id)) 
+                const response = await this.sellerService.authorizeSeller(hashedPin)
+                const { authorizedBy } = response
+                if (!authorizedBy) {
+                    throw new Error('Error en autorizacion')
+                }
+            }
+
             
             // Get seller ID 
             const seller = await this.Seller.findOne({

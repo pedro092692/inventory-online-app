@@ -16,7 +16,6 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     addChange=() => '',
                     remaningChangeDue=null,
                     selectedPaymentMethodId=null,
-                    currentUser=null,
                     isCredit=false,
                     setIsCredit= () => ''
                     }) {
@@ -189,12 +188,6 @@ export default function InputAddPay({setAmount=() => '', addPayment=() => '', am
                     </Button>
                 )
             }
-            
-            <input
-                type="hidden"
-                name="isCredit"
-                value={isCredit}
-            />
         </div>
     )
 }

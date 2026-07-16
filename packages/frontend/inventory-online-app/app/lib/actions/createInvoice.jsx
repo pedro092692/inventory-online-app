@@ -1,6 +1,8 @@
 'use server'
 import Request from '@/app/utils/request'
 import { revalidatePath } from 'next/cache'
+import GetItemAction from '@/app/lib/actions/get'
+
 
 export default async function CreateInvoiceAction(
     msg = 'Operación realizada con éxito 🤑',
@@ -18,6 +20,10 @@ export default async function CreateInvoiceAction(
         }
     }
 
+    // get user permission 
+    const response = await GetItemAction('security/current-user')
+    const permissions = response?.data?.permissions || []
+
     const createInvoiceEndpoint = 'invoices'
     const payInvoiceEndpoint = 'pay-invoice'
 
@@ -27,15 +33,24 @@ export default async function CreateInvoiceAction(
         const details = formData.get('details')
         const paymentsRaw = formData.get('payments')
         const changesRaw = formData.get('changes')
+        const pin = formData.get('pin') || null
 
         // Parse the payments coming from the frontend and adapt them to the backend keys
         const paymentsParsed = JSON.parse(paymentsRaw || '[]')
-
         const isCredit = formData.get('is_credit') === 'true' || paymentsParsed.length === 0
         
+        if (isCredit && !pin && !permissions.includes('update')) {
+            return {
+                message: null,
+                error: 'Error al crear la factura.',
+                invoice: null
+            }
+        }
+
         const createInvoiceBody = {
             customer_id: customer,
             details: JSON.parse(details || '[]'),
+            pin: pin
         }
 
         // A. Create the invoice first

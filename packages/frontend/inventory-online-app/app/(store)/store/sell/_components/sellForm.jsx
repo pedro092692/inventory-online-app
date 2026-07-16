@@ -6,15 +6,17 @@ import SelectCustomer from '@/app/(store)/store/sell/_components/customer/custom
 import SelectObject from '@/app/utils/selectObject'
 import Select from '@/app/ui/select/select'
 import CreateInvoiceAction from '@/app/lib/actions/createInvoice'
+import AuthorizeAction from '@/app/lib/actions/authorize'
 import InvoiceActionButtons from '@/app/(store)/store/sell/_components/buttons/buttons'
 import InputAddPay from '@/app/(store)/store/sell/_components/payInputButton/payInputButton'
 import TotaInfo from '@/app/(store)/store/sell/_components/totalInfo/totalInfo'
 import Pyaments from '@/app/(store)/store/sell/_components/payments/payments'
 import SuccessInfo from '@/app/(store)/store/sell/_components/success/success'
+import ActionModal from '@/app/ui/actionModal/actionModal'
 import { Modal } from '@/app/ui/utils/alert/modal'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Container } from '@/app/ui/utils/container'
-import { useState, useMemo, useActionState, useEffect, startTransition } from 'react'
+import { useState, useMemo, useActionState, useEffect, startTransition, useRef } from 'react'
 
 
 export default function SellForm({ paymentMethods=[], exchangeRate=null, currentUser=null}) {
@@ -26,6 +28,11 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
     const [resetKey, setResetKey] = useState(0)
     const [activeChange, setActiveChange] = useState(false)
     const [isCredit, setIsCredit] = useState(false)
+    const [showSupervisorModal, setShowSupervisorModal] = useState(false)
+    const [supervisorPin, setSupervisorPin] = useState('')
+    const [isCreditAuthorized, setIsCreditAuthorized] = useState(currentUser?.permissions.includes('update') ? true : false)
+    const formRef = useRef(null)
+    
 
     // local state to control actual amount
     const [currentAmount, setCurrentAmount] = useState('')
@@ -295,6 +302,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
             return
         }
 
+        formData.append('pin', supervisorPin)
+
         // Validation: If change is due, require it to be fully itemized.
         if (changeDueUSD > 0.01) {
             const totalChangesAllocatedUSD = changes.reduce((acc, c) => acc + c.amountInUSD, 0)
@@ -333,14 +342,13 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
     }
 
     //function to activate credit mode
-    const handleCredit = () => {
-        const permissions = currentUser.permissions
-        if (!permissions.includes('update')) {
-            setModalMessage('No tienes permisos para hacer una factura a credito')
-            setShowModal(true)
-            return
+    const handleCreditToggle = () => {
+        if (!isCreditAuthorized && !currentUser?.permissions.includes('update')) {
+            setShowSupervisorModal(true)
+        } else {
+            setIsCredit(prev => !prev)
+            setIsCreditAuthorized(prev => !prev)
         }
-        setIsCredit(!isCredit)
     }
     
     const handleReset = () => {
@@ -355,6 +363,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         setSelectedPaymentMethodId('')
         SetResetTime(10)
         clearInvoiceStorage()
+        setIsCredit(false)
+        setIsCreditAuthorized(currentUser?.permissions.includes('update') ? true : false)
         const fd = new FormData()
         fd.append('reset', 'true')
         
@@ -497,7 +507,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
     
     return (
         <div className={styles.mainContainer}>
-            <form className={styles.mainContainer} action={handleSubmitInvoice}>
+            <form ref={formRef} className={styles.mainContainer} action={handleSubmitInvoice}>
                 {/* products section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'products' ? styles.hide : ''}`}>
                     <InvoiceActionButtons items={items} 
@@ -600,14 +610,14 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                     >
                         <Button 
                             type={'danger'} 
-                            onClick={handleCredit}
+                            onClick={handleCreditToggle}
                             showIcon={true}
                             icon={'coins'}
                             size={[24, 24]}
                             title={'Procesar Factura A Crédito'}
                             className='shadow-sm' 
                             disabled={isPending || state?.message ? true : false}  
-                            children={isCredit ? 'Cancelar Venta Por A Crédito' : 'Procesar Factura A Crédito'}   
+                            children={isCredit ? 'Cancelar venta a crédito' : 'Procesar factura a crédito'}   
                         />
                                     
                     </Container>
@@ -644,6 +654,34 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                             Aceptar
                     </Button>
             </Modal>
+            
+            {/* Modal para solicitar PIN del Supervisor */}
+            {showSupervisorModal && (
+                <ActionModal
+                    show={showSupervisorModal}
+                    onClose={() => setShowSupervisorModal(false)}
+                    title="Autorización de Supervisor"
+                    message="Se requiere el PIN de un supervisor para habilitar la venta a crédito."
+                    icon="padlock"
+                    iconColor="var(--color-accentBlue400)"
+                    confirmText="Autorizar"
+                    confirmType="primary"
+                    requirePin={true}
+                    pin={supervisorPin}
+                    onChangePin={true} 
+                    customPin={setSupervisorPin}
+                    action={AuthorizeAction} 
+
+                    onSuccess={(state) => {
+                        if (state?.message) {
+                            setIsCreditAuthorized(true) 
+                            setShowSupervisorModal(false)
+                            setIsCredit(true)
+                        }
+                    }}
+                />
+            )}
+            
         </div>
     )
 }

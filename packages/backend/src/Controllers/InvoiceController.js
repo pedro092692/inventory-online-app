@@ -25,6 +25,8 @@ class InvoiceController {
         const {customer_id, seller_id } = req.body
         const {id: user_id} = req.user
         const details = req.body.details
+        const pin = req.body.pin || null
+        const user = req.user || null
         
         // validate required fields
         if(!customer_id || !user_id || !details) {
@@ -35,7 +37,7 @@ class InvoiceController {
             throw new Error('Details is required, or Details must be a non-empty array')
         }
 
-        const newInvoice = await this.invoiceService.createInvoice(customer_id, user_id, details)
+        const newInvoice = await this.invoiceService.createInvoice(customer_id, user_id, details, pin, user)
         
         // add invoice_id to details 
         for(const detail of details) {
