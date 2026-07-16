@@ -35,7 +35,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
     const [resetTime, SetResetTime] = useState(15)
 
     // form action
-    const initialState = {message: null, errors: {}}
+    const initialState = {message: null, error: null}
     const createInvoice = CreateInvoiceAction.bind(null, 'Factura creada con éxito', false, null)
     const [state, formAction, isPending] = useActionState(createInvoice, initialState)
     
@@ -549,6 +549,10 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null }) {
                     
                     {/* success info */}
                     { state?.message && <SuccessInfo state={state} onClick={handleReset} time={resetTime}/> }
+
+                    {/* error info */}
+                    {state?.error && <span className="field_error">{state?.error}</span>}
+                    
 
                     
                     <TotaInfo 

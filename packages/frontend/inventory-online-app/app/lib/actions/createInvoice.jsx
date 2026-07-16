@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 
 export default async function CreateInvoiceAction(
     msg = 'Operación realizada con éxito 🤑',
-    invoiceStatus = false, // true = credit existing invoice, false = create new invoice
+    invoiceStatus = false, 
     invoiceId = null,
     preState, 
     formData
@@ -47,9 +47,10 @@ export default async function CreateInvoiceAction(
         const { data, error } = response
 
         if (error || !data?.invoice) {
+            console.log('error: ', error)
             return {
                 message: null,
-                errors: error || data?.errors || 'Error al crear la factura.',
+                error: error == 'Something went wrong' ? 'Error al crear la factura.' : error || data?.errors || 'Error al crear la factura.',
                 invoice: null
             }
         }
@@ -67,7 +68,8 @@ export default async function CreateInvoiceAction(
         if (payError || payData?.errors) {
             return {
                 message: null,
-                errors: payError || payData?.errors || 'La factura se creó pero hubo un problema al registrar los pagos.',
+                error: payError == 'Something went wrong' ? 'La factura se creó pero hubo un problema al registrar los pagos.' : payError || payData?.errors 
+                || 'La factura se creó pero hubo un problema al registrar los pagos.',
                 invoice: data.invoice 
             }
         }
