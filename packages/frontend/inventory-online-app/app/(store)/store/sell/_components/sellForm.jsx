@@ -605,9 +605,23 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                     }
                     
                     <Container
-                        justifyContent={'end'}
+                        height={'100%'}
+                        justifyContent={'space-between'}
+                        alignItem={'end'}
                         padding={'0px'}
                     >
+                        <Button 
+                            type={'secondary'} 
+                            onClick={handleReset}
+                            showIcon={true}
+                            icon={'trash'}
+                            size={[24, 24]}
+                            title={'Procesar Factura A Crédito'}
+                            className='shadow-sm' 
+                            disabled={isPending || state?.message ? true : false}  
+                            children={'Cancelar venta'}   
+                        />
+
                         <Button 
                             type={'danger'} 
                             onClick={handleCreditToggle}
