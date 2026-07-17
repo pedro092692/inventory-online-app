@@ -17,6 +17,7 @@ import { Modal } from '@/app/ui/utils/alert/modal'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Container } from '@/app/ui/utils/container'
 import { useState, useMemo, useActionState, useEffect, startTransition, useRef } from 'react'
+const STORE_CREDIT_ID = process.env.NEXT_PUBLIC_STORE_CREDIT_ID || 8
 
 
 export default function SellForm({ paymentMethods=[], exchangeRate=null, currentUser=null}) {
@@ -32,7 +33,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
     const [supervisorPin, setSupervisorPin] = useState('')
     const [isCreditAuthorized, setIsCreditAuthorized] = useState(currentUser?.permissions.includes('update') ? true : false)
     const formRef = useRef(null)
-
+    
     // local state to control actual amount
     const [currentAmount, setCurrentAmount] = useState('')
     const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(1)
@@ -184,8 +185,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
             return 
         }
 
-        const isCreditMethod = paymentMethod.name.toLowerCase().includes('credito') || 
-                           paymentMethod.name.toLowerCase().includes('crédito')
+        const isCreditMethod = methodId == STORE_CREDIT_ID
 
         if (isCreditMethod) {
             
@@ -196,7 +196,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
             }
 
             const creditAlreadyUsedUSD = payments
-            .filter(p => p.name.toLowerCase().includes('credito') || p.name.toLowerCase().includes('crédito'))
+            .filter(p => p.id == STORE_CREDIT_ID)
             .reduce((sum, p) => sum + p.amountInUSD, 0)
 
             const availableCreditUSD = (parseFloat(customer.total_credits) || 0) - creditAlreadyUsedUSD
@@ -380,7 +380,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
             const hasCredits = totalCredits > 0
 
             const creditMethod = paymentMethods.find(pm => 
-            pm.name.toLowerCase().includes('credito') || pm.name.toLowerCase().includes('crédito'))
+            pm.id == STORE_CREDIT_ID)
 
             const posMethod = paymentMethods.find(pm => 
             pm.name.toLowerCase().includes('punto') || pm.name.toLowerCase().includes('venta'))
@@ -406,8 +406,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         const availableCredit = parseFloat(customer?.total_credits || 0)
 
         const selectedMethod = paymentMethods.find(pm => pm.id === selectedPaymentMethodId)
-        const isCredit = selectedMethod?.name.toLowerCase().includes('credito') ||
-                         selectedMethod?.name.toLowerCase().includes('crédito')
+        const isCredit = selectedMethod?.id == STORE_CREDIT_ID
         
         
 
@@ -482,8 +481,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         
         const availableCredit = parseFloat(customer?.total_credits || 0)
         const selectedMethod = paymentMethods.find(pm => pm.id === selectedPaymentMethodId)
-        const isCredit = selectedMethod?.name.toLowerCase().includes('credito') || 
-                         selectedMethod?.name.toLowerCase().includes('crédito')
+        const isCredit = selectedMethod?.id == STORE_CREDIT_ID
         
         if (!isCredit || availableCredit <= 0) return null
 

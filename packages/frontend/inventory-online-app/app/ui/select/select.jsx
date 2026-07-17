@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import styles from './select.module.css'
+const STORE_CREDIT_ID = process.env.NEXT_PUBLIC_STORE_CREDIT_ID || 8
 
 export default function Select({
         options = [],
@@ -82,7 +83,7 @@ export default function Select({
                     className={`${styles.child}`}
                 >
                     {options.map((option, index) => {
-                        const isCreditOption = option.label.toLowerCase().includes('credito') || option.label.toLowerCase().includes('crédito')
+                        const isCreditOption = option.value == STORE_CREDIT_ID
                         const totalCredits = parseFloat(customer?.total_credits || 0)
                         if (isCreditOption && totalCredits <= 0) {
                             return null
