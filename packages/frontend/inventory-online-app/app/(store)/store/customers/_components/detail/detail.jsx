@@ -20,6 +20,7 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
     const response = await GetItemAction(url)
     const {data, error} = response
     const customer = data?.customer || null
+
     
     if (invoiceQuery) {
         const endpoint = `invoices/search?invoice=${invoiceQuery}&customer_id=${id}&limit=${limit}&invoice_page=${page}`

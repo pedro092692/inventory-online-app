@@ -1,5 +1,6 @@
 import List from '@/app/ui/list/list'
 import styles from '@/app/(store)/store/customers/detail/[id]/input.module.css'
+import invoiceStyles from '@/app/(store)/store/bills/_components/invoices.module.css'
 
 export default function CustomerInvoices({ invoices, searchIsActive = false, customer_id = null}) {
     const tableHead = {
@@ -37,6 +38,7 @@ export default function CustomerInvoices({ invoices, searchIsActive = false, cus
                     queryString={`fromCustomer=true&customer_id=${customer_id}`}
                     CustomStyles={{height: '340px'}}
                     customClass={styles.table}
+                    rowClassName={(rowData) => rowData.status === 'Pendiente' ? invoiceStyles.pendingRowCustomer : ''}
                 />
                 :
                 <p>El cliente no tiene facturas</p>

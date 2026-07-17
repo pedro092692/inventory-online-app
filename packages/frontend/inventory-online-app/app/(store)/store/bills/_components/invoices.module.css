@@ -15,3 +15,7 @@
 .pendingRow{
   background-color: var(--color-accentRed200) !important; 
 }
+
+.pendingRowCustomer{
+   background-color: rgb(252, 236, 208) !important; 
+}
