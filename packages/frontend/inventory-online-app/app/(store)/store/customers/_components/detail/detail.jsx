@@ -4,6 +4,7 @@ import GetItemAction from '@/app/lib/actions/get'
 import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
 import Search from '@/app/ui/form/search/search'
 import Pagination from '@/app/ui/pagination/pagination'
+import styles from './detail.module.css'
 import { Suspense } from 'react'
 
 
@@ -20,8 +21,9 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
     const response = await GetItemAction(url)
     const {data, error} = response
     const customer = data?.customer || null
-
+    const pendingInvoices = customer?.invoices.filter(invoice => invoice.status == 'unpaid') || []
     
+    console.log(customer)
     if (invoiceQuery) {
         const endpoint = `invoices/search?invoice=${invoiceQuery}&customer_id=${id}&limit=${limit}&invoice_page=${page}`
         const res = await GetItemAction(endpoint)
@@ -38,8 +40,13 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
                 ) 
                 : 
                 <>
-                    <CustomerDetailForm customer={customer}/>
-                
+                    <div className={styles.mainContainer}>
+                        <CustomerDetailForm customer={customer}/>
+                        
+                        {/* customer credit and debt info */}
+                        <p>Este cliente tiene un credito disponible de: {customer.total_credits}</p>
+                        <p>Este cliente tiene un total de {pendingInvoices.length} facturas sin pagar</p>
+                    </div>
                     {totalInvoicePages > 0 ?
                         <>
                             <p style={{marginTop: '15px'}} className='p1-r'>Facturas De: {`${customer?.name}`}</p>

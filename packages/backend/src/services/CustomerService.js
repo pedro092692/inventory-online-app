@@ -108,6 +108,33 @@ class CustomerService {
             if (!customer) {
                 throw new NotFoundError()
             }
+
+            if(customer.invoices.length > 0) {
+                // calcula total debt for this customer 
+                const customerUnpaidInvoices = await this.Customer.findOne({
+                    include: [
+                        {
+                            association: 'invoices',
+                            separate: true,
+                            attributes: ['total'],
+                            where: {
+                                status: 'unpaid',
+                            }
+                        }     
+                    ],
+                    where: {
+                        id: id
+                    }
+                })
+                
+                const unpaidInvoices = customerUnpaidInvoices?.invoices
+                
+                if (unpaidInvoices.length > 0) {
+                    const total_debt = unpaidInvoices.reduce((acc, c) => acc + parseFloat(c.total), 0)
+                    customer.setDataValue('total_unpaid_invoices', unpaidInvoices.length)
+                    customer.setDataValue('total_debt', total_debt)
+                }
+            }
             
             return {
                 customer: customer
