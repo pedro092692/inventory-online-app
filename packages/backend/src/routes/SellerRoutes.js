@@ -1,12 +1,13 @@
 import { Router } from 'express'
 import SellerController from '../Controllers/SellerController.js'
-import { authenticated } from '../middlewares/authMiddleware.js'
+import { authenticated, isOwner } from '../middlewares/authMiddleware.js'
 import { validateFields } from '../validators/fieldValidator.js'
 
 class SellerRoutes{
     constructor() {
         this.router = Router()
         this.router.use(authenticated)
+        this.router.use(isOwner)
         this.router.use(this.setRoutesModels.bind(this))
         this.inicializateRoutes()
     }  

@@ -68,10 +68,33 @@ class AuthMiddleware {
 
         res.status(403).json({ message: 'Forbidden' })
     })
+    
+    /**
+     * Express middleware to verify if the user has admin or owner privileges.
+     * 
+     * It checks for a user in the request payload and verifies the role.
+     * if the role is admin (`role === 1` or `role === 2`), it continues to the next middleware.
+     * If the role is invalid or missing, it sends a 403 or 401 response, respectively.
+     * This method is wrapped with a controller error handler to catch unexpected errors.
+     * @type {import('express').RequestHandler}
+     */
+    isOwner = this.#error.handler((req, res, next) => {
+        if(!req.user) {
+            res.status(401).json({message: 'Unauthorized'})
+        }
+
+        const role = req.user.role
+        if(role == 1 || role == 2) {
+            return next()
+        }
+
+        res.status(403).json({ message: 'Forbidden' })
+    })
 
 }
 
 const authenticated = new AuthMiddleware().authenticatedToken
 const isAdmin = new AuthMiddleware().isAdmin
+const isOwner = new AuthMiddleware().isOwner
 
-export { authenticated, isAdmin }
+export { authenticated, isAdmin, isOwner }
