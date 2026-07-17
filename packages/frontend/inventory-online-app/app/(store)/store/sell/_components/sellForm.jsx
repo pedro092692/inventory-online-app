@@ -32,7 +32,6 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
     const [supervisorPin, setSupervisorPin] = useState('')
     const [isCreditAuthorized, setIsCreditAuthorized] = useState(currentUser?.permissions.includes('update') ? true : false)
     const formRef = useRef(null)
-    
 
     // local state to control actual amount
     const [currentAmount, setCurrentAmount] = useState('')

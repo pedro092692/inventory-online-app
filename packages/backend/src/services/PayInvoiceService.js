@@ -77,9 +77,7 @@ class PayInvoiceService {
                         order: [['id', 'ASC']],
                         transaction: t
                     })
-
                     
-
                     const totalActiveCreditAvailable = activeCredits.reduce((sum, credit) => sum + parseFloat(credit.amount), 0)
 
                     if (totalActiveCreditAvailable < totalCreditUsed) {
@@ -149,7 +147,7 @@ class PayInvoiceService {
                         parseFloat(amount), 
                         total_to_pay,
                     )
-
+ 
                     cashMovementsToCreate.push({
                         invoice_id: invoiceId,
                         payment_method_id: paymentId,
@@ -547,6 +545,11 @@ class PayInvoiceService {
                     detailAmount = amount
                 }
             } 
+        }
+
+        // set detailAmount for store credit 
+        if(paymentId == 8) {
+            detailAmount = amount
         }
 
         return {
