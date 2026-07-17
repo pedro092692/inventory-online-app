@@ -10,10 +10,11 @@ export default async function BillDetail({ params, searchParams}) {
     const { id }  = await params
     const ulrParams = await searchParams
     const page = Number(ulrParams?.pageProducts) || 1
-    const queryString = buildQueryParams(ulrParams, ['page', 'data'])
+    const queryString = buildQueryParams(ulrParams, ['page', 'data']) || ulrParams
     const response = await Request(`invoice-details/total-pages?id=${id}`, 'GET', null, 'Hubo un error inesperado intententa nuevamente')
     const {data, error} = response
     const totalProductPages = data?.total || 0
+
     return (
         <Container
             direction={'column'}
@@ -21,7 +22,7 @@ export default async function BillDetail({ params, searchParams}) {
             padding='0px'
             width='100%'
         >
-            <Route path='bills' endpoints={['default', 'detail']} queryString={queryString}/> 
+            <Route path='bills' endpoints={ulrParams?.fromCustomer ? ['customer', 'detail'] : ['default', 'detail']} queryString={queryString}/> 
             <Suspense key={id} fallback={<FormSkeleton nFields={5} custonStyle={{width: '100% !important'}}/>}>
                 <BillInfo id={id} queryString={queryString} page={page} totalProductPages={totalProductPages}/>  
             </Suspense>

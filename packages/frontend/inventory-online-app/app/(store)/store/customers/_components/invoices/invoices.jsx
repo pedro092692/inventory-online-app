@@ -1,7 +1,7 @@
 import List from '@/app/ui/list/list'
 import styles from '@/app/(store)/store/customers/detail/[id]/input.module.css'
 
-export default function CustomerInvoices({ invoices, searchIsActive = false}) {
+export default function CustomerInvoices({ invoices, searchIsActive = false, customer_id = null}) {
     const tableHead = {
         'bill_id': 'N° Recibo',
         'total': 'Total',
@@ -32,8 +32,10 @@ export default function CustomerInvoices({ invoices, searchIsActive = false}) {
                 <List 
                     tableHead={tableHead} 
                     tableData={customerInvoices} 
-                    showActions={false} 
-                    CustomStyles={{height: '317px'}}
+                    showActions={true} 
+                    endpoint='bills'
+                    queryString={`fromCustomer=true&customer_id=${customer_id}`}
+                    CustomStyles={{height: '340px'}}
                     customClass={styles.table}
                 />
                 :

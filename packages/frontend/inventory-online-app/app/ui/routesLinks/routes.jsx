@@ -94,6 +94,12 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 href:`${endpoint}/detail/return/${id}`,
                 label: 'Ver productos de la devolución',
                 role: [1,2,3,4]
+            },
+
+            customer: {
+                href:`/store/customers/detail/${queryString?.customer_id ? parseInt(queryString.customer_id) : 1}`,
+                label: 'Detalle Cliente',
+                role: [1,2,3,4]
             }
         },
 
@@ -106,7 +112,7 @@ export default async function Route({path='customers', endpoints=['default', 'ad
             },
             
             add: {
-                 href: `${endpoint}${queryString?`?${queryString}`: ''}`,
+                href: `${endpoint}${queryString?`?${queryString}`: ''}`,
                 label: 'Nueva Venta',
                 role: [1,2,3,4]
             },

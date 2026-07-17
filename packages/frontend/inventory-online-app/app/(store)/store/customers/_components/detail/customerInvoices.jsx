@@ -14,6 +14,6 @@ export default async function CustomerInvoicesWrapper({id, page, invoiceQuery, l
     if (error) {
         return <p className='p2-r errorMsg'>{error}</p>
     }
-    return <CustomerInvoices invoices={invoices} searchIsActive={invoiceQuery ? true : false} />
+    return <CustomerInvoices invoices={invoices} searchIsActive={invoiceQuery ? true : false} customer_id={id}/>
 
 }
