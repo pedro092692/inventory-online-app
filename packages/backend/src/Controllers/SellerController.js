@@ -1,6 +1,7 @@
 import SellerService from '../services/SellerService.js'
 import UserService from '../services/admin/UserService.js'
 import controllerErrorHandler from '../errors/controllerErrorHandler.js'
+import { userPermissions } from './CustomerController.js'
 import hasPassword from '../utils/encrypt.js'
 
 class SellerController {
@@ -66,8 +67,9 @@ class SellerController {
         const page = req.query.page ? parseInt(req.query.page) : 1
         const includeInvoices = req.query.includeInvoices ? req.query.includeInvoices : false
         const currentUserId = req.user.id || null
+        const permissions = userPermissions(req)
         const {sellers} = await this.sellerService.getAllSellers(limit, page, includeInvoices, currentUserId)
-        res.status(200).json({sellers})
+        res.status(200).json({sellers, permissions: permissions})
     })
 
     /**

@@ -10,10 +10,10 @@ export function middleware(request: NextRequest) {
   const authorizePaths = ['/store/customers/edit',
                           '/store/products/edit',
                           '/store/products/add',
-                          '/store/cashiers', 
                           '/store/payment-methods',
                           '/store/currency',
                           '/store/reports',
+                          '/store/staff',
                           '/api/export',
                         ]
 

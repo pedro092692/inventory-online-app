@@ -27,7 +27,6 @@ export default async function Customers({ limit = 10, page = 1, query = null, qu
     const rawData = data?.customers || []
     const userPermissions = data?.permissions || []
     
-    
     const transformData = (customers) => {
         let data = []
         if (customers.length > 0) {
