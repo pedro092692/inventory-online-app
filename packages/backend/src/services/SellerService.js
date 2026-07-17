@@ -1,6 +1,7 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import { InvalidPinError } from '../errors/supervisorPinError.js'
+import { Op } from 'sequelize'
 
 class SellerService {
     // new instance of service error handler 
@@ -39,7 +40,7 @@ class SellerService {
      * @throws {ServiceError} - throws an error if the sellers could not be retrieved
      * @returns {Promise<Array>} - returns an array of sellers with their sales
      */
-    getAllSellers(limit = 10, page = 1, includeInvoices = false) {
+    getAllSellers(limit = 10, page = 1, includeInvoices = false, user_id) {
         const offset = (page - 1) * limit
         const salesAssociation = {}
         if (includeInvoices) {
@@ -51,6 +52,12 @@ class SellerService {
             const sellers = await this.Seller.findAll({
                 include: includeInvoices ? [salesAssociation] : [],
                 order: includeInvoices ? salesAssociation.order : [['id', 'DESC']],
+                attributes: ['id', 'is_supervisor', 'id_number', 'name', 'last_name', 'address'],
+                where: {
+                    user_id: {
+                        [Op.ne]: user_id
+                    }
+                },
                 limit: limit,
                 offset: offset
             })

@@ -65,7 +65,8 @@ class SellerController {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
         const includeInvoices = req.query.includeInvoices ? req.query.includeInvoices : false
-        const {sellers} = await this.sellerService.getAllSellers()
+        const currentUserId = req.user.id || null
+        const {sellers} = await this.sellerService.getAllSellers(limit, page, includeInvoices, currentUserId)
         res.status(200).json({sellers})
     })
 
