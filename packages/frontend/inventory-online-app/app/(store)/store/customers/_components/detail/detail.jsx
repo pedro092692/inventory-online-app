@@ -21,9 +21,7 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
     const response = await GetItemAction(url)
     const {data, error} = response
     const customer = data?.customer || null
-    const pendingInvoices = customer?.invoices.filter(invoice => invoice.status == 'unpaid') || []
     
-    console.log(customer)
     if (invoiceQuery) {
         const endpoint = `invoices/search?invoice=${invoiceQuery}&customer_id=${id}&limit=${limit}&invoice_page=${page}`
         const res = await GetItemAction(endpoint)
@@ -44,8 +42,24 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
                         <CustomerDetailForm customer={customer}/>
                         
                         {/* customer credit and debt info */}
-                        <p>Este cliente tiene un credito disponible de: {customer.total_credits}</p>
-                        <p>Este cliente tiene un total de {pendingInvoices.length} facturas sin pagar</p>
+                        <div className={styles.customerNumbersInfo}>
+                            {
+                                parseFloat(customer.total_credits) > 0 && 
+                                    <p className='p1-r'>Este cliente tiene un credito disponible de: {customer.total_credits}$</p>
+                            }
+
+                            {
+                                customer?.total_unpaid_invoices && 
+                                <>
+                                    <p className='p1-r'>Este cliente tiene un total de <span className='p1-b'>{customer?.total_unpaid_invoices}</span> facturas <span className='p1-b'>sin pagar</span> Sumando una <span className='p1-b'>deuda</span> de <span className='p1-b'>{customer?.total_debt}$</span></p>
+                                </>
+                                
+                            }
+                            
+                            {/* <p className='p1-r'>Este cliente tiene un total de {pendingInvoices.length} facturas sin pagar</p> */}
+                            {/* <p className='p1-r'>Este cliente tiene un total de {pendingInvoices.length} facturas sin pagar</p> */}
+                        </div>
+                        
                     </div>
                     {totalInvoicePages > 0 ?
                         <>
