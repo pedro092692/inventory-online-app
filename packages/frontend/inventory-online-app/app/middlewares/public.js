@@ -4,6 +4,11 @@ import { verifyToken } from '../utils/verifyToken'
 const dashboard = process.env.NEXT_PUBLIC_DASHBOARD
 
 export async function redirectIfLoggedIn(request) {
+    
+    if (request.method !== 'GET') {
+        return NextResponse.next()
+    }
+
     const token = request.cookies.get('access_token')?.value
     if(!token) {
         return NextResponse.next();

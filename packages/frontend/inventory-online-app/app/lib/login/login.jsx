@@ -32,7 +32,7 @@ export default async function Login(nextUrl, prevState, formData) {
         credentials: 'include',
         body: body ? JSON.stringify(body) : null
     })
-    
+
     if (response.ok) {
         const setCookie = response.headers.get('set-cookie')
         if (setCookie) {
@@ -45,7 +45,6 @@ export default async function Login(nextUrl, prevState, formData) {
                 sameSite: 'strict',
                 maxAge: 3600,
             })
-
             redirect(safeNext) 
         }
     }
