@@ -116,6 +116,14 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 label: 'Nueva Venta',
                 role: [1,2,3,4]
             },
+        },
+
+        staff: {
+            default: {
+                href: withParams(endpoint),
+                label: 'Personal',
+                role: [1,2]
+            },
         }
     }
     

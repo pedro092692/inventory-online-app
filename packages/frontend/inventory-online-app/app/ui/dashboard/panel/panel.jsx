@@ -32,9 +32,9 @@ export async function Panel() {
         },
 
         cashier: {
-            title: 'Cajeros',
+            title: 'Personal',
             icon: 'cashier',
-            link: '/store/cashiers',
+            link: '/store/staff',
             role: [1,2,3]
         },
 
