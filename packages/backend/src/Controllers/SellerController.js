@@ -4,6 +4,7 @@ import controllerErrorHandler from '../errors/controllerErrorHandler.js'
 import { userPermissions } from './CustomerController.js'
 import hasPassword from '../utils/encrypt.js'
 import { sequelize } from '../database/database.js'
+import { ValidationError } from 'sequelize'
 
 class SellerController {
     // new instance of controller error handler
@@ -55,8 +56,13 @@ class SellerController {
             const { id_number, name, last_name, address, email, password, role_id } = req.body
             const is_supervisor = req.body.is_supervisor || false
             const pin = req.body.pin || null
+            
+            if (pin && pin.length < 4) {
+                throw new ValidationError('El Pin tiene que tener al menos 4 caracteres')
+            }
             const hashedPin = pin ? hasPassword(pin, String(req.user.tenant_id)) : null
-            const user = await this.UserService.createUser(email, password, role_id, req.user.tenant_id, {transaction: t})
+            const current_user = req.user
+            const user = await this.UserService.createUser(email, password, role_id, current_user, {transaction: t})
             if (!user) {
                 throw new Error('Something went wrong')
             }

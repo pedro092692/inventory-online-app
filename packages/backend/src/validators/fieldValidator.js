@@ -1,6 +1,11 @@
 import {check, validationResult} from 'express-validator'
 
 function validateFields(rule) {
+    const check_pin =  check('pin').isLength({ min: 4 }).withMessage('El pin al menos debe tener 4 caracteres').isString().withMessage('El pin tiene debe ser una cadena de texto.')
+    const check_id_number = check('id_number').isLength({ min: 6}).withMessage('El número de cédula debe tener al menos 6 dígitos')
+    const check_name = check('name').isLength({ min: 3}).withMessage('El nombre debe tener al menos 3 caracteres')
+    const check_isLen = (field, len) => check(field).isLength({ min: len}).withMessage(`${field} debe tener al menos ${len} caracteres.`)
+    
     const validationRule = {
         createCustomer: [
             check('id_number').isLength({ min: 6}).withMessage('El número de cédula debe tener al menos 6 dígitos'),
@@ -28,6 +33,13 @@ function validateFields(rule) {
 
         authorizedSeller: [
             check('pin').isLength({ min: 4 }).withMessage('El pin al menos debe tener 4 caracteres').isString().withMessage('El pin tiene debe ser una cadena de texto.')
+        ],
+
+        createUser: [
+            check_id_number,
+            check_name,
+            check_isLen('last_name', 3),
+            check_isLen('password', 3)
         ]
     }
 

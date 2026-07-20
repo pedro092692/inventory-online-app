@@ -42,7 +42,7 @@ function initializeUser(sequelize) {
                     }
                 },
                 unique:{
-                    msg: 'This email already has been taken'
+                    msg: 'Este correo ya ha sido registrado.'
                 }
             },
 

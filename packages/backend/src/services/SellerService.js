@@ -1,7 +1,7 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import { InvalidPinError } from '../errors/supervisorPinError.js'
-import { Op } from 'sequelize'
+import { Op, ValidationError } from 'sequelize'
 
 class SellerService {
     // new instance of service error handler 
@@ -24,7 +24,7 @@ class SellerService {
         return this.#error.handler(['Create Seller'], async() => {
             // 1 verify if user is supervisor and pin 
             if (is_supervisor && !pin) {
-                throw new Error('For supevisor user pin are required.')
+                throw new ValidationError('Para supervisores el PIN es requerido.')
             }
 
             // 2 check if pin is not taken 
@@ -36,7 +36,7 @@ class SellerService {
                 })
 
                 if (isPinTaken) {
-                    throw new Error('This pin is already taken plase select another one.')
+                    throw new ValidationError('Este PIN es inválido; por favor, elige otro PIN.')
                 }
             }
 

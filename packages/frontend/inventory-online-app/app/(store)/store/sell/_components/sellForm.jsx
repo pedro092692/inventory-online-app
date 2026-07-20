@@ -41,7 +41,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
     const [showModal, setShowModal] = useState(false)
     const [modalMessage, setModalMessage] = useState('')
     const [resetTime, SetResetTime] = useState(15)
-
+    
     // form action
     const initialState = {message: null, error: null}
     const createInvoice = CreateInvoiceAction.bind(null, 'Factura creada con éxito', false, null)

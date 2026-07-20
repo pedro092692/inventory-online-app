@@ -2,8 +2,6 @@
 import GetItemAction from '@/app/lib/actions/get'
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
-import { Container } from '@/app/ui/utils/container'
-import InputWithIcon from '@/app/ui/customers/searchAndSelect/input/inputWithIcon'
 import SearchCustomerInput from '@/app/ui/customers/searchAndSelect/input/searchInput'
 import ProductResultContainer from '@/app/(store)/store/sell/_components/product/productContainer'
 
