@@ -16,11 +16,37 @@ class SellerController {
     }
 
     /**
-     * Creates a new seller and creates new user for the seller.
-     * @param {Object} req - request object containing seller details in the body
-     * @param {Object} res - response object to send the created seller
-     * @throws {ServiceError} - throws an error if the seller could not be created
-     * @returns {Promise<void>} - returns the created seller in the response
+     * Creates a new seller and its associated user within a single database transaction.
+     *
+     * This operation performs the following steps:
+     * 1. Extracts seller and user data from the request body.
+     * 2. Hashes the seller PIN (if provided) using a deterministic hash tied to the tenant.
+     * 3. Creates a new user for the seller.
+     * 4. Creates the seller linked to the newly created user.
+     * 5. Commits the transaction if all operations succeed.
+     *
+     * If any step fails, the transaction is rolled back and the error is propagated.
+     *
+     * @async
+     * @function createSeller
+     * @param {Object} req - Express request object.
+     * @param {Object} req.body - Incoming seller and user data.
+     * @param {string} req.body.id_number - Seller identification number.
+     * @param {string} req.body.name - Seller first name.
+     * @param {string} req.body.last_name - Seller last name.
+     * @param {string} req.body.address - Seller address.
+     * @param {string} req.body.email - Email for the new user account.
+     * @param {string} req.body.password - Password for the new user account.
+     * @param {number} req.body.role_id - Role assigned to the new user.
+     * @param {boolean} [req.body.is_supervisor=false] - Whether the seller is a supervisor.
+     * @param {string|null} [req.body.pin=null] - Optional seller PIN (will be hashed).
+     * @param {Object} req.user - Authenticated user performing the operation.
+     * @param {number} req.user.tenant_id - Tenant ID used for hashing and scoping.
+     *
+     * @param {Object} res - Express response object.
+     *
+     * @throws {ServiceError|Error} - Throws if user or seller creation fails.
+     * @returns {Promise<void>} Sends a JSON response containing the created seller and user.
      */
     createSeller = this.#error.handler( async(req, res) => {
         // create a user for the seller 
