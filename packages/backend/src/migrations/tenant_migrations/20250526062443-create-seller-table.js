@@ -43,6 +43,15 @@ export default {
         pin: {
           type: Sequelize.STRING,
           allowNull: true,
+          unique: {
+            name: 'sellers_pin_unique_idx',
+            msg: 'This pin is invalid, please choose another one.'
+          },
+          validate: {
+            notEmpty: {
+              msg: 'A valid pin is required.'
+            }
+          }
         },
 
         id_number: {
@@ -76,6 +85,11 @@ export default {
           validate: {
             notEmpty: true
           }
+        },
+
+        deletedAt: {
+          type: Sequelize.DATE,
+          allowNull: true
         }
       },
       {

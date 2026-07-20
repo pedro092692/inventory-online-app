@@ -60,12 +60,11 @@ function initializeSeller(sequelize, schema) {
             pin: {
                 type: DataTypes.STRING,
                 allowNull: true,
-                unique:{
+                unique: {
                     name: 'sellers_pin_unique_idx',
                     msg: 'This pin is invalid, please choose another one.'
                 },
                 validate: {
-                    allowNull: true,
                     notEmpty: {
                         msg: 'A valid pin is required.'
                     }
@@ -112,13 +111,22 @@ function initializeSeller(sequelize, schema) {
                     }
                 }
             },
+
+            deletedAt: {
+                type: DataTypes.DATE,
+                allowNull: true
+            }
         },
         {
             sequelize,
             modelName: 'Seller',
             tableName: 'sellers',
-            timestamps: false,
-            schema: schema
+            schema: schema,
+            timestamps: true,
+            createdAt: false,
+            updatedAt: false,
+            paranoid: true,
+            deletedAt: 'deletedAt'
         }
     )
     return Seller

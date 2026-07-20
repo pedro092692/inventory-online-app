@@ -20,7 +20,7 @@ export default {
           user_id: 1,
           is_supervisor: true,
           pin: hasPassword('8974', '1'),
-          id_number: 21259867, // Example Venezuelan ID number
+          id_number: 21259867, // Venezuelan ID number
           name: 'Pedro Daniel',
           last_name: 'Beltran',
           address: 'San Fernando De Henares, Madrid, Spain' // Example address
@@ -47,10 +47,10 @@ export default {
           user_id: 4,
           is_supervisor: true,
           pin: hasPassword('9012', '1'),
-          id_number: 12345661, // Yet another Venezuelan ID number
+          id_number: 12345661, // Venezuelan ID number
           name: 'Javier',
           last_name: 'Martinez',
-          address: '789 Oak St, Valencia, Venezuela', // Yet another example address
+          address: '789 Oak St, Valencia, Venezuela', // nother example address
         }
       ]
     )

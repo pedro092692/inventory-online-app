@@ -3,6 +3,7 @@ import UserService from '../services/admin/UserService.js'
 import controllerErrorHandler from '../errors/controllerErrorHandler.js'
 import { userPermissions } from './CustomerController.js'
 import hasPassword from '../utils/encrypt.js'
+import { sequelize } from '../database/database.js'
 
 class SellerController {
     // new instance of controller error handler
@@ -23,12 +24,30 @@ class SellerController {
      */
     createSeller = this.#error.handler( async(req, res) => {
         // create a user for the seller 
-        const { id_number, name, last_name, address, email, password, role_id } = req.body
-        const user = await this.UserService.createUser(email, password, role_id, req.user.tenant_id)
-        // create seller
-        const seller = await this.sellerService.createSeller(id_number, name, last_name, address)
+        const t = await sequelize.transaction()
+        try {
+            const { id_number, name, last_name, address, email, password, role_id } = req.body
+            const is_supervisor = req.body.is_supervisor || false
+            const pin = req.body.pin || null
+            const hashedPin = pin ? hasPassword(pin, String(req.user.tenant_id)) : null
+            const user = await this.UserService.createUser(email, password, role_id, req.user.tenant_id, {transaction: t})
+            if (!user) {
+                throw new Error('Something went wrong')
+            }
+            // create seller
+            const user_id = user.id
+            const seller = await this.sellerService.createSeller(id_number, name, last_name, address, user_id, is_supervisor, hashedPin, 
+                {transaction: t})
+            
+            await t.commit()
+
+            res.status(201).json({seller, user})
         
-        res.status(201).json({seller, user})
+        }catch(error) {
+            t.rollback()
+            throw error
+        }
+        
     })
     
     /**

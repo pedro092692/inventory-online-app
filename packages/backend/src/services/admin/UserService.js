@@ -28,15 +28,21 @@ class UserService {
      * @return {Promise<Object>} - A promise that resolves to the created user object without the password.
      * @throws {ServiceError} - If an error occurs during user creation.
      */
-    createUser(email, password, role_id, tenant_id=false) {
+    createUser(email, password, role_id, tenant_id=false, options={}) {
         return this.#error.handler(['Create user'], async() => {
             const newUser = await User.create({
                 email: email,
                 password: await bcrypt.hash(password, saltRounds),
-                role_id: role_id
-            }) 
-            const updatedUser = await this.updateUser(newUser.id, {tenant_id: tenant_id || newUser.id})
-            return updatedUser
+                role_id: role_id,
+                tenant_id: tenant_id
+            },
+            {
+                transaction: options?.transaction
+            }
+            ) 
+            const safeUser = this.detelePassword(newUser)
+            // const updatedUser = await this.updateUser(newUser.id, {tenant_id: tenant_id || newUser.id})
+            return safeUser
         })
     }
 

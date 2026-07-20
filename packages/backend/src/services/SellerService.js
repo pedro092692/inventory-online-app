@@ -20,14 +20,39 @@ class SellerService {
      * @throws {ServiceError} - throws an error if the seller could not be created
      * @returns {Promise<Object>} - returns the created seller
      */
-    createSeller(id_number, name, last_name, address) {
+    createSeller(id_number, name, last_name, address, user_id, is_supervisor, pin, options={}) {
         return this.#error.handler(['Create Seller'], async() => {
+            // 1 verify if user is supervisor and pin 
+            if (is_supervisor && !pin) {
+                throw new Error('For supevisor user pin are required.')
+            }
+
+            // 2 check if pin is not taken 
+            if (pin) {
+                const isPinTaken = await this.Seller.findOne({
+                    where: {
+                        pin: pin
+                    }
+                })
+
+                if (isPinTaken) {
+                    throw new Error('This pin is already taken plase select another one.')
+                }
+            }
+
             const newSeller = await this.Seller.create({
+                user_id: user_id,
+                pin: pin,
+                is_supervisor: is_supervisor,
                 id_number: id_number,
                 name: name,
                 last_name: last_name,
-                address: address
-            })
+                address: address,
+            },
+            {
+                transaction: options?.transaction
+            }
+            )
             return newSeller
         })
     }
