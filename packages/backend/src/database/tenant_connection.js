@@ -51,7 +51,7 @@ class TenantConnection {
             dialect: dialect,
             logging: false,
             pool: {
-                max: 1,
+                max: 3,
                 min: 0,
                 acquire: 3000,
                 idle: 10000
@@ -288,7 +288,7 @@ class TenantConnection {
      */
     async newMigration(schema, sequelize, glop_path=migrationsGlobPath) {
         // queryInterface for migration 
-        const queryInterface = sequelize.getQueryInterface()
+        const queryInterface = await sequelize.getQueryInterface()
         // create umzug instance 
         const umzug = await this.newUmzug(schema, sequelize, queryInterface, glop_path)
         const new_migrations = await umzug.pending()
@@ -322,8 +322,8 @@ class TenantConnection {
                         name, 
                         up: async () => {
                             const migrationPath = pathToFileURL(path)
-                            const migration = (await import(migrationPath)).default
-                            migration.up(context.queryInterface, Sequelize, context.schema)
+                            const migration = await (await import(migrationPath)).default
+                            await migration.up(context.queryInterface, Sequelize, context.schema)
                         }
                     }
                 }
