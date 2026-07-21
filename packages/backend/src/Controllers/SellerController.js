@@ -120,10 +120,11 @@ class SellerController {
     allSeller = this.#error.handler(async(req, res) => {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
+        const only_deleted = req.query.onlyDelete || false
         const includeInvoices = req.query.includeInvoices ? req.query.includeInvoices : false
         const currentUserId = req.user.id || null
         const permissions = userPermissions(req)
-        const {sellers} = await this.sellerService.getAllSellers(limit, page, includeInvoices, currentUserId)
+        const {sellers} = await this.sellerService.getAllSellers(limit, page, includeInvoices, currentUserId, only_deleted)
         res.status(200).json({sellers, permissions: permissions})
     })
 
@@ -154,6 +155,7 @@ class SellerController {
     updateSeller = this.#error.handler( async(req, res) => {
         const { id } = req.params
         const updates = req.body 
+        
         if (updates.is_supervisor && (!updates.pin || updates.pin.length < 4)) {
                 throw new ValidationError('El Pin tiene que tener al menos 4 caracteres')
         }

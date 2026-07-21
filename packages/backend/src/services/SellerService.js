@@ -77,9 +77,17 @@ class SellerService {
      * @throws {ServiceError} - throws an error if the sellers could not be retrieved
      * @returns {Promise<Array>} - returns an array of sellers with their sales
      */
-    getAllSellers(limit = 10, page = 1, includeInvoices = false, user_id) {
+    getAllSellers(limit = 10, page = 1, includeInvoices = false, user_id, only_deleted = false) {
         const offset = (page - 1) * limit
         const salesAssociation = {}
+        const whereClause = {
+            user_id: { [Op.ne]: user_id },
+            ...(only_deleted
+                ? { deletedAt: { [Op.ne]: null } }
+                : { deletedAt: null }
+            )
+        }
+        
         if (includeInvoices) {
             association.association = 'sales',
             association.attributes = ['id', 'date', 'total']
@@ -90,13 +98,10 @@ class SellerService {
                 include: includeInvoices ? [salesAssociation] : [],
                 order: includeInvoices ? salesAssociation.order : [['id', 'DESC']],
                 attributes: ['id', 'is_supervisor', 'id_number', 'name', 'last_name', 'address'],
-                where: {
-                    user_id: {
-                        [Op.ne]: user_id
-                    }
-                },
+                where: whereClause,
                 limit: limit,
-                offset: offset
+                offset: offset,
+                paranoid: false,
             })
             return {
                 sellers: sellers
@@ -120,7 +125,8 @@ class SellerService {
                 },
                 {
                     association: 'user',
-                    attributes: ['id', 'email', 'role_id']
+                    attributes: ['id', 'email', 'role_id', 'deletedAt'],
+                    paranoid: false
                 }   
                 ],
                 paranoid: false,
@@ -184,6 +190,7 @@ class SellerService {
      */
     updateSeller(sellerId, updates) {
         return this.#error.handler(['Update Seller', sellerId, 'Seller'], async() => {
+            const { restore } = updates
             const {name, last_name, id_number, address, is_supervisor, pin} = updates
             const staff_updates = {name, last_name, id_number, address, 
                 is_supervisor: is_supervisor ? is_supervisor : false,
@@ -193,7 +200,18 @@ class SellerService {
             const user_updates = {email, role_id, ...(password ? {password} : {})}
             
             const data = await this.getSeller(sellerId)
+            if (!data) throw new NotFoundError('Personal no encontrado')
             
+            if (restore === 'true') {
+                if( data.seller.deletedAt) {
+                    await data.seller.restore()
+                }
+
+                if (data.seller.user.deletedAt) {
+                    await data.seller.user.restore()
+                }
+            }
+
             await data.seller.update(staff_updates)
             
             if (user_updates) {
@@ -221,7 +239,12 @@ class SellerService {
         return this.#error.handler(['Delete Seller', sellerId, 'Seller'], async() => {
             const data = await this.getSeller(sellerId)
             // delete seller 
-            await data.seller.destroy()
+            
+            await Promise.all([
+                data.seller.destroy(),
+                data.seller.user.destroy()
+            ])
+
             return 1
         })
     }

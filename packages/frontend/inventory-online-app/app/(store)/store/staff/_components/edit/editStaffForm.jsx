@@ -9,13 +9,15 @@ import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState, useState, useEffect } from 'react'
 
 export default function StaffDetailForm({staff}) {
+
     const originalValues = {
         name: staff?.name,
         last_name: staff?.last_name,
         id_number: staff?.id_number,
         address: staff?.address,
         email: staff?.user?.email,
-        role_id: staff?.user?.role_id
+        role_id: staff?.user?.role_id, 
+        deletedAt: staff?.deletedAt || null
     }
     const initialState = {message: null, inputs: originalValues, errors: {}}
     const updateCustomer = EditItemAction.bind(null, `sellers/${staff?.id}`, 
@@ -27,7 +29,8 @@ export default function StaffDetailForm({staff}) {
         'password',
         'role_id',
         'is_supervisor',
-        'pin'
+        'pin',
+        'restore'
         ], 
         'Personal editado con éxito')
     
@@ -113,6 +116,21 @@ export default function StaffDetailForm({staff}) {
                 
                     }
 
+                    {
+                        staff.deletedAt && 
+                        <>
+                            <Input type="text" icon="circleArrow" name={'restore_ux'}
+                                            defaultValue={'Restaurar este usuario ✅'}
+                                            readOnly={true}/>
+
+                            <input type='hidden' value={true} name='restore'></input>
+
+                        </>
+                        
+
+                        
+                    }
+
                     {state?.errors?.error && <span className="field_error">{state?.errors?.error}</span>}
 
                     {state?.errors && typeof state.errors != 'object' && <span className="field_error">{state?.errors }</span>}
@@ -123,6 +141,7 @@ export default function StaffDetailForm({staff}) {
                         {isPending && <OvalLoader/>}   
                         {isPending ? 'Guardando...' : 'Editar Personal'} 
                     </Button>
+                    
                 </Form>
             }
         </>
