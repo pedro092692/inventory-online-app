@@ -39,7 +39,7 @@ export default function AddStaffForm() {
     }, [state])
 
     return (
-        <Form className={`${styles.form} shadow`} action={handleSubmit}>
+        <Form className={`${styles.form} shadow`} action={handleSubmit} autoComplete={'off'}>
             <Input type="text" icon="person" name={'name'}
                 defaultValue={state.inputs?.name ?? ""}
                 placeHolder='Nombre' 
@@ -75,6 +75,7 @@ export default function AddStaffForm() {
 
             <Input type="password" icon="padlock" name={'password'}
                 defaultValue={state.inputs?.password ?? ""}
+                autocomplete={'new-password'}
                 placeHolder='Contraseña' 
                 capitalize={true}
             />
