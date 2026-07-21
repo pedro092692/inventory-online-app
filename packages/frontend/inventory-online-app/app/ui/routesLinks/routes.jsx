@@ -129,6 +129,18 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 href: `${endpoint}/add${queryString?`?${queryString}`: ''}`,
                 label: 'Agregar Personal',
                 role: [1,2]
+            },
+
+            detail: {
+                href: `${endpoint}/detail/[id]`,
+                label: 'Detalle de personal',
+                role: [1,2]
+            },
+
+            edit: {
+                href: `${endpoint}/edit/[id]`,
+                label: 'Editar personal',
+                role: [1,2]
             }
         }
     }
