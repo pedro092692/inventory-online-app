@@ -56,8 +56,6 @@ export default async function CustomerInfo({id, limit = 8, page = 1, invoiceQuer
                                 
                             }
                             
-                            {/* <p className='p1-r'>Este cliente tiene un total de {pendingInvoices.length} facturas sin pagar</p> */}
-                            {/* <p className='p1-r'>Este cliente tiene un total de {pendingInvoices.length} facturas sin pagar</p> */}
                         </div>
                         
                     </div>
