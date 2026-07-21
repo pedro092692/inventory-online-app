@@ -12,8 +12,9 @@ class SellerService {
     // new instance of service error handler 
     #error = new ServiceErrorHandler()
 
-    constructor(model) {
+    constructor(model, invoiceModel = null) {
         this.Seller = model
+        this.Invoice = invoiceModel
         this.#error
         this.maxSellerAllowed = 6
     }
@@ -140,6 +141,21 @@ class SellerService {
             return {
                 seller: seller
             }
+        })
+    }
+
+    /**
+     * Retrieves the total count of invoices associated with a specific seller.
+     * @param {string|number} id - The unique identifier of the seller.
+     * @returns {Promise<number>} A promise that resolves to the total number of invoices.
+     * @throws {Error} If the database query fails, handled by the internal error handler.
+     */
+    getTotalSellerInvoices(id, limit = 8) {
+        return this.#error.handler(['Read Seller Total Invoices', id, 'Seller'], async () => {
+            const totalInvoices = await this.Invoice.count({
+                where: { seller_id: id }
+            })
+            return Math.ceil(totalInvoices / limit)
         })
     }
 

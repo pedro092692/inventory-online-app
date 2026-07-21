@@ -10,8 +10,8 @@ class SellerController {
     // new instance of controller error handler
     #error = new controllerErrorHandler()
 
-    constructor(model) {
-        this.sellerService = new SellerService(model)
+    constructor(model, invoiceModel) {
+        this.sellerService = new SellerService(model, invoiceModel)
         this.UserService = new UserService()
         this.#error
     }
@@ -139,6 +139,25 @@ class SellerController {
         const { id } = req.params
         const {seller} = await this.sellerService.getSeller(id)
         res.status(200).json({seller})
+    })
+
+
+
+    /**
+     * Retrieve the total number of pages of invoices the select seller.
+     * * @async
+     * @param {import('express').Request} req - Express request object.
+     * @param {Object} req.query - Query parameters.
+     * @param {string} [req.query.limit] - Max number of items per page (defaults to 8).
+     * @param {string} [req.query.id] - The customer id to filter results.
+     * @param {import('express').Response} res - Express response object.
+     * @returns {Promise<void>} Sends a JSON response with the total page count.
+     */
+    getTotalSellerInvoices = this.#error.handler( async(req, res) => {
+        const id  = req.query.id ? parseInt(req.query.id) : null
+        const limit = req.query.limit ? parseInt(req.query.limit) : 8
+        const total = await this.sellerService.getTotalSellerInvoices(id, limit)
+        res.status(200).json({total})
     })
 
     /**

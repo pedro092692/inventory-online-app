@@ -18,6 +18,7 @@ class SellerRoutes{
     inicializateRoutes() {
         this.router.get('/', (req, res) => res.send('Seller routes'))
         this.router.get('/all', (req, res) => new SellerController(req.Seller).allSeller(req, res))
+        this.router.get('/total-invoices', (req, res) => new SellerController(req.Seller, req.Invoice).getTotalSellerInvoices(req, res))
         this.router.get('/:id', (req, res) => new SellerController(req.Seller).getSeller(req, res))
         this.router.post('/', validateFields('createUser'), (req, res) => new SellerController(req.Seller).createSeller(req, res))
         this.router.post('/authorize', validateFields('authorizedSeller'), (req, res) => new SellerController(req.Seller).authorizedBySeller(req, res))
@@ -37,11 +38,12 @@ class SellerRoutes{
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {Seller} = req.tenantModels
-        if(!Seller) {
-            return res.status(400).json({ message: 'Seller model is required' })
+        const {Seller, Invoice} = req.tenantModels
+        if(!Seller || !Invoice) {
+            return res.status(400).json({ message: 'Seller model is required or Incoive model is requiered' })
         }
         req.Seller = Seller
+        req.Invoice = Invoice
         next()
     }
 }
