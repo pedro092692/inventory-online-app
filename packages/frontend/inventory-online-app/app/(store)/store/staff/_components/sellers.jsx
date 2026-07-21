@@ -43,7 +43,7 @@ export default async function Sellers({}) {
             showActions={true}
             tableData={sellers}
             endpoint='staff'
-            deleteKey={'sellerId '}
+            deleteKey={'sellerId'}
             userPermissions={userPermissions}
             deleteMsg='Personal eliminado con éxito'
             customClass={styles.table}

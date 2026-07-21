@@ -174,6 +174,7 @@ class SellerController {
      */
     deleteSeller = this.#error.handler( async(req, res) => {
         const sellerId = req.body.sellerId
+        
         // delete seller 
         await this.sellerService.deleteSeller(sellerId)
         res.status(204).json({})

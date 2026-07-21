@@ -219,9 +219,9 @@ class SellerService {
      */
     deleteSeller(sellerId) {
         return this.#error.handler(['Delete Seller', sellerId, 'Seller'], async() => {
-            const seller = await this.getSeller(sellerId)
+            const data = await this.getSeller(sellerId)
             // delete seller 
-            await seller.destroy()
+            await data.seller.destroy()
             return 1
         })
     }

@@ -129,7 +129,8 @@ class InvoiceService {
                 
             }
             const sellerAssociation = {
-                association: 'seller', attributes: ['name']
+                association: 'seller', attributes: ['name'],
+                paranoid: false,
             }
             const invoiceDetailsAssociation = {
                 association: 'products',
@@ -237,7 +238,8 @@ class InvoiceService {
                         association: 'customer', attributes: ['name', 'phone', 'id_number'],
                     },
                     {
-                        association: 'seller', attributes: ['name']
+                        association: 'seller', attributes: ['name'],
+                        paranoid: false,
                     },
                     {
                         association: 'payments-details',
@@ -251,6 +253,7 @@ class InvoiceService {
                             },
                             
                         ],
+                        
                         attributes: ['id', 'amount', 'reference_amount', 'status']
                     },
                 ]
