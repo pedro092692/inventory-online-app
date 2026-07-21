@@ -113,10 +113,11 @@ class InvoiceController {
     searchInvoicesbyId = this.#error.handler( async(req, res) => {
         const invoice = req.query.invoice ? req.query.invoice : null
         const customer_id  = req.query.customer_id ? req.query.customer_id : null
+        const seller_id = req.query.seller_id ? req.query.customer_id : null
         if (invoice){
             const limit = req.query.limit ? parseInt(req.query.limit) : 8
             const invoice_page = req.query.invoice_page ? parseInt(req.query.invoice_page) : 1
-            const { invoices, totalPages } = await this.invoiceService.searchInvoicesById(invoice, customer_id, invoice_page, limit)
+            const { invoices, totalPages } = await this.invoiceService.searchInvoicesById(invoice, customer_id, seller_id, invoice_page, limit)
             res.status(200).json({ invoices, totalPages })
             return
         }

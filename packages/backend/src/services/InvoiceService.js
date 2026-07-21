@@ -310,7 +310,7 @@ class InvoiceService {
      * @returns {Promise<{invoices: Object[], total: number, page: number, pageSize: number}>} 
      * A promise that resolves to an object containing the list of invoices, total record count, current page, and page size.
      */
-    searchInvoicesById(query, customerId=null, page = 1, limit=10,){
+    searchInvoicesById(query, customerId=null, sellerId=null, page = 1, limit=10,){
         const offset = (page - 1) * limit;
         return this.#error.handler(['Search Invoices', query, 'Invoice'], async () => {
         if (!query) {
@@ -325,7 +325,15 @@ class InvoiceService {
                     idSearchCondition
                 ]
               }
+            : sellerId 
+            ? {
+                [Op.and]: [
+                    {seller_id: sellerId},
+                    idSearchCondition
+                ]
+              }
             : idSearchCondition
+
 
         const result = await this.Invoice.findAndCountAll({
             where: whereClause,

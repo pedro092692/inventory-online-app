@@ -1,4 +1,4 @@
-import CustomerDetailForm from '@/app/(store)/store/customers/_components/detail/formDetail'
+import SellerDetailForm from '@/app/(store)/store/staff/_components/detail/sellerDetailForm'
 import CustomerInvoicesWrapper from '@/app/(store)/store/customers/_components/detail/customerInvoices'
 import GetItemAction from '@/app/lib/actions/get'
 import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
@@ -21,10 +21,10 @@ export default async function SellerInfo({id, limit = 8, page = 1, invoiceQuery 
     const response = await GetItemAction(url)
     const {data, error} = response
     const seller = data?.seller || null
-    // console.log(seller)
+    
     
     if (invoiceQuery) {
-        const endpoint = `invoices/search?invoice=${invoiceQuery}&customer_id=${id}&limit=${limit}&invoice_page=${page}`
+        const endpoint = `invoices/search?invoice=${invoiceQuery}&seller_id=${id}&limit=${limit}&invoice_page=${page}`
         const res = await GetItemAction(endpoint)
         const {data, error} = res
         totalPages = data?.totalPages || 1
@@ -40,7 +40,7 @@ export default async function SellerInfo({id, limit = 8, page = 1, invoiceQuery 
                 : 
                 <>
                     <div className={styles.mainContainer}>
-                        {/* <CustomerDetailForm customer={customer}/> */}
+                        <SellerDetailForm seller={seller}/>
                         
                     </div>
                     {/* {totalInvoicePages > 0 ?
