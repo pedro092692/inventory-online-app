@@ -60,6 +60,11 @@ module.exports = {
         tenant_id:{
           type: Sequelize.INTEGER,
           allowNull: true,
+        },
+        
+        deletedAt: {
+          type: Sequelize.DATE,
+          allowNull: true
         }
       }
     )

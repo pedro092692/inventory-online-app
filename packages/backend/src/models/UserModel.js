@@ -69,6 +69,11 @@ function initializeUser(sequelize) {
             tenant_id: {
                 type: DataTypes.INTEGER,
                 allowNull: true
+            },
+
+            deletedAt: {
+                type: DataTypes.DATE,
+                allowNull: true
             }
         },
         {
@@ -76,7 +81,12 @@ function initializeUser(sequelize) {
             modelName: 'User',
             tableName: 'users',
             timestamps: false,
-            schema: 'public'
+            schema: 'public',
+            timestamps: true,
+            createdAt: false,
+            updatedAt: false,
+            paranoid: true,
+            deletedAt: 'deletedAt'
         }
     )
 }
