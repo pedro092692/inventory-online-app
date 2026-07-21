@@ -1,5 +1,5 @@
 import SellerDetailForm from '@/app/(store)/store/staff/_components/detail/sellerDetailForm'
-import CustomerInvoicesWrapper from '@/app/(store)/store/customers/_components/detail/customerInvoices'
+import SellerInvoicesWrapper from '@/app/(store)/store/staff/_components/detail/sellerInvoices'
 import GetItemAction from '@/app/lib/actions/get'
 import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
 import Search from '@/app/ui/form/search/search'
@@ -43,9 +43,9 @@ export default async function SellerInfo({id, limit = 8, page = 1, invoiceQuery 
                         <SellerDetailForm seller={seller}/>
                         
                     </div>
-                    {/* {totalInvoicePages > 0 ?
+                    {totalInvoicePages > 0 ?
                         <>
-                            <p style={{marginTop: '15px'}} className='p1-r'>Facturas De: {`${customer?.name}`}</p>
+                            <p style={{marginTop: '15px'}} className='p1-r'>Facturas De: {`${seller?.name}`}</p>
                             <Search 
                                 placeHolder="Buscar N° de Recibo..."
                                 inputMode="number"
@@ -56,7 +56,7 @@ export default async function SellerInfo({id, limit = 8, page = 1, invoiceQuery 
                                 key={invoiceQuery + page}
                                 fallback={<ListSkeleton nRows={4} nTitle={6} customStyles={{height: '317px'}}/>}
                             >
-                                <CustomerInvoicesWrapper 
+                                <SellerInvoicesWrapper 
                                     id={id} 
                                     page={page} 
                                     invoiceQuery={invoiceQuery} 
@@ -69,9 +69,9 @@ export default async function SellerInfo({id, limit = 8, page = 1, invoiceQuery 
                         </>
                         
                         : 
-                        <p className='p1-b' style={{marginTop: '15px'}}>El cliente no tiene facturas</p>
+                        <p className='p1-b' style={{marginTop: '15px'}}>Este no tiene facturas asociadas.</p>
                     
-                    } */}
+                    }
                 </>
             }
         </>
