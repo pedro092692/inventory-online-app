@@ -115,7 +115,7 @@ class SellerService {
                 },
                 {
                     association: 'user',
-                    attributes: ['id', 'email']
+                    attributes: ['id', 'email', 'role_id']
                 }   
                 ],
                 paranoid: false,

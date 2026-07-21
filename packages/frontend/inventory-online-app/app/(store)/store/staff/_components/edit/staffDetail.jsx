@@ -1,5 +1,5 @@
 import Request from '@/app/utils/request'
-
+import StaffDetailForm from '@/app/(store)/store/staff/_components/edit/editStaffForm'
 
 export default async function StaffInfo({id}) {
     
@@ -9,11 +9,12 @@ export default async function StaffInfo({id}) {
     const {data, error} = response
  
     const seller = data?.seller || null
+    
     if (error) {
         return <p className='p2-r errorMsg'>{error}</p>
     }
     
     return (
-       <p>Hi staff</p>
+       <StaffDetailForm staff={seller} />
     )
 }
