@@ -10,6 +10,7 @@ class SellerService {
     constructor(model) {
         this.Seller = model
         this.#error
+        this.maxSellerAllowed = 6
     }
     /**
      * Creates a new seller.
@@ -38,6 +39,12 @@ class SellerService {
                 if (isPinTaken) {
                     throw new ValidationError('Este PIN es inválido; por favor, elige otro PIN.')
                 }
+            }
+
+            // check is current user has max allowed seller created
+            const sellersCount = await this.Seller.count()
+            if (sellersCount >= this.maxSellerAllowed) {
+                throw new ValidationError(`El número máximo de personal (${this.maxSellerAllowed - 1}) alcanzado; elimina un usuario para agregar uno nuevo.`)
             }
 
             const newSeller = await this.Seller.create({
@@ -106,6 +113,7 @@ class SellerService {
                     association: 'sales',
                     attributes: ['id', 'date', 'total']
                 },
+                paranoid: false,
                 order: [['sales', 'id', 'DESC']],
             })
 

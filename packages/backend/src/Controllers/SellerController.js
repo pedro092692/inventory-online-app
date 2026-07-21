@@ -71,6 +71,10 @@ class SellerController {
             const seller = await this.sellerService.createSeller(id_number, name, last_name, address, user_id, is_supervisor, hashedPin, 
                 {transaction: t})
             
+            if (!seller) {
+                throw new Error('Something went wrong')
+            }
+            
             await t.commit()
 
             res.status(201).json({seller, user})
