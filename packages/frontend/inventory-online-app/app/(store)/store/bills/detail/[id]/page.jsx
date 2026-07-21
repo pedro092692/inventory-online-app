@@ -22,7 +22,7 @@ export default async function BillDetail({ params, searchParams}) {
             padding='0px'
             width='100%'
         >
-            <Route path='bills' endpoints={ulrParams?.fromCustomer ? ['customer', 'detail'] : ['default', 'detail']} queryString={queryString}/> 
+            <Route path='bills' endpoints={ulrParams?.fromCustomer ? ['customer', 'detail'] : ulrParams?.fromSeller ? ['staff', 'detail'] : ['default', 'detail']} queryString={queryString}/> 
             <Suspense key={id} fallback={<FormSkeleton nFields={5} custonStyle={{width: '100% !important'}}/>}>
                 <BillInfo id={id} queryString={queryString} page={page} totalProductPages={totalProductPages}/>  
             </Suspense>

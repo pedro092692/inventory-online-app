@@ -100,6 +100,12 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 href:`/store/customers/detail/${queryString?.customer_id ? parseInt(queryString.customer_id) : 1}`,
                 label: 'Detalle Cliente',
                 role: [1,2,3,4]
+            },
+
+            staff: {
+                href:`/store/staff/detail/${queryString?.seller_id ? parseInt(queryString.seller_id) : 1}`,
+                label: 'Detalle Vendedor',
+                role: [1,2,3,4]
             }
         },
 

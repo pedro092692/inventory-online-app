@@ -1,4 +1,4 @@
-import CustomerInvoices from '@/app/(store)/store/customers/_components/invoices/invoices'
+import SellerInvoices from '@/app/(store)/store/staff/_components/invoices/invoices'
 import GetItemAction from '@/app/lib/actions/get'
 
 export default async function SellerInvoicesWrapper({id, page, invoiceQuery, limit = 8}) {
@@ -11,11 +11,10 @@ export default async function SellerInvoicesWrapper({id, page, invoiceQuery, lim
     const response = await GetItemAction(endpoint)
     const {data, error} = response
     let invoices = data?.seller?.sales || data?.invoices ||[]
-    console.log(invoices)
+
     if (error) {
         return <p className='p2-r errorMsg'>{error}</p>
     }
-    // return <CustomerInvoices invoices={invoices} searchIsActive={invoiceQuery ? true : false} customer_id={id}/>
-    return <p>Seller invoices</p>
+    return <SellerInvoices invoices={invoices} searchIsActive={invoiceQuery ? true : false} seller_id={id}/>
 
 }

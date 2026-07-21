@@ -123,7 +123,7 @@ class SellerService {
             const seller = await this.Seller.findByPk(id, {
                 include: [{
                     association: 'sales',
-                    attributes: ['id', 'date', 'total'],
+                    attributes: ['id', 'date', 'total', 'status'],
                     separate: true,
                     limit: limitInvoices,
                     offset: offsetInvoices,
