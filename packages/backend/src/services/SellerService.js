@@ -1,7 +1,12 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import { InvalidPinError } from '../errors/supervisorPinError.js'
+import pkg from '../config/config.js'
 import { Op, ValidationError } from 'sequelize'
+import bcrypt from 'bcrypt'
+
+const currentEnv = process.env.NODE_ENV || 'development'
+const saltRounds = pkg[currentEnv].saltRounds
 
 class SellerService {
     // new instance of service error handler 
@@ -188,10 +193,13 @@ class SellerService {
             const user_updates = {email, role_id, ...(password ? {password} : {})}
             
             const data = await this.getSeller(sellerId)
-            console.log(staff_updates)
+            
             await data.seller.update(staff_updates)
             
             if (user_updates) {
+                if(user_updates.password) {
+                    user_updates.password = await bcrypt.hash(password, saltRounds)
+                }
                 await data.seller.user.update(user_updates)
             }
             
