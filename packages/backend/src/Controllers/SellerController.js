@@ -154,6 +154,13 @@ class SellerController {
     updateSeller = this.#error.handler( async(req, res) => {
         const { id } = req.params
         const updates = req.body 
+        if (updates.is_supervisor && (!updates.pin || updates.pin.length < 4)) {
+                throw new ValidationError('El Pin tiene que tener al menos 4 caracteres')
+        }
+        if(updates.pin){
+            updates.pin = hasPassword(updates.pin, String(req.user.tenant_id))
+        }
+        updates.is_supervisor = updates.is_supervisor ? updates.is_supervisor : false
         const updatedSeller = await this.sellerService.updateSeller(id, updates)
         res.status(200).json(updatedSeller)
     })

@@ -35,19 +35,13 @@ export default function StaffDetailForm({staff}) {
     const [state, formAction, isPending] = useActionState(updateCustomer, initialState)
         
     const handleSubmit = (formData) => {
+        
         if (roleId === 3) {
             formData.append('is_supervisor', true)
         }
 
         return formAction(formData)
     }
-
-    useEffect(() => {
-        const success = state?.message
-        if (success) {
-            setRoleId(4)
-        }
-    }, [state]) 
 
     return (
         <>
@@ -90,6 +84,7 @@ export default function StaffDetailForm({staff}) {
                         defaultValue={state.inputs?.password ?? ""}
                         placeHolder='Contraseña' 
                         capitalize={true}
+                        required={false}
                     />
                     {state?.errors?.password && <span className="field_error">{state?.errors?.password}</span>}
         
@@ -98,7 +93,7 @@ export default function StaffDetailForm({staff}) {
                     <Select 
                         name='role_id' 
                         options={[{value: 4, label: 'Cajero'}, {value: 3, label: 'Supervisor'}]}
-                        value={state.inputs.role_id ?? staff?.user?.role_id}
+                        value={roleId}
                         onChange={(role) => setRoleId(role.value)}
                         disabled={false}
                     />
@@ -110,6 +105,7 @@ export default function StaffDetailForm({staff}) {
                                 defaultValue={state.inputs?.pin ?? ""}
                                 placeHolder='PIN Para Permisos' 
                                 capitalize={true}
+                                required={false}
                                 />
                                 {state?.errors?.pin && <span className="field_error">{state?.errors?.pin}</span>}
                             </>

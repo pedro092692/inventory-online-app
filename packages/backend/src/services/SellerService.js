@@ -121,7 +121,7 @@ class SellerService {
                 paranoid: false,
                 order: [['sales', 'id', 'DESC']],
             })
-            // await seller.user.update({email: 'pedro0926@hotmail.com'})
+            
             if(!seller) {
                 throw new NotFoundError()
             }
@@ -179,9 +179,25 @@ class SellerService {
      */
     updateSeller(sellerId, updates) {
         return this.#error.handler(['Update Seller', sellerId, 'Seller'], async() => {
-            const seller = await this.getSeller(sellerId)
-            const updatedSeller = await seller.update(updates)
-            return updatedSeller
+            const {name, last_name, id_number, address, is_supervisor, pin} = updates
+            const staff_updates = {name, last_name, id_number, address, 
+                is_supervisor: is_supervisor ? is_supervisor : false,
+                pin: pin ? pin : null}
+            
+            const {email, password, role_id} = updates
+            const user_updates = {email, role_id, ...(password ? {password} : {})}
+            
+            const data = await this.getSeller(sellerId)
+            console.log(staff_updates)
+            await data.seller.update(staff_updates)
+            
+            if (user_updates) {
+                await data.seller.user.update(user_updates)
+            }
+            
+            const updatedUser = await this.getSeller(sellerId)
+            
+            return updatedUser.seller
         })
     }
 
