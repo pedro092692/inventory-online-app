@@ -117,12 +117,17 @@ class SellerService {
      * @throws {ServiceError} - throws an error if the seller could not be found
      * @returns {Promise<Object>} - returns the seller with their sales
      */ 
-    getSeller(id) {
+    getSeller(id, pageInvoices=1, limitInvoices=8) {
+        const offsetInvoices = (pageInvoices - 1) * limitInvoices
         return this.#error.handler(['Read Seller', id, 'Seller'], async () => {
             const seller = await this.Seller.findByPk(id, {
                 include: [{
                     association: 'sales',
-                    attributes: ['id', 'date', 'total']
+                    attributes: ['id', 'date', 'total'],
+                    separate: true,
+                    limit: limitInvoices,
+                    offset: offsetInvoices,
+                    order: [['id', 'DESC']]
                 },
                 {
                     association: 'user',
@@ -131,7 +136,6 @@ class SellerService {
                 }   
                 ],
                 paranoid: false,
-                order: [['sales', 'id', 'DESC']],
             })
             
             if(!seller) {

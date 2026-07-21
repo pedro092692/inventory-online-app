@@ -136,8 +136,10 @@ class SellerController {
      * @returns {Promise<void>} - returns the seller details in the response
      */
     getSeller = this.#error.handler( async(req, res) => {
+        const limitInvoices = req.query.limitInvoices ? parseInt(req.query.limitInvoices) : 8
+        const pageInvoices = req.query.pageInvoices ? parseInt(req.query.pageInvoices) : 1
         const { id } = req.params
-        const {seller} = await this.sellerService.getSeller(id)
+        const {seller} = await this.sellerService.getSeller(id, pageInvoices, limitInvoices)
         res.status(200).json({seller})
     })
 
