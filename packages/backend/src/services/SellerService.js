@@ -109,19 +109,26 @@ class SellerService {
     getSeller(id) {
         return this.#error.handler(['Read Seller', id, 'Seller'], async () => {
             const seller = await this.Seller.findByPk(id, {
-                include: {
+                include: [{
                     association: 'sales',
                     attributes: ['id', 'date', 'total']
                 },
+                {
+                    association: 'user',
+                    attributes: ['id', 'email']
+                }   
+                ],
                 paranoid: false,
                 order: [['sales', 'id', 'DESC']],
             })
-
+            // await seller.user.update({email: 'pedro0926@hotmail.com'})
             if(!seller) {
                 throw new NotFoundError()
             }
 
-            return seller
+            return {
+                seller: seller
+            }
         })
     }
 
