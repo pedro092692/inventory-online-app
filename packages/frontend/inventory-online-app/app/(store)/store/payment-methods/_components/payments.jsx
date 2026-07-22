@@ -1,5 +1,6 @@
 import GetItemAction from '@/app/lib/actions/get'
 import List from '@/app/ui/list/list'
+import { Button } from '@/app/ui/utils/button/buttons'
 import styles from '@/app/(store)/store/currency/_components/data.module.css'
 
 export default async function PyamentsInfo({}){
@@ -45,6 +46,10 @@ export default async function PyamentsInfo({}){
         )
     }
 
+    const customButton = (data) => {
+       
+    }
+
     return (
         <List
             tableHead={tableHead}
@@ -55,6 +60,8 @@ export default async function PyamentsInfo({}){
             userPermissions={userPermissions}
             showView={false}
             showDelete={false}
+            showEdit={false}
+            custonActionButton={(data) => customButton(data)}
             customClass={styles.table}
         />
     )
