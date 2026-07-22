@@ -33,7 +33,7 @@ export function Input({
         maxLength=null,
     }) {
     const style_ = {...style, backgroundColor: `var(${backgroundColor})`, padding: showIcon ? '0px 0px 0px 8px' : '0px 0px 0px 16px', width: '100%', textTransform: capitalize ? 'capitalize' : 'none'}
-  
+    
     return (
         <Container
             padding={showIcon ? '0px 0px 0px 16px' : '0px'}
