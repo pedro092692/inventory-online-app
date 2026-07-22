@@ -16,6 +16,7 @@
     "react": "^19.1.2",
     "react-dom": "^19.1.2",
     "react-loader-spinner": "^8.0.2",
+    "react-number-format": "^5.4.5",
     "use-debounce": "^10.1.0"
   },
   "devDependencies": {
