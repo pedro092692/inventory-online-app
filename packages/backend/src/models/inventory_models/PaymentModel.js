@@ -60,6 +60,12 @@ function initializePayment(sequelize, schema) {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false
+            },
+
+            status: {
+                type: DataTypes.ENUM('ACTIVE', 'DISABLED'),
+                allowNull: false,
+                defaultValue: 'ACTIVE'
             }
         },
         {

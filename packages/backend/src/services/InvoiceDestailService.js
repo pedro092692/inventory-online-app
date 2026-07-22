@@ -7,6 +7,10 @@ import { sequelize } from '../database/database.js'
 import hasPassword from '../utils/encrypt.js'
 import {fn, col } from 'sequelize'
 import { NotFoundError } from '../errors/NofoundError.js'
+import pkg from '../config/config.js'
+
+const currentEnv = process.env.NODE_ENV || 'development'
+const {credit_method_id} = pkg[currentEnv]
 
 class InvoiceDetailService {
     // instace of error handler
@@ -261,7 +265,7 @@ class InvoiceDetailService {
                         customer_id: invoice.customer_id,
                         origin_invoice_id: invoiceId,
                         amount: totalAmountToReturn,
-                        payment_method_id: 8,
+                        payment_method_id: credit_method_id,
                     },
                     {
                         transaction: t

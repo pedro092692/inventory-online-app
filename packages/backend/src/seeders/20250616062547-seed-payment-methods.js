@@ -1,3 +1,8 @@
+import pkg from '../config/config.js'
+
+const currentEnv = process.env.NODE_ENV || 'development'
+const {credit_method_id} = pkg[currentEnv]
+
 export default {
   /**
    * Inserts default data into the `payments` table within the specified schema.
@@ -17,41 +22,49 @@ export default {
       },
       [
         {
+          id: 1,
           name: 'Punto de venta',
           currency: 'Bolivar Digital',
           allow_change: false
         },
         {
+          id: 2,
           name: 'Pago Movil',
           currency: 'Bolivar Digital',
           allow_change: false
         },
         { 
+          id: 3,
           name: 'Transferencia',
           currency: 'Bolivar Digital',
           allow_change: false
         },
         {
+          id: 4,
           name: 'Efectivo Bolivares',
           currency: 'Bolivar Digital',
           allow_change: true
         },
         { 
+          id: 5,
           name: 'Efectivo Dolares',
           currency: 'Dolares',
           allow_change: true
         },
         {
+          id: 6,
           name: 'Transferencia Dolares',
           currency: 'Dolares',
           allow_change: false
         },
         {
+          id: 7,
           name: 'Cripto',
           currency: 'Criptomonedas',
           allow_change: false
         },
         {
+          id: credit_method_id,
           name: 'Nota de Credito',
           currency: 'Saldo tienda',
           allow_change: false

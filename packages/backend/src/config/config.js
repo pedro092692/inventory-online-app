@@ -18,6 +18,7 @@ const appConfig = {
     admin_pass: process.env.ADMIN_PASS,
     admin_role: process.env.ADMIN_ROLE,
     admin_tenant: process.env.ADMIN_TENANT,
+    credit_method_id: process.env.CREDIT_METHOD_ID,
 }
 
 module.exports = {

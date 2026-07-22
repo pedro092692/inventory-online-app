@@ -17,7 +17,7 @@ import { Modal } from '@/app/ui/utils/alert/modal'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Container } from '@/app/ui/utils/container'
 import { useState, useMemo, useActionState, useEffect, startTransition, useRef } from 'react'
-const STORE_CREDIT_ID = process.env.NEXT_PUBLIC_STORE_CREDIT_ID || 8
+const STORE_CREDIT_ID = process.env.NEXT_PUBLIC_STORE_CREDIT_ID || 99
 
 
 export default function SellForm({ paymentMethods=[], exchangeRate=null, currentUser=null}) {

@@ -1,7 +1,11 @@
+import pkg from '../config/config.js'
+import process from 'process'
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import { Op } from 'sequelize'
 
+const currentEnv = process.env.NODE_ENV || 'development'
+const {credit_method_id} = pkg[currentEnv]
 
 class PaymentMethodService {
     // Error handler instante 
@@ -60,8 +64,8 @@ class PaymentMethodService {
     getAllPaymentMethods(limit=10, offset=0, forListing = false) {
         return this.#error.handler(['Read All Payment Methods'], async() => {
             const whereClause = forListing ? 
-                { id: { [Op.ne]: 8}  }
-                : {}
+                { id: { [Op.ne]: credit_method_id }  }
+                : {status: 'ACTIVE'}
             const allMethods = await this.PaymentMethod.findAll({
                 where: whereClause,
                 limit: limit,

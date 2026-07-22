@@ -31,7 +31,7 @@ class PayInvoiceService {
         this.auditLogService = new AuditLogService(auditLogModel)
         this.customerCreditService = new CustomerCreditService(customerCreditsModel)
         this.cashMovements = cashMovementsModel,
-        this.credit_method_id = process.env.CREDIT_METHOD_ID || 8
+        this.credit_method_id = process.env.CREDIT_METHOD_ID || 99
         this.#error
     }
 
@@ -130,9 +130,6 @@ class PayInvoiceService {
                 for (const payment of payments) {
                     const { paymentId, amount } = payment
 
-                    if (paymentId < 1 || paymentId > 8) {
-                        throw new Error(`Payment Id must be between 1 and 8. Received: ${paymentId}`)
-                    }
 
                     // Dynamically recalculate the remaining balance to be paid in USD in this iteration
                     let total_to_pay = parseFloat((total - total_paid).toFixed(2))

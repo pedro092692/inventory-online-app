@@ -43,7 +43,13 @@ export default {
           type: Sequelize.BOOLEAN,
           allowNull: false,
           defaultValue: false,
-        }
+        },
+        
+        status: {
+          type: Sequelize.ENUM('ACTIVE', 'DISABLED'),
+          allowNull: false,
+          defaultValue: 'ACTIVE',
+        },
       },
       {
         schema
