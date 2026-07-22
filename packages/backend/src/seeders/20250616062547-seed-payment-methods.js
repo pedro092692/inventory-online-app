@@ -64,6 +64,12 @@ export default {
           allow_change: false
         },
         {
+          id: 8,
+          name: 'Biopago',
+          currency: 'Bolivar Digital',
+          allow_change: false
+        },
+        {
           id: credit_method_id,
           name: 'Nota de Credito',
           currency: 'Saldo tienda',
