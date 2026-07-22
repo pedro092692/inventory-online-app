@@ -36,6 +36,20 @@ class DollarValueController {
     })
 
     /**
+     * Retrieves all currenty history data.
+     * @param {Object} req - request object
+     * @param {Object} res - response object to send the list of currenty data
+     * @throws {ServiceError} - throws an error if the products could not be retrieved
+     * @returns {Promise<void>} - returns the list of products in the response
+     */
+    allData = this.#error.handler( async(req, res) => {
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const page = req.query.page ? parseInt(req.query.page) : 1
+        const {currencyData} = await this.dollarService.getAllData(limit, page)
+        res.status(200).json({currencyData})
+    })
+
+    /**
      * Retrieve the total number of pages for the currency value list.
      * * @async
      * @param {import('express').Request} req - Express request object.

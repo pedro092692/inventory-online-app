@@ -45,6 +45,29 @@ class DollarValueService {
     }
 
     /**
+     * Retrieves all currency history data with pagination.
+     * @param {Number} limit - limit of data to return
+     * @param {Number} offset - offset of data to return
+     * @returns {Promise<Array>} - returns an array of data
+     * @throws {ServiceError} - throws an error if the data could not be retrieved
+     */
+    getAllData(limit = 10, page = 1) {
+        const offset = (page - 1) * limit
+        return this.#error.handler(['Read All Products'], async () => {
+            const data = await this.DollarValue.findAll({
+                attributes: ['date', 'value'],
+                order: [['id', 'DESC']],
+                limit: limit,
+                offset: offset
+            })
+
+            return {
+                currencyData: data
+            }
+        })    
+    }
+
+    /**
      * Retrieves a dollar last dollar value.
      * @returns {Promise<Object>} - returns the last dollar value.
      * @throws {ServiceError} - throws an error if the last dollar value could not be retrieved
