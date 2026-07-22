@@ -64,6 +64,20 @@ class DollarValueService {
         })
     }
 
+
+    /**
+     * Calculates the total number of pages for currency history based on a limit.
+     * @param {number} [limit=10] - The number of records to display per page.
+     * @returns {Promise<number>} A promise that resolves to the total number of calculated pages.
+     * @throws Will be handled by the internal error handler.
+     */
+    totalPages(limit = 10) {
+        return this.#error.handler(['Total pages', limit, 'Dollar value'], async () => {
+            const count = await this.DollarValue.count()
+            return Math.ceil(count / limit)
+        })
+    }
+
     /**
      * Update a Dollar vaule by its ID
      * @returns {Promise<Object>} - returns the updated dollar value.

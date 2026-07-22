@@ -36,6 +36,23 @@ class DollarValueController {
     })
 
     /**
+     * Retrieve the total number of pages for the currency value list.
+     * * @async
+     * @param {import('express').Request} req - Express request object.
+     * @param {Object} req.query - Query parameters.
+     * @param {string} [req.query.limit] - Max number of items per page (defaults to 10).
+     * @param {string} [req.query.data] - Search term to filter results.
+     * @param {import('express').Response} res - Express response object.
+     * @returns {Promise<void>} Sends a JSON response with the total page count.
+     */
+    totalPages = this.#error.handler( async(req, res) => {
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const total = await this.dollarService.totalPages(limit)
+        res.status(200).json({total})
+    })
+
+
+    /**
      * Update the value of Dollar by its ID.
      * @param {Object} req - request object containing new dollar value and ID details in the body
      * @param {Object} res - response object to send the updated new dollar value
