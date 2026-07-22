@@ -1,5 +1,6 @@
 import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
 import PaymentMethodService from '../services/PaymentMethodService.js'
+import { userPermissions } from './CustomerController.js'
 
 class PaymentMethodController {
     // Error handler instance 
@@ -46,7 +47,8 @@ class PaymentMethodController {
     getAllPaymentMethods = this.#error.handler( async(req, res) => {
         const forListing = req.query?.forListing ? req.query?.forListing : false
         const { paymentMethods } = await this.PaymentMethod.getAllPaymentMethods(10, 0, forListing)
-        res.status(200).json({paymentMethods})
+        const permissions = userPermissions(req)
+        res.status(200).json({paymentMethods, permissions: permissions})
     })
 
     /**
