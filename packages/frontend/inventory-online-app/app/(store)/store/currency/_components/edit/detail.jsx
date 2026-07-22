@@ -1,6 +1,5 @@
 import Request from '@/app/utils/request'
-
-
+import CurrencyDetailForm from '@/app/(store)/store/currency/_components/edit/currencyDetailForm'
 export default async function CurrencyInfo({id}) {
     
     const url = `dollar-value/${id}`
@@ -11,8 +10,8 @@ export default async function CurrencyInfo({id}) {
     if (error) {
         return <p className='p2-r errorMsg'>{error}</p>
     }
-    console.log(currencyData)
+    
     return (
-        <p>Details here</p>
+        <CurrencyDetailForm data={currencyData} />
     )
 }
