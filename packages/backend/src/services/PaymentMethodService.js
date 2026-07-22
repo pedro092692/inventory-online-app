@@ -1,5 +1,6 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
+import { Op } from 'sequelize'
 
 
 class PaymentMethodService {
@@ -56,9 +57,13 @@ class PaymentMethodService {
      * @returns {Promise<Array>} - returns an array of payment methods
      * @throws {ServiceError} - throws an error if the payment methods could not be retrieved
      */
-    getAllPaymentMethods(limit=10, offset=0) {
+    getAllPaymentMethods(limit=10, offset=0, forListing = false) {
         return this.#error.handler(['Read All Payment Methods'], async() => {
+            const whereClause = forListing ? 
+                { id: { [Op.ne]: 8}  }
+                : {}
             const allMethods = await this.PaymentMethod.findAll({
+                where: whereClause,
                 limit: limit,
                 offset: offset
             })

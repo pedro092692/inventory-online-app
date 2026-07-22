@@ -44,7 +44,8 @@ class PaymentMethodController {
      * @returns {Promise<void>} - returns the list of payment methods in the response
      */
     getAllPaymentMethods = this.#error.handler( async(req, res) => {
-        const { paymentMethods } = await this.PaymentMethod.getAllPaymentMethods()
+        const forListing = req.query?.forListing ? req.query?.forListing : false
+        const { paymentMethods } = await this.PaymentMethod.getAllPaymentMethods(10, 0, forListing)
         res.status(200).json({paymentMethods})
     })
 

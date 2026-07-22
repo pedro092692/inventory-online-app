@@ -169,6 +169,14 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 label: 'Editar valor divisa',
                 role: [1,2]
             }
+        },
+
+        payments: {
+            default: {
+                href: withParams('payment-methods'),
+                label: 'Métodos de pagos',
+                role: [1,2,3]
+            },
         }
     }
     
