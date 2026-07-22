@@ -1,0 +1,14 @@
+.table td[data-label="date"],
+.table td[data-label="value"]{
+    text-align: right;
+}
+.table td[data-label="date"]{
+    width: 33%;
+}
+
+
+.table tbody tr:hover{
+  background-color: #EEE1C4 !important;
+  cursor: default;
+}
+

@@ -2,6 +2,7 @@ import { Container } from '@/app/ui/utils/container'
 import Route from '@/app/ui/routesLinks/routes'
 import Pagination from '@/app/ui/pagination/pagination'
 import { Suspense } from 'react'
+import Data from '@/app/(store)/store/currency/_components/data'
 import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
 import GetItemAction from '@/app/lib/actions/get'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
@@ -22,8 +23,8 @@ export default async function Currency({searchParams}) {
               width='100%'
         >
             <Route path='currency' endpoints={['add', 'default']} queryString={queryString} /> 
-            <Suspense key={currentPage} fallback={<ListSkeleton nTitle={7} />}>
-                              {/* <Products page={currentPage} query={query} queryString={queryString}/> */}
+            <Suspense key={currentPage} fallback={<ListSkeleton nTitle={3} />}>
+                <Data page={currentPage} queryString={queryString}/>
             </Suspense>
             {
                 error ? 

@@ -1,5 +1,6 @@
 import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
 import DollarValueService from '../services/DollarValueService.js'
+import { userPermissions } from './CustomerController.js'
 
 class DollarValueController {
     // new instance of controller error handler 
@@ -45,8 +46,10 @@ class DollarValueController {
     allData = this.#error.handler( async(req, res) => {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
+        const permissions = userPermissions(req)
         const {currencyData} = await this.dollarService.getAllData(limit, page)
-        res.status(200).json({currencyData})
+
+        res.status(200).json({currencyData, permissions: permissions})
     })
 
     /**

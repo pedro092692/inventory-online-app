@@ -55,7 +55,7 @@ class DollarValueService {
         const offset = (page - 1) * limit
         return this.#error.handler(['Read All Products'], async () => {
             const data = await this.DollarValue.findAll({
-                attributes: ['date', 'value'],
+                attributes: ['date', 'value', 'id'],
                 order: [['id', 'DESC']],
                 limit: limit,
                 offset: offset
