@@ -69,7 +69,8 @@ class PaymentMethodService {
             const allMethods = await this.PaymentMethod.findAll({
                 where: whereClause,
                 limit: limit,
-                offset: offset
+                offset: offset,
+                order: [['id', 'ASC']]
             })
 
             return {
