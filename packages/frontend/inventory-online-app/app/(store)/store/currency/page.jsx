@@ -15,8 +15,30 @@ export default async function Currency({searchParams}) {
     const totalPages = data?.total || 1
     
     return (
-        <>
-            dolares
-        </>
+        <Container
+              direction={'column'}
+              alignItem={'start'}
+              padding='0px'
+              width='100%'
+        >
+            <Route path='currency' endpoints={['add', 'default']} queryString={queryString} /> 
+            <Suspense key={currentPage} fallback={<ListSkeleton nTitle={7} />}>
+                              {/* <Products page={currentPage} query={query} queryString={queryString}/> */}
+            </Suspense>
+            {
+                error ? 
+                (    
+                    <p className='p2-r errorMsg'>{error}</p>
+                )
+                :
+                <Container
+                    padding={'0px'}
+                    width={'100%'}
+                    justifyContent={'space-between'}
+                >
+                    <Pagination totalPages={totalPages} />
+                </Container>
+            }
+        </Container>
     )
 }

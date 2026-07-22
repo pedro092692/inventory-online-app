@@ -148,6 +148,26 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                 label: 'Editar personal',
                 role: [1,2]
             }
+        },
+
+        currency: {
+            default: {
+                href: withParams(endpoint),
+                label: 'Histórico de divisa',
+                role: [1,2,3]
+            },
+
+            add: {
+                href: `${endpoint}/add${queryString?`?${queryString}`: ''}`,
+                label: 'Actualizar valor divisa',
+                role: [1,2]
+            },
+
+            edit: {
+                href: `${endpoint}/edit/[id]`,
+                label: 'Editar valor divisa',
+                role: [1,2]
+            }
         }
     }
     
