@@ -87,6 +87,31 @@ class DollarValueService {
         })
     }
 
+    /**
+     * Retrieves a currency by their ID.
+     * @param {number} id - The ID of the currency to retrieve.
+     * @return {Promise<Object>} - A promise that resolves to the currency object.
+     * @throws {NotFoundError} - If the currency is not found.
+     * @throws {ServiceError} - If an error occurs during currency retrieval.
+     */
+    getDataById(id) {
+        return this.#error.handler(['Read Customer', id, 'Customer'], async () => {
+            const data = await this.DollarValue.findByPk(id, {
+                attributes: [
+                    'date',
+                    'value',
+                    'id'
+                ],
+            })
+            if (!data) {
+                throw new NotFoundError()
+            }
+            return {
+                currencyData: data
+            }
+        })
+    }
+
 
     /**
      * Calculates the total number of pages for currency history based on a limit.

@@ -20,6 +20,7 @@ class DollarValueRoutes{
         this.router.get('/latest', (req, res) => new DollarValueController(req.Dollar).getLastValue(req, res))
         this.router.get('/all', (req, res) => new DollarValueController(req.Dollar).allData(req, res))
         this.router.get('/total-pages', (req, res) => new DollarValueController(req.Dollar).totalPages(req, res))
+        this.router.get('/:id', (req, res) => new DollarValueController(req.Dollar).getCurrencyById(req, res))
         this.router.patch('/', (req, res) => new DollarValueController(req.Dollar).updateDollarValue(req, res))
         this.router.delete('/', (req, res) => new DollarValueController(req.Dollar).deleteDollarValue(req, res))
     }

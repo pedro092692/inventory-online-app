@@ -60,11 +60,11 @@ export default function AddCurrencyValueForm() {
                 />
             </Container>
 
-            
             {state?.errors?.value && <span className="field_error">{state?.errors?.value}</span>}
             
-            
             {state?.errors?.error && <span className="field_error">{state?.errors?.error}</span>}
+
+            {state?.errors && typeof state.errors != 'object' && <span className="field_error">{state?.errors }</span>}
 
             {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
             

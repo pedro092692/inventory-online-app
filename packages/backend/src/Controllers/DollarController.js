@@ -36,6 +36,19 @@ class DollarValueController {
         res.status(200).json({lastValue})
     })
 
+     /**
+     * Retrieves a currency data by their ID.
+     * @param {Object} req - request object containing the currency ID in the params
+     * @param {Object} res - response object to send the currency details
+     * @throws {ServiceError} - throws an error if the currency could not be found
+     * @returns {Promise<void>} - returns the currency details in the response
+     */
+    getCurrencyById = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const {currencyData} = await this.dollarService.getDataById(id)
+        res.status(200).json({currencyData})
+    })
+
     /**
      * Retrieves all currenty history data.
      * @param {Object} req - request object
