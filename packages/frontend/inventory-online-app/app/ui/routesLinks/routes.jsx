@@ -6,6 +6,7 @@ import { getCurrentUser } from '@/app/utils/getCurrentUser'
 export default async function Route({path='customers', endpoints=['default', 'add'], queryString='', id=null}) {
     const userInfo = await getCurrentUser()
     const endpoint = `/store/${path}`
+    
     const withParams = (url) => {
         return queryString ? `${url}?${queryString}` : url
     }

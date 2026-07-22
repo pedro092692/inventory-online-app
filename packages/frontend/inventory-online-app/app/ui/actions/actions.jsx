@@ -26,7 +26,13 @@ export default function Actions({
     const canDelete = userPermissions.includes('delete')
     const createURL = (action, id) => {
         const path = `/store/${endpoint}`
-        const url = `${path}/${action}/${id}${queryString ? `?${queryString}` : ''}`
+        let url = `${path}/${action}/${id}${queryString ? `?${queryString}` : ''}`
+        if (endpoint === 'dollar-value' && action === 'edit'){
+             url = `/store/currency/${action}/${id}${queryString ? `?${queryString}` : ''}`
+        }
+        
+        
+       
         return url
     }
 

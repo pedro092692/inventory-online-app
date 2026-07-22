@@ -1,18 +1,17 @@
 import Request from '@/app/utils/request'
 
 
-export default async function CustomerInfo({id}) {
+export default async function CurrencyInfo({id}) {
     
-    const endpoint = `dollar-value/${id}`
-    const url = `${endpoint}?limitInvoices=0`
+    const url = `dollar-value/${id}`
     const response = await  Request(url, 'GET', null, 'Hubo un error inesperado intententa nuevamente')
     const {data, error} = response
  
-    const customer = data?.customer || null
+    const currencyData = data?.currencyData || null
     if (error) {
         return <p className='p2-r errorMsg'>{error}</p>
     }
-    
+    console.log(currencyData)
     return (
         <p>Details here</p>
     )
