@@ -37,7 +37,7 @@ export function Container(
             marginLeft: marginLeft
         }
     return (
-        <div ref={ref} className={`container ${className} ${listContiner ? 'container-list' : ''}`} style={styles} 
+        <div ref={ref} className={`containerNexa ${className} ${listContiner ? 'container-list' : ''}`} style={styles} 
             onMouseEnter={onMouseEnter} 
             onMouseLeave={onMouseLeave} 
             onClick={onClick}

@@ -6,8 +6,6 @@ import ListSkeleton from '@/app/ui/skeleton/list/listSkeleton'
 
 export default async function Cashiers() {
     
-    
-
     return (
         <Container
             direction={'column'}
