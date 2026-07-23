@@ -54,7 +54,7 @@ class ReportService {
                     name: client.customer.name,
                     total_spent: client.dataValues.total_spent,
                     first_purchase: client.dataValues.first_invoice.toLocaleDateString('es-VE'),
-                    last_purcahse: client.dataValues.last_invoice.toLocaleDateString('es-VE'),
+                    last_purchase: client.dataValues.last_invoice.toLocaleDateString('es-VE'),
                     phone: client.customer.phone
                     
                 }

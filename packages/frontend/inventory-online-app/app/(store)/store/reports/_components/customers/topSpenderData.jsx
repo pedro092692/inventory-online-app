@@ -10,6 +10,6 @@ export default async function TopSpenders() {
     const topSpenders = data
     
     return (
-        <TopSpendersReport data={topSpenders}/>
+        <TopSpendersReport topSpenders={topSpenders}/>
     )   
 }
