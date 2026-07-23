@@ -32,7 +32,7 @@ export function Navbar() {
     }, [])
 
     return (
-        <nav className={`container ${styles.navbar}`}>
+        <nav className={`containerNexa ${styles.navbar}`}>
             {/* company logo */}
             <Link href='/' style={{height: '18px'}}> 
                 <Logo />

@@ -4,7 +4,7 @@ import { Container } from '../../utils/container'
 
 export function Customer() {
     return (
-        <section className={`container ${styles.section}`}>
+        <section className={`containerNexa ${styles.section}`}>
             <Container 
                 className={styles.mainContainer}
                 gap='40px'

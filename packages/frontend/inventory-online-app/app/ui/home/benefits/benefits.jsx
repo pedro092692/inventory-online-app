@@ -14,7 +14,7 @@ export function Benefits() {
 
     console.log(styles.listItem)
     return(
-        <section className={`container ${styles.section}`}>
+        <section className={`containerNexa ${styles.section}`}>
             {/* text */}
             <Container 
                 direction='column'

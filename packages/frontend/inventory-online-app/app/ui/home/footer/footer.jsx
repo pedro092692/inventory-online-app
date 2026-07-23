@@ -33,7 +33,7 @@ export function Footer() {
     }
 
     return (
-        <footer className={`container ${styles.footer}`}>
+        <footer className={`containerNexa ${styles.footer}`}>
             <Container
                 className={styles.footerMenuContainer}
             >  

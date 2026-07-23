@@ -11,92 +11,166 @@ import {
 
 
 export default function TopSpendersReport({ data = [] }) {
-  // Colores para las barras (puedes usar los colores de Nexastock)
-  const COLORS = ['#4f46e5', '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe'];
+const formatCurrency = (value) => 
+    `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const CustomTooltip = ({ active, payload }) => {
 
-  // Formateador de moneda
-  const formatCurrency = (value) => `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    if (!active || !payload?.length) return null
 
-  // Custom Tooltip para la gráfica
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-3 border border-gray-200 shadow-md rounded-md">
-          <p className="font-semibold capitalize text-gray-800">{payload[0].payload.name}</p>
-          <p className="text-indigo-600 font-bold">
-            Total: {formatCurrency(payload[0].value)}
-          </p>
+    const customer = payload[0].payload
+
+    return (
+
+        <div className="rounded-xl bg-white shadow-lg border border-slate-200 p-4">
+
+            <p className="font-semibold text-slate-800">
+                {customer.name}
+            </p>
+
+            <p className="text-2xl font-bold text-[#274C86] mt-1">
+                {formatCurrency(customer.total_spent)}
+            </p>
+
+            <div className="mt-3 text-sm text-slate-500">
+
+                <div>{customer.phone}</div>
+
+                <div>
+                    Última compra {customer.last_purchase}
+                </div>
+
+            </div>
+
         </div>
-      );
-    }
-    return null;
-  };
 
+    )
+
+}
+  
+function Card({title,value}){
+
+return(
+
+<div className="rounded-xl border border-slate-200 bg-white p-5">
+
+<p className="text-sm text-slate-500">
+{title}
+</p>
+
+<h2 className="mt-2 text-3xl font-bold text-slate-800">
+{value}
+</h2>
+
+</div>
+
+)
+
+}
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
-      <h2 className="text-xl font-bold text-gray-800 mb-6">Top Clientes por Gasto</h2>
+    <>
+    <div className="grid grid-cols-4 gap-5 mb-8">
+
+<Card
+title="Clientes"
+value="124"
+/>
+
+<Card
+title="Ventas"
+value="$18,240"
+/>
+
+<Card
+title="Ticket Promedio"
+value="$52"
+/>
+
+<Card
+title="Compras"
+value="654"
+/>
+
+</div>
+    <ResponsiveContainer width="100%" height={420}>
+      <BarChart
+          data={data}
+          layout="vertical"
+          margin={{
+              top: 0,
+              right: 20,
+              left: 10,
+              bottom: 0
+          }}
+      >
+      <XAxis hide type="number" />
+
+      <YAxis
+        width={120}
+        type="category"
+        dataKey="name"
+        tick={{
+            fill: "#5B6472",
+            fontSize: 13
+        }}
+      />
+
+      <Tooltip content={<CustomTooltip />} />
+
+        <Bar
+            dataKey="total_spent"
+            radius={8}
+            barSize={18}
+            fill="#274C86"
+        />
+      </BarChart>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        {/* LADO IZQUIERDO: GRÁFICA */}
-        <div className="h-80 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data}
-              layout="vertical"
-              margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
-            >
-              <XAxis type="number" tickFormatter={(tick) => `$${tick}`} />
-              <YAxis 
-                dataKey="name" 
-                type="category" 
-                tick={{ fontSize: 12, textTransform: 'capitalize' }}
-                width={100}
-              />
-              <Tooltip content={<CustomTooltip />} cursor={{fill: 'transparent'}} />
-              <Bar dataKey="total_spent" radius={[0, 4, 4, 0]} barSize={30}>
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+    </ResponsiveContainer>
+    <div className="space-y-3">
 
-        {/* LADO DERECHO: TABLA DE DETALLES */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 rounded-t-lg">
-              <tr>
-                <th scope="col" className="px-4 py-3 rounded-tl-lg">Cliente</th>
-                <th scope="col" className="px-4 py-3">Total Gastado</th>
-                <th scope="col" className="px-4 py-3">Teléfono</th>
-                <th scope="col" className="px-4 py-3 rounded-tr-lg">Última Compra</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((customer, index) => (
-                <tr key={customer.id} className="bg-white border-b hover:bg-gray-50">
-                  <td className="px-4 py-4 font-medium text-gray-900 capitalize">
-                    {index + 1}. {customer.name}
-                  </td>
-                  <td className="px-4 py-4 font-bold text-indigo-600">
-                    {formatCurrency(customer.total_spent)}
-                  </td>
-                  <td className="px-4 py-4">
-                    {customer.phone}
-                  </td>
-                  <td className="px-4 py-4">
-                    {/* Nota: Corregí el typo 'last_purcahse' a 'last_purchase' si lo arreglas en BD, si no, déjalo como viene en tu JSON */}
-                    {customer.last_purcahse || customer.last_purchase}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+{
+data.map((customer,index)=>(
+<div
+key={customer.id}
+className="flex items-center justify-between rounded-xl border border-slate-200 p-4 hover:shadow transition"
+>
 
-      </div>
-    </div>
+<div>
+
+<div className="font-semibold text-slate-800">
+
+#{index+1} {customer.name}
+
+</div>
+
+<div className="text-sm text-slate-500">
+
+{customer.phone}
+
+</div>
+
+</div>
+
+<div className="text-right">
+
+<div className="font-bold text-[#274C86]">
+
+{formatCurrency(customer.total_spent)}
+
+</div>
+
+<div className="text-xs text-slate-500">
+
+{customer.last_purchase}
+
+</div>
+
+</div>
+
+</div>
+))
+}
+
+</div>
+    </>
   )
 }

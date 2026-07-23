@@ -5,7 +5,7 @@ import styles from './page.module.css'
 
 export function CallToAction() {
     return (
-        <section className='container' style={{flexDirection: 'column', justifyContent:'start', gap:'24px'}}>
+        <section className='containerNexa' style={{flexDirection: 'column', justifyContent:'start', gap:'24px'}}>
             <h2 className={`h1 ${styles.mainText}`}>
                 Lleva tu negocio al siguiente nivel con Nexastock.
             </h2>
