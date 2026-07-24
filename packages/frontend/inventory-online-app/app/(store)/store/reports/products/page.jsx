@@ -2,6 +2,7 @@ import {Container} from '@/app/ui/utils/container'
 import { Suspense } from 'react'
 import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
 import TopProducts from '@/app/(store)/store/reports/_components/products/topProductsData'
+import WorstProducts from '@/app/(store)/store/reports/_components/products/worstProductsData'
 
 
 export default function Reports() {
@@ -21,8 +22,9 @@ export default function Reports() {
                     padding={'16px'}
                     width={'100%'}
                     gap={'24px'}
-                >
+                >   
                     <TopProducts />
+                    <WorstProducts />
                 </Container>
             </Suspense>
         </Container>
