@@ -220,8 +220,17 @@ class ReportService {
                 ],
                 limit: 10
             })
-
-            return products
+         
+            const data_products = products.map((p) => {
+                return {
+                    name: p?.products?.name || 'null',
+                    value: parseInt(p?.dataValues?.total_sold || 0),
+                    price: parseFloat(p.products?.selling_price || 0),
+                    id: p.product_id
+                }
+            })
+            
+            return data_products
         })
     }
 

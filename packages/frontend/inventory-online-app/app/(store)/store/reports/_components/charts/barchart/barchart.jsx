@@ -64,6 +64,16 @@ export default function Barchart({ data = [], keys = [], type = null}) {
                         </>
                     )
                 }
+
+                {
+                    type === 'product' && (
+                        <>
+                            <div>Unidades vendidas: <b>{d.value}</b></div>
+                            <div style={{ opacity: 0.8 }}>Precio unitario: ${d.price.toFixed(2)}</div>
+                            <div style={{ opacity: 0.8 }}>Ingresos generados: ${(d.price * d.value).toFixed(2)}</div>
+                        </>
+                    )
+                }
             </div>
         )
     }
