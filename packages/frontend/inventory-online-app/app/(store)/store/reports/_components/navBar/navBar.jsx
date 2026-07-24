@@ -8,7 +8,6 @@ import Link from 'next/link'
 export default function NavReports() {
     const pathname = usePathname().split('/')
     const endpoint = pathname[pathname.length - 1] 
-    console.log(endpoint)
     const reportsButtons = [
         {
             label: 'Clientes',

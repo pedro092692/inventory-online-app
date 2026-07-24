@@ -52,6 +52,18 @@ export default function Barchart({ data = [], keys = [], type = null}) {
                         </>
                     )
                 }
+
+                {
+                    type === 'recurring' && (
+                        <>
+                            <div>Compras registradas: <b>{d.value}</b></div>
+                            <div style={{ opacity: 0.8, }}>Cliente desde hace {d.daysAsCustomer} días</div>
+                            <div style={{ opacity: 0.8, display: "flex", alignItems: "center", gap: 6 }}>
+                                <Phone size={12} /> {d.phone}
+                            </div>
+                        </>
+                    )
+                }
             </div>
         )
     }
@@ -88,6 +100,6 @@ export default function Barchart({ data = [], keys = [], type = null}) {
     }
 
     return (
-        <RankedBarChart data={data} type={type} keys={keys} barColor={palette.navy} />
+        <RankedBarChart data={data} type={type} keys={keys} barColor={type == 'spending' ?  palette.navy : palette.teal } />
     )
 }
