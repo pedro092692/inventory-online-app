@@ -1,5 +1,6 @@
+import { raw } from 'express';
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js';
-import { Sequelize } from 'sequelize'
+import { Sequelize, where } from 'sequelize'
 
 
 class ReportService {
@@ -12,10 +13,11 @@ class ReportService {
      * @param {InvoiceDetail: typeof Model} [invoiceDetailModel=null] - The InvoiceDetails model.
      * @param {PaymentDetail: typeof Model} [invoicePayDetailModel=null] - The PaymentDetail model.
      */
-    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null) {
+    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null, customerModel=null) {
         this.invoice = invoiceModel
         this.invoiceDetail = invoiceDetailModel,
         this.invoicePayDetail = invoicePayDetailModel
+        this.customerModel = customerModel
         this.#error
     }
     /**
@@ -94,6 +96,92 @@ class ReportService {
 
             return customers
         })
+    }
+
+    /**
+     * Retrieves key performance indicators (KPIs) related to customers and their invoices.
+     *
+     * This method calculates several aggregated metrics in parallel:
+     *
+     * - **total_customers**: Total number of registered customers.
+     * - **avg_ticket**: Average invoice amount for all paid invoices.
+     * - **top_spender**: The customer who has spent the most (sum of paid invoices).
+     * - **top_recurring**: The customer with the highest number of paid invoices.
+     *
+     * The method uses Sequelize aggregate functions (AVG, SUM, COUNT) and grouping
+     * to compute the KPIs efficiently. All queries run concurrently using `Promise.all`
+     * for optimal performance.
+     *
+     * @async
+     * @function getCustomerKPI
+     * @returns {Promise<Object>} An object containing the computed KPI metrics:
+     * @returns {number} return.kpi.total_customers - Total number of customers.
+     * @returns {string} return.kpi.avg_ticket - Average paid invoice amount (formatted to 2 decimals).
+     * @returns {string} return.kpi.top_spender - Highest total spending by a single customer.
+     * @returns {number} return.kpi.top_recurring - Number of paid invoices from the most recurring customer.
+     *
+     * @throws {Error} Throws an error if any of the database queries fail.
+     */
+    getCustomerKPI(){
+        return this.#error.handler(['GET Customer KPI'], async() => {
+            const [total_customer, avg_ticket, customer, recurring ] = await Promise.all([
+                this.customerModel.count(),
+                this.invoice.findOne({
+                where: {
+                    status: 'paid'
+                },
+                attributes: [
+                    [Sequelize.fn('AVG', Sequelize.col('total')), 'average_ticket']
+                ],
+                }),
+                this.invoice.findOne({
+                where: {
+                    status: 'paid'
+                },
+                attributes: [
+                    [Sequelize.fn('SUM', Sequelize.col('total')), 'total_spent'],
+                ],
+                include:[
+                    {
+                        association: 'customer', attributes: ['id']
+                    }
+                ],
+                group: ['customer_id', 'customer.id'],
+                order:[
+                    [[Sequelize.literal('total_spent'), 'DESC']]
+                ],
+                limit: 1
+                }),
+                this.invoice.findOne({
+                where: {
+                    status: 'paid'
+                },
+                attributes: [
+                    [Sequelize.fn('COUNT', Sequelize.col('customer_id')), 'total_recurring']
+                ],
+                include:[
+                    {
+                        association: 'customer', attributes: ['id']
+                    }
+                ],
+                group: ['customer_id', 'customer.id'],
+                order:[
+                    [[Sequelize.literal('total_recurring'), 'DESC']]
+                ],
+                limit: 1
+                })
+            ])
+            const kpi = {
+                total_customers: total_customer,
+                avg_ticket: parseFloat(avg_ticket?.dataValues?.average_ticket).toFixed(2) || 0,
+                top_spender: parseFloat(customer?.dataValues?.total_spent).toFixed(2) || 0,
+                top_recurring: parseInt(recurring?.dataValues?.total_recurring) || 0
+            }
+
+            
+            return {kpi}
+        })
+
     }
 
     /**

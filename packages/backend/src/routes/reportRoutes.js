@@ -18,6 +18,7 @@ class ReportRoutes {
         this.router.get('/', (req, res) => res.send('Report routes'))
         this.router.get('/top-spending-customers', (req, res) => new ReportController(req.Invoice).getTopSpendingCustomer(req, res))
         this.router.get('/top-recurring-customers', (req, res) => new ReportController(req.Invoice).getTopRecurringCustomer(req, res))
+        this.router.get('/customers-kpi', (req, res) => new ReportController(req.Invoice, null, null, req.Customer).getCustomerKPI(res, res))
         this.router.get('/top-selling-products', (req, res) => new ReportController(null, req.InvoiceDetail ).getTopSellingProducts(req, res))
         this.router.get('/worst-selling-products', (req, res) => new ReportController(null, req.InvoiceDetail ).getWorstWellingProducts(req, res))
         this.router.get('/best-selling-day', (req, res) => new ReportController(req.Invoice).bestSellingDay(req, res))
@@ -45,13 +46,14 @@ class ReportRoutes {
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {Invoice, InvoiceDetail, PaymentDetail} = req.tenantModels
-        if(!Invoice || !InvoiceDetail || !PaymentDetail) {
-            return res.status(400).json({ message: 'Invoice, InvoiceDetail and PaymentDetail models are required' })
+        const {Invoice, InvoiceDetail, PaymentDetail, Customer} = req.tenantModels
+        if(!Invoice || !InvoiceDetail || !PaymentDetail || !Customer) {
+            return res.status(400).json({ message: 'Invoice, InvoiceDetail, Customer and PaymentDetail models are required' })
         }
         req.Invoice = Invoice
         req.InvoiceDetail = InvoiceDetail
         req.PaymentDetail = PaymentDetail
+        req.Customer = Customer
         next()
     }
 }
