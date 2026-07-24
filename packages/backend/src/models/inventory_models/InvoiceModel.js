@@ -142,7 +142,7 @@ function initializeInvoice(sequelize, schema) {
             },
 
             total_reference: {
-                type: DataTypes.DECIMAL(10, 2), 
+                type: DataTypes.DECIMAL(20, 2), 
                 allowNull: true,
                 defaultValue: 0.00,
                 validate: {

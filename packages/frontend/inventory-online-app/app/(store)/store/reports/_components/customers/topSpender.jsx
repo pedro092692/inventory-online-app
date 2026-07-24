@@ -103,19 +103,19 @@ const rankFill = (index, base) => {
     const RankedBarChart = ({ data, type, barColor, height }) => {
         return (
             <ResponsiveContainer width="100%" height={height || Math.max(220, data.length * 56)}>
-                <BarChart data={data} layout="vertical" margin={{ top: 4, right: 40, left: 8, bottom: 4 }}>
+                <BarChart data={data} layout="vertical" margin={{ top: 4, right: 64, left: 8, bottom: 4 }}>
                     <CartesianGrid horizontal={false} stroke={palette.grid} />
-                    <XAxis type="number" tick={{ fontSize: 12, fill: palette.muted }} axisLine={false} tickLine={false} />
+                    <XAxis type="number" tick={{ fontSize: 8, fill: palette.muted }} axisLine={false} tickLine={false} />
                     <YAxis
-                    type="category"
-                    dataKey="name"
-                    width={140}
-                    tick={{ fontSize: 13, fill: palette.navy, fontWeight: 500 }}
-                    axisLine={false}
-                    tickLine={false}
+                        type="category"
+                        dataKey="name"
+                        width={140}
+                        tick={{ fontSize: 16, fill: palette.navy, fontWeight: 400 }}
+                        axisLine={false}
+                        tickLine={false}
                     />
                     <Tooltip content={<CustomTooltip type={type} />} cursor={{ fill: "rgba(23,40,75,0.04)" }} />
-                    <Bar dataKey="total_spent" radius={[0, 8, 8, 0]} barSize={22}>
+                    <Bar dataKey="total_spent" radius={[0, 4, 4, 0]} barSize={24}>
                         {data.map((_, i) => (
                             <Cell key={i} fill={rankFill(i, barColor)} />
                         ))}
@@ -123,7 +123,7 @@ const rankFill = (index, base) => {
                         dataKey="total_spent"
                         position="right"
                         formatter={(v) => (type === "spending" ? `$${v.toLocaleString("es-ES")}` : v)}
-                        style={{ fill: palette.navy, fontWeight: 700, fontSize: 12 }}
+                            style={{ fill: palette.navy, fontWeight: 500, fontSize: 16 }}
                         />
                     </Bar>
                 </BarChart>

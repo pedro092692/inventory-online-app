@@ -71,7 +71,7 @@ function initializePaymentDetail(sequelize, schema) {
             },
 
             amount: {
-                type: DataTypes.DECIMAL(10, 2),
+                type: DataTypes.DECIMAL(20, 2),
                 allowNull: false,
                 validate: {
                     isNumeric: {

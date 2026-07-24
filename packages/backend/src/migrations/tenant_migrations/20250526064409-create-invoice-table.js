@@ -69,7 +69,7 @@ export default {
         },
 
         total_reference: {
-          type: Sequelize.DECIMAL(10, 2),
+          type: Sequelize.DECIMAL(20, 2),
           allowNull: true,
           defaultValue: 0.00,
           validate: {
