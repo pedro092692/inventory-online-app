@@ -173,8 +173,8 @@ class ReportService {
             ])
             const kpi = {
                 total_customers: total_customer,
-                avg_ticket: parseFloat(avg_ticket?.dataValues?.average_ticket).toFixed(2) || 0,
-                top_spender: parseFloat(customer?.dataValues?.total_spent).toFixed(2) || 0,
+                avg_ticket: parseFloat(avg_ticket?.dataValues?.average_ticket || 0).toFixed(2) || 0,
+                top_spender: parseFloat(customer?.dataValues?.total_spent || 0).toFixed(2) || 0,
                 top_recurring: parseInt(recurring?.dataValues?.total_recurring) || 0
             }
 
