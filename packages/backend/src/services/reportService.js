@@ -1,6 +1,6 @@
 import { raw } from 'express';
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js';
-import { Sequelize, where } from 'sequelize'
+import { Sequelize, where, Op } from 'sequelize'
 
 
 class ReportService {
@@ -13,11 +13,12 @@ class ReportService {
      * @param {InvoiceDetail: typeof Model} [invoiceDetailModel=null] - The InvoiceDetails model.
      * @param {PaymentDetail: typeof Model} [invoicePayDetailModel=null] - The PaymentDetail model.
      */
-    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null, customerModel=null) {
+    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null, customerModel=null, productModel=null) {
         this.invoice = invoiceModel
         this.invoiceDetail = invoiceDetailModel,
         this.invoicePayDetail = invoicePayDetailModel
         this.customerModel = customerModel
+        this.productModel = productModel
         this.#error
     }
     /**
@@ -179,6 +180,43 @@ class ReportService {
             }
 
             
+            return {kpi}
+        })
+
+    }
+
+    /**
+     * Retrieves key performance indicators (KPIs) related to products and their invoices.
+     *
+     * - **total_products**: Total number of registered products.
+     * - **inventory_value**: total value of products with its purchase price.
+     * - **inventory_value_sale**: total value of products with its selling price..
+     * - **products_in_inventory**: The count of all products with its quantity.
+     *
+     * The method uses Sequelize aggregate functions (SUM, COUNT) and grouping
+     * @async
+     * @function getProductKPI
+     * @returns {Promise<Object>} An object containing the computed KPI metrics:
+     *
+     * @throws {Error} Throws an error if any of the database queries fail.
+     */
+    getProductKPI(){
+        return this.#error.handler(['GET Customer KPI'], async() => {
+            const [productsCount, products] = await Promise.all([
+                this.productModel.count(),
+                this.productModel.findAll()
+            ])
+            
+            const inventory_value = products.reduce((acc, p) => acc + parseFloat(p.purchase_price) * p.stock, 0).toFixed(2)
+            const inventory_value_sale = products.reduce((acc, p) => acc + parseFloat(p.selling_price) * p.stock, 0).toFixed(2)
+            const products_inventory = products.reduce((acc, p) => acc + p.stock, 0)
+
+            const kpi = {
+                total_products: productsCount,
+                inventory_value: inventory_value,
+                inventory_value_sale: inventory_value_sale,
+                inventory_items: products_inventory
+            }
             return {kpi}
         })
 
