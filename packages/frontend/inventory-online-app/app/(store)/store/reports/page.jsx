@@ -17,7 +17,7 @@ export default function Reports() {
         >   
              <Suspense key={'kpi'} fallback={<FormSkeleton nFields={1}/>} >
                 <CustomerKPI />
-                </Suspense>
+            </Suspense>
             
             <Suspense key={'charts'} fallback={<FormSkeleton nFields={1}/>} >
                 <Container

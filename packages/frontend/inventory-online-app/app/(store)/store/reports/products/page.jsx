@@ -1,6 +1,7 @@
 import {Container} from '@/app/ui/utils/container'
 import { Suspense } from 'react'
 import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
+import ProductKPI from '@/app/(store)/store/reports/_components/products/kpi'
 import TopProducts from '@/app/(store)/store/reports/_components/products/topProductsData'
 import WorstProducts from '@/app/(store)/store/reports/_components/products/worstProductsData'
 
@@ -13,9 +14,9 @@ export default function Reports() {
             width={'100%'}
             gap={'16px'}
         >   
-             <Suspense key={'kpi'} fallback={<FormSkeleton nFields={1}/>} >
-                {/* <CustomerKPI /> */}
-                </Suspense>
+            <Suspense key={'kpi'} fallback={<FormSkeleton nFields={1}/>} >
+                <ProductKPI />
+            </Suspense>
             
             <Suspense key={'charts'} fallback={<FormSkeleton nFields={1}/>} >
                 <Container
