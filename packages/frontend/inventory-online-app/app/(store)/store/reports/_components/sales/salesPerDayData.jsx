@@ -19,9 +19,10 @@ export default async function SalesPerDay() {
             revenue: parseFloat(item.revenue)
         }
     })
- 
+    const total_sales = salesData.reduce((acc, d) => acc + d.revenue, 0)
+    console.log(total_sales)
     return (
-        <ChartSection title="Ventas e ingresos por día" subtitle="Barras = unidades vendidas · línea = ingresos generados"  icon={TrendingUp}>
+        <ChartSection title="Ventas e ingresos de los ultimos 30 días" subtitle="Barras = unidades vendidas · línea = ingresos generados"  icon={TrendingUp}>
             <LineChart  dailySales={salesData} />
         </ChartSection> 
     ) 

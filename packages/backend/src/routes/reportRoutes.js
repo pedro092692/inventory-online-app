@@ -22,6 +22,7 @@ class ReportRoutes {
         this.router.get('/products-kpi', (req, res) => new ReportController(req.Invoice, null, null, req.Customer, req.Product).getProductKPI(res, res))
         this.router.get('/top-selling-products', (req, res) => new ReportController(null, req.InvoiceDetail ).getTopSellingProducts(req, res))
         this.router.get('/worst-selling-products', (req, res) => new ReportController(null, req.InvoiceDetail ).getWorstWellingProducts(req, res))
+        this.router.get('/sales-kpi', (req, res) => new ReportController(req.Invoice, req.InvoiceDetail).getSaleKPI(res, res))
         this.router.get('/best-selling-day', (req, res) => new ReportController(req.Invoice).bestSellingDay(req, res))
         this.router.get('/worst-selling-day', (req, res) => new ReportController(req.Invoice).worstSellingDay(req, res))
         this.router.get('/sales-per-day', (req, res) => new ReportController(req.Invoice).salesPerDay(req, res))

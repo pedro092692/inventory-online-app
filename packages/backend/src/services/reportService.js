@@ -1,6 +1,7 @@
 import { raw } from 'express';
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js';
 import { Sequelize, where, Op } from 'sequelize'
+import { group } from 'console';
 
 
 class ReportService {
@@ -310,6 +311,85 @@ class ReportService {
         })
     }
 
+    getSalesKPI() {
+        return this.#error.handler(['GET Sales KPI '], async () => {
+        
+        const today = new Date()
+        const startDate = new Date(today)
+        startDate.setDate(startDate.getDate() - 29)
+        startDate.setHours(0, 0, 0, 0)
+        const endDate = new Date(today)
+        endDate.setHours(23, 59, 59, 999)
+
+            const [total_products, revenue, bestDay, bestInvoiceValue] = await Promise.all([
+                this.invoiceDetail.sum('quantity', {
+                include: [
+                        {
+                            association: 'invoice',
+                            attributes: [],
+                            where: {
+                                status: 'paid',
+                                date: {
+                                        [Op.between]: [startDate, endDate]
+                                    }
+                                }
+                        }
+                    ]
+                }),
+
+                this.invoice.sum('total', {
+                    where: {
+                        status: 'paid',
+                        date: {
+                            [Op.between]: [startDate, endDate]
+                        }
+                    }
+                }),
+
+                this.invoice.findOne({
+                    attributes: [
+                        [Sequelize.fn('DATE', Sequelize.col('date')), 'day'],
+                        [Sequelize.fn('SUM', Sequelize.col('total')), 'total_sales']
+                    ],
+                    where: {
+                        status: 'paid',
+                        date: {
+                            [Op.between]: [startDate, endDate]
+                        }
+                    },
+
+                    group: [Sequelize.fn('DATE', Sequelize.col('date'))],
+                    order: [[Sequelize.literal('total_sales'), 'DESC']],
+                    raw: true,
+                    subQuery: false
+                }),
+
+                this.invoice.findOne({
+                    where: {
+                        status: 'paid',
+                        date: {
+                            [Op.between]: [startDate, endDate]
+                        }
+                    },
+                    attributes: ['id', 'total'],
+                    order: [['total', 'DESC']],
+                    raw: true
+                })
+
+            ])
+
+            const kpi = {
+                total_products: parseInt(total_products, 10),
+                revenue: revenue,
+                best_day_date: bestDay.day,
+                best_day_value: `$${new Intl.NumberFormat('es-VE').format(bestDay.total_sales)}`,
+                best_invoice_id: bestInvoiceValue.id,
+                best_invoice_value: `$${new Intl.NumberFormat('es-VE').format(bestInvoiceValue.total)}`,
+            }
+            return {kpi}
+        })
+    }
+
     /**
      * Retrieves sales data for each day over the last 30 days.
      * @returns {Promise<Array<Object>>} A promise that resolves to a list of daily sales data, ordered by date.
@@ -474,7 +554,9 @@ class ReportService {
                 ],
                 order: [
                     [[Sequelize.literal('day'), 'DESC']]
-                ]
+                ],
+                raw: true,
+                nest: true
 
             })
             

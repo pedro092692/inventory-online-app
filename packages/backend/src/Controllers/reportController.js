@@ -5,7 +5,7 @@ class ReportController {
     // new instance of controller error handler
     #error = new ControllerErrorHandler()
     
-    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null, customerModel=null, productModel) {
+    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null, customerModel=null, productModel=null) {
         this.reportService = new ReportService(invoiceModel, invoiceDetailModel, invoicePayDetailModel, customerModel, productModel)
         this.#error
     }
@@ -55,6 +55,18 @@ class ReportController {
      */
     getProductKPI = this.#error.handler( async(req, res) => {
         const { kpi } = await this.reportService.getProductKPI()
+        res.status(200).json({kpi})
+    })
+
+    /**
+     * Retrieves the KPI for Sales.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     * @returns {Promise<void>} A JSON response with the top recurring cSale.
+     * @throws {Error} If there is a problem retrieving the Sale KPI data.
+     */
+    getSaleKPI = this.#error.handler( async(req, res) => {
+        const { kpi } = await this.reportService.getSalesKPI()
         res.status(200).json({kpi})
     })
 
