@@ -2,6 +2,7 @@ import {Container} from '@/app/ui/utils/container'
 import { Suspense } from 'react'
 import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
 import SalesPerDay from '@/app/(store)/store/reports/_components/sales/salesPerDayData'
+import SaleKPI from '@/app/(store)/store/reports/_components/sales/kpi'
 
 
 export default function Reports() {
@@ -13,7 +14,7 @@ export default function Reports() {
             gap={'16px'}
         >   
             <Suspense key={'kpi'} fallback={<FormSkeleton nFields={1}/>} >
-                {/* <ProductKPI /> */}
+                <SaleKPI />
             </Suspense>
             
             <Suspense key={'charts'} fallback={<FormSkeleton nFields={1}/>} >

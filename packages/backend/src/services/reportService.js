@@ -379,9 +379,9 @@ class ReportService {
             ])
 
             const kpi = {
-                total_products: parseInt(total_products, 10),
-                revenue: revenue,
-                best_day_date: bestDay.day,
+                total_products: new Intl.NumberFormat('es-VE').format(total_products),
+                revenue: new Intl.NumberFormat('es-VE').format(revenue),
+                best_day_date: new Date(bestDay.day).toLocaleDateString('es-ES', {day: '2-digit', month: 'short'}),
                 best_day_value: `$${new Intl.NumberFormat('es-VE').format(bestDay.total_sales)}`,
                 best_invoice_id: bestInvoiceValue.id,
                 best_invoice_value: `$${new Intl.NumberFormat('es-VE').format(bestInvoiceValue.total)}`,
