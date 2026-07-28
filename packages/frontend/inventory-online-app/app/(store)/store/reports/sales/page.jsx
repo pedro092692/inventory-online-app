@@ -1,10 +1,31 @@
+import {Container} from '@/app/ui/utils/container'
+import { Suspense } from 'react'
+import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
+import SalesPerDay from '@/app/(store)/store/reports/_components/sales/salesPerDayData'
 
 
-
-export default async function SaleReports() {
+export default function Reports() {
     return (
-        <>
-            Reporte de ventas aqui
-        </>
+        <Container
+            padding={'16px 0 0 0'}
+            direction={'column'}
+            width={'100%'}
+            gap={'16px'}
+        >   
+            <Suspense key={'kpi'} fallback={<FormSkeleton nFields={1}/>} >
+                {/* <ProductKPI /> */}
+            </Suspense>
+            
+            <Suspense key={'charts'} fallback={<FormSkeleton nFields={1}/>} >
+                <Container
+                    padding={'16px'}
+                    width={'100%'}
+                    gap={'24px'}
+                >   
+                    <SalesPerDay />
+                </Container>
+            </Suspense>
+        </Container>
+    
     )
 }

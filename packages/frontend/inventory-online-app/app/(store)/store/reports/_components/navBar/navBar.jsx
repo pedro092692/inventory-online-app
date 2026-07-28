@@ -23,7 +23,7 @@ export default function NavReports() {
         },
         {
             label: 'Ventas',
-            incon: 'dollar',
+            icon: 'dollar',
             endpoint: 'sales',
             link: '/store/reports/sales',
         }
