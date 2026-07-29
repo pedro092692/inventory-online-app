@@ -311,6 +311,26 @@ class ReportService {
         })
     }
 
+    /**
+     * Retrieves key performance indicators (KPIs) related to sales for the last 30 days.
+     *
+     * Metrics returned:
+     * - **total_products**: Total quantity of products sold (sum of invoiceDetail.quantity).
+     * - **revenue**: Total revenue generated (sum of invoice.total).
+     * - **best_day_date**: The date with the highest total sales.
+     * - **best_day_value**: Total revenue generated on the best sales day.
+     * - **best_invoice_id**: ID of the invoice with the highest total amount.
+     * - **best_invoice_value**: Value of the highest invoice.
+     *
+     * The method filters invoices with status **'paid'** and aggregates data
+     * using Sequelize functions (SUM, DATE, GROUP BY).
+     *
+     * @async
+     * @function getSalesKPI
+     * @returns {Promise<Object>} An object containing the computed KPI metrics.
+     *
+     * @throws {Error} Throws an error if any of the database queries fail.
+     */
     getSalesKPI() {
         return this.#error.handler(['GET Sales KPI '], async () => {
         
