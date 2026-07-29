@@ -19,6 +19,11 @@ export default function SalesNavbar() {
             endpoint: 'patterns',
             link: '/store/reports/sales/patterns',
         },
+        {
+            label: 'Detalles',
+            endpoint: 'details',
+            link: '/store/reports/sales/details',
+        },
     ]
     
     return (

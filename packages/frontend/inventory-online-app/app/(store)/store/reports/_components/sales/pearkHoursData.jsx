@@ -4,7 +4,7 @@ import ColumnChart from '@/app/(store)/store/reports/_components/charts/barchart
 import { Clock } from 'lucide-react'
 
 
-export default async function SalesPatterns() {
+export default async function SalesPeakHourPatterns() {
     // await new Promise (r => setTimeout(r, 1000))
     const endpoint = 'peak-sales-hour'
     const url = `reports/${endpoint}`

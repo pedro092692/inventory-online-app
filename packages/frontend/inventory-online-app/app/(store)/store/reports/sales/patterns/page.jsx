@@ -1,4 +1,4 @@
-import SalesPatterns from '@/app/(store)/store/reports/_components/sales/patternsData'
+import SalesPatterns from '@/app/(store)/store/reports/_components/sales/patternsReport'
 import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
 import { Suspense } from 'react'
 import {Container} from '@/app/ui/utils/container'

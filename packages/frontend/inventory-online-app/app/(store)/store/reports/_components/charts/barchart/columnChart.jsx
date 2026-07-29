@@ -2,7 +2,7 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LabelList,} from 'recharts'
 import { Users, Repeat2, Package, Phone, Calendar, Trophy } from "lucide-react"
 
-export default function ColumnChart({data}) {
+export default function ColumnChart({data, type = 'hours'}) {
     const palette = {
         navy: "#1B4279",
         primary: "#12113B",
@@ -31,7 +31,7 @@ export default function ColumnChart({data}) {
                     color: "#fff",
                     borderRadius: 10,
                     padding: "10px 14px",
-                    fontSize: 13,
+                    fontSize: 16,
                     lineHeight: 1.5,
                     boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
                 }}
@@ -58,7 +58,7 @@ export default function ColumnChart({data}) {
                     
                     <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={28}>
                         {data.map((_, i) => (
-                            <Cell key={i} fill={i === 0 ? palette.gold : color} />
+                            <Cell key={i} fill={_.value === Math.max(...data.map((x) => x.value)) ? palette.gold : color} />
                         ))}
                     </Bar>
                 </BarChart>
@@ -67,6 +67,6 @@ export default function ColumnChart({data}) {
     }
 
     return (
-        <ColumnChartFn data={data} color={palette.navy}/>
+        <ColumnChartFn data={data} color={type == 'hours' ? palette.navy : palette.teal}/>
     )
 }

@@ -9,7 +9,7 @@ export default function NavReports() {
     const pathname = usePathname()
     const segments = pathname.split('/')
     const currentEndpoint = segments[3] || 'reports'
-    console.log(currentEndpoint)
+  
     const reportsButtons = [
         {
             label: 'Clientes',
