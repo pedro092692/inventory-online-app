@@ -24,7 +24,7 @@ export function Button(
         outline: 'p1-r',
         danger: 'p1-b',
         warning: 'p1-b',
-        simple: 'p2-r',
+        simple: 'p1-r',
         grey: 'p2-r',
         disabled: 'p1-r',
         nonActive: 'p1-r'

@@ -20,7 +20,6 @@ export default async function SalesPerDay() {
         }
     })
     const total_sales = salesData.reduce((acc, d) => acc + d.revenue, 0)
-    console.log(total_sales)
     return (
         <ChartSection title="Ventas e ingresos de los ultimos 30 días" subtitle="Barras = unidades vendidas · línea = ingresos generados"  icon={TrendingUp}>
             <LineChart  dailySales={salesData} />

@@ -6,8 +6,10 @@ import { Button } from "@/app/ui/utils/button/buttons"
 import Link from 'next/link'
 
 export default function NavReports() {
-    const pathname = usePathname().split('/')
-    const endpoint = pathname[pathname.length - 1] 
+    const pathname = usePathname()
+    const segments = pathname.split('/')
+    const currentEndpoint = segments[3] || 'reports'
+    console.log(currentEndpoint)
     const reportsButtons = [
         {
             label: 'Clientes',
@@ -41,6 +43,7 @@ export default function NavReports() {
         >
             {
                 reportsButtons.map((button, index) => {
+                    const isActive = button.endpoint == currentEndpoint
                     return (
                         <Link key={index+button.label} href={`${button.link}`}>
                             <Button 
@@ -49,8 +52,8 @@ export default function NavReports() {
                                 icon={button.icon}
                                 showIcon={true}
                                 children={button.label}
-                                className={endpoint != button.endpoint ? '' : 'shadow'}
-                                style={{backgroundColor: endpoint != button.endpoint ? '#5C6572' : ''}}
+                                className={isActive ? 'shadow' : ''}
+                                style={{ backgroundColor: isActive ? '' : '#5C6572' }}
                             />
                         </Link>
                     )
