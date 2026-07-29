@@ -26,6 +26,7 @@
     align-items: start;
     justify-content: start;
     width: 900px;
+    /* aspect-ratio: 1.9; */
     aspect-ratio: 1.51;
 }
 
