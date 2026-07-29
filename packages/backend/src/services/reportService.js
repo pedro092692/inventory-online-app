@@ -539,7 +539,7 @@ class ReportService {
             startDate.setDate(today.getDate() - 30)
             startDate.setHours(0, 0, 0, 0)
 
-            const data = await this.invoicePayDetail.findAll({
+            const rawData = await this.invoicePayDetail.findAll({
                 attributes:[
                     [Sequelize.fn('DATE', Sequelize.col('invoice.date')), 'day'],
                     [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_currenty'],
@@ -579,7 +579,16 @@ class ReportService {
                 nest: true
 
             })
-            
+
+            const data = rawData.map(({day, total_currency, total_dollar, transactions, payments}) => ({
+                day,
+                total_currency,
+                total_dollar,
+                transactions,
+                payment: payments?.name || 'null',
+                currency: payments?.currency || 'null'
+            }))
+           
             return data
         })
     }
