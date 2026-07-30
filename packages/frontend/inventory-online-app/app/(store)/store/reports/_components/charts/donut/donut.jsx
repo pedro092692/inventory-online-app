@@ -45,7 +45,7 @@ export default function DonutChart({methods, totalUsd}) {
         const single = methods.length === 1
 
         return (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 18 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 18, height: "410px"}}>
                 <svg width={size} height={size} role="img" aria-label="Distribución de ingresos por método de pago">
                     { single ? (
                         <circle
