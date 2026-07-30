@@ -1,7 +1,7 @@
 import GetItemAction from '@/app/lib/actions/get'
 import ChartSection from '../charts/sectionChart' 
-import BesWorstChart from '@/app/(store)/store/reports/_components/charts/barchart/bestWorstChart'
-import { ArrowUpDown } from 'lucide-react'
+import DonutChart from '@/app/(store)/store/reports/_components/charts/donut/donut'
+import { PieChart } from 'lucide-react'
 
 
 export default async function DetailsSales() {
@@ -114,8 +114,8 @@ export default async function DetailsSales() {
    
    
     return (
-        <ChartSection title="Mejores y peores días del periodo" subtitle="Top 5 mejores en verde, top 5 peores en rojo"  icon={ArrowUpDown}>
-            :p
+        <ChartSection title="Distribución por método" subtitle="% del total en USD"  icon={PieChart}>
+            <DonutChart methods={detailMethods} totalUsd={totalUsd} />
         </ChartSection> 
     ) 
 }
