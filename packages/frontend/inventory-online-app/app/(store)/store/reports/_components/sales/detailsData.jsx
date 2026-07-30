@@ -2,8 +2,9 @@ import GetItemAction from '@/app/lib/actions/get'
 import ChartSection from '../charts/sectionChart' 
 import DonutChart from '@/app/(store)/store/reports/_components/charts/donut/donut'
 import MultiLineChart from '@/app/(store)/store/reports/_components/charts/line/multiLine'
+import SplitListChart from '@/app/(store)/store/reports/_components/charts/barchart/split'
 import {Container} from '@/app/ui/utils/container'
-import { PieChart, TrendingUp } from 'lucide-react'
+import { PieChart, TrendingUp, CreditCard } from 'lucide-react'
 
 
 export default async function DetailsSales() {
@@ -118,17 +119,27 @@ export default async function DetailsSales() {
     return (
         <Container
             padding={'0px'}
-            gap={'16px'}
+            direction={'column'}
+            gap={'24px'}
             width={'100%'}
         >
-            <ChartSection title="Distribución por método" subtitle="% del total en USD"  icon={PieChart}>
-                <DonutChart methods={detailMethods} totalUsd={totalUsd} />
-            </ChartSection> 
+            <Container
+                padding={'0px'}
+                gap={'16px'}
+                width={'100%'}
+            >
+                <ChartSection title="Distribución por método" subtitle="% del total en USD"  icon={PieChart}>
+                    <DonutChart methods={detailMethods} totalUsd={totalUsd} />
+                </ChartSection> 
 
-            <ChartSection title="Tendencia por método (USD)" subtitle="Top 4 métodos — últimos 30 días"  icon={TrendingUp}>
-                <MultiLineChart datasets={trendData.datasets} merged={trendData.merged} />
-            </ChartSection> 
-        </Container>
+                <ChartSection title="Tendencia por método (USD)" subtitle="Top 4 métodos — últimos 30 días"  icon={TrendingUp}>
+                    <MultiLineChart datasets={trendData.datasets} merged={trendData.merged} />
+                </ChartSection> 
+            </Container>
+                <ChartSection title="Bolívares vs Dólares" subtitle="Ingresos convertidos a USD, agrupados por moneda de cobro"  icon={CreditCard}>
+                    <SplitListChart currencies={detail.currencies} />
+                </ChartSection> 
+        </Container>    
         
         
     ) 
