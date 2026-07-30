@@ -3,6 +3,7 @@ import ChartSection from '../charts/sectionChart'
 import DonutChart from '@/app/(store)/store/reports/_components/charts/donut/donut'
 import MultiLineChart from '@/app/(store)/store/reports/_components/charts/line/multiLine'
 import SplitListChart from '@/app/(store)/store/reports/_components/charts/barchart/split'
+import MethodsComparativeTable from '@/app/(store)/store/reports/_components/table/table'
 import {Container} from '@/app/ui/utils/container'
 import { PieChart, TrendingUp, CreditCard } from 'lucide-react'
 
@@ -138,6 +139,10 @@ export default async function DetailsSales() {
             </Container>
                 <ChartSection title="Bolívares vs Dólares" subtitle="Ingresos convertidos a USD, agrupados por moneda de cobro"  icon={CreditCard}>
                     <SplitListChart currencies={detail.currencies} />
+                </ChartSection> 
+
+                <ChartSection title="Resumen por método de pago" subtitle="Totales acumulados de los últimos 30 días"  icon={CreditCard}>
+                    <MethodsComparativeTable methods={detailMethods} totalUsd={totalUsd}/>
                 </ChartSection> 
         </Container>    
         
