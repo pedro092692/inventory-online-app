@@ -336,7 +336,7 @@ class ReportService {
         
         const today = new Date()
         const startDate = new Date(today)
-        startDate.setDate(startDate.getDate() - 29)
+        startDate.setDate(startDate.getDate() - 20)
         startDate.setHours(0, 0, 0, 0)
         const endDate = new Date(today)
         endDate.setHours(23, 59, 59, 999)
@@ -534,10 +534,12 @@ class ReportService {
      */
     dayTotalSales() {
         return this.#error.handler(['Get total sales day'], async() => {
-            const today = new Date( )
+            const today = new Date()
             const startDate = new Date(today)
-            startDate.setDate(today.getDate() - 30)
+            startDate.setDate(startDate.getDate() - 20)
             startDate.setHours(0, 0, 0, 0)
+            const endDate = new Date(today)
+            endDate.setHours(23, 59, 59, 999)
 
             const rawData = await this.invoicePayDetail.findAll({
                 attributes:[
@@ -561,7 +563,7 @@ class ReportService {
                             //     Sequelize.fn('DATE', Sequelize.col('date')), '2025-08-04'
                             // )
                             date: {
-                                [Sequelize.Op.between]: [startDate, today]
+                                [Sequelize.Op.between]: [startDate, endDate]
                                 
                             }
                         }
