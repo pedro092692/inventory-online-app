@@ -8,14 +8,14 @@ import Link from 'next/link'
 export default function NavReports() {
     const pathname = usePathname()
     const segments = pathname.split('/')
-    const currentEndpoint = segments[3] || 'reports'
+    const currentEndpoint = segments[3]
   
     const reportsButtons = [
         {
-            label: 'Clientes',
-            icon: 'person',
-            endpoint: 'reports',
-            link: '/store/reports',
+            label: 'Ventas',
+            icon: 'dollar',
+            endpoint: 'sales',
+            link: '/store/reports/sales',
         },
         {
             label: 'Productos',
@@ -24,11 +24,11 @@ export default function NavReports() {
             link: '/store/reports/products',
         },
         {
-            label: 'Ventas',
-            icon: 'dollar',
-            endpoint: 'sales',
-            link: '/store/reports/sales',
-        }
+            label: 'Clientes',
+            icon: 'person',
+            endpoint: 'customers',
+            link: '/store/reports/customers',
+        },
     ]
 
     return (
