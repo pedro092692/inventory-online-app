@@ -112,14 +112,11 @@ class PayInvoiceService {
                     }
                 }
             
-
-
                 const total = parseFloat(invoice.total)
                 let total_paid = parseFloat(invoice.total_paid) || 0.00
                 let total_reference = 0
                 let has_change = false
                 
-
                 let total_change = explicitChanges.reduce((acc, current) => acc + parseFloat(current.amountInUSD), 0)
                 const dollarValue = await this.dollarValue.getLastValue()
                 
@@ -144,32 +141,23 @@ class PayInvoiceService {
                         parseFloat(amount), 
                         total_to_pay,
                     )
- 
+
                     cashMovementsToCreate.push({
                         invoice_id: invoiceId,
                         payment_method_id: paymentId,
                         type: 'in',
                         amount: amount,
-                        amount_ref: movementAmount,
+                        applied_to_invoice_amount: movementAmount,
                         exchange_rate: dollarValue.value,
-                        description: `Pago de factura #${invoiceId}`
+                        description: `Pago de factura #${invoiceId}`,
+                        user_id: invoice.seller_id,
+                        movement_category: 'invoice_payment',
+                        converted_amount: reference_amount
                     })
 
                     // Collect the change if the method generated one (e.g., cash)
                     if (change) {
                         has_change = change
-                        // const numericChange = parseFloat(change)
-                        // total_change = parseFloat((total_change + numericChange).toFixed(2))
-                        
-                        // cashMovementsToCreate.push({
-                        //     invoice_id: invoiceId,
-                        //     payment_method_id: paymentId, 
-                        //     type: 'out',
-                        //     amount: numericChange, 
-                        //     amount_ref: numericChange, 
-                        //     exchange_rate: dollarValue.value,
-                        //     description: `Vuelto de factura #${invoiceId}`
-                        // })
                     }
 
                     // Accumulate the amount paid in dollars cleanly
@@ -199,9 +187,12 @@ class PayInvoiceService {
                             payment_method_id: payment_method_id, 
                             type: 'out',
                             amount: amount, 
-                            amount_ref: amountInUSD, 
+                            applied_to_invoice_amount: null, 
                             exchange_rate: dollarValue.value,
-                            description: `Vuelto de factura #${invoiceId}`
+                            description: `Vuelto de factura #${invoiceId}`,
+                            user_id: invoice.seller_id,
+                            movement_category: 'invoice_change',
+                            converted_amount: amountInUSD
                         })
                     }
                 }

@@ -245,6 +245,7 @@ class TenantConnection {
         InvoiceReturn.associationSupervisorSeller({Seller})
         CashMovements.associationInvoice({Invoice})
         CashMovements.associationPaymentMehotd({Payment})
+        CashMovements.associationUser({User})
     }
     
     

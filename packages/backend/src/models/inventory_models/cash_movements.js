@@ -28,6 +28,19 @@ class CashMovements extends Model {
         })
     }
 
+    /**
+     * Creates an association between User model and the CashMovements model.
+     * @param {{User: typeof Model}} model - An object containing the User model.
+     * @return {void} This method does not return a value.
+     */
+    static associationUser(model) {
+        this.belongsTo(model.User, {
+            foreignKey: 'user_id',
+            as: 'user',
+            constraints: false,
+        })
+    }
+
 }
 
 /**
@@ -58,6 +71,12 @@ function initializeCashMovements(sequelize, schema) {
                 onDelete: 'CASCADE'
             },
 
+            user_id: {
+                type: DataTypes.INTEGER,
+                allowNull: true
+
+            },
+
             payment_method_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -76,6 +95,18 @@ function initializeCashMovements(sequelize, schema) {
                 }
             },
 
+            movement_category: {
+                type: DataTypes.ENUM(
+                    'invoice_payment',
+                    'invoice_change',
+                    'withdrawal',
+                    'deposit',
+                    'adjustment',
+                ),
+                allowNull: false,
+                defaultValue: 'invoice_payment'
+            },
+
             amount: {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false,
@@ -84,12 +115,14 @@ function initializeCashMovements(sequelize, schema) {
                 }
             },
 
-            amount_ref: {
+            applied_to_invoice_amount: {
                 type: DataTypes.DECIMAL(10, 2),
-                allowNull: false,
-                validate: {
-                    isNumeric: true
-                }    
+                allowNull: true, 
+            },
+
+            converted_amount: {
+                type: DataTypes.DECIMAL(10, 2),
+                allowNull: true,
             },
 
             exchange_rate: {

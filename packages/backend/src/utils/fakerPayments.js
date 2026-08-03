@@ -108,10 +108,7 @@ class FakerPayment {
                     
                     i++
                 }
-            }
-            
-            
-           
+            }    
         }
         return details
     }
