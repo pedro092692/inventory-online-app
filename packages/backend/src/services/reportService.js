@@ -649,6 +649,18 @@ class ReportService {
     cashClosing(seller_id, date) {
          return this.#error.handler(['Get total sales day'], async() => {
             const targetDate = date ?? this.#formatDate(new Date())
+
+            const invoiceWhere = {
+                status: 'paid',
+                date: Sequelize.where(
+                    Sequelize.fn('DATE', Sequelize.col('date')),
+                    targetDate
+                )
+            }
+
+            if (seller_id) {
+                invoiceWhere.seller_id = seller_id
+            }
             const data = await this.invoicePayDetail.findAll({
                 attributes:[
                     [Sequelize.fn('DATE', Sequelize.col('invoice.date')), 'day'],
@@ -664,14 +676,7 @@ class ReportService {
                     {
                         association: 'invoice',
                         attributes: [],
-                        where:{
-                            status: 'paid',
-                            seller_id: seller_id,
-                            date: Sequelize.where(
-                                Sequelize.fn('DATE', Sequelize.col('date')),
-                                targetDate
-                            )
-                        }
+                        where: invoiceWhere
                     }
                 ],
                 group: [
@@ -710,6 +715,17 @@ class ReportService {
         return this.#error.handler(['Get cash balance by day'], async () => {
            const targetDate = date ?? this.#formatDate(new Date())
 
+           const whereClause = {
+                created_at: Sequelize.where(
+                    Sequelize.fn('DATE', Sequelize.col('CashMovements.created_at')),
+                    targetDate
+                )
+           }
+
+           if (seller_id) {
+                whereClause.user_id = seller_id
+           }
+
         const data = await this.cashMovements.findAll({
             attributes: [
                 [Sequelize.fn('DATE', Sequelize.col('CashMovements.created_at')), 'day'],
@@ -730,13 +746,7 @@ class ReportService {
             include: [
                 { association: 'payments', attributes: ['name', 'currency'] }
             ],
-            where: {
-                user_id: seller_id,
-                created_at: Sequelize.where(
-                    Sequelize.fn('DATE', Sequelize.col('CashMovements.created_at')),
-                    targetDate
-                )
-            },
+            where: whereClause,
             group: [
                 Sequelize.fn('DATE', Sequelize.col('CashMovements.created_at')), // 👈 el fix
                 'payment_method_id',
