@@ -5,8 +5,9 @@ class ReportController {
     // new instance of controller error handler
     #error = new ControllerErrorHandler()
     
-    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null, customerModel=null, productModel=null) {
-        this.reportService = new ReportService(invoiceModel, invoiceDetailModel, invoicePayDetailModel, customerModel, productModel)
+    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null, customerModel=null, productModel=null, cashMovements=null) {
+        this.reportService = new ReportService(invoiceModel, invoiceDetailModel, invoicePayDetailModel, customerModel, productModel, 
+            cashMovements)
         this.#error
     }
 
@@ -191,6 +192,21 @@ class ReportController {
         const { seller_id, date } = req.body
         const data = await this.reportService.cashClosing(seller_id, date)
         res.status(200).json(data)
+    })
+
+    /**
+     * Performs a cash balance check for a specific seller and date.
+     * @param {Object} req - The request object.
+     * @param {Object} req.body - The request body.
+     * @param {number} req.body.seller_id - The ID of the seller.
+     * @param {Object} res - The response object.
+     * @returns {Promise<void>} A JSON response with the cash balance data.
+     * @throws {Error} If there is a problem retrieving closing cash data. 
+     */
+    cashBalance = this.#error.handler( async(req, res) => {
+        const { seller_id, date } = req.body
+        const data = await this.reportService.cashBalance(seller_id, date)
+        res.status(200).json(data) 
     })
 
     /**

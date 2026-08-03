@@ -31,6 +31,7 @@ class ReportRoutes {
         this.router.get('/detail-sales', (req, res) => new ReportController(null, null, req.PaymentDetail).salesDetail(req, res))
         this.router.get('/invoices-per-day', (req, res) => new ReportController(req.Invoice).invoicePerDate(req, res))
         this.router.get('/cash-closing', (req, res) =>  new ReportController(null, null, req.PaymentDetail).cashClosing(req, res))
+        this.router.get('/cash-balance', (req, res) =>  new ReportController(null, null, null, null, null, req.CashMovements).cashBalance(req, res))
         this.router.get('/pay-methods', (req, res) =>  new ReportController(null, null, req.PaymentDetail).payMethodPercent(req, res))
     }
     
@@ -48,15 +49,16 @@ class ReportRoutes {
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {Invoice, InvoiceDetail, PaymentDetail, Customer, Product} = req.tenantModels
-        if(!Invoice || !InvoiceDetail || !PaymentDetail || !Customer || !Product) {
-            return res.status(400).json({ message: 'Invoice, InvoiceDetail, Customer, Product and PaymentDetail models are required' })
+        const {Invoice, InvoiceDetail, PaymentDetail, Customer, Product, CashMovements} = req.tenantModels
+        if(!Invoice || !InvoiceDetail || !PaymentDetail || !Customer || !Product || !CashMovements) {
+            return res.status(400).json({ message: 'Invoice, InvoiceDetail, Customer, Product, PaymentDetail and CashMovements models are required' })
         }
         req.Invoice = Invoice
         req.InvoiceDetail = InvoiceDetail
         req.PaymentDetail = PaymentDetail
         req.Customer = Customer
         req.Product = Product
+        req.CashMovements = CashMovements
         next()
     }
 }

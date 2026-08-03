@@ -14,12 +14,13 @@ class ReportService {
      * @param {InvoiceDetail: typeof Model} [invoiceDetailModel=null] - The InvoiceDetails model.
      * @param {PaymentDetail: typeof Model} [invoicePayDetailModel=null] - The PaymentDetail model.
      */
-    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null, customerModel=null, productModel=null) {
+    constructor(invoiceModel, invoiceDetailModel=null, invoicePayDetailModel=null, customerModel=null, productModel=null, cashMovements=null) {
         this.invoice = invoiceModel
         this.invoiceDetail = invoiceDetailModel,
         this.invoicePayDetail = invoicePayDetailModel
         this.customerModel = customerModel
-        this.productModel = productModel
+        this.productModel = productModel,
+        this.cashMovements = cashMovements
         this.#error
     }
     /**
@@ -685,6 +686,66 @@ class ReportService {
             })
             
             return data
+        })
+    }
+
+    /**
+     * Retrieves the cash balance summary for a seller on a specific day.
+     *
+     * This method aggregates cash movements for the given seller, grouping them by
+     * payment method and calculating:
+     *  - Net amount (sum of "in" movements minus "out" movements)
+     *  - Total sales (sum of amounts applied to invoice payments)
+     *  - Number of movements
+     *
+     * If no date is provided, the current date is used.
+     *
+     * @param {number} seller_id - The ID of the seller whose cash balance will be retrieved.
+     * @param {string} [date] - Optional date in YYYY-MM-DD format. Defaults to today's date.
+     * @returns {Promise<Array>} A list of aggregated cash movement records grouped by payment method.
+     *
+     * @throws {Error} Throws an error if the database query fails or validation errors occur.
+     */
+    cashBalance(seller_id, date) {
+        return this.#error.handler(['Get cash balance by day'], async () => {
+           const targetDate = date ?? this.#formatDate(new Date())
+
+        const data = await this.cashMovements.findAll({
+            attributes: [
+                [Sequelize.fn('DATE', Sequelize.col('CashMovements.created_at')), 'day'],
+                [
+                    Sequelize.fn('SUM',
+                        Sequelize.literal(`CASE WHEN "CashMovements"."type" = 'in' THEN amount ELSE -amount END`)
+                    ),
+                    'net_amount'
+                ],
+                [
+                    Sequelize.fn('SUM',
+                        Sequelize.literal(`CASE WHEN movement_category = 'invoice_payment' THEN applied_to_invoice_amount ELSE 0 END`)
+                    ),
+                    'total_sales'
+                ],
+                [Sequelize.fn('COUNT', Sequelize.col('CashMovements.id')), 'movements']
+            ],
+            include: [
+                { association: 'payments', attributes: ['name', 'currency'] }
+            ],
+            where: {
+                user_id: seller_id,
+                created_at: Sequelize.where(
+                    Sequelize.fn('DATE', Sequelize.col('CashMovements.created_at')),
+                    targetDate
+                )
+            },
+            group: [
+                Sequelize.fn('DATE', Sequelize.col('CashMovements.created_at')), // 👈 el fix
+                'payment_method_id',
+                'payments.id'
+            ],
+            order: [[Sequelize.literal('day'), 'DESC']]
+        })
+
+        return data
         })
     }
 
