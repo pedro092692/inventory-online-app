@@ -188,8 +188,8 @@ class ReportController {
      * @throws {Error} If there is a problem retrieving closing cash data. 
      */
     cashClosing = this.#error.handler( async(req, res) => {
-        const { seller_id } = req.body
-        const data = await this.reportService.cashClosing(seller_id)
+        const { seller_id, date } = req.body
+        const data = await this.reportService.cashClosing(seller_id, date)
         res.status(200).json(data)
     })
 

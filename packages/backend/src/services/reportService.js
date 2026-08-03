@@ -645,9 +645,9 @@ class ReportService {
      * @returns {Promise<Array<Object>>} A promise that resolves to a list of payment summaries for the seller's daily sales.
      * @throws {ServiceError} If there is an error querying the database.
      */
-    cashClosing(seller_id) {
+    cashClosing(seller_id, date) {
          return this.#error.handler(['Get total sales day'], async() => {
-            const today = new Date()
+            const targetDate = date ?? this.#formatDate(new Date())
             const data = await this.invoicePayDetail.findAll({
                 attributes:[
                     [Sequelize.fn('DATE', Sequelize.col('invoice.date')), 'day'],
@@ -666,8 +666,9 @@ class ReportService {
                         where:{
                             status: 'paid',
                             seller_id: seller_id,
-                            [Sequelize.Op.and]: Sequelize.where(
-                                Sequelize.fn('DATE', Sequelize.col('date')), `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
+                            date: Sequelize.where(
+                                Sequelize.fn('DATE', Sequelize.col('date')),
+                                targetDate
                             )
                         }
                     }
@@ -678,7 +679,7 @@ class ReportService {
                     'payments.id'
                 ],
                 order: [
-                    [[Sequelize.literal('day'), 'DESC']]
+                    [Sequelize.literal('day'), 'DESC']
                 ]
 
             })
@@ -753,6 +754,18 @@ class ReportService {
             data.push(total)
             return data
         })
+    }
+
+    /**
+     * Format a given date into a string representation in the format "YYYY-MM-DD" with leading zeros.
+     * @param {Date} date
+     * @returns {string} A string representation of the date in the format "YYYY-MM-DD". 
+     */
+    #formatDate(date) {
+        const year = date.getFullYear()
+        const month = String(date.getMonth() + 1).padStart(2, '0')
+        const day = String(date.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
     }
 
 }
