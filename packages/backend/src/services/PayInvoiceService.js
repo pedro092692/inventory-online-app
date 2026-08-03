@@ -116,8 +116,10 @@ class PayInvoiceService {
                 let total_paid = parseFloat(invoice.total_paid) || 0.00
                 let total_reference = 0
                 let has_change = false
+                let converted_amount = 0
                 
                 let total_change = explicitChanges.reduce((acc, current) => acc + parseFloat(current.amountInUSD), 0)
+             
                 const dollarValue = await this.dollarValue.getLastValue()
                 
                 const detailsToCreate = []
@@ -135,12 +137,14 @@ class PayInvoiceService {
                     if (total_to_pay <= 0) total_to_pay = 0
 
                     // Evaluate the current payment method and calculate reference amounts/changes.
-                    const { reference_amount, change, detailAmount, movementAmount } = this._checkPaymentMethod(
+                    const { reference_amount, change, detailAmount, movementAmount, converted_amount } = this._checkPaymentMethod(
                         paymentId, 
                         dollarValue, 
                         parseFloat(amount), 
                         total_to_pay,
                     )
+
+                    
 
                     cashMovementsToCreate.push({
                         invoice_id: invoiceId,
@@ -152,7 +156,7 @@ class PayInvoiceService {
                         description: `Pago de factura #${invoiceId}`,
                         user_id: invoice.seller_id,
                         movement_category: 'invoice_payment',
-                        converted_amount: reference_amount
+                        converted_amount: converted_amount
                     })
 
                     // Collect the change if the method generated one (e.g., cash)
@@ -476,9 +480,11 @@ class PayInvoiceService {
         let reference_amount = amount
         let detailAmount = total_to_pay
         let change = 0
+        let change_bs = 0
         let payment_type = null
         let dollar = dollarValue.toJSON().value
         let movementAmount = amount
+        let converted_amount = amount
 
         /**
          * Table of payment methods:
@@ -500,6 +506,7 @@ class PayInvoiceService {
 
             // set payment type to bolivars 
             payment_type = 'bolivars'
+            converted_amount = reference_amount
         }
 
         // check if reference_amount is greather than total to pay and throw and error
@@ -519,7 +526,8 @@ class PayInvoiceService {
                 
                 // if payment is in bolivar set amount and change in bolivar 
                 if(payment_type == 'bolivars') {
-                    change = parseFloat((amount - (total_to_pay * dollar)).toFixed(2))
+                    change = parseFloat(((amount / dollar) - (total_to_pay)).toFixed(2))
+                    change_bs = parseFloat((change * dollar).toFixed(2))
                     detailAmount = parseFloat((total_to_pay * dollar).toFixed(2))
                     reference_amount = parseFloat((detailAmount / dollar).toFixed(2))
                     movementAmount = (amount / dollar).toFixed(2)
@@ -544,7 +552,8 @@ class PayInvoiceService {
             reference_amount: reference_amount,
             change: change,
             detailAmount: detailAmount,
-            movementAmount: movementAmount
+            movementAmount: movementAmount,
+            converted_amount: converted_amount
         }
        
     }
@@ -612,3 +621,4 @@ class PayInvoiceService {
 
 
 export default PayInvoiceService
+
