@@ -86,15 +86,16 @@ export default async function ClosureSalesData({seller_id, date}) {
 
     const closingData = closing_data ? normalizeClosingData(closing_data) : {rows: [], totalBs: 0, totalUsd: 0}
     const balanceData = balance_data ? normalizeCashBalanceData(balance_data) : {rows: [], netBs: 0, netUsd: 0}
-    const {rows: rows_closing, totalBs, totalUsd} = closingData
-    const {rows: rows_balance, netBs, netUsd} = balanceData
+    const {rows: closing_rows, totalBs, totalUsd} = closingData
+    const {rows: balance_rows, netBs, netUsd} = balanceData
     
     
  
     return (
-        <Container>
-            <ClosureReport totalBs={totalBs} totalUsd={totalUsd} netBs={netBs} netUsd={netUsd}/>
-        </Container>
+
+        <ClosureReport totalBs={totalBs} totalUsd={totalUsd} netBs={netBs} netUsd={netUsd} 
+            closing_rows={closing_rows} balance_rows={balance_rows}/>
+  
     )
 
 

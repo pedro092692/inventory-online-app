@@ -13,7 +13,7 @@ export default function MethodsComparativeTable({ methods = [], totalUsd = [] })
     const MethodTable = ({methods, totalUsd}) => {
         return (
             <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, tableLayout: "fixed" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, tableLayout: "fixed" }}>
                     <thead>
                         <tr style={{ borderBottom: `1px solid ${palette.grid}` }}>
                             {["Método", "Moneda", "Transacciones", "Total USD", "% del total"].map((h) => (

@@ -16,7 +16,7 @@ export default function DonutChart({methods, totalUsd}) {
         const ri = 56
 
         if (!totalUsd) {
-            return <div style={{ padding: 24, textAlign: "center", fontSize: 13, color: palette.muted }}>Sin datos en el periodo</div>
+            return <div style={{ padding: 24, textAlign: "center", fontSize: 16, color: palette.muted }}>Sin datos en el periodo</div>
         }
 
         let cumAngle = -Math.PI / 2
@@ -46,7 +46,7 @@ export default function DonutChart({methods, totalUsd}) {
 
         return (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 18, height: "410px"}}>
-                <svg width={size} height={size} role="img" aria-label="Distribución de ingresos por método de pago">
+                <svg width={size} height={size} role="img" aria-label="Distribución de ingresos por método de pago" style={{marginTop: "-32px"}}>
                     { single ? (
                         <circle
                             cx={cx}
@@ -65,7 +65,7 @@ export default function DonutChart({methods, totalUsd}) {
                 </svg>
                 <div style={{ display: "flex", flexDirection: "column", gap: 9, width: "100%" }}>
                     {methods.map((m) => (
-                        <div key={m.name} style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 13 }}>
+                        <div key={m.name} style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 16 }}>
                             <span style={{ width: 11, height: 11, borderRadius: 3, background: m.color, flexShrink: 0 }} />
                             <span style={{ color: palette.muted, flex: 1 }}>{m.name}</span>
                             <span style={{ fontWeight: 700, color: palette.navy, fontVariantNumeric: "tabular-nums" }}>
@@ -74,6 +74,7 @@ export default function DonutChart({methods, totalUsd}) {
                         </div>
                     ))}
                 </div>
+                
             </div>
         )
     }

@@ -1,6 +1,7 @@
 import ClosureSalesData from '@/app/(store)/store/reports/_components/sales/closureData'
 import GetItemAction from '@/app/lib/actions/get'
 import ReportFilters from '@/app/(store)/store/reports/_components/sales/closure/reportFilter'
+import {Container} from '@/app/ui/utils/container'
 
 
 export default async function ClosureReport({searchParams}) {
@@ -11,10 +12,16 @@ export default async function ClosureReport({searchParams}) {
     const sellers = seller_response?.data?.sellers || []
 
     return (
-        <div>
+        <Container
+            alignItem={'flex-start'}
+            padding={'0px 24px'}
+            gap={'0px'}
+            direction={'column'}
+            width={'100%'}
+        >
             <ReportFilters date={date} sellerId={seller_id} sellers={sellers} />
             <ClosureSalesData seller_id={seller_id} date={date} />
-        </div>
+        </Container>
         
     )
 }

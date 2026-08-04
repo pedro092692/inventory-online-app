@@ -23,7 +23,7 @@ export default function SplitListChart({currencies = []}) {
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                fontSize: 11,
+                                fontSize: 18,
                                 fontWeight: 700,
                                 color: "#fff",
                             }}
@@ -35,9 +35,9 @@ export default function SplitListChart({currencies = []}) {
                 {currencies.map((c) => (
                     <div key={c.name} style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 13 }}>
                         <span style={{ width: 11, height: 11, borderRadius: 3, background: CURRENCY_COLORS[c.name] || "#888", flexShrink: 0 }} />
-                        <span style={{ color: palette.muted, flex: 1 }}>{c.name}</span>
-                        <span style={{ color: palette.muted, fontSize: 12 }}>{c.txn.toLocaleString()} txn</span>
-                        <span style={{ fontWeight: 700, color: palette.navy, fontVariantNumeric: "tabular-nums", minWidth: 90, textAlign: "right" }}>
+                        <span style={{ color: palette.muted, flex: 1, fontSize: "16px" }}>{c.name}</span>
+                        <span style={{ color: palette.muted, fontSize: 14 }}>{c.txn.toLocaleString()} txn</span>
+                        <span style={{ fontWeight: 700, color: palette.navy, fontVariantNumeric: "tabular-nums", minWidth: 90, textAlign: "right", fontSize: "16px" }}>
                             ${c.usd.toLocaleString("es-ES", { minimumFractionDigits: 2 })}
                         </span>
                     </div>
