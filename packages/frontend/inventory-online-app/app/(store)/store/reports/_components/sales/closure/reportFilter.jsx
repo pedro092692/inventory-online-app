@@ -29,7 +29,7 @@ export default function ReportFilters({date, sellerId, sellers = []}) {
         const user_id = value
         const params = new URLSearchParams(searchParams)
         setSeller(user_id)
-        params.set('userId', user_id)
+        params.set('sellerId', user_id)
         router.replace(`?${params.toString()}`)
     }
 
