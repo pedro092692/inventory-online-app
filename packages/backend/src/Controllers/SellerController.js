@@ -129,6 +129,18 @@ class SellerController {
     })
 
     /**
+     * Retrieves all sellers name ids.
+     * @param {Object} req - request object
+     * @param {Object} res - response object to send the list of sellers
+     * @throws {ServiceError} - throws an error if the sellers could not be retrieved
+     * @returns {Promise<void>} - returns the list of sellers in the response
+     */
+    sellersName = this.#error.handler(async(req, res) => {
+        const {sellers} = await this.sellerService.sellersName()
+        res.status(200).json({sellers})
+    })
+
+    /**
      * Retrieves a seller by their ID.
      * @param {Object} req - request object containing the seller ID in the params
      * @param {Object} res - response object to send the seller details

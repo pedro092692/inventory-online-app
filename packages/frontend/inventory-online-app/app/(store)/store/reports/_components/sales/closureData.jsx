@@ -1,14 +1,14 @@
 import GetItemAction from '@/app/lib/actions/get'
-import ChartSection from '../charts/sectionChart' 
 import {Container} from '@/app/ui/utils/container'
 
 const METHOD_COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"]
 
-export default async function ClosureSalesData() {
+export default async function ClosureSalesData({seller_id = null, date = null}) {
     // await new Promise (r => setTimeout(r, 1000))
-
-    const cash_closing_url = 'reports/cash-closing'
-    const cash_balance_url = 'reports/cash-balance'
+  
+    const cash_closing_url = `reports/cash-closing?${seller_id ? `sellerId=${seller_id}&` : ''}${date ? `date=${date}` : ''}`
+    const cash_balance_url = `reports/cash-balance?${seller_id ? `sellerId=${seller_id}&` : ''}${date ? `date=${date}` : ''}`
+  
 
     const [closing_response, balance_response] = await Promise.all([
         GetItemAction(cash_closing_url, 'Hubo un error inesperado intenta nuevamente'),
@@ -77,8 +77,8 @@ export default async function ClosureSalesData() {
     const closingData = closing_data ? normalizeClosingData(closing_data) : {rows: [], totalBs: 0, totalUsd: 0}
     const balanceData = balance_data ? normalizeCashBalanceData(balance_data) : {rows: [], netBs: 0, netUsd: 0}
 
-
-
+    console.log('closingData', closingData)
+    console.log('balanceData', balanceData)
     return (
         <Container>
             Hola cierre

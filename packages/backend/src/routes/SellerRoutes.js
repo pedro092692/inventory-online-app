@@ -18,6 +18,7 @@ class SellerRoutes{
     inicializateRoutes() {
         this.router.get('/', (req, res) => res.send('Seller routes'))
         this.router.get('/all', (req, res) => new SellerController(req.Seller).allSeller(req, res))
+        this.router.get('/all-names', (req, res) => new SellerController(req.Seller).sellersName(req, res))
         this.router.get('/total-invoices', (req, res) => new SellerController(req.Seller, req.Invoice).getTotalSellerInvoices(req, res))
         this.router.get('/:id', (req, res) => new SellerController(req.Seller).getSeller(req, res))
         this.router.post('/', validateFields('createUser'), (req, res) => new SellerController(req.Seller).createSeller(req, res))

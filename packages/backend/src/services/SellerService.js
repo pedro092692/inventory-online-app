@@ -111,6 +111,26 @@ class SellerService {
     }
 
     /**
+     * Get all sellers id and names.
+     * @description Retrieves all sellers with their names and ids.
+     * @throws {ServiceError} - throws an error if the sellers could not be retrieved
+     * @returns {Promise<Array>} - returns an array of sellers with their sales
+     */
+    sellersName() {
+        return this.#error.handler(['Read all sellers'], async () => {
+            const sellers = await this.Seller.findAll({
+                attributes: ['id', 'name'],
+                order: [['name', 'ASC']]
+            })
+
+            return {
+                sellers: sellers
+            }
+        })
+    }
+
+
+    /**
      * Retrieves a seller by their ID.
      * @description Retrieves a seller with their sales by the given ID.
      * @param {Number} id - ID of the seller to retrieve
