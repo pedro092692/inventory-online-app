@@ -24,6 +24,11 @@ export default function SalesNavbar() {
             endpoint: 'details',
             link: '/store/reports/sales/details',
         },
+        {
+            label: 'Cierre',
+            endpoint: 'closure',
+            link: '/store/reports/sales/closure',
+        }
     ]
     
     return (
