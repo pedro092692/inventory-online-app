@@ -3,7 +3,7 @@ import {Container} from '@/app/ui/utils/container'
 
 const METHOD_COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"]
 
-export default async function ClosureSalesData({seller_id = null, date = null}) {
+export default async function ClosureSalesData({seller_id, date}) {
     // await new Promise (r => setTimeout(r, 1000))
   
     const cash_closing_url = `reports/cash-closing?${seller_id ? `sellerId=${seller_id}&` : ''}${date ? `date=${date}` : ''}`
@@ -77,8 +77,8 @@ export default async function ClosureSalesData({seller_id = null, date = null}) 
     const closingData = closing_data ? normalizeClosingData(closing_data) : {rows: [], totalBs: 0, totalUsd: 0}
     const balanceData = balance_data ? normalizeCashBalanceData(balance_data) : {rows: [], netBs: 0, netUsd: 0}
 
-    console.log('closingData', closingData)
-    console.log('balanceData', balanceData)
+    // console.log('closingData', closingData)
+    console.log('balanceData', balanceData.rows[0], cash_balance_url)
     return (
         <Container>
             Hola cierre
