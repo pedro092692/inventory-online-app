@@ -189,7 +189,8 @@ class ReportController {
      * @throws {Error} If there is a problem retrieving closing cash data. 
      */
     cashClosing = this.#error.handler( async(req, res) => {
-        const { seller_id, date } = req.body
+        const seller_id = req.query.seller_id ? parseInt(req.query.seller_id) : null
+        const date = req.query.date ? req.query.date : null
         const data = await this.reportService.cashClosing(seller_id, date)
         res.status(200).json(data)
     })
@@ -204,7 +205,8 @@ class ReportController {
      * @throws {Error} If there is a problem retrieving closing cash data. 
      */
     cashBalance = this.#error.handler( async(req, res) => {
-        const { seller_id, date } = req.body
+        const seller_id = req.query.seller_id ? parseInt(req.query.seller_id) : null
+        const date = req.query.date ? req.query.date : null
         const data = await this.reportService.cashBalance(seller_id, date)
         res.status(200).json(data) 
     })

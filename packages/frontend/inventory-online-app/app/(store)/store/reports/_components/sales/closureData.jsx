@@ -46,8 +46,8 @@ export default async function ClosureSalesData() {
 
 
     const normalizeCashBalanceData = (raw) => {
-        const netBs = 0
-        const netUsd = 0 
+        let netBs = 0
+        let netUsd = 0 
 
         const rows = raw
             .map((r, i) => {
@@ -77,8 +77,7 @@ export default async function ClosureSalesData() {
     const closingData = closing_data ? normalizeClosingData(closing_data) : {rows: [], totalBs: 0, totalUsd: 0}
     const balanceData = balance_data ? normalizeCashBalanceData(balance_data) : {rows: [], netBs: 0, netUsd: 0}
 
-    console.log('closingData', closing_response)
-    console.log('balanceData', balanceData)
+
 
     return (
         <Container>
