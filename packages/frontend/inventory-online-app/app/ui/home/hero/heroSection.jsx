@@ -53,7 +53,7 @@ export function Hero() {
                     <Image 
                     src='/images/home/img-1.png'
                     fill
-                    style={{ objectFit: 'cotain' }}
+                    // style={{ objectFit: 'cotain' }}
                     alt='Nexastock Software'
                     />
                 </Container>
