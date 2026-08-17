@@ -1,12 +1,12 @@
 import { verifyAuth } from './app/middlewares/auth.js'
 import { redirectIfLoggedIn } from './app/middlewares/public.js'
-import { checkAuthorization } from './app/middlewares/authorization.js'
+import { checkAuthorization, checkAdmin } from './app/middlewares/authorization.js'
 import { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const publicPaths = ['/login']
-  const privatePaths = ['/store']
+  const privatePaths = ['/store', '/admin']
   const authorizePaths = ['/store/customers/edit',
                           '/store/products/edit',
                           '/store/products/add',
@@ -16,6 +16,7 @@ export function middleware(request: NextRequest) {
                           '/store/staff',
                           '/api/export',
                         ]
+  const adminPaths = ['/admin']
 
   if(publicPaths.some((path) => pathname.startsWith(path))) {
     // If the user is logged in, redirect them to the dashboard
@@ -26,6 +27,10 @@ export function middleware(request: NextRequest) {
     return checkAuthorization(request)
   }
 
+  if(adminPaths.some((path) => pathname.startsWith(path))) {
+    return checkAdmin(request)
+  }
+
   if(privatePaths.some((path) => pathname.startsWith(path))) {
     return verifyAuth(request)
   }
@@ -34,5 +39,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/store/customers/edit/:path*', '/store/:path*', '/login'],
+    matcher: ['/store/customers/edit/:path*', '/store/:path*', '/login', '/admin'],
 }

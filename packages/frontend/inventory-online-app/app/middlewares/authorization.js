@@ -19,7 +19,7 @@ class AuthorizationMiddleWare {
         try{
             // verify token 
             const res = await this.verifyToken(token, true)
-
+            
             
             if (![1,2,3].includes(res.data.role)){
                 return NextResponse.redirect(new URL('/store', request.url))
@@ -33,9 +33,30 @@ class AuthorizationMiddleWare {
             return NextResponse.next()
         }
     }
+
+    checkAdmin = async (request) => {
+        const token = request.cookies.get('access_token')?.value 
+        if (!token) {
+             return NextResponse.redirect(new URL('/404', request.url));
+        }
+
+        try{
+            
+            const res = await this.verifyToken(token, true)
+            if (res.data.role != 1) {
+                return NextResponse.redirect(new URL('/404', request.url));
+            }else {
+                return NextResponse.next()
+            }
+
+        }catch(err){
+            return NextResponse.next()
+        }
+    }
 }
 
 const checkAuthorization = new AuthorizationMiddleWare().checkAuthorization
+const checkAdmin = new AuthorizationMiddleWare().checkAdmin
 
-export { checkAuthorization }
+export { checkAuthorization, checkAdmin }
 
