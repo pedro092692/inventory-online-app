@@ -1,6 +1,7 @@
 'use server'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
+import { verifyToken } from '@/app/utils/verifyToken'
 import checkNextParam from '@/app/utils/checkNextParam'
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1'
 
@@ -45,6 +46,16 @@ export default async function Login(nextUrl, prevState, formData) {
                 sameSite: 'strict',
                 maxAge: 3600,
             })
+
+            // get current user role
+            const response_cu = await verifyToken(tokenPart.split('access_token=')[1])
+            const current_user = await response_cu.json()
+            
+            if(current_user.data.role_name === 'admin' && safeNext === '/store') {
+                redirect('/admin')
+            }
+
+
             redirect(safeNext) 
         }
     }

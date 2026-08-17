@@ -105,7 +105,8 @@ class SecurityController {
         const user = { 
             email: currentUser.email, 
             permissions: currentUser.permissions, 
-            role: currentUser.role 
+            role: currentUser.role,
+            role_name: currentUser.role_name, 
         }
         res.status(200).json(user)
     })
