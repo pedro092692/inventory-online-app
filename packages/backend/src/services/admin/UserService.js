@@ -83,6 +83,35 @@ class UserService {
     }
 
     /**
+     * Retrieves all store-owners users with pagination.
+     * @param {number} limit - The maximum number of users to retrieve.
+     * @param {number} offset - The number of users to skip before starting to retrieve.
+     * @return {Promise<Array>} - A promise that resolves to an array of user objects.
+     * @throws {ServiceError} - If an error occurs during user retrieval.
+     */
+    getStoreOwner(limit=10, offset=0) {
+        return this.#error.handler(['Read store owner users'], async() => {
+            const users = await User.findAll({
+                where: {
+                    role_id: 2
+                },
+                attributes: ['id', 'email', 'tenant_id', 'deletedAt'],
+                include: [
+                    {
+                        association: 'role',
+                        attributes: ['name']
+                    }
+                ],
+                limit: limit,
+                offset: offset
+            })
+            return {
+                users: users
+            }
+        })
+    }
+
+    /**
      * Retrieves a user by their ID.
      * @param {number} id - The ID of the user to retrieve.
      * @return {Promise<Object>} - A promise that resolves to the user object without the password.

@@ -35,6 +35,18 @@ class UserController {
         res.status(200).json(users)
     })
 
+     /**
+     * Retrieves all store owners users.
+     * @param {Object} req - request object
+     * @param {Object} res - response object to send the list of users
+     * @throws {ServiceError} - throws an error if the users could not be retrieved
+     * @returns {Promise<void>} - returns the list of users in the response
+     */
+    getAllStoreOwners = this.#error.handler( async(req, res) => {
+        const {users} = await this.User.getStoreOwner()
+        res.status(200).json({users})
+    })
+
     /**
      * Retrieves a user by their ID.
      * @param {Object} req - request object containing the user ID in the params
