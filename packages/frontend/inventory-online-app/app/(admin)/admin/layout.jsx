@@ -1,4 +1,5 @@
 import { Container } from '@/app/ui/utils/container'
+import { Panel } from '@/app/ui/dashboard/panel/panel'
 
 export default function Dashboard({children}) {
     return (
@@ -13,7 +14,7 @@ export default function Dashboard({children}) {
 
         >
             {/* panel */}
-            <p>Welcome admin pedro</p>
+            <Panel type={'admin'}/>
             {/* panel */}
             <Container
                 padding='8px'

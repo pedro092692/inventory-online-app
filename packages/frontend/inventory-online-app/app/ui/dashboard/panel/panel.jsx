@@ -6,9 +6,9 @@ import styles from './panel.module.css'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
 
 
-export async function Panel() {
+export async function Panel({type = 'store'}) {
     const userInfo = await getCurrentUser()
-    const menuItems = {
+    const menuStore = {
         customers: {
             title: 'clientes',
             icon: 'customer',
@@ -68,24 +68,38 @@ export async function Panel() {
         }
     }
 
+    const adminMenu = {
+        users: {
+            title: 'Usuarios',
+            icon: 'users',
+            link: '/admin/users',
+            role: [1]
+        }
+    }
+
+    const menu = (type) => {
+        return type === 'store' ? menuStore : adminMenu
+    }
+
     return(
         <Container className={styles.panel}>
             {/* logo */}
-            <Link href='/store'>
+            <Link href={`${type === 'store' ? '/store' : '/admin'}`}>
                 <Logo type='logoWhite' style={{width: '100%'}}/>
             </Link>
             {/* menu container */}
             <Container className={styles.menu}>
                 {/* render menu */}
-                {Object.keys(menuItems).map(((key, index) => {
-                    if (menuItems[key].role.includes(userInfo.role)) {
+                
+                {Object.keys(menu(type)).map(((key, index) => {
+                    if (menu(type)[key].role.includes(userInfo.role)) {
                         return (
-                            <Link key={index} href={menuItems[key].link} style={{width: '100%'}}>
+                            <Link key={index} href={menu(type)[key].link} style={{width: '100%'}}>
                                 <Container
                                     className={`p2-r ${styles.menuItem}`}
                                 >
-                                    <p>{menuItems[key].title}</p>
-                                    <Icon icon={menuItems[key].icon}/>
+                                    <p>{menu(type)[key].title}</p>
+                                    <Icon icon={menu(type)[key].icon}/>
                                 </Container>
                             </Link>
                         )
