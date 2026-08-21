@@ -17,15 +17,19 @@ export default function Actions({
         queryString='',
         deleteMsg='Elemento eliminado con éxito',
         cancelSupervisor = false,
-        custonActionButton = false
+        custonActionButton = false,
+        typeList = 'store'
     }){
     
     const [showModal, setShowModal] = useState(false)
     const [isMounted, setIsMounted] = useState(false)
     const canEdit = userPermissions.includes('update')
     const canDelete = userPermissions.includes('delete')
+    const urlPath = typeList === 'store' ? '/store' : '/admin'
+
+
     const createURL = (action, id) => {
-        const path = `/store/${endpoint}`
+        const path = `${urlPath}/${endpoint}`
         let url = `${path}/${action}/${id}${queryString ? `?${queryString}` : ''}`
         if (endpoint === 'dollar-value' && action === 'edit'){
              url = `/store/currency/${action}/${id}${queryString ? `?${queryString}` : ''}`

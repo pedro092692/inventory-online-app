@@ -19,6 +19,7 @@ export default function List({
         cancelSupervisor = false,
         custonActionButton = () => '', 
         noRenderKeys = [],
+        typeList = 'store'
 
     }) {
     return (
@@ -71,6 +72,7 @@ export default function List({
                                                             deleteMsg={deleteMsg}
                                                             cancelSupervisor={cancelSupervisor}
                                                             custonActionButton={custonButtom}
+                                                            typeList={typeList}
                                                         />
                                                     </td>
                                                 )
