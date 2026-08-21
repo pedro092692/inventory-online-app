@@ -112,6 +112,36 @@ class UserService {
     }
 
     /**
+     * Calculates the total number of pages forusers results based on a tenant_id and limit.
+     * * @param {string} [query=''] - The tenant_id term to filter users.
+     * @param {number} [limit=10] - The number of records to display per page.
+     * @returns {Promise<number>} A promise that resolves to the total number of calculated pages.
+     * @throws Will be handled by the internal error handler.
+     */
+    totalPages(tenant_id = null, limit = 10) {
+        return this.#error.handler(['Total pages', tenant_id, 'Users'], async() => {
+            let whereClause = {}
+            
+            if(tenant_id) {
+                whereClause = {
+                    tenant_id: tenant_id
+                }
+            }else {
+                whereClause = {
+                    role_id: 2
+                }
+            }
+            
+            const count = await User.count({
+                where: whereClause
+            })
+
+            return Math.ceil(count / limit)
+            
+        })
+    }
+
+    /**
      * Retrieves a user by their ID.
      * @param {number} id - The ID of the user to retrieve.
      * @return {Promise<Object>} - A promise that resolves to the user object without the password.
