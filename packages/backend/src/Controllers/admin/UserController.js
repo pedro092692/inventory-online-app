@@ -22,6 +22,19 @@ class UserController {
         const user = await this.User.createUser(email, password, role_id)
         res.status(201).json(user)
     })
+
+    /**
+     * Creates a new store and seller.
+     * @param {Object} req - request object containing user details in the body
+     * @param {Object} res - response object to send the created user
+     * @throws {ServiceError} - throws an error if the user could not be created
+     * @returns {Promise<void>} - returns the created user in the response
+     */
+    createNewStore = this.#error.handler( async(req, res) => {
+        const { email, password, given_name, last_name, id_number, address, pin } = req.body
+        const { newStore, seller } = await this.User.createNewStore(email, password, given_name, last_name, id_number, address, pin)
+        res.status(201).json({newStore, seller})
+    })
     
     /**
      * Retrieves all users.

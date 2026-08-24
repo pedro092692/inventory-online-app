@@ -16,7 +16,7 @@
 
 export default {
   async up (queryInterface, Sequelize, schema) {
-    queryInterface.createTable(
+    await queryInterface.createTable(
       'payments',
       {
         id: {

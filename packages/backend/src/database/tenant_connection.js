@@ -100,7 +100,7 @@ class TenantConnection {
         }
 
         // create new schema for tenant if it not exist
-        this.createNewShema(schema)
+        await this.createNewShema(schema)
         
 
         // checks if tenant is alreay registered 
@@ -183,9 +183,9 @@ class TenantConnection {
         const PaymentDetail = initializePaymentDetail(sequelize, schema)
         const Dollar = initializeDollar(sequelize, schema)
         const AuditLog = initializeAuditLog(sequelize, schema)
-        const CustomerCredit = initializeCustomerCredit(sequelize, schema)
-        const InvoiceReturn = initializeInvoiceReturn(sequelize, schema)
+        const CustomerCredit = initializeCustomerCredit(sequelize, schema)        
         const CashMovements = initializeCashMovements(sequelize, schema)
+        const InvoiceReturn = initializeInvoiceReturn(sequelize, schema)
         
         return {
             Customer, 
@@ -198,8 +198,8 @@ class TenantConnection {
             Dollar,
             AuditLog,
             CustomerCredit,
+            CashMovements,            
             InvoiceReturn,
-            CashMovements
         }
     }
 

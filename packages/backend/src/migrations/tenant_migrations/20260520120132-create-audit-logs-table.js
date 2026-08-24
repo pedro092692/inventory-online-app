@@ -21,7 +21,7 @@
  */
 export default {
   async up (queryInterface, Sequelize, schema) {
-    queryInterface.createTable(
+    await queryInterface.createTable(
       'audit_logs',
       {
         id: {
@@ -107,7 +107,7 @@ export default {
    * @returns {Promise<void>}
    */
   async down (queryInterface, Sequelize, schema) {
-    queryInterface.dropTable({
+    await queryInterface.dropTable({
       tableName: 'audit_logs',
       schema
     })

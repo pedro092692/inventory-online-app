@@ -16,7 +16,7 @@
 
 export default {
   async up (queryInterface, Sequelize, schema){
-    queryInterface.createTable(
+    await queryInterface.createTable(
       'exchange_rates',
       {
         id: {
@@ -56,7 +56,7 @@ export default {
    */
 
   async down (queryInterface, Sequelize, schema){
-    queryInterface.dropTable({
+    await queryInterface.dropTable({
       tableName: 'exchange_rates',
       schema
     })

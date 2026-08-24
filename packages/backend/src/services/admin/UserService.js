@@ -1,5 +1,7 @@
 import { NotFoundError } from '../../errors/NofoundError.js'
 import ServiceErrorHandler from '../../errors/ServiceErrorHandler.js'
+import Database from '../../database/database.js'
+import { sequelize } from '../../database/database.js'
 import pkg from '../../config/config.js'
 import process from 'process'
 import { User } from '../../models/UserModel.js'
@@ -17,6 +19,7 @@ class UserService {
     #error = new ServiceErrorHandler()
 
     constructor() {
+        this.db = new Database()
         this.#error
     }
 
@@ -30,6 +33,7 @@ class UserService {
      */
     createUser(email, password, role_id, current_user, options={}) {
         return this.#error.handler(['Create user'], async() => {
+     
             if (current_user && current_user?.role_name != 'admin' && (role_id == 1 || role_id == 2)) {
                 throw new Error ('Forbidden')
             }
@@ -43,6 +47,9 @@ class UserService {
             },
             {
                 transaction: options?.transaction
+            },
+            {
+                raw: true
             }
             ) 
 
@@ -51,12 +58,110 @@ class UserService {
             }
 
             if (!current_user) {
-                user = await this.updateUser(newUser.id, {tenant_id: newUser.id})
+                user = await this.updateUser(newUser.id, {tenant_id: newUser.id}, options)
             }
 
             return user
         })
     }
+
+
+    /**
+     * Creates a new store owner user, initializes a tenant schema for that user,
+     * and registers the owner as a seller with supervisor privileges.
+     *
+     * This operation is executed in two main phases:
+     *
+     * **Phase 1 — Create the store owner user (public.users):**
+     * - Hashes the provided password.
+     * - Creates a new user with role_id = 2 (storeOwner).
+     * - Sets the user's tenant_id to match its own id (each store owner becomes its own tenant).
+     * - Runs inside a database transaction to ensure atomicity.
+     *
+     * **Phase 2 — Initialize tenant schema and create the seller record:**
+     * - Establishes a tenant-specific database connection using the newly assigned tenant_id.
+     * - Creates a seller entry inside the tenant schema, marking the user as the supervisor.
+     *
+     * If Phase 2 fails, the method performs manual compensation by deleting the previously
+     * created user to avoid leaving orphaned records without a corresponding tenant.
+     *
+     * @async
+     * @function createNewStore
+     * @param {string} email - Email address for the new store owner.
+     * @param {string} password - Raw password to be hashed and stored.
+     * @param {string} given_name - First name of the store owner.
+     * @param {string} last_name - Last name of the store owner.
+     * @param {string} id_number - Identification number of the store owner.
+     * @param {string} address - Physical address of the store owner.
+     * @param {string} pin - Security PIN for the store owner (stored in tenant schema).
+     *
+     * @returns {Promise<Object>} An object containing:
+     * - `newStore`: The newly created user record.
+     * - `seller`: The seller record created inside the tenant schema.
+     *
+     * @throws {Error} Throws if user creation fails, tenant initialization fails,
+     * or seller creation fails. In case of tenant/seller failure, the user is deleted
+     * to maintain consistency.
+     */
+    createNewStore(email, password, given_name, last_name, id_number, address, pin) {
+    return this.#error.handler(['Create new Store'], async () => {
+        const t = await sequelize.transaction()
+        let newStoreOwner
+
+        // --- 1: Create new user public.users ---
+        try {
+            const hashedPassword = await bcrypt.hash(password, saltRounds)
+
+            newStoreOwner = await User.create(
+                {
+                    email,
+                    password: hashedPassword,
+                    role_id: 2, // storeOwner
+                    tenant_id: null
+                },
+                { transaction: t }
+            )
+
+            // same user id is tenant_id
+            await newStoreOwner.update(
+                { tenant_id: newStoreOwner.id },
+                { transaction: t }
+            )
+
+            await t.commit()
+        } catch (err) {
+            await t.rollback()
+            throw err
+        }
+
+        // --- 2: create tenan schema t + storeOwner seller ---
+        try {
+            const tenant = await this.db.tenant.TenantConnection(newStoreOwner.tenant_id)
+
+            const ownerSeller = await tenant.models.Seller.create({
+                user_id: newStoreOwner.id,
+                name: given_name,
+                last_name: last_name,
+                id_number: id_number,
+                address: address, 
+                pin: pin,
+                is_supervisor: true 
+            })
+
+            return {
+                newStore: newStoreOwner,
+                seller: ownerSeller
+            }
+        } catch (err) {
+            // Manual compensation: If the schema/seller fails, we don't leave
+            // an orphaned user without a store
+                await User.destroy({ where: { id: newStoreOwner.id }, force: true })
+                throw err
+            }
+        })
+    }
+
+
 
     /**
      * Retrieves all users with pagination.
@@ -148,7 +253,7 @@ class UserService {
      * @throws {ServiceError} - If the user is not found or an error occurs during retrieval.
      * 
      */
-    getUser(id) {
+    getUser(id, options={}) {
         return this.#error.handler(['Read user', id, 'User'], async() => {
             const user = await User.findByPk(id, {
                 attributes: ['id', 'email'],
@@ -158,7 +263,12 @@ class UserService {
                         attributes: ['name']
                     }
                 ]
-            })
+
+            },
+            {
+                transaction: options?.transaction
+            }
+            )
             if(!user) {
                 throw new NotFoundError()
             }
@@ -191,9 +301,9 @@ class UserService {
      * @return {Promise<Object>} - A promise that resolves to the updated user object without the password.
      * @throws {ServiceError} - If the user is not found or an error occurs during the update.
      */
-    updateUser(userId, updates) {
+    updateUser(userId, updates, options={}) {
         return this.#error.handler(['Update User', userId, 'User'], async() => {
-            const user = await this.getUser(userId)
+            const user = await this.getUser(userId, options)
             const updatedUser = await user.update(updates)
             const safeUser = this.detelePassword(updatedUser)
             return safeUser
