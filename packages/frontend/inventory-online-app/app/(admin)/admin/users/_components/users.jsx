@@ -4,12 +4,12 @@ import styles from '@/app/(store)/store/customers/_components/customers.module.c
 
 export default async function Users({ limit = 10, page = 1, query = null }){
  
-    const enpoint = query ? 'customers/search' : 'users/store-owners-all'
+    const enpoint = query ? 'users/search-owner' : 'users/store-owners-all'
     const params = new URLSearchParams()
     const rawParams = params.toString()
     
     if (query){
-        params.append('data', query)
+        params.append('query', query)
         params.append('limitResults', limit)
         params.append('page', page)
     }else{
@@ -19,10 +19,12 @@ export default async function Users({ limit = 10, page = 1, query = null }){
 
     const url = `${enpoint}?${params.toString()}`
 
+
+
     const response = await GetItemAction(url)
     
     const {data, error} = response
-    const rawData = data?.users || []
+    const rawData = data?.users || data?.storeOwners || []
     
     const transformData = (users) => {
         let data = []

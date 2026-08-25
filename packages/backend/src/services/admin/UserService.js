@@ -195,7 +195,8 @@ class UserService {
         return this.#error.handler(['Search store owners', query, 'Users'],  async() => {
             const results = await User.findAll({
                 where: {
-                    email: {[Op.substring]: query}
+                    email: {[Op.substring]: query},
+                    role_id: 2 // only store owner
                 },
                 attributes: ['id', 'email', 'tenant_id', 'deletedAt'],
                 include: [
@@ -249,7 +250,7 @@ class UserService {
      * @returns {Promise<number>} A promise that resolves to the total number of calculated pages.
      * @throws Will be handled by the internal error handler.
      */
-    totalPages(tenant_id = null, limit = 10) {
+    totalPages(tenant_id = null, limit = 10, query = '') {
         return this.#error.handler(['Total pages', tenant_id, 'Users'], async() => {
             let whereClause = {}
             
@@ -263,11 +264,23 @@ class UserService {
                 }
             }
             
-            const count = await User.count({
+            if(!query) {
+                const count = await User.count({
                 where: whereClause
+                })
+
+                return Math.ceil(count / limit)
+            }
+
+            const results = await User.findAndCountAll({
+                where: {
+                    email: {[Op.substring]: query},
+                    role_id: 2 // only store owner
+                },
             })
 
-            return Math.ceil(count / limit)
+            return Math.ceil(results.count / limit)
+            
             
         })
     }

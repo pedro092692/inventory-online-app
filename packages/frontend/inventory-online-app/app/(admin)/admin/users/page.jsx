@@ -1,4 +1,6 @@
 import { Container } from '@/app/ui/utils/container'
+import { Button } from '@/app/ui/utils/button/buttons'
+import Link from 'next/link'
 import Search from '@/app/ui/form/search/search'
 import Pagination from '@/app/ui/pagination/pagination'
 import Request from '@/app/utils/request'
@@ -22,13 +24,16 @@ export default async function User({searchParams}) {
                 padding='0px'
                 width='100%'
             >
-            
+                <Link href={'/admin/users/add'}>
+                    <Button showIcon={true} type={'secondary'} icon='circlePlus' children='Agregar Un Nuevo Usuario' 
+                        className='p3-r shadow'/>
+                </Link>
                 <Search 
                     placeHolder="Buscar usuario por correo"
                 />
 
                 <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={4} />}>
-                    <Users page={currentPage}/>
+                    <Users page={currentPage} query={query}/>
                 </Suspense>
 
                 {

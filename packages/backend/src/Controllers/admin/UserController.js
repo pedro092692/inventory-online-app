@@ -87,9 +87,10 @@ class UserController {
      * @returns {Promise<void>} Sends a JSON response with the total page count.
      */
     totalPages = this.#error.handler( async(req, res) => {
+        const { data } = req.query
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const { tenant_id } = req.query || null
-        const total = await this.User.totalPages(tenant_id, limit)
+        const total = await this.User.totalPages(tenant_id, limit, data)
         res.status(200).json({total})
     })
 

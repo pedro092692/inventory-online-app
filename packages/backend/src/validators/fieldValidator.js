@@ -4,7 +4,7 @@ function validateFields(rule) {
     const check_pin =  check('pin').isLength({ min: 4 }).withMessage('El pin al menos debe tener 4 caracteres').isString().withMessage('El pin tiene debe ser una cadena de texto.')
     const check_id_number = check('id_number').isLength({ min: 6}).withMessage('El número de cédula debe tener al menos 6 dígitos')
     const check_name = check('name').isLength({ min: 3}).withMessage('El nombre debe tener al menos 3 caracteres')
-    const check_isLen = (field, len) => check(field).isLength({ min: len}).withMessage(`${field} debe tener al menos ${len} caracteres.`)
+    const check_isLen = (field, len, field_display=null) => check(field).isLength({ min: len}).withMessage(`${field_display ? field_display : field} debe tener al menos ${len} caracteres.`)
     
     const validationRule = {
         createCustomer: [
@@ -39,7 +39,17 @@ function validateFields(rule) {
             check_id_number,
             check_name,
             check_isLen('last_name', 3),
-            check_isLen('password', 3)
+            check_isLen('password', 8)
+        ],
+
+        createStore: [
+            check_id_number,
+            check_isLen('given_name', 3, 'Nombre'),
+            check_isLen('last_name', 3),
+            check_isLen('password', 8, 'Contraseña'),
+            check('email').isEmail().withMessage('El email tiene que ser valido'),
+            check_isLen('address', 3, 'Dirección'),
+            check_pin,
         ]
     }
 
