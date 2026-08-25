@@ -3,6 +3,7 @@ import ServiceErrorHandler from '../../errors/ServiceErrorHandler.js'
 import Database from '../../database/database.js'
 import { sequelize } from '../../database/database.js'
 import pkg from '../../config/config.js'
+import { Op } from 'sequelize'
 import process from 'process'
 import { User } from '../../models/UserModel.js'
 import bcrypt from 'bcrypt'
@@ -10,9 +11,6 @@ import bcrypt from 'bcrypt'
 
 const currentEnv = process.env.NODE_ENV || 'development'
 const saltRounds = pkg[currentEnv].saltRounds
-
-
-
 
 class UserService {
     // new instance of service error handler 
@@ -161,8 +159,6 @@ class UserService {
         })
     }
 
-
-
     /**
      * Retrieves all users with pagination.
      * @param {number} limit - The maximum number of users to retrieve.
@@ -184,6 +180,36 @@ class UserService {
                 offset: offset
             })
             return users
+        })
+    }
+
+    /**
+     * Searches for store owners by email.
+     * @param {string} query - The email to search for.
+     * @param {number} [limitResults=8] - The maximum number of results to return.
+     * @return {Promise<Object>} - A promise that resolves to an object containing search results and pagination info.
+     * @throws {ServiceError} - If an error occurs during the search.
+     */
+    searchStoreownnerUsers(query, page=1, limitResults=8) {
+        const offset = (page - 1) * limitResults
+        return this.#error.handler(['Search store owners', query, 'Users'],  async() => {
+            const results = await User.findAll({
+                where: {
+                    email: {[Op.substring]: query}
+                },
+                attributes: ['id', 'email', 'tenant_id', 'deletedAt'],
+                include: [
+                    {
+                        association: 'role',
+                        attributes: ['name']
+                    }
+                ],
+                limit: limitResults,
+                offset: offset
+            })
+            return {
+                storeOwners: results
+            }
         })
     }
 

@@ -60,6 +60,22 @@ class UserController {
         res.status(200).json({users})
     })
 
+     /**
+     * Searches for store owners user based on a query string.
+     * @param {Object} req - request object containing the search query and pagination parameters
+     * @param {Object} res - response object to send the search results
+     * @throws {ServiceError} - throws an error if the search operation fails
+     * @returns {Promise<void>} - returns the search results in the response
+     */
+    searchStoreOwners = this.#error.handler( async(req, res) => {
+        const { query } = req.query
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const page = req.query.page ? parseInt(req.query.page) : 1
+        const { storeOwners } = await this.User.searchStoreownnerUsers(query, page, limit)
+        res.status(200).json({storeOwners})
+
+    })
+
     /**
      * Retrieve the total number of pages for the users list.
      * * @async
