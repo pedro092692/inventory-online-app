@@ -24,6 +24,7 @@ class UserRoutes {
         this.router.post('/', (req, res) => new UserController().createUser(req, res))
         this.router.post('/store', validateFields('createStore'), (req, res) => new UserController().createNewStore(req, res))
         this.router.patch('/', (req, res) => new UserController().updateUser(req, res))
+        this.router.patch('/storeOwner', validateFields('updateStoreOwner'), (req, res) => new UserController().updateStoreOwner(req, res))
         this.router.delete('/', (req, res) => new UserController().deleteUser(req, res))
     }
 }

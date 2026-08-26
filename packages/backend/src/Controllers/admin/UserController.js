@@ -121,6 +121,20 @@ class UserController {
         res.status(200).json(updatedUser)
     })
 
+     /**
+     * Updates a store owner (and their linked seller record) by their user ID.
+     * @param {Object} req - request object containing the store owner's user ID and updates in the body
+     * @param {Object} res - response object to send the updated store owner
+     * @throws {ServiceError} - throws an error if the store owner could not be updated
+     * @returns {Promise<void>} - returns the updated store owner (and seller) in the response
+     */
+    updateStoreOwner = this.#error.handler( async(req, res) => {
+        const userId = req.body.userId
+        const updates = req.body.updates
+        const updatedStoreOwner = await this.User.updateStoreOwner(userId, updates)
+        res.status(200).json(updatedStoreOwner)
+    })
+
     /**
      * Deletes a user by their ID.
      * @param {Object} req - request object containing the user ID in the body

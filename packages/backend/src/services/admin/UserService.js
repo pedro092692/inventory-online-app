@@ -160,6 +160,98 @@ class UserService {
     }
 
     /**
+     * Updates a store owner in the public.users table and synchronizes editable fields
+     * with the corresponding Seller record inside the tenant schema.
+     *
+     * The update process is executed in two phases:
+     *
+     * **Phase 1 — Update public.users (email and/or password):**
+     * - Validates that the store owner exists.
+     * - Applies email and/or password changes inside a transaction.
+     * - Hashes the password if provided.
+     * - Ensures validation rules such as unique email and minimum password length.
+     *
+     * **Phase 2 — Update Seller record inside the tenant schema:**
+     * - Retrieves the tenant-specific database connection using tenant_id.
+     * - Locates the Seller record associated with the user.
+     * - Updates only editable fields: name, last_name, id_number, and address.
+     * - If this phase fails, the method restores the previous email to avoid inconsistency.
+     *
+     * @async
+     * @function updateStoreOwner
+     * @param {number} userId - The ID of the store owner to update.
+     * @param {Object} updates - Fields to update for both the user and seller.
+     * @param {string} [updates.email] - New email for the store owner.
+     * @param {string} [updates.password] - New raw password to be hashed.
+     * @param {string} [updates.name] - Updated first name for the seller record.
+     * @param {string} [updates.last_name] - Updated last name for the seller record.
+     * @param {string} [updates.id_number] - Updated identification number.
+     * @param {string} [updates.address] - Updated physical address.
+     *
+     * @returns {Promise<Object>} An object containing:
+     * - `storeOwner`: The updated user record.
+     * - `seller`: The updated seller record inside the tenant schema.
+     *
+     * @throws {Error} Throws if the store owner does not exist, if validation fails,
+     * or if the Seller record cannot be found. If Phase 2 fails, the previous email
+     * is restored to maintain consistency.
+    */
+    updateStoreOwner(userId, updates) {
+    return this.#error.handler(['Update Store Owner'], async () => {
+            const storeOwner = await User.findByPk(userId)
+            if (!storeOwner) {
+                throw new Error('Store owner not found')
+            }
+
+            // --- Step 1: Update public.users (email and/or password) ---
+            const t = await sequelize.transaction()
+            const previousEmail = storeOwner.email
+
+            try {
+                if (updates.email !== undefined) {
+                    storeOwner.email = updates.email
+                }
+
+                if (updates.password !== undefined) {
+                    storeOwner.password = await bcrypt.hash(updates.password, saltRounds)
+                }
+                
+                // Validates email format, uniqueness, and password length
+                await storeOwner.save({ transaction: t }) 
+                await t.commit()
+            } catch (err) {
+                await t.rollback()
+                throw err
+            }
+
+             // --- Step 2: Update Seller inside the tenant schema ---
+            try {
+                const tenant = await this.db.tenant.TenantConnection(storeOwner.tenant_id)
+                const seller = await tenant.models.Seller.findOne({
+                    where: { user_id: storeOwner.id }
+                })
+                if (!seller) {
+                    throw new Error('Seller record not found for this store owner')
+                }
+
+                const editableFields = ['name', 'last_name', 'id_number', 'address']
+                editableFields.forEach((field) => {
+                    if (updates[field] !== undefined) {
+                        seller[field] = updates[field]
+                    }
+                })
+                await seller.save()
+
+                return { storeOwner, seller }
+            } catch (err) {
+                // Restore previous email to avoid inconsistent state
+                await storeOwner.update({ email: previousEmail })
+                throw err
+            }
+        })
+    }
+
+    /**
      * Retrieves all users with pagination.
      * @param {number} limit - The maximum number of users to retrieve.
      * @param {number} offset - The number of users to skip before starting to retrieve.
