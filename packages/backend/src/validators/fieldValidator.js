@@ -51,6 +51,9 @@ function validateFields(rule) {
             check('email').isEmail().withMessage('El email tiene que ser valido'),
             check_isLen('address', 3, 'Dirección'),
             check_pin,
+            check_isLen('store_name', 3, 'Nombre de la tienda'),
+            check('fiscal_id').optional({ checkFalsy: true }).isLength({ min: 3 }).withMessage('El registro fiscal debe tener al menos 3 caracteres.'),
+            check_isLen('phone', 13, 'Teléfono'),
         ],
 
         updateStoreOwner: [

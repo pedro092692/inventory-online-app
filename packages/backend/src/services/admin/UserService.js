@@ -6,6 +6,7 @@ import pkg from '../../config/config.js'
 import { Op } from 'sequelize'
 import process from 'process'
 import { User } from '../../models/UserModel.js'
+import { Store } from '../../models/StoreModel.js'
 import bcrypt from 'bcrypt'
 
 
@@ -65,48 +66,44 @@ class UserService {
 
 
     /**
-     * Creates a new store owner user, initializes a tenant schema for that user,
+     * Creates a new store owner user, its store profile, initializes a tenant schema,
      * and registers the owner as a seller with supervisor privileges.
      *
-     * This operation is executed in two main phases:
-     *
-     * **Phase 1 — Create the store owner user (public.users):**
+     * **Phase 1 — Create the store owner user and store profile (public schema):**
      * - Hashes the provided password.
      * - Creates a new user with role_id = 2 (storeOwner).
-     * - Sets the user's tenant_id to match its own id (each store owner becomes its own tenant).
-     * - Runs inside a database transaction to ensure atomicity.
+     * - Sets the user's tenant_id to match its own id.
+     * - Creates the Store row linked to that same tenant_id.
+     * - Runs inside a single transaction (User y Store viven en la misma conexión pública).
      *
      * **Phase 2 — Initialize tenant schema and create the seller record:**
      * - Establishes a tenant-specific database connection using the newly assigned tenant_id.
      * - Creates a seller entry inside the tenant schema, marking the user as the supervisor.
      *
-     * If Phase 2 fails, the method performs manual compensation by deleting the previously
-     * created user to avoid leaving orphaned records without a corresponding tenant.
+     * If Phase 2 fails, deletes the previously created user and store to avoid orphaned records.
      *
-     * @async
-     * @function createNewStore
-     * @param {string} email - Email address for the new store owner.
-     * @param {string} password - Raw password to be hashed and stored.
-     * @param {string} given_name - First name of the store owner.
-     * @param {string} last_name - Last name of the store owner.
-     * @param {string} id_number - Identification number of the store owner.
-     * @param {string} address - Physical address of the store owner.
-     * @param {string} pin - Security PIN for the store owner (stored in tenant schema).
-     *
-     * @returns {Promise<Object>} An object containing:
-     * - `newStore`: The newly created user record.
-     * - `seller`: The seller record created inside the tenant schema.
-     *
-     * @throws {Error} Throws if user creation fails, tenant initialization fails,
-     * or seller creation fails. In case of tenant/seller failure, the user is deleted
-     * to maintain consistency.
+     * @param {string} email
+     * @param {string} password
+     * @param {Object} details
+     * @param {string} details.given_name
+     * @param {string} details.last_name
+     * @param {string} details.id_number
+     * @param {string} details.address
+     * @param {string} details.pin
+     * @param {string} details.store_name
+     * @param {string} [details.fiscal_id] - Opcional.
+     * @param {string} details.phone
+     * @returns {Promise<{newStore: Object, store: Object, seller: Object}>}
      */
-    createNewStore(email, password, given_name, last_name, id_number, address, pin) {
+    createNewStore(email, password, details) {
     return this.#error.handler(['Create new Store'], async () => {
+        const { given_name, last_name, id_number, address, pin, store_name, fiscal_id, phone } = details
+
         const t = await sequelize.transaction()
         let newStoreOwner
+        let newStoreInfo
 
-        // --- 1: Create new user public.users ---
+        // --- 1: Create new user + store profile in public ---
         try {
             const hashedPassword = await bcrypt.hash(password, saltRounds)
 
@@ -126,13 +123,24 @@ class UserService {
                 { transaction: t }
             )
 
+            newStoreInfo = await Store.create(
+                {
+                    tenant_id: newStoreOwner.id,
+                    name: store_name,
+                    fiscal_id: fiscal_id || null,
+                    address,
+                    phone
+                },
+                { transaction: t }
+            )
+
             await t.commit()
         } catch (err) {
             await t.rollback()
             throw err
         }
 
-        // --- 2: create tenan schema t + storeOwner seller ---
+        // --- 2: create tenant schema + storeOwner seller ---
         try {
             const tenant = await this.db.tenant.TenantConnection(newStoreOwner.tenant_id)
 
@@ -141,18 +149,19 @@ class UserService {
                 name: given_name,
                 last_name: last_name,
                 id_number: id_number,
-                address: address, 
+                address: address,
                 pin: pin,
-                is_supervisor: true 
+                is_supervisor: true
             })
 
             return {
                 newStore: newStoreOwner,
+                store: newStoreInfo,
                 seller: ownerSeller
             }
         } catch (err) {
-            // Manual compensation: If the schema/seller fails, we don't leave
-            // an orphaned user without a store
+                // Manual compensation: phase 1 ya quedó confirmado (commit)
+                await Store.destroy({ where: { tenant_id: newStoreOwner.id } })
                 await User.destroy({ where: { id: newStoreOwner.id }, force: true })
                 throw err
             }

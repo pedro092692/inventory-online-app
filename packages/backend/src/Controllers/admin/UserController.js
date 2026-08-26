@@ -31,9 +31,11 @@ class UserController {
      * @returns {Promise<void>} - returns the created user in the response
      */
     createNewStore = this.#error.handler( async(req, res) => {
-        const { email, password, given_name, last_name, id_number, address, pin } = req.body
-        const { newStore, seller } = await this.User.createNewStore(email, password, given_name, last_name, id_number, address, pin)
-        res.status(201).json({newStore, seller})
+        const { email, password, given_name, last_name, id_number, address, pin, store_name, fiscal_id, phone } = req.body
+        const { newStore, store, seller } = await this.User.createNewStore(email, password, {
+            given_name, last_name, id_number, address, pin, store_name, fiscal_id, phone
+        })
+        res.status(201).json({newStore, store, seller})
     })
     
     /**

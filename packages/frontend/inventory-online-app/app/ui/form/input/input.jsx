@@ -78,6 +78,7 @@ export function Input({
                     defaultValue={value ?? defaultValue ?? ""}
                     readOnly={readOnly}  
                     name={name}
+                    required={required}
                 />
         }
         </Container>
