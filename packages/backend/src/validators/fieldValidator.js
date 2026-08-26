@@ -54,18 +54,14 @@ function validateFields(rule) {
         ],
 
         updateStoreOwner: [
-            check('userId').isInt().withMessage('El id del usuario debe ser un número entero'),
-            check('updates')
-                .custom((value) => typeof value === 'object' && value !== null && !Array.isArray(value))
-                .withMessage('Se requiere un objeto de actualizaciones'),
-            
-            check('updates.email').optional().isEmail().withMessage('El email tiene que ser válido'),
-            check_isLen_optional('updates.password', 8, 'La contraseña'),
-            check_isLen_optional('updates.name', 3, 'El nombre'),
-            check_isLen_optional('updates.last_name', 3, 'El apellido'),
-            check_isLen_optional('updates.id_number', 6, 'El número de cédula'),
-            check_isLen_optional('updates.address', 3, 'La dirección'),
-        ]
+            check('id').isInt().withMessage('El id del usuario debe ser un número entero'),
+            check('email').optional().isEmail().withMessage('El email tiene que ser válido'),
+            check('password').optional({ checkFalsy: true }).isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres.'),
+            check_isLen_optional('name', 3, 'El nombre'),
+            check_isLen_optional('last_name', 3, 'El apellido'),
+            check_isLen_optional('id_number', 6, 'El número de cédula'),
+            check_isLen_optional('address', 3, 'La dirección'),
+        ],
     }
 
     return [...validationRule[rule],

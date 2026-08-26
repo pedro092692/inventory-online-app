@@ -20,11 +20,12 @@ class UserRoutes {
         this.router.get('/store-owners-all', (req, res) => new UserController().getAllStoreOwners(req, res))
         this.router.get('/search-owner', (req, res) => new UserController().searchStoreOwners(req, res))
         this.router.get('/total-pages', (req, res) => new UserController().totalPages(req, res))
+        this.router.get('/store-owner/:id', (req, res) => new UserController().getStoreOwner(req, res))
         this.router.get('/:id', (req, res) => new UserController().getUser(req, res))
         this.router.post('/', (req, res) => new UserController().createUser(req, res))
         this.router.post('/store', validateFields('createStore'), (req, res) => new UserController().createNewStore(req, res))
         this.router.patch('/', (req, res) => new UserController().updateUser(req, res))
-        this.router.patch('/storeOwner', validateFields('updateStoreOwner'), (req, res) => new UserController().updateStoreOwner(req, res))
+        this.router.patch('/storeOwner/:id', validateFields('updateStoreOwner'), (req, res) => new UserController().updateStoreOwner(req, res))
         this.router.delete('/', (req, res) => new UserController().deleteUser(req, res))
     }
 }

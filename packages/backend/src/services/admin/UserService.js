@@ -212,7 +212,7 @@ class UserService {
                     storeOwner.email = updates.email
                 }
 
-                if (updates.password !== undefined) {
+                if (updates.password) {
                     storeOwner.password = await bcrypt.hash(updates.password, saltRounds)
                 }
                 
@@ -404,6 +404,31 @@ class UserService {
                 throw new NotFoundError()
             }
             return user
+        })
+    }
+
+    /**
+     * Retrieves a store owner (public.users row) together with their seller
+     * record from the tenant schema, so the edit form can precargarse completo.
+     * @param {number} id - The store owner's user id (= tenant_id).
+     * @returns {Promise<{user: Object, seller: Object|null}>}
+     */
+    getStoreOwner(id) {
+        return this.#error.handler(['Read store owner', id, 'User'], async () => {
+            const user = await User.findByPk(id, {
+                attributes: ['id', 'email', 'tenant_id'],
+                include: [{ association: 'role', attributes: ['name'] }]
+            })
+            if (!user) {
+                throw new NotFoundError()
+            }
+
+            const tenant = await this.db.tenant.TenantConnection(user.tenant_id)
+            const seller = await tenant.models.Seller.findOne({
+                where: { user_id: user.id }
+            })
+
+            return { user, seller }
         })
     }
 
