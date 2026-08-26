@@ -207,7 +207,10 @@ class UserService {
     */
     updateStoreOwner(userId, updates) {
     return this.#error.handler(['Update Store Owner'], async () => {
-            const storeOwner = await User.findByPk(userId)
+            const storeOwner = await User.findByPk(userId, {
+                include: [{ association: 'store' }]
+            })
+            
             if (!storeOwner) {
                 throw new Error('Store owner not found')
             }
@@ -224,9 +227,17 @@ class UserService {
                 if (updates.password) {
                     storeOwner.password = await bcrypt.hash(updates.password, saltRounds)
                 }
-                
+
                 // Validates email format, uniqueness, and password length
                 await storeOwner.save({ transaction: t }) 
+
+                if (storeOwner.store) {
+                    if (updates.store_name !== undefined) storeOwner.store.name = updates.store_name
+                    if (updates.fiscal_id !== undefined) storeOwner.store.fiscal_id = updates.fiscal_id || null
+                    if (updates.store_phone !== undefined) storeOwner.store.phone = updates.store_phone
+                    await storeOwner.store.save({ transaction: t })
+                }
+            
                 await t.commit()
             } catch (err) {
                 await t.rollback()
@@ -296,15 +307,15 @@ class UserService {
         return this.#error.handler(['Search store owners', query, 'Users'],  async() => {
             const results = await User.findAll({
                 where: {
-                    email: {[Op.substring]: query},
-                    role_id: 2 // only store owner
+                    [Op.or]: [
+                        { email: { [Op.substring]: query } },
+                        { '$store.name$': { [Op.substring]: query} }
+                    ]
                 },
                 attributes: ['id', 'email', 'tenant_id', 'deletedAt'],
                 include: [
-                    {
-                        association: 'role',
-                        attributes: ['name']
-                    }
+                    { association: 'role', attributes: ['name'] },
+                    { association: 'store', attributes: ['name', 'is_active'], required: false }
                 ],
                 limit: limitResults,
                 offset: offset
@@ -330,10 +341,8 @@ class UserService {
                 },
                 attributes: ['id', 'email', 'tenant_id', 'deletedAt'],
                 include: [
-                    {
-                        association: 'role',
-                        attributes: ['name']
-                    }
+                    { association: 'role', attributes: ['name'] },
+                    { association: 'store', attributes: ['name', 'is_active'], required: false }
                 ],
                 limit: limit,
                 offset: offset
@@ -375,9 +384,16 @@ class UserService {
 
             const results = await User.findAndCountAll({
                 where: {
-                    email: {[Op.substring]: query},
-                    role_id: 2 // only store owner
+                    role_id: 2,
+                    [Op.or]: [
+                        { email: { [Op.substring]: query } },
+                        { '$store.name$': { [Op.substring]: query } }
+                    ]
                 },
+                include: [
+                    { association: 'store', attributes: [], required: false }
+                ],
+                distinct: true
             })
 
             return Math.ceil(results.count / limit)
@@ -426,7 +442,10 @@ class UserService {
         return this.#error.handler(['Read store owner', id, 'User'], async () => {
             const user = await User.findByPk(id, {
                 attributes: ['id', 'email', 'tenant_id'],
-                include: [{ association: 'role', attributes: ['name'] }]
+                include: [
+                    { association: 'role', attributes: ['name'] },
+                    { association: 'store' }
+                ]
             })
             if (!user) {
                 throw new NotFoundError()

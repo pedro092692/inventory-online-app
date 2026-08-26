@@ -30,13 +30,14 @@ export default async function Users({ limit = 10, page = 1, query = null }){
         let data = []
         if (users.length > 0) {
             data = users.map(user => (
-                {
-                    email: user.email,
-                    tenant_id: user.tenant_id,
-                    deteletedAt: user.deletedAt ? user.deletedAt : 'Activo',
-                    rol: user?.role?.name ? 'Dueño de tienda' : 'Error' || 'null',
-                    id: user.id,
-                }
+            {   
+                store_name: user?.store?.name || 'Sin tienda',
+                email: user.email,
+                tenant_id: user.tenant_id,
+                deteletedAt: user.deletedAt ? user.deletedAt : 'Activo',
+                rol: user?.role?.name ? 'Dueño de tienda' : 'Error' || 'null',
+                id: user.id,
+            }
             ))
         }
         return data
@@ -56,6 +57,7 @@ export default async function Users({ limit = 10, page = 1, query = null }){
         <List
             tableHead={
                 {
+                    'store_name': 'Tienda',
                     'email': 'Correo',
                     'tenant_id': 'Identificador',
                     'isActive': 'Usuario Eliminado',

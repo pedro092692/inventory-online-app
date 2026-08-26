@@ -29,7 +29,7 @@ export default async function User({searchParams}) {
                         className='p3-r shadow'/>
                 </Link>
                 <Search 
-                    placeHolder="Buscar usuario por correo"
+                    placeHolder="Buscar por correo o nombre de tienda"
                 />
 
                 <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={4} />}>
