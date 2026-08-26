@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import InvoiceController from '../Controllers/InvoiceController.js'
-import { authenticated } from '../middlewares/authMiddleware.js'
+import { authenticated, requireActiveStore } from '../middlewares/authMiddleware.js'
 class InvoiceRoutes {
 
     constructor() {
@@ -22,9 +22,9 @@ class InvoiceRoutes {
         this.router.get('/total-pages', (req, res) => new InvoiceController(req.Invoice).totalPages(req, res))
         this.router.get('/:id', (req, res) => 
             new InvoiceController(req.Invoice, req.InvoiceDetail, null, req.Dollar).getInvoice(req, res))
-        this.router.get('/send-whatsapp/:id', (req, res) => 
+        this.router.get('/send-whatsapp/:id', requireActiveStore, (req, res) =>
             new InvoiceController(req.Invoice, req.InvoiceDetail, null, req.Dollar).sendWhatsappInvoice(req, res))
-        this.router.post('/', (req, res) => 
+        this.router.post('/', requireActiveStore, (req, res) =>
             new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar, null, req.Seller).createInvoice(req, res))
         this.router.patch('/:id', (req, res) => 
             new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).updateInvoice(req, res))

@@ -1,7 +1,7 @@
 import { Button } from '@/app/ui/utils/button/buttons'
 import styles from './buttons.module.css'
 
-export default function InvoiceActionButtons({items=[], screen=() => '', activeScreen=null, customer=null, state={}}) {
+export default function InvoiceActionButtons({items=[], screen=() => '', activeScreen=null, customer=null, state={}, storeInactive=false, blockedReason=null}) {
     return (
         <div className={styles.container}>
             <div className={styles.buttonsContainer}>
@@ -31,14 +31,14 @@ export default function InvoiceActionButtons({items=[], screen=() => '', activeS
                 />
                 
                 {/* pay */}
-                <Button 
-                    type={!customer || items.length < 1 ? 'disabled' : activeScreen == 'pay' ? 'secondary' : 'nonActive'}
-                    disabled={!customer || items.length < 1 ? true : false}
+                <Button
+                    type={!customer || items.length < 1 || storeInactive ? 'disabled' : activeScreen == 'pay' ? 'secondary' : 'nonActive'}
+                    disabled={!customer || items.length < 1 || storeInactive ? true : false}
                     showIcon={true}
                     icon={'creditCard'}
                     size={[24, 24]}
                     style={{padding: '8px'}}
-                    title={'Getionar Pagos'}
+                    title={storeInactive ? (blockedReason || 'Tu tienda está inactiva, no puedes registrar ventas.') : 'Getionar Pagos'}
                     onClick={() => screen('pay')}
                     children={''}
                     className={activeScreen == 'pay' ? 'shadow' : 'shadow-sm'}

@@ -11,6 +11,6 @@ export default async function StoreOwnerInfo({id}) {
     }
 
     return (
-        <StoreOwnerDetailForm user={data?.user} seller={data?.seller} store={data?.user?.store}/>
+        <StoreOwnerDetailForm user={data?.user} seller={data?.seller} store={data?.user?.store} stats={data?.stats}/>
     )
 }

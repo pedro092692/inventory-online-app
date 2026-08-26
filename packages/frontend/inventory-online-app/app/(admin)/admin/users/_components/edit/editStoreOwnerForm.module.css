@@ -1,0 +1,41 @@
+.form {
+    margin-top: 16px;
+    background: var(--color-neutralGrey500);
+    padding: 16px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 1100px;
+    flex-grow: 1;
+}
+
+.fieldset {
+    border: 1px solid var(--color-neutralGrey600);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.legend {
+    padding: 0 8px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    width: 100%;
+}
+
+.grid .fieldset {
+    margin-bottom: 0;
+}
+
+@media screen and (max-width: 700px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}

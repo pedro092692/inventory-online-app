@@ -37,6 +37,7 @@ export default function AddNewStoreForm() {
     useEffect(() => {
          if (state?.message) {
             setStep(0)
+            setPhoneValue('')
             return
         }
         

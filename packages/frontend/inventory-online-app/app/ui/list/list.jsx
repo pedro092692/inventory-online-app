@@ -19,7 +19,10 @@ export default function List({
         cancelSupervisor = false,
         custonActionButton = () => '', 
         noRenderKeys = [],
-        typeList = 'store'
+        typeList = 'store',
+        editIcon = 'edit',
+        editTitle = 'Editar',
+        editButtonType = 'warning'
 
     }) {
     return (
@@ -73,6 +76,9 @@ export default function List({
                                                             cancelSupervisor={cancelSupervisor}
                                                             custonActionButton={custonButtom}
                                                             typeList={typeList}
+                                                            editIcon={editIcon}
+                                                            editTitle={editTitle}
+                                                            editButtonType={editButtonType}
                                                         />
                                                     </td>
                                                 )

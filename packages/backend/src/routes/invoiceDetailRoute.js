@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import InvoiceDetailController from '../Controllers/InvoiceDetailController.js'
-import { authenticated } from '../middlewares/authMiddleware.js'
+import { authenticated, requireActiveStore } from '../middlewares/authMiddleware.js'
 import { validateFields } from '../validators/fieldValidator.js'
 
 class InvoiceDetailRoutes {
@@ -18,7 +18,7 @@ class InvoiceDetailRoutes {
     inicializateRoutes() {
         this.router.get('/', (req, res) => res.send('Invoices Details Routes'))
         this.router.get('/total-pages', (req, res) => new InvoiceDetailController(req.InvoiceDetail).totalProductsPages(req, res))
-        this.router.delete('/', validateFields('cancelItemDetail'), (req, res) => new InvoiceDetailController
+        this.router.delete('/', requireActiveStore, validateFields('cancelItemDetail'), (req, res) => new InvoiceDetailController
             (req.InvoiceDetail, req.Seller, req.Product, req.InvoiceReturn, req.CustomerCredit, req.Invoice, req.AuditLog)
             .cancelInvoiceItemDetail(req, res))
     }   

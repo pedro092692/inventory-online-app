@@ -18,7 +18,10 @@ export default function Actions({
         deleteMsg='Elemento eliminado con éxito',
         cancelSupervisor = false,
         custonActionButton = false,
-        typeList = 'store'
+        typeList = 'store',
+        editIcon = 'edit',
+        editTitle = 'Editar',
+        editButtonType = 'warning'
     }){
     
     const [showModal, setShowModal] = useState(false)
@@ -75,11 +78,11 @@ export default function Actions({
                     <Button 
                         children={false}
                         showIcon={true}
-                        icon={'edit'}
-                        type={'warning'}
+                        icon={editIcon}
+                        type={editButtonType}
                         size={[15, 15]}
                         style={{padding: '3px 5px'}}
-                        title={'Editar'}
+                        title={editTitle}
                     />
                 </Link>
             )

@@ -13,6 +13,7 @@ import DollarValueRoutes from './routes/DollarValueRoutes.js'
 import ReportRoutes from './routes/reportRoutes.js'
 import SecurityRoutes from './routes/security/SecurityRoutes.js'
 import InvoiceReturnRoutes from './routes/invoiceReturnRoutes.js'
+import StoreStatusRoutes from './routes/StoreStatusRoutes.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 
@@ -94,8 +95,11 @@ class Server {
         // report routes
         this.app.use('/api/reports', new ReportRoutes().router)
 
-        // security routes 
+        // security routes
         this.app.use('/api/security', new SecurityRoutes().router)
+
+        // store status (active/blocked/expired) for the store's own users
+        this.app.use('/api/store', new StoreStatusRoutes().router)
     }
 
     /**

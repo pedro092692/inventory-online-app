@@ -1,6 +1,12 @@
 import { Container } from '@/app/ui/utils/container'
 import { Panel } from '../ui/dashboard/panel/panel'
-export default function Dashboard({children, }) {
+import StoreStatusBanner from './_components/storeStatusBanner'
+import GetItemAction from '@/app/lib/actions/get'
+
+export default async function Dashboard({children, }) {
+    const { data } = await GetItemAction('store/status')
+    const reason = data?.active === false ? data?.reason : null
+
     return (
         <Container
             marginLeft={'15%'}
@@ -22,7 +28,9 @@ export default function Dashboard({children, }) {
                 height='100%'
                 alignItem='start'
                 justifyContent='start'
+                gap='8px'
             >
+                <StoreStatusBanner reason={reason}/>
                 {/* content */}
                 {children}
             </Container>

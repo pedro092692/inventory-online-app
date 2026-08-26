@@ -66,6 +66,10 @@ export default async function Users({ limit = 10, page = 1, query = null }){
             tableData={users}
             showActions={true}
             showDelete={false}
+            showView={false}
+            editIcon="view"
+            editTitle="Ver detalles"
+            editButtonType="secondary"
             params={rawParams}
             endpoint='users'
             deleteKey={'userId'}

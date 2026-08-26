@@ -152,6 +152,33 @@ class UserController {
     })
 
     /**
+     * Blocks a store for abuse or policy violations.
+     * @param {Object} req - request object containing the tenant ID in the params and the reason in the body
+     * @param {Object} res - response object to send the updated store
+     * @throws {ServiceError} - throws an error if the store could not be blocked
+     * @returns {Promise<void>} - returns the updated (blocked) store in the response
+     */
+    blockStore = this.#error.handler( async(req, res) => {
+        const { tenantId } = req.params
+        const { reason } = req.body
+        const store = await this.User.blockStore(tenantId, reason)
+        res.status(200).json({store})
+    })
+
+    /**
+     * Unblocks a previously blocked store.
+     * @param {Object} req - request object containing the tenant ID in the params
+     * @param {Object} res - response object to send the updated store
+     * @throws {ServiceError} - throws an error if the store could not be unblocked
+     * @returns {Promise<void>} - returns the updated (unblocked) store in the response
+     */
+    unblockStore = this.#error.handler( async(req, res) => {
+        const { tenantId } = req.params
+        const store = await this.User.unblockStore(tenantId)
+        res.status(200).json({store})
+    })
+
+    /**
      * Deletes a user by their ID.
      * @param {Object} req - request object containing the user ID in the body
      * @param {Object} res - response object to send the deletion confirmation

@@ -26,6 +26,8 @@ class UserRoutes {
         this.router.post('/store', validateFields('createStore'), (req, res) => new UserController().createNewStore(req, res))
         this.router.patch('/', (req, res) => new UserController().updateUser(req, res))
         this.router.patch('/storeOwner/:id', validateFields('updateStoreOwner'), (req, res) => new UserController().updateStoreOwner(req, res))
+        this.router.patch('/store/:tenantId/block', validateFields('blockStore'), (req, res) => new UserController().blockStore(req, res))
+        this.router.patch('/store/:tenantId/unblock', (req, res) => new UserController().unblockStore(req, res))
         this.router.delete('/', (req, res) => new UserController().deleteUser(req, res))
     }
 }

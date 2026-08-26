@@ -51,9 +51,6 @@ function validateFields(rule) {
             check('email').isEmail().withMessage('El email tiene que ser valido'),
             check_isLen('address', 3, 'Dirección'),
             check_pin,
-            check_isLen('store_name', 3, 'Nombre de la tienda'),
-            check('fiscal_id').optional({ checkFalsy: true }).isLength({ min: 3 }).withMessage('El registro fiscal debe tener al menos 3 caracteres.'),
-            check_isLen('phone', 13, 'Teléfono'),
         ],
 
         updateStoreOwner: [
@@ -64,9 +61,10 @@ function validateFields(rule) {
             check_isLen_optional('last_name', 3, 'El apellido'),
             check_isLen_optional('id_number', 6, 'El número de cédula'),
             check_isLen_optional('address', 3, 'La dirección'),
-            check_isLen_optional('store_name', 3, 'El nombre de la tienda'),
-            check('fiscal_id').optional({ checkFalsy: true }).isLength({ min: 3 }).withMessage('El registro fiscal debe tener al menos 3 caracteres.'),
-            check_isLen_optional('store_phone', 13, 'El teléfono de la tienda'),
+        ],
+
+        blockStore: [
+            check_isLen('reason', 10, 'El motivo del bloqueo'),
         ],
     }
 

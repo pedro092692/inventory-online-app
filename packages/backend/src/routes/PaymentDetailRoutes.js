@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import PayInvoiceController from '../Controllers/PaymentInvoiceDetailController.js'
-import { authenticated } from '../middlewares/authMiddleware.js'
+import { authenticated, requireActiveStore } from '../middlewares/authMiddleware.js'
 
 class PayInvoiceRoutes {
 
@@ -18,13 +18,13 @@ class PayInvoiceRoutes {
     initializeRoutes() {
         this.router.get('/', (req, res) => res.send('Pay Invoice Detail Route'))
         this.router.get('/:id', (req, res) => new PayInvoiceController(req.PaymentDetail).getPaymentDetail(req, res))
-        this.router.post('/', (req, res) => new PayInvoiceController
+        this.router.post('/', requireActiveStore, (req, res) => new PayInvoiceController
             (req.PaymentDetail, req.Dollar, req.Invoice, null, null, req.InvoiceDetail, req.CashMovements, req.CustomerCredit).createPaymentInvoiceDetail(req, res))
-        this.router.delete('/', (req, res) => new PayInvoiceController
+        this.router.delete('/', requireActiveStore, (req, res) => new PayInvoiceController
             (req.PaymentDetail, req.Dollar, req.Invoice, req.Seller, req.AuditLog, req.InvoiceDetail).cancelPaymentInvoiceDetail(req, res))
         this.router.patch('/:id', (req, res) => new PayInvoiceController
             (req.PaymentDetail, req.Dollar, req.Invoice).updatePaymentDetail(req, res))
-        this.router.delete('/cancel', (req, res) => new PayInvoiceController
+        this.router.delete('/cancel', requireActiveStore, (req, res) => new PayInvoiceController
             (req.PaymentDetail, req.Dollar, req.Invoice).deletePaymentDetail(req, res))
     }
 

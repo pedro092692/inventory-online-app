@@ -75,6 +75,16 @@ function initializeStore(sequelize) {
             subscription_expires_at: {
                 type: DataTypes.DATE,
                 allowNull: true,
+            },
+
+            blocked_reason: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
+
+            blocked_at: {
+                type: DataTypes.DATE,
+                allowNull: true
             }
         },
         {

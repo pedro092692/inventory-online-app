@@ -20,7 +20,7 @@ import { useState, useMemo, useActionState, useEffect, startTransition, useRef }
 const STORE_CREDIT_ID = process.env.NEXT_PUBLIC_STORE_CREDIT_ID || 99
 
 
-export default function SellForm({ paymentMethods=[], exchangeRate=null, currentUser=null}) {
+export default function SellForm({ paymentMethods=[], exchangeRate=null, currentUser=null, storeInactive=false, blockedReason=null}) {
     const [activeScreen, setActiveScreen] = useState('products')
     const [items, setItems] = useState([])
     const [customer, setCustomer] = useState(null)
@@ -507,33 +507,39 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
             <form ref={formRef} className={styles.mainContainer} action={handleSubmitInvoice}>
                 {/* products section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'products' ? styles.hide : ''}`}>
-                    <InvoiceActionButtons items={items} 
-                        screen={setActiveScreen} 
+                    <InvoiceActionButtons items={items}
+                        screen={setActiveScreen}
                         activeScreen={activeScreen}
                         customer={customer}
                         state={state}
+                        storeInactive={storeInactive}
+                        blockedReason={blockedReason}
                     />
                     <ProductSelector  setItems={setItems} items={items} activeScreen={activeScreen} changes={changes} setChanges={setChanges}/>
                 </div>
 
                 {/* customer section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'customer' ? styles.hide : ''}`}>
-                    <InvoiceActionButtons items={items} 
-                        screen={setActiveScreen} 
+                    <InvoiceActionButtons items={items}
+                        screen={setActiveScreen}
                         activeScreen={activeScreen}
                         customer={customer}
                         state={state}
+                        storeInactive={storeInactive}
+                        blockedReason={blockedReason}
                     />
                     <SelectCustomer customer={customer} setCustomer={setCustomer} showResult={false} bgColor={'white'} activeScreen={activeScreen}/>
                 </div>
 
                 {/* pay section */}
                 <div className={`${styles.searchContainer} ${activeScreen !== 'pay' ? styles.hide : ''}`}>
-                    <InvoiceActionButtons items={items} 
-                        screen={setActiveScreen} 
+                    <InvoiceActionButtons items={items}
+                        screen={setActiveScreen}
                         activeScreen={activeScreen}
                         customer={customer}
                         state={state}
+                        storeInactive={storeInactive}
+                        blockedReason={blockedReason}
                     /> 
                    
                     <Select 

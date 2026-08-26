@@ -1,6 +1,7 @@
 import ControllerErrorHandler from '../errors/controllerErrorHandler.js'
 import Database from '../database/database.js'
 import SecurityService from '../services/admin/SecurityService.js'
+import StoreStatusService from '../services/StoreStatusService.js'
 
 
 
@@ -12,9 +13,10 @@ class AuthMiddleware {
     
     #error = new ControllerErrorHandler()
     
-    constructor() { 
+    constructor() {
         this.db = new Database()
         this.security = new SecurityService()
+        this.storeStatus = new StoreStatusService()
     }
     
     /**
@@ -91,10 +93,41 @@ class AuthMiddleware {
         res.status(403).json({ message: 'Forbidden' })
     })
 
+    /**
+     * Express middleware to block actions that "move" the business (sell, pay, register/edit
+     * products, return products, refund payments) when the tenant's store is inactive —
+     * either because the admin blocked it (`is_active = false`) or because its subscription
+     * expired (`subscription_expires_at` in the past).
+     *
+     * Read-only routes (viewing products, invoices, reports, etc.) are NOT protected by this
+     * middleware on purpose — a blocked/expired store can still see its own data.
+     *
+     * If the user has no `tenant_id` (e.g. an admin hitting these routes directly) or has no
+     * Store row yet, it lets the request through — this middleware only blocks known-inactive stores.
+     *
+     * @type {import('express').RequestHandler}
+     */
+    requireActiveStore = this.#error.handler(async (req, res, next) => {
+        const tenantId = req.user?.tenant_id
+
+        if (!tenantId) {
+            return next()
+        }
+
+        const { active, reason } = await this.storeStatus.getStatus(tenantId)
+
+        if (!active) {
+            return res.status(403).json({ message: reason })
+        }
+
+        next()
+    })
+
 }
 
 const authenticated = new AuthMiddleware().authenticatedToken
 const isAdmin = new AuthMiddleware().isAdmin
 const isOwner = new AuthMiddleware().isOwner
+const requireActiveStore = new AuthMiddleware().requireActiveStore
 
-export { authenticated, isAdmin, isOwner }
+export { authenticated, isAdmin, isOwner, requireActiveStore }

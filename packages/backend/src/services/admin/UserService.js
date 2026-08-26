@@ -129,7 +129,8 @@ class UserService {
                     name: store_name,
                     fiscal_id: fiscal_id || null,
                     address,
-                    phone
+                    phone,
+                    subscription_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
                 },
                 { transaction: t }
             )
@@ -433,30 +434,68 @@ class UserService {
     }
 
     /**
-     * Retrieves a store owner (public.users row) together with their seller
-     * record from the tenant schema, so the edit form can precargarse completo.
-     * @param {number} id - The store owner's user id (= tenant_id).
-     * @returns {Promise<{user: Object, seller: Object|null}>}
+     * Retrieves detailed information about a store owner, including:
+     * - Basic user data (id, email, tenant_id)
+     * - Associated role
+     * - Associated store
+     * - Seller record inside the tenant schema
+     * - Store statistics (seller count, customer count, last invoice date)
+     *
+     * This method performs queries both in the main public schema and
+     * inside the tenant-specific schema associated with the store owner.
+     *
+     * @async
+     * @function getStoreOwner
+     * @param {number} id - The ID of the store owner (user) to retrieve.
+     *
+     * @returns {Promise<Object>} An object containing:
+     * - `user`: The user record with role and store associations.
+     * - `seller`: The seller record inside the tenant schema.
+     * - `stats`: Aggregated store statistics:
+     *      - `sellerCount`: Total number of sellers in the tenant.
+     *      - `customerCount`: Total number of customers in the tenant.
+     *      - `lastInvoiceDate`: Date of the most recent invoice, or null if none exist.
+     *
+     * @throws {NotFoundError} If the user does not exist.
      */
     getStoreOwner(id) {
-        return this.#error.handler(['Read store owner', id, 'User'], async () => {
-            const user = await User.findByPk(id, {
-                attributes: ['id', 'email', 'tenant_id'],
-                include: [
-                    { association: 'role', attributes: ['name'] },
-                    { association: 'store' }
-                ]
+    return this.#error.handler(['Read store owner', id, 'User'], async () => {
+        const user = await User.findByPk(id, {
+            attributes: ['id', 'email', 'tenant_id'],
+            include: [
+                { association: 'role', attributes: ['name'] },
+                { association: 'store' }
+            ]
+        })
+        
+        if (!user) {
+            throw new NotFoundError()
+        }
+
+        const tenant = await this.db.tenant.TenantConnection(user.tenant_id)
+        
+        const seller = await tenant.models.Seller.findOne({
+            where: { user_id: user.id }
+        })
+
+        const [sellerCount, customerCount, lastInvoice] = await Promise.all([
+            tenant.models.Seller.count(),
+            tenant.models.Customer.count(),
+            tenant.models.Invoice.findOne({
+                attributes: ['id', 'date'],
+                order: [['date', 'DESC']]
             })
-            if (!user) {
-                throw new NotFoundError()
+        ])
+
+            return {
+                user,
+                seller,
+                stats: {
+                    sellerCount,
+                    customerCount,
+                    lastInvoiceDate: lastInvoice?.date || null
+                }
             }
-
-            const tenant = await this.db.tenant.TenantConnection(user.tenant_id)
-            const seller = await tenant.models.Seller.findOne({
-                where: { user_id: user.id }
-            })
-
-            return { user, seller }
         })
     }
 
@@ -519,6 +558,104 @@ class UserService {
         const objNotPassword ={...obj.toJSON()}
         delete objNotPassword.password
         return objNotPassword
+    }
+
+    /**
+     * Renews a store's subscription by extending its expiration date.
+     *
+     * The renewal logic works as follows:
+     * - If the current subscription is still active (expiration date is in the future),
+     *   the renewal is added on top of the existing expiration date.
+     * - If the subscription has already expired, the renewal starts from the current date.
+     *
+     * This ensures that active subscribers do not lose remaining days,
+     * while expired subscribers restart their subscription from today.
+     *
+     * @async
+     * @function renewSubscription
+     * @param {number} tenantId - The tenant ID associated with the store.
+     * @param {number} [days=30] - Number of days to extend the subscription.
+     *
+     * @returns {Promise<Object>} The updated store record with the new expiration date.
+     *
+     * @throws {NotFoundError} If the store does not exist.
+     */
+    renewSubscription(tenantId, days = 30) {
+        return this.#error.handler(['Renew subscription', tenantId, 'Store'], async () => {
+            const store = await Store.findOne({ where: { tenant_id: tenantId } })
+            if (!store) {
+                throw new NotFoundError()
+            }
+
+            const now = new Date()
+            const currentExpiry = store.subscription_expires_at
+            const base = (currentExpiry && currentExpiry > now) ? currentExpiry : now 
+            const newExpiry = new Date(base.getTime() + days * 24 * 60 * 60 * 1000)
+
+            await store.update({ subscription_expires_at: newExpiry })
+            return store
+        })
+    }
+
+    /**
+     * Blocks a store for abuse or policy violations (e.g. illegal use of the platform).
+     * This is independent of the billing-driven deactivation: it deactivates the store
+     * and records the reason and timestamp, so an unrelated subscription payment does not
+     * silently reactivate a store that was blocked for policy reasons.
+     *
+     * @async
+     * @function blockStore
+     * @param {number} tenantId - The tenant ID associated with the store.
+     * @param {string} reason - The reason for the block, shown to the admin later.
+     *
+     * @returns {Promise<Object>} The updated (blocked) store record.
+     *
+     * @throws {NotFoundError} If the store does not exist.
+     */
+    blockStore(tenantId, reason) {
+        return this.#error.handler(['Block store', tenantId, 'Store'], async () => {
+            const store = await Store.findOne({ where: { tenant_id: tenantId } })
+            if (!store) {
+                throw new NotFoundError()
+            }
+
+            await store.update({
+                is_active: false,
+                blocked_reason: reason,
+                blocked_at: new Date()
+            })
+
+            return store
+        })
+    }
+
+    /**
+     * Unblocks a previously blocked store, reactivating it and clearing the block reason.
+     * Note: this does not touch `subscription_expires_at` — it only reverses a manual block.
+     *
+     * @async
+     * @function unblockStore
+     * @param {number} tenantId - The tenant ID associated with the store.
+     *
+     * @returns {Promise<Object>} The updated (unblocked) store record.
+     *
+     * @throws {NotFoundError} If the store does not exist.
+     */
+    unblockStore(tenantId) {
+        return this.#error.handler(['Unblock store', tenantId, 'Store'], async () => {
+            const store = await Store.findOne({ where: { tenant_id: tenantId } })
+            if (!store) {
+                throw new NotFoundError()
+            }
+
+            await store.update({
+                is_active: true,
+                blocked_reason: null,
+                blocked_at: null
+            })
+
+            return store
+        })
     }
 
     /**
