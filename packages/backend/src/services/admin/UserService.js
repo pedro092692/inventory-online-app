@@ -7,6 +7,8 @@ import { Op } from 'sequelize'
 import process from 'process'
 import { User } from '../../models/UserModel.js'
 import { Store } from '../../models/StoreModel.js'
+import { SubscriptionPayment } from '../../models/SubscriptionPaymentModel.js'
+import StorageService from '../StorageService.js'
 import bcrypt from 'bcrypt'
 
 
@@ -19,6 +21,7 @@ class UserService {
 
     constructor() {
         this.db = new Database()
+        this.storage = new StorageService()
         this.#error
     }
 
@@ -655,6 +658,129 @@ class UserService {
             })
 
             return store
+        })
+    }
+
+    /**
+     * Retrieves pending subscription payments awaiting admin review, oldest first
+     * (fair queue), including the submitting store's name and owner email.
+     *
+     * @async
+     * @function getPendingPayments
+     * @param {number} [limit=10] - Max number of records.
+     * @param {number} [page=1] - Page number.
+     *
+     * @returns {Promise<Object>} { payments }
+     */
+    getPendingPayments(limit = 10, page = 1) {
+        const offset = (page - 1) * limit
+        return this.#error.handler(['Read pending payments', null, 'SubscriptionPayment'], async () => {
+            const payments = await SubscriptionPayment.findAll({
+                where: { status: 'pending' },
+                include: [{
+                    association: 'owner',
+                    attributes: ['id', 'email'],
+                    include: [{ association: 'store', attributes: ['name'] }]
+                }],
+                order: [['submitted_at', 'ASC']],
+                limit,
+                offset
+            })
+            return { payments }
+        })
+    }
+
+    /**
+     * Generates a short-lived signed URL so an admin can privately view a payment's receipt image.
+     *
+     * @async
+     * @function getPaymentReceiptUrl
+     * @param {number} paymentId - The SubscriptionPayment ID.
+     *
+     * @returns {Promise<string>} The signed URL.
+     *
+     * @throws {NotFoundError} If the payment does not exist.
+     */
+    getPaymentReceiptUrl(paymentId) {
+        return this.#error.handler(['Read payment receipt', paymentId, 'SubscriptionPayment'], async () => {
+            const payment = await SubscriptionPayment.findByPk(paymentId)
+            if (!payment) {
+                throw new NotFoundError()
+            }
+            return this.storage.getSignedDownloadUrl(payment.receipt_key)
+        })
+    }
+
+    /**
+     * Approves a pending subscription payment: marks it reviewed and renews the
+     * store's subscription (reusing `renewSubscription`).
+     *
+     * @async
+     * @function approvePayment
+     * @param {number} paymentId - The SubscriptionPayment ID.
+     * @param {number} adminId - The id of the admin approving it.
+     * @param {number} [days=30] - Number of days to extend the subscription.
+     *
+     * @returns {Promise<Object>} { payment, store }
+     *
+     * @throws {NotFoundError} If the payment does not exist.
+     * @throws {Error} If the payment was already reviewed.
+     */
+    approvePayment(paymentId, adminId, days = 30) {
+        return this.#error.handler(['Approve payment', paymentId, 'SubscriptionPayment'], async () => {
+            const payment = await SubscriptionPayment.findByPk(paymentId)
+            if (!payment) {
+                throw new NotFoundError()
+            }
+            if (payment.status !== 'pending') {
+                throw new Error('Este pago ya fue revisado.')
+            }
+
+            await payment.update({
+                status: 'approved',
+                reviewed_at: new Date(),
+                reviewed_by: adminId
+            })
+
+            const store = await this.renewSubscription(payment.tenant_id, days)
+
+            return { payment, store }
+        })
+    }
+
+    /**
+     * Rejects a pending subscription payment, recording the reason. Does not touch the
+     * store's subscription — the owner can submit a new receipt.
+     *
+     * @async
+     * @function rejectPayment
+     * @param {number} paymentId - The SubscriptionPayment ID.
+     * @param {number} adminId - The id of the admin rejecting it.
+     * @param {string} reason - Why the payment was rejected.
+     *
+     * @returns {Promise<Object>} The updated (rejected) payment.
+     *
+     * @throws {NotFoundError} If the payment does not exist.
+     * @throws {Error} If the payment was already reviewed.
+     */
+    rejectPayment(paymentId, adminId, reason) {
+        return this.#error.handler(['Reject payment', paymentId, 'SubscriptionPayment'], async () => {
+            const payment = await SubscriptionPayment.findByPk(paymentId)
+            if (!payment) {
+                throw new NotFoundError()
+            }
+            if (payment.status !== 'pending') {
+                throw new Error('Este pago ya fue revisado.')
+            }
+
+            await payment.update({
+                status: 'rejected',
+                reviewed_at: new Date(),
+                reviewed_by: adminId,
+                rejection_reason: reason
+            })
+
+            return payment
         })
     }
 

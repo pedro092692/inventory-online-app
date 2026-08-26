@@ -19,6 +19,11 @@ const appConfig = {
     admin_role: process.env.ADMIN_ROLE,
     admin_tenant: process.env.ADMIN_TENANT,
     credit_method_id: process.env.CREDIT_METHOD_ID,
+    subscription_price_usd: parseFloat(process.env.SUBSCRIPTION_PRICE_USD) || 20,
+    r2_account_id: process.env.R2_ACCOUNT_ID,
+    r2_access_key_id: process.env.R2_ACCESS_KEY_ID,
+    r2_secret_access_key: process.env.R2_SECRET_ACCESS_KEY,
+    r2_bucket_name: process.env.R2_BUCKET_NAME,
 }
 
 module.exports = {

@@ -5,6 +5,7 @@ import { initializeUser, User } from '../models/UserModel.js'
 import { initializeRole, Role } from '../models/RoleModel.js'
 import { initializeStore, Store } from '../models/StoreModel.js'
 import { initializePlatformExchangeRate, PlatFormExchangeRate } from '../models/PlatformExchangeRateModel.js'
+import { initializeSubscriptionPayment, SubscriptionPayment } from '../models/SubscriptionPaymentModel.js'
 import TenantConnection from './tenant_connection.js'
 
 const currentEnv = process.env.NODE_ENV || 'development'
@@ -65,7 +66,8 @@ class Database {
         initializeRole(this.sequelize)
         initializeStore(this.sequelize)
         initializePlatformExchangeRate(this.sequelize)
-    
+        initializeSubscriptionPayment(this.sequelize)
+
     }
 
     initializeRelations() {
@@ -74,6 +76,8 @@ class Database {
         Role.associationUser({User})
         User.associationStore({Store})
         Store.associationOwner({User})
+        SubscriptionPayment.associationOwner({User})
+        SubscriptionPayment.associationReviewer({User})
     }
 
     // get all tenants 

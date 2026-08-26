@@ -66,6 +66,14 @@ function validateFields(rule) {
         blockStore: [
             check_isLen('reason', 10, 'El motivo del bloqueo'),
         ],
+
+        submitPayment: [
+            check('amount').isNumeric().withMessage('El monto debe ser un número.').isFloat({ min: 0.01 }).withMessage('El monto debe ser mayor a 0.'),
+        ],
+
+        rejectPayment: [
+            check_isLen('reason', 5, 'El motivo del rechazo'),
+        ],
     }
 
     return [...validationRule[rule],

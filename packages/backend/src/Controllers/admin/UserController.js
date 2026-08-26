@@ -179,6 +179,62 @@ class UserController {
     })
 
     /**
+     * Retrieves subscription payments awaiting admin review.
+     * @param {Object} req - request object with optional limit/page query params
+     * @param {Object} res - response object to send the pending payments
+     * @throws {ServiceError} - throws an error if the payments could not be retrieved
+     * @returns {Promise<void>} - returns {payments}
+     */
+    getPendingPayments = this.#error.handler( async(req, res) => {
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const page = req.query.page ? parseInt(req.query.page) : 1
+        const { payments } = await this.User.getPendingPayments(limit, page)
+        res.status(200).json({ payments })
+    })
+
+    /**
+     * Generates a short-lived signed URL to view a payment's receipt image.
+     * @param {Object} req - request object containing the payment ID in the params
+     * @param {Object} res - response object to send the signed URL
+     * @throws {ServiceError} - throws an error if the receipt URL could not be generated
+     * @returns {Promise<void>} - returns {url}
+     */
+    getPaymentReceiptUrl = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const url = await this.User.getPaymentReceiptUrl(id)
+        res.status(200).json({ url })
+    })
+
+    /**
+     * Approves a pending subscription payment and renews the store's subscription.
+     * @param {Object} req - request object containing the payment ID in the params
+     * @param {Object} res - response object to send the updated payment and store
+     * @throws {ServiceError} - throws an error if the payment could not be approved
+     * @returns {Promise<void>} - returns {payment, store}
+     */
+    approvePayment = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const adminId = req.user.id
+        const { payment, store } = await this.User.approvePayment(id, adminId)
+        res.status(200).json({ payment, store })
+    })
+
+    /**
+     * Rejects a pending subscription payment.
+     * @param {Object} req - request object containing the payment ID in the params and the reason in the body
+     * @param {Object} res - response object to send the updated payment
+     * @throws {ServiceError} - throws an error if the payment could not be rejected
+     * @returns {Promise<void>} - returns {payment}
+     */
+    rejectPayment = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const { reason } = req.body
+        const adminId = req.user.id
+        const payment = await this.User.rejectPayment(id, adminId, reason)
+        res.status(200).json({ payment })
+    })
+
+    /**
      * Deletes a user by their ID.
      * @param {Object} req - request object containing the user ID in the body
      * @param {Object} res - response object to send the deletion confirmation
