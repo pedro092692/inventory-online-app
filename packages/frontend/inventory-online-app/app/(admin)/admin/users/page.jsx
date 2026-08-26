@@ -25,7 +25,7 @@ export default async function User({searchParams}) {
                 width='100%'
             >
                 <Link href={'/admin/users/add'}>
-                    <Button showIcon={true} type={'secondary'} icon='circlePlus' children='Agregar Un Nuevo Usuario' 
+                    <Button showIcon={true} type={'secondary'} icon='circlePlus' children='Agregar Nueva Tienda' 
                         className='p3-r shadow'/>
                 </Link>
                 <Search 

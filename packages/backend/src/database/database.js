@@ -4,6 +4,7 @@ import { Sequelize } from 'sequelize'
 import { initializeUser, User } from '../models/UserModel.js'
 import { initializeRole, Role } from '../models/RoleModel.js'
 import { initializeStore, Store } from '../models/StoreModel.js'
+import { initializePlatformExchangeRate, PlatFormExchangeRate } from '../models/PlatformExchangeRateModel.js'
 import TenantConnection from './tenant_connection.js'
 
 const currentEnv = process.env.NODE_ENV || 'development'
@@ -63,6 +64,7 @@ class Database {
         initializeUser(this.sequelize)
         initializeRole(this.sequelize)
         initializeStore(this.sequelize)
+        initializePlatformExchangeRate(this.sequelize)
     
     }
 

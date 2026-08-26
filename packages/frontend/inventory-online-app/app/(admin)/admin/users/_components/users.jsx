@@ -34,8 +34,7 @@ export default async function Users({ limit = 10, page = 1, query = null }){
                 store_name: user?.store?.name || 'Sin tienda',
                 email: user.email,
                 tenant_id: user.tenant_id,
-                deteletedAt: user.deletedAt ? user.deletedAt : 'Activo',
-                rol: user?.role?.name ? 'Dueño de tienda' : 'Error' || 'null',
+                status: user?.store?.is_active === false ? 'Inactiva' : 'Activa',
                 id: user.id,
             }
             ))
@@ -60,8 +59,7 @@ export default async function Users({ limit = 10, page = 1, query = null }){
                     'store_name': 'Tienda',
                     'email': 'Correo',
                     'tenant_id': 'Identificador',
-                    'isActive': 'Usuario Eliminado',
-                    'role': 'Rol',
+                    'status': 'Estado',
                     'actions': 'Acciones'
                 }
             }

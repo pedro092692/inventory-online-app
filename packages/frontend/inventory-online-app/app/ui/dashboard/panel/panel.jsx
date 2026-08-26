@@ -70,8 +70,8 @@ export async function Panel({type = 'store'}) {
 
     const adminMenu = {
         users: {
-            title: 'Usuarios',
-            icon: 'users',
+            title: 'Tiendas',
+            icon: 'store',
             link: '/admin/users',
             role: [1]
         }
