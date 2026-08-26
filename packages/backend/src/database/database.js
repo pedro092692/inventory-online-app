@@ -3,6 +3,7 @@ import process from 'process'
 import { Sequelize } from 'sequelize'
 import { initializeUser, User } from '../models/UserModel.js'
 import { initializeRole, Role } from '../models/RoleModel.js'
+import { initializeStore, Store } from '../models/StoreModel.js'
 import TenantConnection from './tenant_connection.js'
 
 const currentEnv = process.env.NODE_ENV || 'development'
@@ -61,6 +62,7 @@ class Database {
         // initialize public models
         initializeUser(this.sequelize)
         initializeRole(this.sequelize)
+        initializeStore(this.sequelize)
     
     }
 
@@ -68,6 +70,8 @@ class Database {
         // Public models relations
         User.associationRole({Role})
         Role.associationUser({User})
+        User.associationStore({Store})
+        Store.associationOwner({User})
     }
 
     // get all tenants 

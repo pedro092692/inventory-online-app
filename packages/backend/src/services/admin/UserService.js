@@ -313,7 +313,7 @@ class UserService {
      * @return {Promise<Array>} - A promise that resolves to an array of user objects.
      * @throws {ServiceError} - If an error occurs during user retrieval.
      */
-    getStoreOwner(limit=10, offset=0) {
+    getAllStoreOwner(limit=10, offset=0) {
         return this.#error.handler(['Read store owner users'], async() => {
             const users = await User.findAll({
                 where: {

@@ -68,7 +68,7 @@ export default async function Users({ limit = 10, page = 1, query = null }){
             params={rawParams}
             endpoint='users'
             deleteKey={'userId'}
-            userPermissions={[1,2,3]}
+            userPermissions={['view', 'update', 'delete']}
             deleteMsg='Usuario Eliminado.'
             customClass={styles.table}
             typeList={'admin'}

@@ -56,7 +56,7 @@ class UserController {
      * @returns {Promise<void>} - returns the list of users in the response
      */
     getAllStoreOwners = this.#error.handler( async(req, res) => {
-        const {users} = await this.User.getStoreOwner()
+        const {users} = await this.User.getAllStoreOwner()
         res.status(200).json({users})
     })
 

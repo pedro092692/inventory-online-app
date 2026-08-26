@@ -14,6 +14,19 @@ class User extends Model {
             as: 'role'
         })
     }
+
+    /**
+     * Creates an association between User model and the Store model.
+     * @param {{Role: typeof Model}} model - An object containing the Store model.
+     * @return {void} This method does not return a value. 
+     */
+    static associationStore(model) {
+    this.hasOne(model.Store, {
+        foreignKey: 'tenant_id',
+        sourceKey: 'id',
+        as: 'store'
+    })
+}
 }
 
 /**
