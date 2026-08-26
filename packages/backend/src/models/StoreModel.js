@@ -70,6 +70,11 @@ function initializeStore(sequelize) {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: true
+            },
+
+            subscription_expires_at: {
+                type: DataTypes.DATE,
+                allowNull: true,
             }
         },
         {
