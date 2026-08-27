@@ -20,6 +20,8 @@ class UserRoutes {
         this.router.get('/store-owners-all', (req, res) => new UserController().getAllStoreOwners(req, res))
         this.router.get('/search-owner', (req, res) => new UserController().searchStoreOwners(req, res))
         this.router.get('/total-pages', (req, res) => new UserController().totalPages(req, res))
+        // Same reason as /payments below: must stay before the generic '/:id' route.
+        this.router.get('/dashboard-stats', (req, res) => new UserController().getDashboardStats(req, res))
         this.router.get('/store-owner/:id', (req, res) => new UserController().getStoreOwner(req, res))
         // NOTE: these /payments routes must stay registered before the generic '/:id' route
         // below — otherwise a GET to '/payments' would be swallowed by '/:id' (id='payments').

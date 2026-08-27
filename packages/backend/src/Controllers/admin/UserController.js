@@ -179,6 +179,19 @@ class UserController {
     })
 
     /**
+     * Retrieves aggregate stats for the admin home dashboard: store counts, pending
+     * payments, and an estimate of this month's billing.
+     * @param {Object} req - request object
+     * @param {Object} res - response object; sends { stats }
+     * @throws {ServiceError} - throws an error if the stats could not be computed
+     * @returns {Promise<void>}
+     */
+    getDashboardStats = this.#error.handler( async(req, res) => {
+        const stats = await this.User.getDashboardStats()
+        res.status(200).json({ stats })
+    })
+
+    /**
      * Retrieves subscription payments for admin review, optionally filtered by status.
      * @param {Object} req - request object with optional status/limit/page query params
      * @param {Object} res - response object to send the payments

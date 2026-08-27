@@ -885,6 +885,56 @@ class UserService {
     }
 
     /**
+     * Aggregate stats for the admin home dashboard.
+     *
+     * - `totalStores` / `activeStores` / `inactiveStores`: store counts. "Active" uses the
+     *   exact same definition as StoreStatusService (not manually blocked AND subscription
+     *   not expired) so this number always agrees with what actually blocks a store's users.
+     * - `pendingPayments`: subscription payments awaiting admin review right now.
+     * - `billedThisMonthUsd`: approved payments so far this calendar month × the fixed
+     *   subscription price in USD (from config). Deliberately NOT a sum of the raw `amount_declared`
+     *   Bs figures — those are recorded at whatever exchange rate was in effect on each
+     *   payment's day, so adding them together across a month mixes currencies at different
+     *   values and doesn't mean anything. Counting approved payments and pricing them at the
+     *   fixed USD rate gives a stable, meaningful number instead.
+     *
+     * @async
+     * @function getDashboardStats
+     * @returns {Promise<{totalStores: number, activeStores: number, inactiveStores: number, pendingPayments: number, billedThisMonthUsd: number}>}
+     */
+    getDashboardStats() {
+        return this.#error.handler(['Read admin dashboard stats'], async () => {
+            const now = new Date()
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
+            const activeWhere = {
+                is_active: true,
+                [Op.or]: [
+                    { subscription_expires_at: null },
+                    { subscription_expires_at: { [Op.gte]: now } }
+                ]
+            }
+
+            const [totalStores, activeStores, pendingPayments, approvedThisMonth] = await Promise.all([
+                Store.count(),
+                Store.count({ where: activeWhere }),
+                SubscriptionPayment.count({ where: { status: 'pending' } }),
+                SubscriptionPayment.count({ where: { status: 'approved', reviewed_at: { [Op.gte]: startOfMonth } } })
+            ])
+
+            const subscriptionPriceUsd = pkg[currentEnv].subscription_price_usd
+
+            return {
+                totalStores,
+                activeStores,
+                inactiveStores: totalStores - activeStores,
+                pendingPayments,
+                billedThisMonthUsd: approvedThisMonth * subscriptionPriceUsd
+            }
+        })
+    }
+
+    /**
      * Verifies a user's password using bcrypt.
      *
      * @param {object} user - The user object containing the hashed password.
