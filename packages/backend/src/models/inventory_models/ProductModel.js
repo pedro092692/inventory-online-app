@@ -72,8 +72,23 @@ function initializeProduct(sequelize, schema) {
             },
 
             stock: {
-                type: DataTypes.INTEGER, 
-                allowNull: false, 
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    isNumeric: {
+                        msg: 'A valid number is required.'
+                    }
+                }
+            },
+
+            // Threshold used for low-stock alerts on the store dashboard: a product is
+            // considered "low stock" once `stock` falls to or below this value. Defaults
+            // to 5 (see the migration) so alerts work out of the box; the owner can
+            // customize it per product from the add/edit product form.
+            min_stock: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 5,
                 validate: {
                     isNumeric: {
                         msg: 'A valid number is required.'

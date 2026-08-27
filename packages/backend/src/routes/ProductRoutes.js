@@ -26,6 +26,9 @@ class ProductRoutes {
         this.router.get('/all', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).allProducts(req, res))
         this.router.get('/search', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).searchProducts(req, res))
         this.router.get('/total-pages', (req, res) => new ProductController(req.Product).totalPages(req, res))
+        // NOTE: /low-stock must stay registered before the generic '/:id' route below —
+        // otherwise a GET to '/low-stock' would be swallowed by '/:id' (id='low-stock').
+        this.router.get('/low-stock', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product).lowStockProducts(req, res))
         this.router.get('/:id', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).getProduct(req, res))
         this.router.post('/', requireActiveStore, validateFields('createProduct'), (req, res) => new ProductController(req.Product).createProduct(req, res))
         this.router.post('/bulk', authorization(PERMISSIONS.UPDATE), this.upload.single('file'), (req, res) => new ProductController(req.Product).bulkProducts(req, res))

@@ -9,35 +9,37 @@ import styles from './styles.module.css'
 
 export default function AddProductForm() {
     const initialState = {message: null, inputs: {}, errors: {}}
-    const addProduct = AddItemAction.bind(null, 'products', ['name', 'barcode', 'purchase_price', 'selling_price', 'stock'], 
+    const addProduct = AddItemAction.bind(null, 'products', ['name', 'barcode', 'purchase_price', 'selling_price', 'stock', 'min_stock'],
         'Producto agregado con éxito')
     const [state, formAction, isPending] = useActionState(addProduct, initialState)
-    const [field, setField] = useState({name: {isEdited: false,}, barcode: {isEdited: false}, 
-                                        purchase_price: {isEdited: false}, selling_price: {isEdited: false}, stock: 
-                                        {isEdited: false}}) 
-    
-    const hasChanges = 
+    const [field, setField] = useState({name: {isEdited: false,}, barcode: {isEdited: false},
+                                        purchase_price: {isEdited: false}, selling_price: {isEdited: false}, stock:
+                                        {isEdited: false}, min_stock: {isEdited: false}})
+
+    const hasChanges =
                 field.name.isEdited ||
                 field.barcode.isEdited ||
                 field.purchase_price.isEdited ||
                 field.selling_price.isEdited ||
-                field.stock.isEdited
-    
+                field.stock.isEdited ||
+                field.min_stock.isEdited
+
                 const handleSubmit = (formData) => {
         if(!hasChanges) return
-        
+
         formAction(formData)
     }
 
     useEffect(() => {
-        const success = state?.message 
+        const success = state?.message
         if (success) {
             setField({
                 name: {isEdited: false},
                 barcode: {isEdited: false},
                 purchase_price: {isEdited: false},
                 selling_price: {isEdited: false},
-                stock: {isEdited: false}
+                stock: {isEdited: false},
+                min_stock: {isEdited: false}
             })
         }
     }, [state])
@@ -84,7 +86,15 @@ export default function AddProductForm() {
             name={'stock'} />
             
             {state?.errors?.stock && <span className="field_error">{state?.errors?.stock}</span>}
-                
+
+            <label>Stock mínimo (alerta)</label>
+            <Input type="text" placeHolder="Déjalo vacío para usar 5 por defecto" icon="alert"
+            defaultValue={state.inputs?.min_stock ?? ""}
+            onChange={() => setField({...field, min_stock: {isEdited: true}})}
+            name={'min_stock'} />
+
+            {state?.errors?.min_stock && <span className="field_error">{state?.errors?.min_stock}</span>}
+
             {state?.errors?.error && <span className="field_error">{state?.errors?.error }</span>}
 
             {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}

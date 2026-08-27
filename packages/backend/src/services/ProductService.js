@@ -2,7 +2,7 @@ import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import { FileError, InvalidFileTypeError, EmptyRowsError } from '../errors/FileError.js'
 import DollarValueService from './DollarValueService.js'
-import { Op, ValidationError} from 'sequelize'
+import { Op, ValidationError, col, where as sequelizeWhere } from 'sequelize'
 import XLSX from 'xlsx'
 
 class ProductService{
@@ -21,11 +21,12 @@ class ProductService{
      * @param {String} name - name of the product
      * @param {Number} purchase_price - purchase price of the product
      * @param {Number} selling_price - selling price of the product
-     * @param {Number} stock - stock of the product 
+     * @param {Number} stock - stock of the product
+     * @param {Number} [min_stock] - low-stock alert threshold; omit/empty to use the model's default (5).
      * @returns {Promise<Object>} - returns the created product
      * @throws {ServiceError} - throws an error if the product could not be created
      */
-    createProduct(barcode, name, purchase_price, selling_price, stock) {
+    createProduct(barcode, name, purchase_price, selling_price, stock, min_stock) {
         return this.#error.handler(['Create Product'], async() => {
             // check if barcode exists
             const product = await this.Product.findOne({
@@ -37,15 +38,53 @@ class ProductService{
             if (product) {
                 throw new ValidationError('Ya existe un producto con este código de barras')
             }
-            
+
+            // Normalize '' / null to undefined so Sequelize applies the model's
+            // defaultValue (5) instead of trying to insert an empty string.
+            const normalizedMinStock = (min_stock === undefined || min_stock === null || min_stock === '')
+                ? undefined
+                : min_stock
+
             const newProduct = await this.Product.create({
                 barcode: barcode,
-                name: name.toLowerCase(), 
-                purchase_price: purchase_price, 
+                name: name.toLowerCase(),
+                purchase_price: purchase_price,
                 selling_price: selling_price,
-                stock
+                stock,
+                min_stock: normalizedMinStock
             })
             return newProduct
+        })
+    }
+
+    /**
+     * Retrieves products whose stock has fallen at or below their configured
+     * `min_stock` threshold, so the store can restock before running out. Every
+     * product has a min_stock (defaults to 5 — see the model/migration), so this works
+     * without any per-product setup.
+     *
+     * @async
+     * @function getLowStockProducts
+     * @param {number} [limit=5] - Max number of products to return (for a compact dashboard widget).
+     * @returns {Promise<{count: number, products: Array}>} `count` is the TOTAL number of
+     * low-stock products (not capped by `limit`); `products` is the `limit` most urgent
+     * ones (lowest stock first).
+     */
+    getLowStockProducts(limit = 5) {
+        return this.#error.handler(['Read low stock products'], async () => {
+            const lowStockWhere = sequelizeWhere(col('stock'), Op.lte, col('min_stock'))
+
+            const [products, count] = await Promise.all([
+                this.Product.findAll({
+                    where: lowStockWhere,
+                    attributes: ['id', 'name', 'barcode', 'stock', 'min_stock'],
+                    order: [['stock', 'ASC']],
+                    limit
+                }),
+                this.Product.count({ where: lowStockWhere })
+            ])
+
+            return { products, count }
         })
     }
 

@@ -12,22 +12,24 @@ export default function ProductDetailForm({product}) {
         barcode: product?.barcode,
         purchase_price: product?.purchase_price,
         selling_price: product?.selling_price,
-        stock: product?.stock
+        stock: product?.stock,
+        min_stock: product?.min_stock
     }
 
     const initialSte = {message: null, inputs: originalValues, errors: {}}
-    const updateProduct = EditItemAction.bind(null, `products/${product?.id}`, 
-        ['name', 'barcode', 'purchase_price', 'selling_price', 'stock'], 'Producto editado con éxito')
+    const updateProduct = EditItemAction.bind(null, `products/${product?.id}`,
+        ['name', 'barcode', 'purchase_price', 'selling_price', 'stock', 'min_stock'], 'Producto editado con éxito')
     const [state, formAction, isPending] = useActionState(updateProduct, initialSte)
-    const [field, setField] = useState({name: {isEdited: false,}, barcode: {isEdited: false}, 
-                                        purchase_price: {isEdited: false}, selling_price: {isEdited: false}, stock: 
-                                        {isEdited: false}})
-    const hasChanges = 
+    const [field, setField] = useState({name: {isEdited: false,}, barcode: {isEdited: false},
+                                        purchase_price: {isEdited: false}, selling_price: {isEdited: false}, stock:
+                                        {isEdited: false}, min_stock: {isEdited: false}})
+    const hasChanges =
                 field.name.isEdited ||
                 field.barcode.isEdited ||
                 field.purchase_price.isEdited ||
                 field.selling_price.isEdited ||
-                field.stock.isEdited
+                field.stock.isEdited ||
+                field.min_stock.isEdited
 
     const handleSubmit = (formData) => {
         if(!hasChanges) return 
@@ -42,10 +44,11 @@ export default function ProductDetailForm({product}) {
                 barcode: {isEdited: false},
                 purchase_price: {isEdited: false},
                 selling_price: {isEdited: false},
-                stock: {isEdited: false}
+                stock: {isEdited: false},
+                min_stock: {isEdited: false}
             })
         }
-    }, [state]) 
+    }, [state])
     
 
     return (
@@ -93,7 +96,15 @@ export default function ProductDetailForm({product}) {
                 name={'stock'} />
                 
                 {state?.errors?.stock && <span className="field_error">{state?.errors?.stock}</span>}
-                    
+
+                <label>Stock mínimo (alerta)</label>
+                <Input type="text" placeHolder="Stock mínimo (alerta)" icon="alert"
+                defaultValue={state.inputs?.min_stock ?? product.min_stock}
+                onChange={() => setField({...field, min_stock: {isEdited: true}})}
+                name={'min_stock'} />
+
+                {state?.errors?.min_stock && <span className="field_error">{state?.errors?.min_stock}</span>}
+
                 {state?.errors?.error && <span className="field_error">{state?.errors?.error}</span>}
 
                 {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}

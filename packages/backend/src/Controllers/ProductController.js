@@ -20,9 +20,23 @@ class ProductController{
      * @returns {Promise<void>} - returns the created product in the response
      */
     createProduct = this.#error.handler( async(req, res) => {
-        const { barcode, name, purchase_price, selling_price, stock } = req.body
-        const product = await this.ProductService.createProduct(barcode, name, purchase_price, selling_price, stock)
+        const { barcode, name, purchase_price, selling_price, stock, min_stock } = req.body
+        const product = await this.ProductService.createProduct(barcode, name, purchase_price, selling_price, stock, min_stock)
         res.status(201).json(product)
+    })
+
+    /**
+     * Retrieves products at or below their configured minimum stock, for the store
+     * dashboard's low-stock alert widget.
+     * @param {Object} req - request object, optionally with a `limit` query param.
+     * @param {Object} res - response object; sends { count, products }.
+     * @throws {ServiceError} - throws an error if the products could not be retrieved.
+     * @returns {Promise<void>}
+     */
+    lowStockProducts = this.#error.handler( async(req, res) => {
+        const limit = req.query.limit ? parseInt(req.query.limit) : 5
+        const { count, products } = await this.ProductService.getLowStockProducts(limit)
+        res.status(200).json({ count, products })
     })
 
     /* JSdocs here */

@@ -23,7 +23,9 @@ function validateFields(rule) {
             check('name').isLength({ min: 3 }).withMessage('El nombre debe tener al menos 3 caracteres').isString().withMessage('El nombre debe ser una cadena de texto'),
             check('purchase_price').isNumeric().withMessage('El precio de compra debe ser un número'),
             check('selling_price').isNumeric().withMessage('El precio de venta debe ser un número'),
-            check('stock').isNumeric().withMessage('El stock debe ser un número')
+            check('stock').isNumeric().withMessage('El stock debe ser un número'),
+            // Optional: left empty, the product falls back to the model's default (5).
+            check('min_stock').optional({ checkFalsy: true }).isInt({ min: 0 }).withMessage('El stock mínimo debe ser un número entero mayor o igual a 0.')
         ],
 
         cancelItemDetail: [
