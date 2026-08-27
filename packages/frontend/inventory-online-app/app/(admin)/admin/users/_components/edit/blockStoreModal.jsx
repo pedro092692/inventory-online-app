@@ -18,10 +18,12 @@ export default function BlockStoreModal({show, onClose, tenantId}) {
     }
 
     useEffect(() => {
-        if (state?.message) {
+        const success = state?.message
+        if (success) {
             const timer = setTimeout(() => {
-                onClose(true)
-            }, 850)
+                handleCancel()
+
+            }, 450)
             return () => clearTimeout(timer)
         }
     }, [state?.message])
@@ -43,7 +45,10 @@ export default function BlockStoreModal({show, onClose, tenantId}) {
                 gap="0px"
             >
                 <p>La tienda quedará inactiva de inmediato. El motivo queda registrado y podrás desbloquearla luego.</p>
-                <Container padding="12px">
+                <Container 
+                    padding="12px"
+                    width={'100%'}
+                >
                     <Form action={formAction}>
                         <Input
                             type="text"
@@ -52,9 +57,10 @@ export default function BlockStoreModal({show, onClose, tenantId}) {
                             placeHolder="Motivo del bloqueo (ej: uso indebido de la plataforma)"
                             defaultValue={state.inputs?.reason ?? ''}
                             capitalize={true}
+                            style={{width: '100%'}}
                         />
                         {state?.errors?.reason && <span className="field_error">{state?.errors?.reason}</span>}
-                        <Container padding="0px" direction="row">
+                        <Container padding="0px" direction="row" width={'100%'}>
                             <Button role="submit" type="secondary" disabled={isPending}>
                                 {isPending && <OvalLoader/>}
                                 {isPending ? 'Bloqueando...' : 'Si, bloquear'}

@@ -8,7 +8,7 @@ import styles from './editStoreOwnerForm.module.css'
 import EditItemAction from '@/app/lib/actions/edit'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import BlockStoreModal from './blockStoreModal'
-import { useActionState, useState } from 'react'
+import { useActionState, useState, startTransition } from 'react'
 
 export default function StoreOwnerDetailForm({user, seller, store, stats}) {
     const daysUntil = (dateStr) => {
@@ -101,6 +101,7 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
                             <p className='p2-r' style={{color: isBlocked ? '#c0392b' : 'green', marginBottom: '8px'}}>
                                 Estado: {isBlocked ? 'Bloqueada' : 'Activa'}
                             </p>
+                            {unblockState?.message && !isBlocked && <span style={{color: 'green'}}>{unblockState.message}</span>}
                             {
                                 isBlocked && store?.blocked_reason &&
                                 <p className='p2-r' style={{color: '#c0392b'}}>
@@ -111,7 +112,13 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
                             {
                                 isBlocked ? 
                                 (
-                                    <Button type="secondary" disabled={unblockPending} onClick={() => unblockAction()}>
+                                    <Button type="secondary" className='p2-r' style={{width: '100%'}} disabled={unblockPending} 
+                                        onClick={() => 
+                                            startTransition(() => {
+                                                unblockAction()
+                                            })
+                                        }
+                                    >
                                         {unblockPending && <OvalLoader/>}
                                         {unblockPending ? 'Desbloqueando...' : 'Desbloquear tienda'}
                                     </Button>
@@ -123,7 +130,6 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
                                     </Button>
                                 )
                             }
-                            {unblockState?.message && <span style={{color: 'green'}}>{unblockState.message}</span>}
                         </Card>
 
                     </Container>
