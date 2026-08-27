@@ -673,30 +673,34 @@ class UserService {
 
     /**
      * Retrieves pending subscription payments awaiting admin review, oldest first
-     * (fair queue), including the submitting store's name and owner email.
+     * (fair queue), including the submitting store's name and owner email, along
+     * with the total count (for paginating the list on the frontend).
      *
      * @async
      * @function getPendingPayments
      * @param {number} [limit=10] - Max number of records.
      * @param {number} [page=1] - Page number.
      *
-     * @returns {Promise<Object>} { payments }
+     * @returns {Promise<Object>} { payments, total }
      */
     getPendingPayments(limit = 10, page = 1) {
         const offset = (page - 1) * limit
         return this.#error.handler(['Read pending payments', null, 'SubscriptionPayment'], async () => {
-            const payments = await SubscriptionPayment.findAll({
-                where: { status: 'pending' },
-                include: [{
-                    association: 'owner',
-                    attributes: ['id', 'email'],
-                    include: [{ association: 'store', attributes: ['name'] }]
-                }],
-                order: [['submitted_at', 'ASC']],
-                limit,
-                offset
-            })
-            return { payments }
+            const [payments, total] = await Promise.all([
+                SubscriptionPayment.findAll({
+                    where: { status: 'pending' },
+                    include: [{
+                        association: 'owner',
+                        attributes: ['id', 'email'],
+                        include: [{ association: 'store', attributes: ['name'] }]
+                    }],
+                    order: [['submitted_at', 'ASC']],
+                    limit,
+                    offset
+                }),
+                SubscriptionPayment.count({ where: { status: 'pending' } })
+            ])
+            return { payments, total }
         })
     }
 

@@ -81,6 +81,13 @@ export async function Panel({type = 'store'}) {
             icon: 'store',
             link: '/admin/users',
             role: [1]
+        },
+
+        payments: {
+            title: 'Pagos',
+            icon: 'cash',
+            link: '/admin/payments',
+            role: [1]
         }
     }
 

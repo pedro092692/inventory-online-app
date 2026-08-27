@@ -183,13 +183,13 @@ class UserController {
      * @param {Object} req - request object with optional limit/page query params
      * @param {Object} res - response object to send the pending payments
      * @throws {ServiceError} - throws an error if the payments could not be retrieved
-     * @returns {Promise<void>} - returns {payments}
+     * @returns {Promise<void>} - returns {payments, total, totalPages}
      */
     getPendingPayments = this.#error.handler( async(req, res) => {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
-        const { payments } = await this.User.getPendingPayments(limit, page)
-        res.status(200).json({ payments })
+        const { payments, total } = await this.User.getPendingPayments(limit, page)
+        res.status(200).json({ payments, total, totalPages: Math.ceil(total / limit) || 1 })
     })
 
     /**
