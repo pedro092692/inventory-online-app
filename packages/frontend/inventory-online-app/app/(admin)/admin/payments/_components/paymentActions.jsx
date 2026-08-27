@@ -8,14 +8,15 @@ import RejectPaymentModal from '@/app/(admin)/admin/payments/_components/rejectP
 import ConfirmActionModal from '@/app/(admin)/admin/payments/_components/confirmActionModal'
 import { useState } from 'react'
 
-export default function PaymentActions({paymentId, status = 'pending'}) {
+export default function PaymentActions({paymentId, status = 'pending', payment_status = null}) {
+    
     const [showApprove, setShowApprove] = useState(false)
     const [showReject, setShowReject] = useState(false)
     const [showRevert, setShowRevert] = useState(false)
 
     const approveAction = ApprovePaymentAction.bind(null, paymentId)
     const revertAction = RevertPaymentAction.bind(null, paymentId)
-
+    console.log(status)
     return (
         <Container padding="0px" gap="8px" direction="row" justifyContent="start">
             <ViewReceiptButton paymentId={paymentId}/>

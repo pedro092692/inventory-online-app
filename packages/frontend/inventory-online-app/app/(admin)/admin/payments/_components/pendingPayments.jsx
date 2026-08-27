@@ -59,11 +59,17 @@ export default async function PendingPayments({page = 1, status = 'pending'}) {
                 }}
                 tableData={tableData}
                 showActions={true}
+                customClass={styles.table}
                 showView={false}
                 showEdit={false}
                 showDelete={false}
-                customClass={styles.table}
-                custonActionButton={(data) => <PaymentActions paymentId={data.id} status={status}/>}
+                custonActionButton={(data) => {
+                    // `status` here is the tab filter (can be 'all'), not necessarily this row's
+                    // real status — look up the actual payment so PaymentActions always shows the
+                    // right actions for *this* row, even inside the "Todos" tab where rows mix statuses.
+                    const rowPayment = payments.find((p) => p.id === data.id)
+                    return <PaymentActions key={data.id} paymentId={data.id} status={rowPayment?.status || status}/>
+                }}
             />
             {totalPages > 1 && <Pagination totalPages={totalPages}/>}
         </>
