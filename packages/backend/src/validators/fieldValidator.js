@@ -74,6 +74,10 @@ function validateFields(rule) {
         rejectPayment: [
             check_isLen('reason', 5, 'El motivo del rechazo'),
         ],
+
+        setExchangeRate: [
+            check('value').isNumeric().withMessage('La tasa debe ser un número.').isFloat({ min: 0.01 }).withMessage('La tasa debe ser mayor a 0.'),
+        ],
     }
 
     return [...validationRule[rule],

@@ -7,6 +7,7 @@ import SellerRoutes from './routes/SellerRoutes.js'
 import ProductRoutes from './routes/ProductRoutes.js'
 import UserRoutes from './routes/admin/UserRoutes.js'
 import RoleRoutes from './routes/admin/RoleRoutes.js'
+import ExchangeRateRoutes from './routes/admin/ExchangeRateRoutes.js'
 import PaymentMethodRoutes from './routes/PaymentMethodRoutes.js'
 import PayInvoiceRoutes from './routes/PaymentDetailRoutes.js'
 import DollarValueRoutes from './routes/DollarValueRoutes.js'
@@ -80,8 +81,11 @@ class Server {
         // users
         this.app.use('/api/users', new UserRoutes().router)
 
-        // roles 
+        // roles
         this.app.use('/api/roles', new RoleRoutes().router)
+
+        // platform exchange rate (admin-managed; drives subscription pricing in Bs)
+        this.app.use('/api/exchange-rate', new ExchangeRateRoutes().router)
 
         // payment methods
         this.app.use('/api/payment-methods', new PaymentMethodRoutes().router)
