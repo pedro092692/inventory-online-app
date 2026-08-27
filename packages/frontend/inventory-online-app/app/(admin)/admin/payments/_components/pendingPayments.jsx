@@ -21,11 +21,11 @@ export default async function PendingPayments({page = 1}) {
     }
 
     const tableData = payments.map((payment) => ({
-        id: payment.id,
         store_name: payment.owner?.store?.name || 'Sin tienda',
         email: payment.owner?.email || '—',
         amount: `Bs. ${payment.amount_declared}`,
-        submitted_at: new Date(payment.submitted_at).toLocaleDateString('es-VE')
+        submitted_at: new Date(payment.submitted_at).toLocaleDateString('es-VE'),
+        id: payment.id,
     }))
 
     return (
