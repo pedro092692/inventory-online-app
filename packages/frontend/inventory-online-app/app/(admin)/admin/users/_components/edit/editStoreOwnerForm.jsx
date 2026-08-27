@@ -30,6 +30,7 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
         store_name: store?.name,
         fiscal_id: store?.fiscal_id,
         store_phone: store?.phone,
+        store_address: store?.address,
         name: seller?.name,
         last_name: seller?.last_name,
         id_number: seller?.id_number,
@@ -38,7 +39,7 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
     const initialState = {message: null, inputs: originalValues, errors: {}}
 
     const updateStoreOwner = EditItemAction.bind(null, `users/storeOwner/${user?.id}`,
-        ['email', 'password', 'store_name', 'fiscal_id', 'store_phone', 'name', 'last_name', 'id_number', 'address'],
+        ['email', 'password', 'store_name', 'fiscal_id', 'store_phone', 'store_address', 'name', 'last_name', 'id_number', 'address'],
         'Tienda editada con éxito')
 
     const [state, formAction, isPending] = useActionState(updateStoreOwner, initialState)
@@ -61,7 +62,7 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
             {user &&
                 <Form className={`${styles.form} shadow`} action={handleSubmit}>
 
-                    <fieldset className={styles.fieldset}>
+                    {/* <fieldset className={styles.fieldset}>
                         <legend className={`p2-b ${styles.legend}`}>Salud de la tienda</legend>
                         <p className='p2-r' style={{color: subscriptionColor}}>{subscriptionLabel}</p>
                         <p className='p2-r'>Vendedores: {stats?.sellerCount ?? '—'}</p>
@@ -90,7 +91,7 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
                             </Button>
                         )}
                         {unblockState?.message && <span style={{color: 'green'}}>{unblockState.message}</span>}
-                    </fieldset>
+                    </fieldset> */}
 
                     <div className={styles.grid}>
                         <fieldset className={styles.fieldset}>
@@ -112,6 +113,12 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
                                 onChange={(e) => setPhoneValue(e.target.value)}
                             />
                             {state?.errors?.store_phone && <span className="field_error">{state?.errors?.store_phone}</span>}
+
+                            <Input type="text" icon="address" name={'store_address'}
+                                defaultValue={state.inputs?.store_address ?? store?.address}
+                                placeHolder='Dirección' capitalize={true}
+                            />
+                            {state?.errors?.store_adress && <span className="field_error">{state?.errors?.store_adress}</span>}
                         </fieldset>
 
                         <fieldset className={styles.fieldset}>

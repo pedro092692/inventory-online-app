@@ -239,6 +239,7 @@ class UserService {
                     if (updates.store_name !== undefined) storeOwner.store.name = updates.store_name
                     if (updates.fiscal_id !== undefined) storeOwner.store.fiscal_id = updates.fiscal_id || null
                     if (updates.store_phone !== undefined) storeOwner.store.phone = updates.store_phone
+                    if (updates.store_address !== undefined) storeOwner.store.address = updates.store_address
                     await storeOwner.store.save({ transaction: t })
                 }
             

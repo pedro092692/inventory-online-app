@@ -12,6 +12,7 @@ export async function Title({ title, icon, showUserInfo = true}) {
     // hacer login), así que no hace falta pedirlo de nuevo en cada página.
     const displayName = (userInfo?.role !== 1 && userInfo?.store_name) || userInfo?.email
 
+
     return (
         <Container
             className={`shadow ${styles.titleContainer}`}
@@ -26,7 +27,7 @@ export async function Title({ title, icon, showUserInfo = true}) {
                 className='p2-r shadow-sm'
                 style={{cursor: 'auto', textTransform: 'capitalize'}}
                 showIcon={true}
-                icon={'store'}
+                icon={userInfo.role_name != 'admin' ? 'store' : 'user'}
                 type={'grey'}  
                 children={displayName}/>
             }

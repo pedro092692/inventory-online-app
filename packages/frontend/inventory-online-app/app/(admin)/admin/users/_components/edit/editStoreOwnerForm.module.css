@@ -1,11 +1,10 @@
 .form {
     margin-top: 16px;
-    background: var(--color-neutralGrey500);
+    background: var(--color-neutralGrey400);
     padding: 16px;
     border-radius: 8px;
     width: 100%;
-    max-width: 1100px;
-    flex-grow: 1;
+    flex-grow: 0 !important;
 }
 
 .fieldset {
