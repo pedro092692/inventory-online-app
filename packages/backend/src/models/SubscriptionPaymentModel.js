@@ -98,6 +98,15 @@ function initializeSubscriptionPayment(sequelize) {
             rejection_reason: {
                 type: DataTypes.STRING,
                 allowNull: true
+            },
+
+            // Number of days the subscription was extended when this payment was approved.
+            // Recorded so a mistaken approval can be reverted precisely (the same number of
+            // days is subtracted back off the store's subscription_expires_at) instead of
+            // guessing at the renewal length that was used.
+            days_granted: {
+                type: DataTypes.INTEGER,
+                allowNull: true
             }
         },
         {

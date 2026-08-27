@@ -4,7 +4,7 @@ import { Container } from '@/app/ui/utils/container'
 export default function PaymentsLayout({children}) {
     return (
         <>
-            <Title title="Pagos pendientes" icon="cash"/>
+            <Title title="Pagos" icon="cash"/>
             <Container
                 padding='24px'
                 flexGrow='1'

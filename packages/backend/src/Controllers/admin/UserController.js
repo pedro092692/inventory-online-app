@@ -179,16 +179,18 @@ class UserController {
     })
 
     /**
-     * Retrieves subscription payments awaiting admin review.
-     * @param {Object} req - request object with optional limit/page query params
-     * @param {Object} res - response object to send the pending payments
+     * Retrieves subscription payments for admin review, optionally filtered by status.
+     * @param {Object} req - request object with optional status/limit/page query params
+     * @param {Object} res - response object to send the payments
      * @throws {ServiceError} - throws an error if the payments could not be retrieved
      * @returns {Promise<void>} - returns {payments, total, totalPages}
      */
-    getPendingPayments = this.#error.handler( async(req, res) => {
+    getPayments = this.#error.handler( async(req, res) => {
+        const validStatuses = ['pending', 'approved', 'rejected']
+        const status = validStatuses.includes(req.query.status) ? req.query.status : null
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
-        const { payments, total } = await this.User.getPendingPayments(limit, page)
+        const { payments, total } = await this.User.getPayments(status, limit, page)
         res.status(200).json({ payments, total, totalPages: Math.ceil(total / limit) || 1 })
     })
 
@@ -232,6 +234,20 @@ class UserController {
         const adminId = req.user.id
         const payment = await this.User.rejectPayment(id, adminId, reason)
         res.status(200).json({ payment })
+    })
+
+    /**
+     * Reverts a payment back to pending, undoing a mistaken approval or rejection. For a
+     * previously approved payment this also rolls back the subscription-day extension it granted.
+     * @param {Object} req - request object containing the payment ID in the params
+     * @param {Object} res - response object to send the updated payment and store
+     * @throws {ServiceError} - throws an error if the payment could not be reverted
+     * @returns {Promise<void>} - returns {payment, store}
+     */
+    revertPayment = this.#error.handler( async(req, res) => {
+        const { id } = req.params
+        const { payment, store } = await this.User.revertPayment(id)
+        res.status(200).json({ payment, store })
     })
 
     /**

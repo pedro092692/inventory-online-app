@@ -239,7 +239,6 @@ class UserService {
                     if (updates.store_name !== undefined) storeOwner.store.name = updates.store_name
                     if (updates.fiscal_id !== undefined) storeOwner.store.fiscal_id = updates.fiscal_id || null
                     if (updates.store_phone !== undefined) storeOwner.store.phone = updates.store_phone
-                    if (updates.store_address !== undefined) storeOwner.store.address = updates.store_address
                     await storeOwner.store.save({ transaction: t })
                 }
             
@@ -673,33 +672,41 @@ class UserService {
     }
 
     /**
-     * Retrieves pending subscription payments awaiting admin review, oldest first
-     * (fair queue), including the submitting store's name and owner email, along
-     * with the total count (for paginating the list on the frontend).
+     * Retrieves subscription payments for admin review, optionally filtered by status,
+     * including the submitting store's name and owner email, along with the total count
+     * (for paginating the list on the frontend).
+     *
+     * Pending payments are ordered oldest-first (fair queue, so the admin works through
+     * the backlog in submission order). Any other view (approved, rejected, or all) is
+     * ordered newest-first, since the admin is more likely to be checking recent activity.
      *
      * @async
-     * @function getPendingPayments
+     * @function getPayments
+     * @param {string|null} [status=null] - 'pending' | 'approved' | 'rejected' | null (null = every status).
      * @param {number} [limit=10] - Max number of records.
      * @param {number} [page=1] - Page number.
      *
      * @returns {Promise<Object>} { payments, total }
      */
-    getPendingPayments(limit = 10, page = 1) {
+    getPayments(status = null, limit = 10, page = 1) {
         const offset = (page - 1) * limit
-        return this.#error.handler(['Read pending payments', null, 'SubscriptionPayment'], async () => {
+        const where = status ? { status } : {}
+        const order = status === 'pending' ? [['submitted_at', 'ASC']] : [['submitted_at', 'DESC']]
+
+        return this.#error.handler(['Read payments', status, 'SubscriptionPayment'], async () => {
             const [payments, total] = await Promise.all([
                 SubscriptionPayment.findAll({
-                    where: { status: 'pending' },
+                    where,
                     include: [{
                         association: 'owner',
                         attributes: ['id', 'email'],
                         include: [{ association: 'store', attributes: ['name'] }]
                     }],
-                    order: [['submitted_at', 'ASC']],
+                    order,
                     limit,
                     offset
                 }),
-                SubscriptionPayment.count({ where: { status: 'pending' } })
+                SubscriptionPayment.count({ where })
             ])
             return { payments, total }
         })
@@ -754,7 +761,8 @@ class UserService {
             await payment.update({
                 status: 'approved',
                 reviewed_at: new Date(),
-                reviewed_by: adminId
+                reviewed_by: adminId,
+                days_granted: days
             })
 
             const store = await this.renewSubscription(payment.tenant_id, days)
@@ -796,6 +804,59 @@ class UserService {
             })
 
             return payment
+        })
+    }
+
+    /**
+     * Reverts a payment that was approved or rejected by mistake, sending it back to
+     * 'pending' so the admin can review it again.
+     *
+     * If the payment had been approved, this also rolls back the subscription-day
+     * extension it granted: it subtracts `days_granted` from the store's current
+     * `subscription_expires_at`. This is exact as long as the subscription never actually
+     * lapsed to expired between the approval and now (see `renewSubscription`'s additive
+     * base+days logic) — subtracting the same number of days back off the current expiry
+     * undoes exactly what the approval added.
+     *
+     * @async
+     * @function revertPayment
+     * @param {number} paymentId - The SubscriptionPayment ID.
+     *
+     * @returns {Promise<Object>} { payment, store } — store is null when there was no
+     * subscription change to roll back (a reverted rejection, or a store that no longer exists).
+     *
+     * @throws {NotFoundError} If the payment does not exist.
+     * @throws {Error} If the payment is still pending (nothing to revert).
+     */
+    revertPayment(paymentId) {
+        return this.#error.handler(['Revert payment', paymentId, 'SubscriptionPayment'], async () => {
+            const payment = await SubscriptionPayment.findByPk(paymentId)
+            if (!payment) {
+                throw new NotFoundError()
+            }
+            if (payment.status === 'pending') {
+                throw new Error('Este pago ya está pendiente.')
+            }
+
+            let store = null
+
+            if (payment.status === 'approved' && payment.days_granted) {
+                store = await Store.findOne({ where: { tenant_id: payment.tenant_id } })
+                if (store && store.subscription_expires_at) {
+                    const rolledBack = new Date(store.subscription_expires_at.getTime() - payment.days_granted * 24 * 60 * 60 * 1000)
+                    await store.update({ subscription_expires_at: rolledBack })
+                }
+            }
+
+            await payment.update({
+                status: 'pending',
+                reviewed_at: null,
+                reviewed_by: null,
+                rejection_reason: null,
+                days_granted: null
+            })
+
+            return { payment, store }
         })
     }
 
