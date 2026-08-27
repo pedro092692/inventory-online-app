@@ -1,5 +1,7 @@
 import Request from '@/app/utils/request'
-import styles from '@/app/(store)/store/subscription/_components/subscription.module.css'
+import KpiCard from '@/app/(store)/store/reports/_components/kpiCards/kpiCards'
+import { Users, UserCog, Receipt, Info, LockKeyhole, CalendarClock, DollarSign} from 'lucide-react'
+import {Container} from '@/app/ui/utils/container'
 
 export default async function StoreOverview() {
     const response = await Request('store/me', 'GET', null, 'Hubo un error inesperado intenta nuevamente')
@@ -22,40 +24,49 @@ export default async function StoreOverview() {
     const subscriptionLabel = remaining === null
         ? 'Sin información de pago'
         : remaining >= 0
-            ? `Activa — vence en ${remaining} día${remaining === 1 ? '' : 's'}`
+            ? `Activa, vence en ${remaining} día${remaining === 1 ? '' : 's'}`
             : `Vencida hace ${Math.abs(remaining)} día${Math.abs(remaining) === 1 ? '' : 's'}`
 
-    const subscriptionColor = remaining === null ? '#888' : remaining >= 0 ? 'green' : '#c0392b'
+    const subscription_expires_at = new Date(store?.subscription_expires_at)
+        .toLocaleDateString('es-Es', { day: '2-digit', month: '2-digit', year: '2-digit'})
 
     const isBlocked = store?.is_active === false
 
     return (
-        <div className={`${styles.card} shadow`}>
-            <fieldset className={styles.fieldset}>
-                <legend className={`p2-b ${styles.legend}`}>Salud de la tienda</legend>
-                <p className='p2-r'>Vendedores: {stats?.sellerCount ?? '—'}</p>
-                <p className='p2-r'>Clientes: {stats?.customerCount ?? '—'}</p>
-                <p className='p2-r'>
-                    Última factura: {stats?.lastInvoiceDate ? new Date(stats.lastInvoiceDate).toLocaleDateString('es-VE') : 'Sin facturas'}
-                </p>
-                <p className='p2-r' style={{color: isBlocked ? '#c0392b' : 'green'}}>
-                    Estado de la cuenta: {isBlocked ? 'Bloqueada' : 'Activa'}
-                </p>
-                {isBlocked && store?.blocked_reason &&
-                    <p className='p2-r' style={{color: '#c0392b'}}>
-                        Motivo del bloqueo: {store.blocked_reason}
-                    </p>
-                }
-            </fieldset>
+        <Container
+            padding={'0px 0px'}
+            width={'100%'}
+            // justifyContent={'space-between'}
+            justifyContent={'flex-start'}
+            gap={'32px'}
+        >
+            <KpiCard label={'Suscripción'} value={isBlocked ? 'Bloqueada' : subscriptionLabel} 
+                icon={CalendarClock} text='md'
+                textColor={ isBlocked ? 'red-700' : 'green-700'}
+                mainTextSize='md' 
+                extraText={`${subscription_expires_at}`}
+            />
+            {
+                !isBlocked && 
+                <KpiCard label={'Monto a pagar:'} 
+                    value={`$${amountDueUsd}${exchangeRate ? ` (Bs. ${amountDueBs})` : ''}`}
+                    icon={DollarSign} text='md'
+                    extraText={exchangeRate ? `Tasa usada: Bs. ${exchangeRate} por USD` : false}
+                textColor={ isBlocked ? 'red-700' : 'green-700'} mainTextSize='md'/>
+            }
 
-            <fieldset className={styles.fieldset}>
-                <legend className={`p2-b ${styles.legend}`}>Suscripción</legend>
-                <p className='p2-r' style={{color: subscriptionColor}}>{subscriptionLabel}</p>
-                <p className='p2-r'>
-                    Monto a pagar: ${amountDueUsd}{exchangeRate ? ` (Bs. ${amountDueBs})` : ''}
-                </p>
-                {exchangeRate && <p className='p3-r' style={{color: '#888'}}>Tasa usada: Bs. {exchangeRate} por USD</p>}
-            </fieldset>
-        </div>
+            <KpiCard label={'Estado de la cuenta:'} value={isBlocked ? 'Bloqueada' : 'Activa'} icon={Info} text='md'
+                textColor={ isBlocked ? 'red-700' : 'green-700'} mainTextSize='md'/>
+            {
+                isBlocked && store?.blocked_reason && 
+                <KpiCard label={'Motivo del bloqueo'} value={store.blocked_reason} icon={LockKeyhole} text='md' mainTextSize='md'/>
+            }
+            
+            <KpiCard label={'Total Vendedores'} value={stats?.sellerCount ?? '—'} icon={UserCog} text='md' mainTextSize='md'/>
+            <KpiCard label={'Total Clientes'} value={stats?.sellerCount ?? '—'} icon={Users} text='md' mainTextSize='md'/>
+            <KpiCard label={'Última factura'} 
+                value={stats?.lastInvoiceDate ? new Date(stats.lastInvoiceDate).toLocaleDateString('es-VE') : 'Sin facturas'} 
+                icon={Receipt} text='md' mainTextSize='md'/>
+        </Container>
     )
 }

@@ -32,6 +32,7 @@ export default async function Subscription({searchParams}) {
             width='100%'
             gap='16px'
         >
+            <h1 className='h3'>Salud de tienda</h1>
             <Suspense fallback={<FormSkeleton nFields={5}/>}>
                 <StoreOverview />
             </Suspense>
