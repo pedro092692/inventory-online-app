@@ -531,6 +531,30 @@ class UserService {
     }
 
     /**
+     * Retrieves a user by their ID, attaching `store_name` the same way
+     * `findUserByEmail` does. Used by the refresh-token flow to re-issue an access token
+     * without requiring the user's password again.
+     * @param {number} id - The ID of the user to retrieve.
+     * @return {Promise<Object|null>} - A promise that resolves to the user object, or null if not found.
+     * @throws {ServiceError} - If an error occurs during retrieval.
+     */
+    findUserById(id) {
+        return this.#error.handler(['Finding User by id', id, 'User'], async() => {
+            const user = await User.findByPk(id)
+
+            if (user && user.tenant_id) {
+                const store = await Store.findOne({
+                    where: { tenant_id: user.tenant_id },
+                    attributes: ['name']
+                })
+                user.store_name = store?.name || null
+            }
+
+            return user
+        })
+    }
+
+    /**
      * Updates a user with the given ID and updates.
      * @param {number} userId - The ID of the user to update.
      * @param {Object} updates - An object containing the updates to apply to the user.

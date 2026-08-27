@@ -33,14 +33,62 @@ class SecurityController {
         }
         // sign jwt token, create token
         const token = await this.security.setJwt(user)
-        // send token 
+        // sign a long-lived refresh token so the user isn't bounced to /login every
+        // time the 1h access token expires — see SecurityService.setRefreshToken.
+        const refreshToken = await this.security.setRefreshToken(user.id)
+        // send tokens
         res.cookie('access_token', token, {
             httpOnly: true,
             secure: true,
             sameSite: 'strict',
-            maxAge: 1000 * 60 * 60 
+            maxAge: 1000 * 60 * 60
+        })
+        .cookie('refresh_token', refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 1000 * 60 * 60 * 24 * 7
         })
         .status(200).json({message: 'Login successful'})
+    })
+
+    /**
+     * Exchanges a valid refresh token (sent as the `refresh_token` cookie) for a new
+     * access token, without requiring the user's password again. This is what lets the
+     * frontend middleware transparently renew an expired 1h access token — see
+     * app/middlewares/session.js on the frontend.
+     *
+     * - If the refresh token is missing/invalid/expired, responds 401.
+     * - If valid, looks up the user (fresh data — role/store_name may have changed since
+     *   the refresh token was issued), re-signs an access token, sets it as a cookie, and
+     *   returns 200.
+     *
+     * @function refresh
+     * @param {import("express").Request} req - Express request object, expects a `refresh_token` cookie.
+     * @param {import("express").Response} res - Express response object.
+     * @returns {Promise<void>}
+     */
+    refresh = this.#error.handler( async(req, res) => {
+        const refreshToken = req.cookies.refresh_token
+        const data = await this.security.verifyRefreshToken(refreshToken)
+
+        if (!data) {
+            return res.status(401).json({message: 'Invalid or expired refresh token'})
+        }
+
+        const user = await this.user.findUserById(data.id)
+        if (!user) {
+            return res.status(401).json({message: 'Invalid or expired refresh token'})
+        }
+
+        const token = await this.security.setJwt(user)
+        res.cookie('access_token', token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 1000 * 60 * 60
+        })
+        .status(200).json({message: 'Token refreshed'})
     })
 
 

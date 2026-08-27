@@ -1,30 +1,19 @@
 import { NextResponse } from 'next/server'
-import { verifyToken } from '../utils/verifyToken'
+import { verifySession, forwardedRequestInit, applyRefreshedCookie } from './session'
 
 export async function verifyAuth(request) {
     const isServerAction = request.headers.get('Next-Action') !== null
-    const token = request.cookies.get('access_token')?.value
-    if(!token) {
-        if (isServerAction) return NextResponse.next()
+    const { valid, refreshedToken } = await verifySession(request)
 
-        const redirectUrl = new URL('/login', request.url)
-        const next = request.nextUrl.pathname + request.nextUrl.search
-        redirectUrl.searchParams.set('next', next)
-        return NextResponse.redirect(redirectUrl)
-
+    if (valid) {
+        const response = NextResponse.next({ request: forwardedRequestInit(request, refreshedToken) })
+        return applyRefreshedCookie(response, refreshedToken)
     }
 
-    // verify token 
-    const res = await verifyToken(token)
-    
-    if(res.ok) {
-        return NextResponse.next()
-    }
+    if (isServerAction) return NextResponse.next()
 
-    // if token is invalid redirect to login
     const redirectUrl = new URL('/login', request.url)
-    redirectUrl.searchParams.set('next', new URL(request.url).pathname)
+    const next = request.nextUrl.pathname + request.nextUrl.search
+    redirectUrl.searchParams.set('next', next)
     return NextResponse.redirect(redirectUrl)
-
-
 }

@@ -5,6 +5,7 @@ import process from 'process'
 
 const currentEnv = process.env.NODE_ENV || 'development'
 const jtw_secret = pkg[currentEnv].jtw_secret
+const refresh_jtw_secret = pkg[currentEnv].refresh_jwt_secret
 
 class SecurityService {
     #error = new ServiceErrorHandler()
@@ -46,6 +47,59 @@ class SecurityService {
                 }
             )
             return token
+        })
+    }
+
+    /**
+     * Creates and signs a long-lived refresh token for a given user. Unlike the access
+     * token, this carries only the user's id plus a `type: 'refresh'` claim — no
+     * email/role/tenant/store data, since its only job is to let the user get a fresh
+     * access token later without re-entering their password. The `type` claim is a
+     * defense-in-depth check: it stops a refresh token from being accidentally (or
+     * maliciously) accepted anywhere an access token is expected, and vice versa.
+     * @param {number} userId - The user's ID.
+     * @throws {ServiceError} - throws an error if the token could not be signed.
+     * @returns {string} The generated refresh JWT.
+     */
+    setRefreshToken(userId) {
+        return this.#error.handler(['Set refresh token'], async() => {
+            const token = jwt.sign(
+                {
+                    id: userId,
+                    type: 'refresh'
+                },
+                refresh_jtw_secret,
+                {
+                    expiresIn: '7d'
+                }
+            )
+            return token
+        })
+    }
+
+    /**
+     * Verifies a refresh token and returns the user id it was issued for, or `false` if
+     * it's missing, expired, invalid, or isn't actually a refresh token (e.g. someone
+     * passed an access token here instead).
+     * @param {string} token - The refresh JWT to verify.
+     * @throws {ServiceError} - Throws an error if the token verification fails unexpectedly.
+     * @returns {Promise<{id: number}|boolean>}
+     */
+    verifyRefreshToken(token) {
+        return this.#error.handler(['Verify refresh token'], async() => {
+            if (!token) {
+                return false
+            }
+
+            try {
+                const data = jwt.verify(token, refresh_jtw_secret)
+                if (data.type !== 'refresh') {
+                    return false
+                }
+                return { id: data.id }
+            } catch {
+                return false
+            }
         })
     }
 

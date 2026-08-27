@@ -1,57 +1,45 @@
 import { NextResponse } from 'next/server'
-import { verifyToken } from '../utils/verifyToken'
+import { verifySession, forwardedRequestInit, applyRefreshedCookie } from './session'
 
 class AuthorizationMiddleWare {
-    
-    constructor(){
-        this.verifyToken = verifyToken
-    
-    }
 
     checkAuthorization = async (request) => {
-        const token = request.cookies.get('access_token')?.value 
-        if (!token) {
+        const { valid, data, refreshedToken } = await verifySession(request)
+
+        if (!valid) {
             const redirectUrl = new URL('/login', request.url)
             redirectUrl.searchParams.set('next', new URL(request.url).pathname)
             return NextResponse.redirect(redirectUrl)
         }
 
-        try{
-            // verify token 
-            const res = await this.verifyToken(token, true)
-            
-            
-            if (![1,2,3].includes(res.data.role)){
-                return NextResponse.redirect(new URL('/store', request.url))
-                // return new NextResponse('Forbidden', { status: 403 })
-
-            }else{
-                return NextResponse.next()
-            }
-
-        }catch(err){
-            return NextResponse.next()
+        if (![1, 2, 3].includes(data.role)) {
+            const response = NextResponse.redirect(new URL('/store', request.url))
+            return applyRefreshedCookie(response, refreshedToken)
         }
+
+        const response = NextResponse.next({ request: forwardedRequestInit(request, refreshedToken) })
+        return applyRefreshedCookie(response, refreshedToken)
     }
 
     checkAdmin = async (request) => {
-        const token = request.cookies.get('access_token')?.value 
-        if (!token) {
-             return NextResponse.redirect(new URL('/404', request.url));
+        const { valid, data, refreshedToken } = await verifySession(request)
+
+        if (!valid) {
+            // Previously redirected to /404 here specifically (unlike every other guard,
+            // which goes to /login) — unified so an expired/missing session always sends
+            // you to /login, consistent with checkAuthorization and verifyAuth.
+            const redirectUrl = new URL('/login', request.url)
+            redirectUrl.searchParams.set('next', new URL(request.url).pathname)
+            return NextResponse.redirect(redirectUrl)
         }
 
-        try{
-            
-            const res = await this.verifyToken(token, true)
-            if (res.data.role != 1) {
-                return NextResponse.redirect(new URL('/404', request.url));
-            }else {
-                return NextResponse.next()
-            }
-
-        }catch(err){
-            return NextResponse.next()
+        if (data.role != 1) {
+            const response = NextResponse.redirect(new URL('/404', request.url))
+            return applyRefreshedCookie(response, refreshedToken)
         }
+
+        const response = NextResponse.next({ request: forwardedRequestInit(request, refreshedToken) })
+        return applyRefreshedCookie(response, refreshedToken)
     }
 }
 
@@ -59,4 +47,3 @@ const checkAuthorization = new AuthorizationMiddleWare().checkAuthorization
 const checkAdmin = new AuthorizationMiddleWare().checkAdmin
 
 export { checkAuthorization, checkAdmin }
-

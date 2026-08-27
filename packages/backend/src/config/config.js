@@ -14,6 +14,10 @@ const dbConfig = {
 const appConfig = {
     saltRounds: parseInt(process.env.SALT_ROUNDS, 10),
     jtw_secret: process.env.JWT_SECRET,
+    // Falls back to JWT_SECRET if not set, so the app keeps working without a new .env
+    // entry — but a separate secret is recommended so a leaked access-token secret alone
+    // doesn't also let an attacker mint refresh tokens.
+    refresh_jwt_secret: process.env.REFRESH_JWT_SECRET || process.env.JWT_SECRET,
     admin_user: process.env.ADMIN_EMAIL,
     admin_pass: process.env.ADMIN_PASS,
     admin_role: process.env.ADMIN_ROLE,

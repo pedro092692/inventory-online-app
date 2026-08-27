@@ -35,28 +35,53 @@ export default async function Login(nextUrl, prevState, formData) {
     })
 
     if (response.ok) {
-        const setCookie = response.headers.get('set-cookie')
-        if (setCookie) {
-            const tokenPart = setCookie.split(';')[0]
-            const [name, value] = tokenPart.split('=')
-            const cookieStore = await cookies()
-            cookieStore.set(name.trim(), value, {
-                httpOnly: true,
-                secure: true, 
-                sameSite: 'strict',
-                maxAge: 3600,
-            })
+        // getSetCookie() returns each Set-Cookie header separately — the backend now sets
+        // TWO cookies (access_token + refresh_token, see SecurityController.login), and the
+        // older .get('set-cookie') would merge them into one comma-joined string and break
+        // this parsing.
+        const setCookies = typeof response.headers.getSetCookie === 'function'
+            ? response.headers.getSetCookie()
+            : []
 
+        const cookieMaxAges = {
+            access_token: 3600,
+            refresh_token: 3600 * 24 * 7
+        }
+
+        let accessTokenValue = null
+        const cookieStore = await cookies()
+
+        for (const rawCookie of setCookies) {
+            const [pair] = rawCookie.split(';')
+            const eqIdx = pair.indexOf('=')
+            const name = pair.slice(0, eqIdx).trim()
+            const value = pair.slice(eqIdx + 1)
+
+            if (!(name in cookieMaxAges)) continue
+
+            if (name === 'access_token') {
+                accessTokenValue = value
+            }
+
+            cookieStore.set(name, value, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'strict',
+                maxAge: cookieMaxAges[name],
+            })
+        }
+
+        if (accessTokenValue) {
             // get current user role
-            const response_cu = await verifyToken(tokenPart.split('access_token=')[1])
+            const response_cu = await verifyToken(accessTokenValue)
             const current_user = await response_cu.json()
-            
+
             if(current_user.data.role_name === 'admin' && safeNext === '/store') {
                 redirect('/admin')
             }
 
 
-            redirect(safeNext) 
+            redirect(safeNext)
         }
     }
     
