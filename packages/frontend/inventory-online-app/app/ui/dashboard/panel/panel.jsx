@@ -88,6 +88,13 @@ export async function Panel({type = 'store'}) {
             icon: 'cash',
             link: '/admin/payments',
             role: [1]
+        },
+
+        exchangeRate: {
+            title: 'Tasa de cambio',
+            icon: 'dollar',
+            link: '/admin/exchange-rate',
+            role: [1]
         }
     }
 

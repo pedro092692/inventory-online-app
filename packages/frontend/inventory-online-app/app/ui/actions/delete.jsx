@@ -21,12 +21,13 @@ export default function DeleteModal({
         cancelSupervisor = false,
         pin = null,
         onChangePin = null,
-        customPin = null
+        customPin = null,
+        typeList = 'store'
 
     }) {
     const initialState = {message: null, error: null}
-    const deleteResource = !cancelSupervisor ? 
-        deleteFuncion.bind(null, id, path, deleteKey, deleteMsg)
+    const deleteResource = !cancelSupervisor ?
+        deleteFuncion.bind(null, id, path, deleteKey, deleteMsg, typeList)
         :
         CancelResource.bind(null, id, pin, path, deleteKey, deleteMsg)
     

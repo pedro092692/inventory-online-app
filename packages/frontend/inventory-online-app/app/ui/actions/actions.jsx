@@ -129,14 +129,15 @@ export default function Actions({
             
             {   
                 canDelete ? 
-                    isMounted && <DeleteModal 
-                                        show={showModal} 
-                                        onClose={closeModal} 
+                    isMounted && <DeleteModal
+                                        show={showModal}
+                                        onClose={closeModal}
                                         id={resourceId}
                                         path={endpoint}
                                         deleteKey={deleteKey}
                                         deleteMsg={deleteMsg}
                                         cancelSupervisor={cancelSupervisor}
+                                        typeList={typeList}
                                     />
                 :
                     isMounted && <DeleteModal 
@@ -148,6 +149,7 @@ export default function Actions({
                                         deleteMsg={deleteMsg}
                                         cancelSupervisor={cancelSupervisor}
                                         pin={true}
+                                        typeList={typeList}
                                     />
                     
             }

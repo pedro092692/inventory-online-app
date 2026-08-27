@@ -77,14 +77,15 @@ class ExchangeRateController {
     })
 
     /**
-     * Deletes an exchange rate entry by its ID.
-     * @param {Object} req - request object containing the rate ID in the params
+     * Deletes an exchange rate entry. Takes the id from the body (not the URL) to match
+     * the app's existing generic delete flow (DeleteResource / Actions / DeleteModal).
+     * @param {Object} req - request object containing the rate ID in the body
      * @param {Object} res - response object to send a success status
      * @throws {ServiceError} - throws an error if the rate could not be deleted
      * @returns {Promise<void>} - returns a confirmation message
      */
     deleteRate = this.#error.handler( async(req, res) => {
-        const { id } = req.params
+        const { id } = req.body
         await this.exchangeRate.deleteRate(id)
         res.status(200).json({ message: 'Tasa de cambio eliminada' })
     })

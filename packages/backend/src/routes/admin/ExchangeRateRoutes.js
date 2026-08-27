@@ -22,7 +22,10 @@ class ExchangeRateRoutes {
         this.router.get('/:id', (req, res) => new ExchangeRateController().getRate(req, res))
         this.router.post('/', validateFields('setExchangeRate'), (req, res) => new ExchangeRateController().createRate(req, res))
         this.router.patch('/:id', validateFields('setExchangeRate'), (req, res) => new ExchangeRateController().updateRate(req, res))
-        this.router.delete('/:id', (req, res) => new ExchangeRateController().deleteRate(req, res))
+        // Deliberately DELETE '/' with the id in the body (not '/:id') — this matches the
+        // app's existing generic delete flow (DeleteResource / Actions / DeleteModal), which
+        // is already wired for /users, /roles and /dollar-value the same way.
+        this.router.delete('/', (req, res) => new ExchangeRateController().deleteRate(req, res))
     }
 }
 

@@ -35,6 +35,7 @@ export default async function PendingPayments({page = 1, status = 'pending'}) {
         return <p className='p2-r'>{emptyMessages[status] || emptyMessages.all}</p>
     }
 
+
     const tableData = payments.map((payment) => ({
         store_name: payment.owner?.store?.name || 'Sin tienda',
         email: payment.owner?.email || '—',
@@ -42,7 +43,7 @@ export default async function PendingPayments({page = 1, status = 'pending'}) {
         status: <span className={`p3-r ${styles.statusBadge} ${styles[payment.status] || ''}`}>{statusLabels[payment.status] || payment.status}</span>,
         submitted_at: new Date(payment.submitted_at).toLocaleDateString('es-VE'),
         rejection_reason: payment.status === 'rejected' && payment.rejection_reason ? payment.rejection_reason : '—',
-        id: payment.id,
+        id: payment.id
     }))
 
     return (
@@ -58,8 +59,8 @@ export default async function PendingPayments({page = 1, status = 'pending'}) {
                     actions: 'Acciones'
                 }}
                 tableData={tableData}
-                showActions={true}
                 customClass={styles.table}
+                showActions={true}
                 showView={false}
                 showEdit={false}
                 showDelete={false}
