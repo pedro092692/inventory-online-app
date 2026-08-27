@@ -4,6 +4,8 @@ import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { Container } from '@/app/ui/utils/container'
 import { OvalLoader } from '@/app/ui/loader/spinner'
+import { Icon } from '@/app/ui/utils/icons/icons'
+import FloatInput from '@/app/ui/form/input/floatInput'
 import SubmitPaymentAction from '@/app/lib/actions/submitPayment'
 import { useActionState, useState } from 'react'
 import styles from '@/app/(store)/store/subscription/_components/subscription.module.css'
@@ -47,22 +49,29 @@ export default function PaymentForm() {
     }
 
     return (
-        <div className={`${styles.card} shadow`}>
-            <fieldset className={styles.fieldset}>
-                <legend className={`p2-b ${styles.legend}`}>Reportar un pago</legend>
-                <p className='p3-r' style={{color: '#888'}}>
+        <Container
+            direction={'column'}
+            padding={'16px'}
+            gap={'8px'}
+            borderRadius={'8px'}
+            className='shadow-sm'
+            backgroundColor="var(--color-neutralGrey200)" 
+        >
+                <p className='p2-r'>
                     Sube el comprobante de tu transferencia o pago móvil. Un administrador lo revisará y activará tu suscripción.
                 </p>
                 <Form action={handleSubmit}>
-                    <Input
-                        type="number"
-                        icon="cash"
-                        name="amount"
-                        placeHolder="Monto pagado (Bs)"
-                        defaultValue={state.inputs?.amount ?? ''}
-                        step="0.01"
-                        min="0.01"
-                    />
+                    <Container
+                        padding={'0px 0px 0px 16px'}
+                        backgroundColor={'var(--color-neutralGrey300)'}
+                        width='100%'
+                        gap={'4px'}
+                        borderRadius='8px'
+                        justifyContent='start'
+                    >  
+                        <Icon icon={'cash'} color='black'/>
+                        <FloatInput inputValue={state.inputs?.amount ?? false} name='amount'/>
+                    </Container>
                     {state?.errors?.amount && <span className="field_error">{state?.errors?.amount}</span>}
 
                     <Input
@@ -73,9 +82,10 @@ export default function PaymentForm() {
                         accept="image/*,.pdf"
                         required={true}
                         onChange={handleFileChange}
+                        className={styles.fileInput}
                     />
 
-                    <Container width="100%" padding="12px 16px" borderRadius="8px" backgroundColor="var(--color-neutralGrey600)" justifyContent="start">
+                    <Container width="100%" padding="12px 16px" borderRadius="8px" backgroundColor="var(--color-neutralGrey400)"  justifyContent="start">
                         <label htmlFor="receipt" style={{cursor: 'pointer'}}>
                             Seleccionar comprobante
                         </label>
@@ -92,7 +102,6 @@ export default function PaymentForm() {
                         {isPending ? 'Enviando...' : 'Enviar comprobante'}
                     </Button>
                 </Form>
-            </fieldset>
-        </div>
+        </Container>
     )
 }

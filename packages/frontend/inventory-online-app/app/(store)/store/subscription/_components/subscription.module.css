@@ -46,3 +46,7 @@
     background: #f8d7da;
     color: #a51818;
 }
+
+.fileInput {
+  display: none !important;
+}

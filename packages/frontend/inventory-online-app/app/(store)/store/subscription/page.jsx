@@ -32,15 +32,16 @@ export default async function Subscription({searchParams}) {
             width='100%'
             gap='16px'
         >
-            <h1 className='h3'>Salud de tienda</h1>
+            <h2 className='h3'>Salud de tienda</h2>
             <Suspense fallback={<FormSkeleton nFields={5}/>}>
                 <StoreOverview />
             </Suspense>
-
+            
+            <h2 className='h3'>Reportar un pago</h2>
             <PaymentForm />
 
             <Suspense key={currentPage} fallback={<FormSkeleton nFields={3}/>}>
-                <PaymentHistory page={currentPage}/>
+                {/* <PaymentHistory page={currentPage}/> */}
             </Suspense>
         </Container>
     )
