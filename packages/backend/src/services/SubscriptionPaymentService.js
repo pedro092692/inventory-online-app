@@ -107,23 +107,27 @@ class SubscriptionPaymentService {
     }
 
     /**
-     * Retrieves the current store owner's own submitted payments, most recent first.
+     * Retrieves the current store owner's own submitted payments, most recent first,
+     * along with the total count (for paginating the list on the frontend).
      * @param {number} tenantId - The tenant ID.
      * @param {number} [limit=10] - Max number of records.
      * @param {number} [page=1] - Page number.
-     * @returns {Promise<Array>} The tenant's SubscriptionPayment rows.
+     * @returns {Promise<Object>} { payments, total }
      */
     getMyPayments(tenantId, limit = 10, page = 1) {
         const offset = (page - 1) * limit
         return this.#error.handler(['Read my subscription payments', tenantId, 'SubscriptionPayment'], async () => {
-            const payments = await SubscriptionPayment.findAll({
-                where: { tenant_id: tenantId },
-                attributes: ['id', 'amount_declared', 'amount_expected', 'status', 'submitted_at', 'reviewed_at', 'rejection_reason'],
-                order: [['submitted_at', 'DESC']],
-                limit,
-                offset
-            })
-            return payments
+            const [payments, total] = await Promise.all([
+                SubscriptionPayment.findAll({
+                    where: { tenant_id: tenantId },
+                    attributes: ['id', 'amount_declared', 'amount_expected', 'status', 'submitted_at', 'reviewed_at', 'rejection_reason'],
+                    order: [['submitted_at', 'DESC']],
+                    limit,
+                    offset
+                }),
+                SubscriptionPayment.count({ where: { tenant_id: tenantId } })
+            ])
+            return { payments, total }
         })
     }
 }

@@ -8,14 +8,42 @@ import SubmitPaymentAction from '@/app/lib/actions/submitPayment'
 import { useActionState, useState } from 'react'
 import styles from '@/app/(store)/store/subscription/_components/subscription.module.css'
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB, igual al límite de multer en el backend
+const MAX_FILE_LABEL = '5MB'
+
 export default function PaymentForm() {
     const initialState = {message: null, errors: {}, inputs: {}}
     const [state, formAction, isPending] = useActionState(SubmitPaymentAction, initialState)
     const [fileName, setFileName] = useState(null)
+    const [fileError, setFileError] = useState(null)
 
     const handleFileChange = (e) => {
         const file = e.target.files?.[0]
-        setFileName(file ? file.name : null)
+
+        if (!file) {
+            setFileName(null)
+            setFileError(null)
+            return
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+            setFileName(null)
+            setFileError(`El archivo pesa demasiado (máximo ${MAX_FILE_LABEL}). Elige una imagen más liviana o comprímela.`)
+            e.target.value = ''
+            return
+        }
+
+        setFileName(file.name)
+        setFileError(null)
+    }
+
+    const handleSubmit = (formData) => {
+        const file = formData.get('receipt')
+        if (file && file.size > MAX_FILE_SIZE) {
+            setFileError(`El archivo pesa demasiado (máximo ${MAX_FILE_LABEL}). Elige una imagen más liviana o comprímela.`)
+            return
+        }
+        return formAction(formData)
     }
 
     return (
@@ -25,7 +53,7 @@ export default function PaymentForm() {
                 <p className='p3-r' style={{color: '#888'}}>
                     Sube el comprobante de tu transferencia o pago móvil. Un administrador lo revisará y activará tu suscripción.
                 </p>
-                <Form action={formAction}>
+                <Form action={handleSubmit}>
                     <Input
                         type="number"
                         icon="cash"
@@ -53,11 +81,13 @@ export default function PaymentForm() {
                         </label>
                         {fileName && <span className='p3-r'>{fileName}</span>}
                     </Container>
+                    <p className='p3-r' style={{color: '#888'}}>Tamaño máximo: {MAX_FILE_LABEL}</p>
+                    {fileError && <span className="field_error">{fileError}</span>}
 
                     {state?.errors?.error && <span className="field_error">{state?.errors?.error}</span>}
                     {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
 
-                    <Button role="submit" type="secondary" disabled={isPending}>
+                    <Button role="submit" type="secondary" disabled={isPending || !!fileError}>
                         {isPending && <OvalLoader/>}
                         {isPending ? 'Enviando...' : 'Enviar comprobante'}
                     </Button>

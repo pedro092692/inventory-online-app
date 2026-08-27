@@ -57,14 +57,14 @@ class StoreStatusController {
      * @param {Object} req - request object, uses the authenticated user's tenant_id
      * @param {Object} res - response object to send the payments list
      * @throws {ServiceError} - throws an error if the payments could not be retrieved
-     * @returns {Promise<void>} - returns {payments}
+     * @returns {Promise<void>} - returns {payments, total, totalPages}
      */
     getMyPayments = this.#error.handler( async(req, res) => {
         const tenantId = req.user?.tenant_id
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
-        const payments = await this.payments.getMyPayments(tenantId, limit, page)
-        res.status(200).json({ payments })
+        const { payments, total } = await this.payments.getMyPayments(tenantId, limit, page)
+        res.status(200).json({ payments, total, totalPages: Math.ceil(total / limit) || 1 })
     })
 }
 

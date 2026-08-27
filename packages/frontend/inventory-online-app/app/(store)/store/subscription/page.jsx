@@ -6,8 +6,10 @@ import StoreOverview from '@/app/(store)/store/subscription/_components/storeOve
 import PaymentForm from '@/app/(store)/store/subscription/_components/paymentForm'
 import PaymentHistory from '@/app/(store)/store/subscription/_components/paymentHistory'
 
-export default async function Subscription() {
+export default async function Subscription({searchParams}) {
     const userInfo = await getCurrentUser()
+    const params = await searchParams
+    const currentPage = Number(params?.page) || 1
 
     if (userInfo?.role !== 2) {
         return (
@@ -36,8 +38,8 @@ export default async function Subscription() {
 
             <PaymentForm />
 
-            <Suspense fallback={<FormSkeleton nFields={3}/>}>
-                <PaymentHistory />
+            <Suspense key={currentPage} fallback={<FormSkeleton nFields={3}/>}>
+                <PaymentHistory page={currentPage}/>
             </Suspense>
         </Container>
     )
