@@ -60,120 +60,129 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
     return (
         <>
             {user &&
-                <Form className={`${styles.form} shadow`} action={handleSubmit}>
+                <>
+                    <p className='p1-b'>Salud de tienda</p>
+                    <div className='divider'></div>
+                    <p className='p1-b'>Editar Tienda</p>
+                    <Form className={`${styles.form} shadow`} action={handleSubmit}>
 
-                    {/* <fieldset className={styles.fieldset}>
-                        <legend className={`p2-b ${styles.legend}`}>Salud de la tienda</legend>
-                        <p className='p2-r' style={{color: subscriptionColor}}>{subscriptionLabel}</p>
-                        <p className='p2-r'>Vendedores: {stats?.sellerCount ?? '—'}</p>
-                        <p className='p2-r'>Clientes: {stats?.customerCount ?? '—'}</p>
-                        <p className='p2-r'>
-                            Última factura: {stats?.lastInvoiceDate ? new Date(stats.lastInvoiceDate).toLocaleDateString('es-VE') : 'Sin facturas'}
-                        </p>
-                        <p className='p2-r' style={{color: isBlocked ? '#c0392b' : 'green'}}>
-                            Estado: {isBlocked ? 'Bloqueada' : 'Activa'}
-                        </p>
-                        {isBlocked && store?.blocked_reason &&
-                            <p className='p2-r' style={{color: '#c0392b'}}>
-                                Motivo: {store.blocked_reason}
-                                {store?.blocked_at ? ` (${new Date(store.blocked_at).toLocaleDateString('es-VE')})` : ''}
+                        {/* <fieldset className={styles.fieldset}>
+                            <legend className={`p2-b ${styles.legend}`}>Salud de la tienda</legend>
+                            <p className='p2-r' style={{color: subscriptionColor}}>{subscriptionLabel}</p>
+                            <p className='p2-r'>Vendedores: {stats?.sellerCount ?? '—'}</p>
+                            <p className='p2-r'>Clientes: {stats?.customerCount ?? '—'}</p>
+                            <p className='p2-r'>
+                                Última factura: {stats?.lastInvoiceDate ? new Date(stats.lastInvoiceDate).toLocaleDateString('es-VE') : 'Sin facturas'}
                             </p>
-                        }
+                            <p className='p2-r' style={{color: isBlocked ? '#c0392b' : 'green'}}>
+                                Estado: {isBlocked ? 'Bloqueada' : 'Activa'}
+                            </p>
+                            {isBlocked && store?.blocked_reason &&
+                                <p className='p2-r' style={{color: '#c0392b'}}>
+                                    Motivo: {store.blocked_reason}
+                                    {store?.blocked_at ? ` (${new Date(store.blocked_at).toLocaleDateString('es-VE')})` : ''}
+                                </p>
+                            }
 
-                        {isBlocked ? (
-                            <Button type="secondary" disabled={unblockPending} onClick={() => unblockAction()}>
-                                {unblockPending && <OvalLoader/>}
-                                {unblockPending ? 'Desbloqueando...' : 'Desbloquear tienda'}
-                            </Button>
-                        ) : (
-                            <Button type="danger" onClick={() => setShowBlockModal(true)}>
-                                Bloquear tienda
-                            </Button>
-                        )}
-                        {unblockState?.message && <span style={{color: 'green'}}>{unblockState.message}</span>}
-                    </fieldset> */}
+                            {isBlocked ? (
+                                <Button type="secondary" disabled={unblockPending} onClick={() => unblockAction()}>
+                                    {unblockPending && <OvalLoader/>}
+                                    {unblockPending ? 'Desbloqueando...' : 'Desbloquear tienda'}
+                                </Button>
+                            ) : (
+                                <Button type="danger" onClick={() => setShowBlockModal(true)}>
+                                    Bloquear tienda
+                                </Button>
+                            )}
+                            {unblockState?.message && <span style={{color: 'green'}}>{unblockState.message}</span>}
+                        </fieldset> */}
 
-                    <div className={styles.grid}>
-                        <fieldset className={styles.fieldset}>
-                            <legend className={`p2-b ${styles.legend}`}>Datos de la tienda</legend>
+                        <div className={styles.grid}>
+                            {/* store data */}
+                            <fieldset className={styles.fieldset}>
+                                <legend className={`p2-b ${styles.legend}`}>Datos de la tienda</legend>
 
-                            <Input type="text" icon="store" name={'store_name'}
-                                defaultValue={state.inputs?.store_name ?? store?.name}
-                                placeHolder='Nombre de la tienda' capitalize={true}
-                            />
-                            {state?.errors?.store_name && <span className="field_error">{state?.errors?.store_name}</span>}
+                                <Input type="text" icon="store" name={'store_name'}
+                                    defaultValue={state.inputs?.store_name ?? store?.name}
+                                    placeHolder='Nombre de la tienda' capitalize={true}
+                                />
+                                {state?.errors?.store_name && <span className="field_error">{state?.errors?.store_name}</span>}
 
-                            <Input type="text" icon="id" name={'fiscal_id'}
-                                defaultValue={state.inputs?.fiscal_id ?? store?.fiscal_id}
-                                placeHolder='Registro fiscal (opcional)' required={false}
-                            />
-                            {state?.errors?.fiscal_id && <span className="field_error">{state?.errors?.fiscal_id}</span>}
+                                <Input type="text" icon="id" name={'fiscal_id'}
+                                    defaultValue={state.inputs?.fiscal_id ?? store?.fiscal_id}
+                                    placeHolder='Registro fiscal (opcional)' required={false}
+                                />
+                                {state?.errors?.fiscal_id && <span className="field_error">{state?.errors?.fiscal_id}</span>}
 
-                            <Input type="phone" icon="phone" value={phoneValue} name={'store_phone'}
-                                onChange={(e) => setPhoneValue(e.target.value)}
-                            />
-                            {state?.errors?.store_phone && <span className="field_error">{state?.errors?.store_phone}</span>}
+                                <Input type="phone" icon="phone" value={phoneValue} name={'store_phone'}
+                                    onChange={(e) => setPhoneValue(e.target.value)}
+                                />
+                                {state?.errors?.store_phone && <span className="field_error">{state?.errors?.store_phone}</span>}
 
-                            <Input type="text" icon="address" name={'store_address'}
-                                defaultValue={state.inputs?.store_address ?? store?.address}
-                                placeHolder='Dirección' capitalize={true}
-                            />
-                            {state?.errors?.store_adress && <span className="field_error">{state?.errors?.store_adress}</span>}
-                        </fieldset>
+                                <Input type="text" icon="address" name={'store_address'}
+                                    defaultValue={state.inputs?.store_address ?? store?.address}
+                                    placeHolder='Dirección' capitalize={true}
+                                />
+                                {state?.errors?.store_adress && <span className="field_error">{state?.errors?.store_adress}</span>}
+                            </fieldset>
 
-                        <fieldset className={styles.fieldset}>
-                            <legend className={`p2-b ${styles.legend}`}>Datos del usuario</legend>
+                            {/* seller data */}
+                            <fieldset className={styles.fieldset}>
+                                <legend className={`p2-b ${styles.legend}`}>Datos del vendedor</legend>
 
-                            <Input type="email" icon="mail" name={'email'}
-                                defaultValue={state.inputs?.email ?? user?.email}
-                                placeHolder='Email'
-                            />
-                            {state?.errors?.email && <span className="field_error">{state?.errors?.email}</span>}
+                                <Input type="text" icon="person" name={'name'}
+                                    defaultValue={state.inputs?.name ?? seller?.name}
+                                    placeHolder='Nombre del dueño' capitalize={true}
+                                />
+                                {state?.errors?.name && <span className="field_error">{state?.errors?.name}</span>}
 
-                            <Input type="password" icon="padlock" name={'password'}
-                                defaultValue={""}
-                                placeHolder='Nueva contraseña (opcional)' required={false}
-                            />
-                            {state?.errors?.password && <span className="field_error">{state?.errors?.password}</span>}
-                        </fieldset>
+                                <Input type="text" icon="paper" name={'last_name'}
+                                    defaultValue={state.inputs?.last_name ?? seller?.last_name}
+                                    placeHolder='Apellido' capitalize={true}
+                                />
+                                {state?.errors?.last_name && <span className="field_error">{state?.errors?.last_name}</span>}
 
-                        <fieldset className={styles.fieldset}>
-                            <legend className={`p2-b ${styles.legend}`}>Datos del vendedor</legend>
+                                <Input type="number" icon="id" name={'id_number'}
+                                    defaultValue={state.inputs?.id_number ?? seller?.id_number}
+                                    placeHolder='Número de cédula'
+                                />
+                                {state?.errors?.id_number && <span className="field_error">{state?.errors?.id_number}</span>}
 
-                            <Input type="text" icon="person" name={'name'}
-                                defaultValue={state.inputs?.name ?? seller?.name}
-                                placeHolder='Nombre del dueño' capitalize={true}
-                            />
-                            {state?.errors?.name && <span className="field_error">{state?.errors?.name}</span>}
+                                <Input type="text" icon="address" name={'address'}
+                                    defaultValue={state.inputs?.address ?? seller?.address}
+                                    placeHolder='Dirección' capitalize={true}
+                                />
+                                {state?.errors?.address && <span className="field_error">{state?.errors?.address}</span>}
+                            </fieldset>
 
-                            <Input type="text" icon="paper" name={'last_name'}
-                                defaultValue={state.inputs?.last_name ?? seller?.last_name}
-                                placeHolder='Apellido' capitalize={true}
-                            />
-                            {state?.errors?.last_name && <span className="field_error">{state?.errors?.last_name}</span>}
+                            {/* user data */}
+                            
+                            <fieldset className={styles.fieldset}>
+                                <legend className={`p2-b ${styles.legend}`}>Datos del usuario</legend>
 
-                            <Input type="number" icon="id" name={'id_number'}
-                                defaultValue={state.inputs?.id_number ?? seller?.id_number}
-                                placeHolder='Número de cédula'
-                            />
-                            {state?.errors?.id_number && <span className="field_error">{state?.errors?.id_number}</span>}
+                                <Input type="email" icon="mail" name={'email'}
+                                    defaultValue={state.inputs?.email ?? user?.email}
+                                    placeHolder='Email'
+                                />
+                                {state?.errors?.email && <span className="field_error">{state?.errors?.email}</span>}
 
-                            <Input type="text" icon="address" name={'address'}
-                                defaultValue={state.inputs?.address ?? seller?.address}
-                                placeHolder='Dirección' capitalize={true}
-                            />
-                            {state?.errors?.address && <span className="field_error">{state?.errors?.address}</span>}
-                        </fieldset>
-                    </div>
+                                <Input type="password" icon="padlock" name={'password'}
+                                    defaultValue={""}
+                                    placeHolder='Nueva contraseña (opcional)' required={false}
+                                />
+                                {state?.errors?.password && <span className="field_error">{state?.errors?.password}</span>}
+                            </fieldset>
+                        </div>
 
-                    {state?.errors?.error && <span className="field_error">{state?.errors?.error}</span>}
-                    {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
+                        {state?.errors?.error && <span className="field_error">{state?.errors?.error}</span>}
+                        {state?.message && <span style={{color: 'green', marginTop: '8px'}}>{state?.message}</span>}
 
-                    <Button role="submit" type="secondary" disabled={isPending}>
-                        {isPending && <OvalLoader/>}
-                        {isPending ? 'Guardando...' : 'Editar Tienda'}
-                    </Button>
-                </Form>
+                        <Button role="submit" type="secondary" disabled={isPending}>
+                            {isPending && <OvalLoader/>}
+                            {isPending ? 'Guardando...' : 'Editar Tienda'}
+                        </Button>
+                    </Form>
+                </>
             }
             <BlockStoreModal show={showBlockModal} onClose={setShowBlockModal} tenantId={user?.id}/>
         </>

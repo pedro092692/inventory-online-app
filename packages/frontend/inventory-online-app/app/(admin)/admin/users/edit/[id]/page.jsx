@@ -7,8 +7,6 @@ export default async function EditStoreOwner({ params }) {
 
     return (
         <>
-            <h1 className='h3'>Editar tienda</h1>
-
             <Suspense key={id} fallback={<FormSkeleton nFields={6}/>}>
                 <StoreOwnerInfo id={id} />
             </Suspense>
