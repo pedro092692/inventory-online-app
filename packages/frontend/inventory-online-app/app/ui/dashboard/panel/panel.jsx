@@ -10,14 +10,14 @@ export async function Panel({type = 'store'}) {
     const userInfo = await getCurrentUser()
     const menuStore = {
         customers: {
-            title: 'clientes',
+            title: 'Clientes',
             icon: 'customer',
             link: '/store/customers',
             role: [1,2,3,4]
         },
 
         products: {
-            title: 'productos',
+            title: 'Productos',
             icon: 'product',
             link: '/store/products',
             role: [1,2,3,4]
