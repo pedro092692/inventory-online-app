@@ -36,13 +36,39 @@ export default async function Subscription({searchParams}) {
             <Suspense fallback={<FormSkeleton nFields={5}/>}>
                 <StoreOverview />
             </Suspense>
-            
-            <h2 className='h3'>Reportar un pago</h2>
-            <PaymentForm />
 
-            <Suspense key={currentPage} fallback={<FormSkeleton nFields={3}/>}>
-                {/* <PaymentHistory page={currentPage}/> */}
-            </Suspense>
+            <Container
+                padding={'0px'}
+                width={'100%'}
+                justifyContent={'start'}
+                gap={'24px'}
+            >
+                <Container
+                    padding={'0px'}
+                    width={'30%'}
+                    height={'100%'}
+                    direction={'column'}
+                    alignItem={'start'}
+                    justifyContent={'start'}
+                >
+                    <h2 className='h3'>Reportar un pago</h2>
+                    <PaymentForm />
+                </Container>
+
+                <Container
+                    padding={'0px'}
+                    width={'70%'}
+                    direction={'column'}
+                    alignItem={'start'}
+                    justifyContent={'start'}
+                    height={'100%'}
+                >
+                    <h2 className='h3'>Historial de pagos</h2>
+                    <Suspense key={currentPage} fallback={<FormSkeleton nFields={3}/>}>
+                        <PaymentHistory page={currentPage}/>
+                    </Suspense>
+                </Container>
+            </Container>
         </Container>
     )
 }

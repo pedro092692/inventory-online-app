@@ -2,6 +2,7 @@ import Request from '@/app/utils/request'
 import List from '@/app/ui/list/list'
 import Pagination from '@/app/ui/pagination/pagination'
 import styles from '@/app/(store)/store/subscription/_components/subscription.module.css'
+import { Container } from '@/app/ui/utils/container'
 
 const statusLabels = {
     pending: 'En revisión',
@@ -9,7 +10,7 @@ const statusLabels = {
     rejected: 'Rechazado'
 }
 
-const LIMIT = 10
+const LIMIT = 5
 
 export default async function PaymentHistory({page = 1}) {
     const response = await Request(`store/payments?limit=${LIMIT}&page=${page}`, 'GET', null, 'Hubo un error inesperado intenta nuevamente')
@@ -35,10 +36,18 @@ export default async function PaymentHistory({page = 1}) {
     }))
 
     return (
-        <div className={`${styles.card} shadow`}>
-            <fieldset className={styles.fieldset}>
-                <legend className={`p2-b ${styles.legend}`}>Historial de pagos</legend>
-
+        <Container
+            backgroundColor="var(--color-neutralGrey200)"  
+            direction={'column'}
+            alignItem={'start'}
+            justifyContent={'space-between'}
+            padding='16px'
+            borderRadius={'8px'}
+            className='shadow-sm'
+            width='100%'
+            height={'100%'}
+            
+        >
                 {payments.length === 0 && <p className='p2-r'>Aún no has enviado ningún comprobante.</p>}
 
                 {payments.length > 0 &&
@@ -57,7 +66,6 @@ export default async function PaymentHistory({page = 1}) {
                         {totalPages > 1 && <Pagination totalPages={totalPages}/>}
                     </>
                 }
-            </fieldset>
-        </div>
+        </Container>
     )
 }
