@@ -4,13 +4,10 @@ import { Icon } from '../../utils/icons/icons'
 import Link from 'next/link'
 import styles from './panel.module.css'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
-import GetItemAction from '@/app/lib/actions/get'
 
 
 export async function Panel({type = 'store'}) {
     const userInfo = await getCurrentUser()
-    const { data: storeOverview } = type === 'store' ? await GetItemAction('store/me') : { data: null }
-    const storeName = storeOverview?.store?.name
     const menuStore = {
         customers: {
             title: 'clientes',
@@ -97,8 +94,6 @@ export async function Panel({type = 'store'}) {
             <Link href={`${type === 'store' ? '/store' : '/admin'}`}>
                 <Logo type='logoWhite' style={{width: '100%'}}/>
             </Link>
-            {/* store name */}
-            {storeName && <p className={`p2-b ${styles.storeName}`}>{storeName}</p>}
             {/* menu container */}
             <Container className={styles.menu}>
                 {/* render menu */}

@@ -15,12 +15,17 @@ class SecurityService {
 
     /**
      * Creates and signs a JSON Web Token (JWT) for a given user.
-     * The token contains the user's ID, email, and role, and expires in 1 hour.
+     * The token contains the user's ID, email, role, tenant_id and store_name
+     * (when the user belongs to a store), and expires in 1 hour. Embedding
+     * store_name here avoids re-fetching it on every page load, since it rarely
+     * changes (only an admin editing the store triggers it) — the trade-off is
+     * that a rename can take up to 1h (or a re-login) to show up for that user.
      * @param {object} user - The user object for whom to generate the token.
      * @param {number} user.id - The user's ID.
      * @param {string} user.email - The user's email.
      * @param {object} user.Role - The user's role object, which should be included in the user query.
      * @param {string} user.Role.name - The name of the user's role.
+     * @param {string|null} [user.store_name] - The name of the store the user belongs to, if any.
      * @throws {ServiceError} - throws an error if the token could not be sign.
      * @returns {string} The generated JWT.
      */
@@ -28,17 +33,18 @@ class SecurityService {
         return this.#error.handler(['Set jwt'], async() => {
             const token = jwt.sign(
                 {
-                    id: user.id, 
+                    id: user.id,
                     email: user.email,
                     role: user.role_id,
                     role_name: this.roleName(user.role_id),
-                    tenant_id: user.tenant_id
+                    tenant_id: user.tenant_id,
+                    store_name: user.store_name ?? null
                 },
                 jtw_secret,
                 {
                     expiresIn: '1h'
                 }
-            )    
+            )
             return token
         })
     }
@@ -64,7 +70,8 @@ class SecurityService {
                     email: data.email,
                     role: data.role,
                     role_name: this.roleName(data.role),
-                    tenant_id: data.tenant_id
+                    tenant_id: data.tenant_id,
+                    store_name: data.store_name ?? null
                 }
             }catch {
                 return false

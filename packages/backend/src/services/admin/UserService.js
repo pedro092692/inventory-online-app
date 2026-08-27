@@ -503,7 +503,9 @@ class UserService {
     }
 
     /**
-     * Retrieves a user by a given email.
+     * Retrieves a user by a given email. Also attaches `store_name` (the store the
+     * user belongs to, looked up by `tenant_id`, not by ownership) so it can be
+     * embedded in the JWT at login and avoid a separate request on every page.
      * @param {String} email - The meail of the user to retrieve.
      * @return {Promise<Object>} - A promise that resolves to the user object.
      * @throws {ServiceError} - If an error occurs during retrieval.
@@ -515,7 +517,15 @@ class UserService {
                     email: email
                 }
             })
-            
+
+            if (user && user.tenant_id) {
+                const store = await Store.findOne({
+                    where: { tenant_id: user.tenant_id },
+                    attributes: ['name']
+                })
+                user.store_name = store?.name || null
+            }
+
             return user
         })
     }
