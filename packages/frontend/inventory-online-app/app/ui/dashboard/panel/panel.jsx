@@ -4,6 +4,7 @@ import { Icon } from '../../utils/icons/icons'
 import Link from 'next/link'
 import styles from './panel.module.css'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
+import LogoutAction from '@/app/lib/actions/logout'
 
 
 export async function Panel({type = 'store'}) {
@@ -127,6 +128,16 @@ export async function Panel({type = 'store'}) {
                     }
                 }))}
             </Container>
+            {/* logout */}
+            <form action={LogoutAction} style={{width: '100%'}}>
+                <button
+                    type="submit"
+                    className={`p2-r ${styles.menuItem} ${styles.logoutButton}`}
+                >
+                    <p>Cerrar sesión</p>
+                    <Icon icon='logout'/>
+                </button>
+            </form>
         </Container>
     )
 }

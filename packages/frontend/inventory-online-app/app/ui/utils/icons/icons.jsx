@@ -119,9 +119,15 @@ export function Icon({icon='person', color='white', size=[20, 20], className='',
 
         trash: {
             icon: <g xmlns="http://www.w3.org/2000/svg" clipPath="url(#clip0_431_224)">
-                        <path d="M12 38C12 40.2 13.8 42 16 42H32C34.2 42 36 40.2 36 38V14H12V38ZM38 8H31L29 6H19L17 8H10V12H38V8Z" 
+                        <path d="M12 38C12 40.2 13.8 42 16 42H32C34.2 42 36 40.2 36 38V14H12V38ZM38 8H31L29 6H19L17 8H10V12H38V8Z"
                         fill={color}/>
                   </g>
+        },
+
+        logout: {
+            icon: <path xmlns="http://www.w3.org/2000/svg"
+                    d="M34 14L31.18 16.82L36.34 22H16V26H36.34L31.18 31.18L34 34L44 24L34 14ZM8 10H24V6H8C5.8 6 4 7.8 4 10V38C4 40.2 5.8 42 8 42H24V38H8V10Z"
+                    fill={color}/>
         },
 
         arrowRight: {

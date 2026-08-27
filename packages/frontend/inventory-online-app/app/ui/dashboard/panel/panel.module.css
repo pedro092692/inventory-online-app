@@ -32,3 +32,13 @@
     border-bottom: 1px solid var(--color-neutralGrey600);
     cursor: pointer;
 }
+
+.logoutButton {
+    display: flex;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--color-neutralGrey600);
+    font-family: inherit;
+    text-align: left;
+    margin-top: 16px;
+}
