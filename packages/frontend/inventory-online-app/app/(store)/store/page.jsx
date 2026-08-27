@@ -9,14 +9,14 @@ function KpiRowSkeleton({ count = 4 }) {
     return (
         <Container padding={'0px'} width={'100%'} justifyContent={'flex-start'} gap={'20px'}>
             {Array.from({ length: count }).map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 h-[76px] w-[220px] animate-pulse" />
+                <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 h-19 w-55 animate-pulse" />
             ))}
         </Container>
     )
 }
 
 function WidgetSkeleton() {
-    return <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 h-[160px] w-full animate-pulse" />
+    return <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 h-40 w-full animate-pulse" />
 }
 
 export default function HomeStore() {
@@ -45,7 +45,7 @@ export default function HomeStore() {
 
                 <h2 className='h3'>Productos Vista Rápida</h2>
                 <Suspense fallback={<WidgetSkeleton />}>
-                    <LowStockWidget />
+                    <LowStockWidget  />
                 </Suspense>
             </Container>
         </Container>

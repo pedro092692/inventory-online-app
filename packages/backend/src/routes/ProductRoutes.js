@@ -30,7 +30,11 @@ class ProductRoutes {
         // otherwise a GET to '/low-stock' would be swallowed by '/:id' (id='low-stock').
         this.router.get('/low-stock', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product).lowStockProducts(req, res))
         this.router.get('/:id', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).getProduct(req, res))
-        this.router.post('/', requireActiveStore, validateFields('createProduct'), (req, res) => new ProductController(req.Product).createProduct(req, res))
+        // authorization(UPDATE) here (not the more permissive WRITE, which USER/vendedor also
+        // has) is deliberate: it keeps catalog changes — creating products, same as editing
+        // and deleting them below — restricted to ADMIN/STORE_OWNER/MANAGER, matching the
+        // dashboard's "Agregar producto" shortcut being hidden from the vendedor role.
+        this.router.post('/', requireActiveStore, authorization(PERMISSIONS.UPDATE), validateFields('createProduct'), (req, res) => new ProductController(req.Product).createProduct(req, res))
         this.router.post('/bulk', authorization(PERMISSIONS.UPDATE), this.upload.single('file'), (req, res) => new ProductController(req.Product).bulkProducts(req, res))
         this.router.post('/export', authorization(PERMISSIONS.UPDATE), (req, res) => new ProductController(req.Product).exportProductsSheet(req, res))
         this.router.patch('/:id', requireActiveStore, authorization(PERMISSIONS.UPDATE), validateFields('createProduct'), (req, res) => new ProductController(req.Product).updateProduct(req, res))

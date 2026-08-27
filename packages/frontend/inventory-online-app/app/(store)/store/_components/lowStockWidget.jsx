@@ -5,11 +5,14 @@ import { PackageX, CircleCheck } from 'lucide-react'
 /**
  * "Stock bajo" widget for the store's home dashboard. Lists the products whose stock has
  * fallen to or below their configured min_stock (see ProductService.getLowStockProducts),
- * so the owner/manager can restock before running out — the count is the TOTAL number of
- * low-stock products, the list below shows only the most urgent few.
+ * so the owner/manager can restock before running out — `count` is the TOTAL number of
+ * low-stock products (could be 100 in a store that's badly out of stock); the list itself
+ * is always capped to `limit` (default 5) so this never turns into a huge scroll — the
+ * rest are just a "ver los N restantes" link to the full products list.
+ * @param {number} [limit=5] - Max rows to render.
  */
-export default async function LowStockWidget() {
-    const response = await GetItemAction('products/low-stock?limit=5', 'Hubo un error inesperado intenta nuevamente')
+export default async function LowStockWidget({ limit = 5 }) {
+    const response = await GetItemAction(`products/low-stock?limit=${limit}`, 'Hubo un error inesperado intenta nuevamente')
     const { data, error } = response
 
     if (error) {
@@ -38,7 +41,7 @@ export default async function LowStockWidget() {
             )}
 
             {products.length > 0 && (
-                <ul className="divide-y divide-gray-100">
+                <ul className="divide-y divide-gray-100 max-h-72">
                     {products.map((product) => (
                         <li key={product.id}>
                             <Link
