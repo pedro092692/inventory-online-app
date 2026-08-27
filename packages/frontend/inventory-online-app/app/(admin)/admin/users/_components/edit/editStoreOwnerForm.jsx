@@ -2,6 +2,8 @@
 import { Form } from '@/app/ui/form/form/form'
 import { Input } from '@/app/ui/form/input/input'
 import { Button } from '@/app/ui/utils/button/buttons'
+import { Container } from '@/app/ui/utils/container'
+import Card from '@/app/ui/utils/card/card'
 import styles from './editStoreOwnerForm.module.css'
 import EditItemAction from '@/app/lib/actions/edit'
 import { OvalLoader } from '@/app/ui/loader/spinner'
@@ -16,13 +18,17 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
     }
 
     const remaining = daysUntil(store?.subscription_expires_at)
-
+    
     const subscriptionLabel = remaining === null
         ? 'Sin información de pago'
         : remaining >= 0
-            ? `Activa — vence en ${remaining} día${remaining === 1 ? '' : 's'}`
+            ? `Activa, vence en ${remaining} día${remaining === 1 ? '' : 's'}`
             : `Vencida hace ${Math.abs(remaining)} día${Math.abs(remaining) === 1 ? '' : 's'}`
 
+    const expires_at = remaining != null 
+        ?  `${new Date(store?.subscription_expires_at)
+                    .toLocaleDateString('es-Es', { day: '2-digit', month: '2-digit', year: '2-digit'})}`
+        : 'Sin Vencimiento.'
     const subscriptionColor = remaining === null ? '#888' : remaining >= 0 ? 'green' : '#c0392b'
 
     const originalValues = {
@@ -62,41 +68,68 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
             {user &&
                 <>
                     <p className='p1-b'>Salud de tienda</p>
-                    <div className='divider'></div>
-                    <p className='p1-b'>Editar Tienda</p>
-                    <Form className={`${styles.form} shadow`} action={handleSubmit}>
-
-                        {/* <fieldset className={styles.fieldset}>
-                            <legend className={`p2-b ${styles.legend}`}>Salud de la tienda</legend>
+                    <Container
+                        padding={'0px'}
+                        gap={'16px'}
+                        width={'100%'}
+                    >
+                        <Card
+                            title={'Estatus de suscripción'}
+                            subtitle={'Fecha de Vencimiento'}
+                        >
                             <p className='p2-r' style={{color: subscriptionColor}}>{subscriptionLabel}</p>
+                            <p className='p2-r'>Dia de vencimiento: <span style={{color: subscriptionColor}}>{expires_at}</span></p>
+                            
+                        </Card>
+                        
+                        <Card
+                            title={'Resumen de tienda'}
+                            subtitle={'Estadísticas'}
+                        >
                             <p className='p2-r'>Vendedores: {stats?.sellerCount ?? '—'}</p>
                             <p className='p2-r'>Clientes: {stats?.customerCount ?? '—'}</p>
                             <p className='p2-r'>
                                 Última factura: {stats?.lastInvoiceDate ? new Date(stats.lastInvoiceDate).toLocaleDateString('es-VE') : 'Sin facturas'}
                             </p>
-                            <p className='p2-r' style={{color: isBlocked ? '#c0392b' : 'green'}}>
+
+                        </Card>
+                        
+                        <Card
+                            title={'Estado de tienda'}
+                            subtitle={'Bloquear/Desbloquear'}
+                        >
+                            <p className='p2-r' style={{color: isBlocked ? '#c0392b' : 'green', marginBottom: '8px'}}>
                                 Estado: {isBlocked ? 'Bloqueada' : 'Activa'}
                             </p>
-                            {isBlocked && store?.blocked_reason &&
+                            {
+                                isBlocked && store?.blocked_reason &&
                                 <p className='p2-r' style={{color: '#c0392b'}}>
                                     Motivo: {store.blocked_reason}
                                     {store?.blocked_at ? ` (${new Date(store.blocked_at).toLocaleDateString('es-VE')})` : ''}
                                 </p>
                             }
-
-                            {isBlocked ? (
-                                <Button type="secondary" disabled={unblockPending} onClick={() => unblockAction()}>
-                                    {unblockPending && <OvalLoader/>}
-                                    {unblockPending ? 'Desbloqueando...' : 'Desbloquear tienda'}
-                                </Button>
-                            ) : (
-                                <Button type="danger" onClick={() => setShowBlockModal(true)}>
-                                    Bloquear tienda
-                                </Button>
-                            )}
+                            {
+                                isBlocked ? 
+                                (
+                                    <Button type="secondary" disabled={unblockPending} onClick={() => unblockAction()}>
+                                        {unblockPending && <OvalLoader/>}
+                                        {unblockPending ? 'Desbloqueando...' : 'Desbloquear tienda'}
+                                    </Button>
+                                ) 
+                                : 
+                                (
+                                    <Button type="danger" className='p2-r' style={{width: '100%'}} onClick={() => setShowBlockModal(true)}>
+                                        Bloquear tienda
+                                    </Button>
+                                )
+                            }
                             {unblockState?.message && <span style={{color: 'green'}}>{unblockState.message}</span>}
-                        </fieldset> */}
+                        </Card>
 
+                    </Container>
+                   
+                    <p className='p1-b'>Editar Tienda</p>
+                    <Form className={`${styles.form} shadow`} action={handleSubmit}>
                         <div className={styles.grid}>
                             {/* store data */}
                             <fieldset className={styles.fieldset}>
