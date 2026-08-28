@@ -1,5 +1,7 @@
 'use client'
 import { Container } from '@/app/ui/utils/container'
+import { Button } from '@/app/ui/utils/button/buttons'
+import { OvalLoader } from '@/app/ui/loader/spinner'
 import Select from '@/app/ui/select/select'
 import SelectObject from '@/app/utils/selectObject'
 import InputAddPay from '@/app/(store)/store/sell/_components/payInputButton/payInputButton'
@@ -52,6 +54,11 @@ export default function PayRemainingForm({ invoice = null, paymentMethods = [] ,
         const remaining = changes.reduce((acc, c) => acc + (c?.amountInUSD || 0), 0)
         return remaining > 0 ? remaining : 0
     }, [changes])
+
+    // sum of payments added in this form only (excludes what the invoice already had paid)
+    const totalEnteredUSD = useMemo(() => {
+        return payments.reduce((acc, p) => acc + p.amountInUSD, 0)
+    }, [payments])
 
     const [validationMsg, setValidationMsg] = useState('')
 
@@ -168,6 +175,24 @@ export default function PayRemainingForm({ invoice = null, paymentMethods = [] ,
         return formAction(formData)
     }
 
+    // register a partial payment (abono): whatever has been added so far, even if it
+    // doesn't cover the full remaining balance. The invoice stays 'unpaid' with the
+    // paid amount updated — the backend already supports this, it just wasn't reachable.
+    const handleAbonar = () => {
+        setValidationMsg('')
+
+        if (payments.length < 1) {
+            setValidationMsg('Agrega al menos un método de pago para abonar.')
+            return
+        }
+
+        const formData = new FormData()
+        formData.append('payments', JSON.stringify(payments))
+        formData.append('changes', JSON.stringify([]))
+
+        return formAction(formData)
+    }
+
     return (
         <Container
             width={'100%'}
@@ -214,6 +239,24 @@ export default function PayRemainingForm({ invoice = null, paymentMethods = [] ,
                             isCredit={false}
                             setIsCredit={() => ''}
                         />
+
+                        {/* abono: register a partial payment without covering the full remaining balance */}
+                        {!activeChange && payments.length > 0 && remainingToPayUSD > 0.01 && (
+                            <Button
+                                type={'secondary'}
+                                role={'button'}
+                                onClick={handleAbonar}
+                                showIcon={!isPending}
+                                icon={'coins'}
+                                size={[20, 20]}
+                                title={'Abonar'}
+                                className='shadow-sm'
+                                disabled={isPending}
+                            >
+                                {isPending && <OvalLoader/>}
+                                {isPending ? 'Procesando...' : `Abonar ${totalEnteredUSD.toFixed(2)} $ y dejar el resto pendiente`}
+                            </Button>
+                        )}
 
                         {validationMsg && <p className='p2-r errorMsg'>{validationMsg}</p>}
                         {state?.error && <p className='p2-r errorMsg'>{state.error}</p>}
