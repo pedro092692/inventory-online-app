@@ -56,7 +56,6 @@ export default function LabelsForm() {
             <div class="label">
                 <p class="name">${escapeHtml(label.name)}</p>
                 <p class="priceBs">${new Intl.NumberFormat('es-VE').format(label.priceBs)} Bs</p>
-                <p class="priceUsd">${new Intl.NumberFormat('en-US').format(label.priceUsd)} $</p>
             </div>
         `).join('')
 
@@ -73,8 +72,8 @@ export default function LabelsForm() {
                     * { box-sizing: border-box; }
                     body { font-family: Arial, sans-serif; margin: 0; padding: 8mm; }
                     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
-                    .label { border: 1px solid #000; border-radius: 4px; padding: 6mm 4mm; text-align: center; page-break-inside: avoid; }
-                    .name { font-size: 12px; font-weight: 600; margin: 0 0 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+                    .label { border: 1px solid #000; border-radius: 4px; padding: 6mm 4mm; text-align: center; page-break-inside: avoid; text-transform: capitalize; }
+                    .name { font-size: 12px; font-weight: 600; margin: 0 0 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;text-transform: capitalize;}
                     .priceBs { font-size: 18px; font-weight: 800; margin: 0; }
                     .priceUsd { font-size: 11px; color: #555; margin: 2px 0 0; }
                     @page { margin: 8mm; }
@@ -140,9 +139,9 @@ export default function LabelsForm() {
                 <div className={styles.labelsGrid}>
                     {labels.map(label => (
                         <div key={label.key} className={styles.label}>
-                            <p className={styles.labelName}>{label.name}</p>
+                            <p className={styles.labelName} style={{textTransform: 'capitalize'}}>{label.name}</p>
                             <p className={styles.labelPriceBs}>{new Intl.NumberFormat('es-VE').format(label.priceBs)} Bs</p>
-                            <p className={styles.labelPriceUsd}>{new Intl.NumberFormat('en-US').format(label.priceUsd)} $</p>
+                            {/* <p className={styles.labelPriceUsd}>{new Intl.NumberFormat('en-US').format(label.priceUsd)} $</p> */}
                         </div>
                     ))}
                 </div>
