@@ -707,12 +707,30 @@ class InvoiceService {
             const product_list = products.map(product => `${product.name} (${product.quantity}) x ${product.price} Bs `).join('\n')
             const total = invoice.total_reference
             const phone = invoice.customer.phone
-            
+
             const formattedProducts = product_list
                 .split('\n')
                 .filter(line => line.trim() !== '')
                 .map((line, index) => `${index + 1}. ${line.trim()}`)
                 .join('\n')
+
+            // `total_Paid_Bolivar` is filled in by getInvoice() for both branches (unpaid: computed
+            // from total_paid at the current rate; paid: equal to total_reference), so it always
+            // reflects what has actually been paid so far — including partial abonos.
+            const totalBs = parseFloat(total)
+            const paidBs = parseFloat(invoice.dataValues.total_Paid_Bolivar || 0)
+            const pendingBs = Math.max(totalBs - paidBs, 0).toFixed(2)
+            const isFullyPaid = invoice.status === 'paid'
+
+            const balanceSection = isFullyPaid
+                ? `TOTAL PAGADO:\n${total} Bs`
+                : paidBs > 0
+                    ? `TOTAL: ${total} Bs\nABONADO: ${paidBs.toFixed(2)} Bs\nSALDO PENDIENTE: ${pendingBs} Bs`
+                    : `TOTAL A PAGAR:\n${total} Bs`
+
+            const closing = isFullyPaid
+                ? '¡Muchas gracias por su compra!\n Esperamos atenderle nuevamente.'
+                : 'Aún tiene un saldo pendiente por cancelar.\n ¡Gracias por su preferencia!'
 
             const data = `PEDIDO #${invoiceNumber}
 Cliente: ${customer.toUpperCase()}
@@ -722,13 +740,10 @@ Hora: ${hours}
 PRODUCTOS
 ${formattedProducts}
 ━━━━━━━━━━━━━━━━━━━━━━
-TOTAL NETO: ${total} Bs
-TOTAL A PAGAR:
-${total} Bs
+${balanceSection}
 ━━━━━━━━━━━━━━━━━━━━━━
- ¡Muchas gracias por su compra!
- Esperamos atenderle nuevamente.`
-            
+ ${closing}`
+
             const encodedData = encodeURIComponent(data)
             const waLink = `https://wa.me/${phone.replace('+', '')}?text=${encodedData}`
             return waLink

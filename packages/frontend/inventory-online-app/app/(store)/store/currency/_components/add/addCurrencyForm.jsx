@@ -18,8 +18,7 @@ export default function AddCurrencyValueForm() {
     const handleSubmit = (formData) => {
         if( !formData.get('value') ) return
         
-        const newValue = parseFloat(value)
-        formData.value = newValue
+        formData.value = parseFloat(formData.value)
         formAction(formData)
     }
 
