@@ -68,6 +68,13 @@ export async function Panel({type = 'store'}) {
             role: [1,2,3,4]
         },
 
+        quote: {
+            title: 'Cotizar',
+            icon: 'paper',
+            link: '/store/quote',
+            role: [1,2,3,4]
+        },
+
         subscription: {
             title: 'Mi tienda',
             icon: 'store',
