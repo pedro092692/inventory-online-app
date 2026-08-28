@@ -42,7 +42,7 @@ class InvoiceDetailController {
         const itemsToReturn = req.body.itemsToReturn || []
         const pin = req.body.pin || null
         const userRole = getUserRole(req.user.role)
-        const pinIsRequired = !['ADMIN', 'MANAGER'].includes(userRole)
+        const pinIsRequired = !['ADMIN', 'STORE_OWNER', 'MANAGER'].includes(userRole)
         const currentUser = req.user
         const {sucess} = await this.invoiceDetail.cancelInvoiceItemDetail(itemsToReturn, pinIsRequired, pin, currentUser)
         res.status(200).json({sucess})
