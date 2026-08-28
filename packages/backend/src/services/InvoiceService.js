@@ -125,8 +125,8 @@ class InvoiceService {
         const offset = (page - 1) * limit
         return this.#error.handler(['Read All invoices'], async() => {
             const customerAssociation = {
-                association: 'customer', attributes: ['name']
-                
+                association: 'customer', attributes: ['name'],
+                paranoid: false,
             }
             const sellerAssociation = {
                 association: 'seller', attributes: ['name'],
@@ -194,6 +194,7 @@ class InvoiceService {
                 include: [
                     {
                         association: 'customer', attributes: ['name', 'phone'],
+                        paranoid: false,
                     },
                     {
                         association: 'products',
@@ -236,6 +237,7 @@ class InvoiceService {
                 include: [
                     {
                         association: 'customer', attributes: ['name', 'phone', 'id_number'],
+                        paranoid: false,
                     },
                     {
                         association: 'seller', attributes: ['name'],
@@ -391,7 +393,8 @@ class InvoiceService {
                     {
                         association: 'customer',
                         attributes: ['id', 'name', 'id_number'],
-                        required: true
+                        required: true,
+                        paranoid: false,
                     },
                     {
                         association: 'seller',
@@ -757,7 +760,8 @@ ${total} Bs
                 include: [{
                     association: 'customer',
                     attributes: ['id', 'name', 'id_number'],
-                    required: true
+                    required: true,
+                    paranoid: false,
                 }]
             })
             return Math.ceil(results.count / limit)

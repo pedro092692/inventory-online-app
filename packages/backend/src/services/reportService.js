@@ -43,7 +43,8 @@ class ReportService {
                 ],
                 include:[
                     {
-                        association: 'customer', attributes: ['name', 'phone', 'id']
+                        association: 'customer', attributes: ['name', 'phone', 'id'],
+                        paranoid: false,
                     }
                 ],
                 group: ['customer_id', 'customer.id'],
@@ -87,7 +88,8 @@ class ReportService {
                 ],
                 include:[
                     {
-                        association: 'customer', attributes: ['name', 'phone', 'id']
+                        association: 'customer', attributes: ['name', 'phone', 'id'],
+                        paranoid: false,
                     }
                 ],
                 group: ['customer_id', 'customer.id'],
@@ -617,12 +619,13 @@ class ReportService {
                 ],
                 include: [
                     {
-                        association: 'seller', 
+                        association: 'seller',
                         attributes: ['name']
                     },
                     {
                         association: 'customer',
-                        attributes: ['name', 'phone']
+                        attributes: ['name', 'phone'],
+                        paranoid: false,
                     }
                 ],
                 where:{
