@@ -135,8 +135,9 @@ class InvoiceService {
             const invoiceDetailsAssociation = {
                 association: 'products',
                 attributes: ['name'],
+                paranoid: false,
                 through: {
-                    attributes: ['quantity', 'unit_price'] 
+                    attributes: ['quantity', 'unit_price']
                 }
             }
             const inludes = [customerAssociation, sellerAssociation]
@@ -199,8 +200,9 @@ class InvoiceService {
                     {
                         association: 'products',
                         attributes: ['name'],
+                        paranoid: false,
                         through: {
-                            attributes: ['quantity', 'unit_price'] 
+                            attributes: ['quantity', 'unit_price']
                         }
                     },
                     {

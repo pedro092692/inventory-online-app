@@ -97,7 +97,8 @@ class InvoiceDetailService {
                     },
                     {
                         association: 'products',
-                        attributes: ['name']
+                        attributes: ['name'],
+                        paranoid: false,
                     }
                 ]
             })
@@ -139,6 +140,7 @@ class InvoiceDetailService {
                     {
                         association: 'products',
                         attributes: ['name'],
+                        paranoid: false,
                     },
                     {
                         association: 'invoice_returns',

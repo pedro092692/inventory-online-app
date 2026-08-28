@@ -298,7 +298,13 @@ class ProductService{
     }
 
     /**
-     * Deletes a product by its ID.
+     * Deletes a product by its ID (soft-delete).
+     * @description Marks the product as deleted (sets `deletedAt`) instead of removing the
+     * row, since products can have invoice history and a hard delete would break
+     * invoice_details referencing them. Sequelize's `paranoid` mode then automatically
+     * excludes this product from normal queries (listing, search, stock lookups), while
+     * past invoices/receipts still show its name and price. Its barcode is also freed up
+     * for reuse (see the barcode partial-unique-index migration).
      * @param {Number} productId - id of the product to delete
      * @returns {Promise<Number>} - returns 1 if the product was deleted successfully
      * @throws {ServiceError} - throws an error if the product could not be deleted
@@ -306,11 +312,8 @@ class ProductService{
     deleteProduct(productId) {
         return this.#error.handler(['Delete Product', productId, 'Product'], async() => {
             const product = await this.getProduct(productId, false)
-            const productInvoices = await product.getInvoices()
-            if (productInvoices.length > 0) {
-                throw new ValidationError('No se puede eliminar un producto con facturas asociadas')
-            }
-            // delete product
+
+            // soft-delete product (sets deletedAt, row and its invoice history stay intact)
             await product.destroy()
             return 1
         })
@@ -665,9 +668,19 @@ class ProductService{
                 const {productsToUpdate, ignoredProducts} = this.checkProductForUpdate(productsToCheckUpdate, productsInDb)
                 
                 if (productsToUpdate.length > 0) {
-                    await this.Product.bulkCreate(productsToUpdate, {
-                        updateOnDuplicate: ['name', 'purchase_price', 'selling_price', 'stock']
-                    })
+                    // Updated by id (not `bulkCreate({ updateOnDuplicate })`): that relies on
+                    // Postgres' ON CONFLICT (barcode), which no longer has a plain unique
+                    // constraint to target now that barcode uniqueness is a partial index
+                    // scoped to non-deleted products (see the barcode partial-index migration).
+                    await Promise.all(productsToUpdate.map(product => this.Product.update(
+                        {
+                            name: product.name,
+                            purchase_price: product.purchase_price,
+                            selling_price: product.selling_price,
+                            stock: product.stock
+                        },
+                        { where: { id: product.id } }
+                    )))
                 }
                 
                 ignored = ignoredProducts

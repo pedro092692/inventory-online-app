@@ -40,9 +40,11 @@ function initializeProduct(sequelize, schema) {
 
             barcode: {
                 type: DataTypes.STRING,
-                allowNull: false, 
-                unique: true,
-                defaultValue: '0000000000001' // default barcode number 
+                allowNull: false,
+                // Not a plain `unique: true` here: it's enforced as a partial unique
+                // index scoped to non-deleted rows (see the barcode partial-index
+                // migration), so a soft-deleted product's barcode can be reused.
+                defaultValue: '0000000000001' // default barcode number
             },
 
             name: {
@@ -94,13 +96,22 @@ function initializeProduct(sequelize, schema) {
                         msg: 'A valid number is required.'
                     }
                 }
+            },
+
+            deletedAt: {
+                type: DataTypes.DATE,
+                allowNull: true
             }
         },
         {
-            sequelize, 
+            sequelize,
             modelName: 'Product',
             tableName: 'products',
-            timestamps: false,
+            timestamps: true,
+            createdAt: false,
+            updatedAt: false,
+            paranoid: true,
+            deletedAt: 'deletedAt',
             schema: schema
         }
     )

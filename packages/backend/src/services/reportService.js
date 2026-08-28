@@ -243,7 +243,8 @@ class ReportService {
                 include:[
                     {
                         association: 'products',
-                        attributes: ['name', 'selling_price']
+                        attributes: ['name', 'selling_price'],
+                        paranoid: false,
                     },
                     {
                         association: 'invoice',

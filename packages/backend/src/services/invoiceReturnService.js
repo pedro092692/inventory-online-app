@@ -55,7 +55,8 @@ class InvoiceReturnService {
                         include: [
                             {
                                 association: 'products',
-                                attributes: ['name']
+                                attributes: ['name'],
+                                paranoid: false,
                             }
                         ]
 

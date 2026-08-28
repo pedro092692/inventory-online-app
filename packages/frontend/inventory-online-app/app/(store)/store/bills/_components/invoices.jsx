@@ -33,8 +33,8 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
                     total_reference: new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(invoice.total_reference),
                     exchange_rate: invoice.exchangeRate ? new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(invoice.exchangeRate) : 'N/A',
                     status: invoice.status == 'paid' ? 'Pagado' : 'Pendiente',
-                    seller: invoice.seller.name,
-                    customer: invoice.customer.name,
+                    seller: invoice.seller?.name || 'Vendedor eliminado',
+                    customer: invoice.customer?.name || 'Cliente eliminado',
                     id: invoice.id,
                 }
             ))
