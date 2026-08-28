@@ -19,8 +19,12 @@ class StoreSettingsService {
     }
 
     /**
-     * Retrieves the store's settings row, creating it with defaults on first read.
-     * @returns {Promise<Object>} - the store settings.
+     * Retrieves the store's settings row, creating it with defaults on first read. Also
+     * reports whether the buffer rate has gone stale — the official rate caught up to or
+     * passed it, so it's no longer actually a "cushion" (see DollarValueService.getEffectiveValue,
+     * which already falls back to the official rate on its own when this happens) — so the
+     * owner can be warned to raise it, without silently undercharging in the meantime.
+     * @returns {Promise<{settings: Object, official_rate: number|null, buffer_is_stale: boolean}>}
      * @throws {ServiceError} - throws an error if the settings could not be retrieved.
      */
     getSettings() {
@@ -29,7 +33,23 @@ class StoreSettingsService {
                 where: { id: 1 },
                 defaults: { buffer_enabled: false, buffer_rate: null }
             })
-            return settings
+
+            let officialRate = null
+            if (this.Dollar) {
+                const officialValue = await this.Dollar.findOne({ order: [['id', 'DESC']], limit: 1 })
+                officialRate = officialValue ? parseFloat(officialValue.value) : null
+            }
+
+            const bufferRate = parseFloat(settings.buffer_rate)
+            const bufferIsStale = Boolean(
+                settings.buffer_enabled && bufferRate && officialRate && bufferRate <= officialRate
+            )
+
+            return {
+                settings,
+                official_rate: officialRate,
+                buffer_is_stale: bufferIsStale
+            }
         })
     }
 

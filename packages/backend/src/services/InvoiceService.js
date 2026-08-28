@@ -13,14 +13,15 @@ class InvoiceService {
     // instance of error handler 
     #error = new ServiceErrorHandler()
 
-    constructor(model, detailModel=null, productModel=null, dollarModel=null, customerModel=null, sellerModel=null) {
+    constructor(model, detailModel=null, productModel=null, dollarModel=null, customerModel=null, sellerModel=null, storeSettingsModel=null) {
         this.Invoice = model
         this.InvoiceDetail = new InvoiceDetailService(detailModel)
-        this.Product = new ProductService(productModel, dollarModel)
+        this.Product = new ProductService(productModel, dollarModel, storeSettingsModel)
         this.dollarValue = new DollarValueService(dollarModel)
         this.Customer = customerModel
         this.Seller = sellerModel
         this.sellerService = new SellerService(sellerModel)
+        this.StoreSettings = storeSettingsModel
         this.#error
     }
 
@@ -271,10 +272,10 @@ class InvoiceService {
             }
 
             if(referenceProduct){
-                // check if invoice is paid 
+                // check if invoice is paid
                 if(invoice.status === 'unpaid') {
-                    // calculate refrence amount 
-                    const dollarValue = await this.dollarValue.getLastValue()
+                    // calculate reference amount using the effective (buffer-aware) rate
+                    const dollarValue = await this.dollarValue.getEffectiveValue(this.StoreSettings)
                     invoice.total_reference = (invoice.total * dollarValue.value).toFixed(2)
 
                     // changed product price to reference price 
@@ -800,7 +801,7 @@ ${balanceSection}
     async calculateExchangeRate(invoices, setDollar = true) {
         let dollarValue = {}
         if(setDollar) {
-            dollarValue = await this.dollarValue.getLastValue()
+            dollarValue = await this.dollarValue.getEffectiveValue(this.StoreSettings)
         }
         const invoicesWithExchangeRate = invoices.map((invoice) => {
             if (parseInt(invoice.total_reference)) {

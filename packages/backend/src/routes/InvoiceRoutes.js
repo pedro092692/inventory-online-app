@@ -15,19 +15,19 @@ class InvoiceRoutes {
      */
     inicializateRoutes() {
         this.router.get('/', (req, res) => res.send('Invoices Routes'))
-        this.router.get('/all', (req, res) => new InvoiceController(req.Invoice, null, null, req.Dollar).allInvoices(req, res))
+        this.router.get('/all', (req, res) => new InvoiceController(req.Invoice, null, null, req.Dollar, null, null, req.StoreSettings).allInvoices(req, res))
         this.router.get('/day', (req, res) => new InvoiceController(req.Invoice).dayInvoices(req, res))
         this.router.get('/search', (req, res) => new InvoiceController(req.Invoice).searchInvoicesbyId(req, res))
         this.router.get('/search-query', (req, res) => new InvoiceController(req.Invoice).searchInvoices(req, res))
         this.router.get('/total-pages', (req, res) => new InvoiceController(req.Invoice).totalPages(req, res))
-        this.router.get('/:id', (req, res) => 
-            new InvoiceController(req.Invoice, req.InvoiceDetail, null, req.Dollar).getInvoice(req, res))
+        this.router.get('/:id', (req, res) =>
+            new InvoiceController(req.Invoice, req.InvoiceDetail, null, req.Dollar, null, null, req.StoreSettings).getInvoice(req, res))
         this.router.get('/send-whatsapp/:id', requireActiveStore, (req, res) =>
-            new InvoiceController(req.Invoice, req.InvoiceDetail, null, req.Dollar).sendWhatsappInvoice(req, res))
+            new InvoiceController(req.Invoice, req.InvoiceDetail, null, req.Dollar, null, null, req.StoreSettings).sendWhatsappInvoice(req, res))
         this.router.post('/', requireActiveStore, (req, res) =>
-            new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar, null, req.Seller).createInvoice(req, res))
-        this.router.patch('/:id', (req, res) => 
-            new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).updateInvoice(req, res))
+            new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar, null, req.Seller, req.StoreSettings).createInvoice(req, res))
+        this.router.patch('/:id', (req, res) =>
+            new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar, null, null, req.StoreSettings).updateInvoice(req, res))
         this.router.delete('/', (req, res) => 
             new InvoiceController(req.Invoice, req.InvoiceDetail, req.Product, req.Dollar).deleteInvoice(req, res))
         this.router.delete('/detail', (req, res) => 
@@ -49,7 +49,7 @@ class InvoiceRoutes {
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {Invoice, Product, Dollar, InvoiceDetail, Customer, Seller} = req.tenantModels
+        const {Invoice, Product, Dollar, InvoiceDetail, Customer, Seller, StoreSettings} = req.tenantModels
         if(!Dollar || !Invoice || !Product || !InvoiceDetail || !Customer || !Seller) {
             return res.status(400).json({ message: 'All models are required' })
         }
@@ -59,6 +59,7 @@ class InvoiceRoutes {
         req.Dollar = Dollar
         req.Customer = Customer
         req.Seller = Seller
+        req.StoreSettings = StoreSettings
 
         next()
     }

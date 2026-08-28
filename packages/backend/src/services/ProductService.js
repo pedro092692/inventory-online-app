@@ -9,9 +9,10 @@ class ProductService{
     // instance of error handler
     #error = new ServiceErrorHandler()
 
-    constructor(model, dollarValueModel=null) {
+    constructor(model, dollarValueModel=null, storeSettingsModel=null) {
         this.Product = model
         this.dollarValue = new DollarValueService(dollarValueModel)
+        this.StoreSettings = storeSettingsModel
         this.#error
     }
 
@@ -182,17 +183,21 @@ class ProductService{
                 throw new NotFoundError()
             }
             
-            // add reference selling price to product 
+            // add reference selling price to product
             if(priceReference){
-                // get the last dollar value
-                const dollarValue = await this.dollarValue.getLastValue()
+                // get the effective rate (the store's "tasa colchón" when active, else the official rate)
+                const dollarValue = await this.dollarValue.getEffectiveValue(this.StoreSettings)
 
-                // set reference selling price to the product
-                product.dataValues.reference_selling_price = (parseFloat(product.selling_price) * parseFloat(dollarValue.value)).toFixed(2)
-                
-                // if dollar value is not found, set reference selling price to message 
                 if(!dollarValue) {
+                    // if dollar value is not found, set reference selling price to message
                     product.dataValues.reference_selling_price = 'No dollar value found'
+                } else {
+                    const { sellingPriceUsd, referenceSellingPriceBs } = this._buffereredPrices(product.selling_price, dollarValue)
+                    // when the buffer is active this also nudges the displayed USD price up by
+                    // the same ratio, so a customer multiplying it by the official rate they
+                    // know still lands on the Bs price actually charged — see _buffereredPrices.
+                    product.dataValues.selling_price = sellingPriceUsd
+                    product.dataValues.reference_selling_price = referenceSellingPriceBs
                 }
             }
             
@@ -411,14 +416,45 @@ class ProductService{
      * @returns {Promise<Array<Object>|null>} The updated array of products with 'reference_selling_price' added.
      */
     async setSellingPriceBs(products = null) {
-        //add reference price to products 
-        const dollarValue = await this.dollarValue.getLastValue()
+        //add reference price to products, using the effective (buffer-aware) rate
+        const dollarValue = await this.dollarValue.getEffectiveValue(this.StoreSettings)
         products.forEach((product) => {
-            product.dataValues.reference_selling_price = 
-                (parseFloat(product.selling_price) * parseFloat(dollarValue.value ? dollarValue.value : 1)).toFixed(2)
+            const { sellingPriceUsd, referenceSellingPriceBs } = this._buffereredPrices(product.selling_price, dollarValue)
+            // when the buffer is active this also nudges the displayed USD price up by the
+            // same ratio, so a customer multiplying it by the official rate they know still
+            // lands on the Bs price actually charged — see _buffereredPrices.
+            product.dataValues.selling_price = sellingPriceUsd
+            product.dataValues.reference_selling_price = referenceSellingPriceBs
         })
 
         return products
+    }
+
+    /**
+     * Computes the prices to actually show for a product's true USD selling price, given
+     * the current effective (buffer-aware) rate from DollarValueService.getEffectiveValue.
+     *
+     * The Bs price always uses the effective rate directly. When a buffer is active, the
+     * displayed USD price is also scaled by the same (effectiveRate / officialRate) ratio,
+     * so `sellingPriceUsd × officialRate === referenceSellingPriceBs` — the math a customer
+     * does against the official rate they already know still checks out, instead of looking
+     * like they're being charged more than the sticker price implies. With no buffer active
+     * (effectiveRate === officialRate), the ratio is 1 and the USD price is left untouched.
+     *
+     * @param {number|string} trueSellingPriceUsd - the product's real, stored USD selling price.
+     * @param {{value: number, official_value?: number}|false} dollarValue - result of getEffectiveValue().
+     * @returns {{sellingPriceUsd: string, referenceSellingPriceBs: string}}
+     */
+    _buffereredPrices(trueSellingPriceUsd, dollarValue) {
+        const trueUsd = parseFloat(trueSellingPriceUsd) || 0
+        const effectiveRate = dollarValue?.value ? parseFloat(dollarValue.value) : 1
+        const officialRate = dollarValue?.official_value ? parseFloat(dollarValue.official_value) : effectiveRate
+        const usdAdjustmentRatio = officialRate ? (effectiveRate / officialRate) : 1
+
+        return {
+            sellingPriceUsd: (trueUsd * usdAdjustmentRatio).toFixed(2),
+            referenceSellingPriceBs: (trueUsd * effectiveRate).toFixed(2)
+        }
     }
 
     /**

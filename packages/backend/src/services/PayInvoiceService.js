@@ -14,23 +14,25 @@ class PayInvoiceService {
     // instace of error handler
     #error = new ServiceErrorHandler()
 
-    constructor(model, 
-                dollarValueModel=null, 
-                invoiceModel=null, 
-                sellerModel=null, 
-                auditLogModel=null, 
-                invoiceDetailModel=null, 
+    constructor(model,
+                dollarValueModel=null,
+                invoiceModel=null,
+                sellerModel=null,
+                auditLogModel=null,
+                invoiceDetailModel=null,
                 cashMovementsModel=null,
-                customerCreditsModel=null
-            ) 
+                customerCreditsModel=null,
+                storeSettingsModel=null
+            )
         {
         this.PaymentDetail = model,
         this.dollarValue = new DollarValueService(dollarValueModel)
-        this.invoiceService = new InvoiceService(invoiceModel, invoiceDetailModel, null, dollarValueModel)
+        this.invoiceService = new InvoiceService(invoiceModel, invoiceDetailModel, null, dollarValueModel, null, null, storeSettingsModel)
         this.sellerService = new SellerService(sellerModel)
         this.auditLogService = new AuditLogService(auditLogModel)
         this.customerCreditService = new CustomerCreditService(customerCreditsModel)
         this.cashMovements = cashMovementsModel,
+        this.StoreSettings = storeSettingsModel
         this.credit_method_id = process.env.CREDIT_METHOD_ID || 99
         this.#error
     }
@@ -119,8 +121,12 @@ class PayInvoiceService {
                 let converted_amount = 0
                 
                 let total_change = explicitChanges.reduce((acc, current) => acc + parseFloat(current.amountInUSD), 0)
-             
-                const dollarValue = await this.dollarValue.getLastValue()
+
+                // effective (buffer-aware) rate: Bs payment methods convert at this rate below,
+                // so a Bs payment costs the customer more when the buffer is on — consistent with
+                // what the product catalog/invoice already show them. USD payment methods never
+                // read this value at all (see _checkPaymentMethod), so they're unaffected.
+                const dollarValue = await this.dollarValue.getEffectiveValue(this.StoreSettings)
                 
                 const detailsToCreate = []
                 const cashMovementsToCreate = []
@@ -312,8 +318,8 @@ class PayInvoiceService {
 
                 // check if is needed recalculated reference amount 
                 if((parseFloat(paymentDetail.amount) / parseFloat(paymentDetail.reference_amount)) !=1 && amount) {
-                    // get dollar value 
-                    const dollar_value = await this.dollarValue.getLastValue()
+                    // get effective (buffer-aware) rate
+                    const dollar_value = await this.dollarValue.getEffectiveValue(this.StoreSettings)
                     // calcule new reference value 
                     
                 

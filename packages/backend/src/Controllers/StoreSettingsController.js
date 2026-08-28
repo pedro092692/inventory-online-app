@@ -18,8 +18,8 @@ class StoreSettingsController {
      * @returns {Promise<void>} - returns the settings in the response
      */
     getSettings = this.#error.handler(async (req, res) => {
-        const settings = await this.settingsService.getSettings()
-        res.status(200).json({ settings })
+        const { settings, official_rate, buffer_is_stale } = await this.settingsService.getSettings()
+        res.status(200).json({ settings, official_rate, buffer_is_stale })
     })
 
     /**

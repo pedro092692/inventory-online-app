@@ -21,7 +21,7 @@ class StoreSettingsRoutes {
      * @returns {void}
      */
     initializeRoutes() {
-        this.router.get('/', (req, res) => new StoreSettingsController(req.StoreSettings).getSettings(req, res))
+        this.router.get('/', (req, res) => new StoreSettingsController(req.StoreSettings, req.Dollar).getSettings(req, res))
         this.router.patch('/', authorization(PERMISSIONS.UPDATE), (req, res) => new StoreSettingsController(req.StoreSettings, req.Dollar).updateSettings(req, res))
     }
 

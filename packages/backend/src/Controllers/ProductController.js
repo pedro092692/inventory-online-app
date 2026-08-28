@@ -7,8 +7,8 @@ class ProductController{
     // error controller new instace 
     #error = new ControllerErrorHandler()
     
-    constructor(model, dollarValueModel=null) {
-        this.ProductService = new ProductService(model, dollarValueModel)
+    constructor(model, dollarValueModel=null, storeSettingsModel=null) {
+        this.ProductService = new ProductService(model, dollarValueModel, storeSettingsModel)
         this.#error
     }
 

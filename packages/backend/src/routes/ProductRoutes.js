@@ -23,13 +23,13 @@ class ProductRoutes {
      */
     initializeRoutes() {
         this.router.get('/', (req, res) => res.send('Product routes'))
-        this.router.get('/all', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).allProducts(req, res))
-        this.router.get('/search', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).searchProducts(req, res))
+        this.router.get('/all', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar, req.StoreSettings).allProducts(req, res))
+        this.router.get('/search', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar, req.StoreSettings).searchProducts(req, res))
         this.router.get('/total-pages', (req, res) => new ProductController(req.Product).totalPages(req, res))
         // NOTE: /low-stock must stay registered before the generic '/:id' route below —
         // otherwise a GET to '/low-stock' would be swallowed by '/:id' (id='low-stock').
         this.router.get('/low-stock', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product).lowStockProducts(req, res))
-        this.router.get('/:id', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar).getProduct(req, res))
+        this.router.get('/:id', authorization(PERMISSIONS.READ), (req, res) => new ProductController(req.Product, req.Dollar, req.StoreSettings).getProduct(req, res))
         // authorization(UPDATE) here (not the more permissive WRITE, which USER/vendedor also
         // has) is deliberate: it keeps catalog changes — creating products, same as editing
         // and deleting them below — restricted to ADMIN/STORE_OWNER/MANAGER, matching the
@@ -55,12 +55,13 @@ class ProductRoutes {
      * @returns {Promise<void>}
      */
     async setRoutesModels(req, res, next) {
-        const {Product, Dollar} = req.tenantModels
+        const {Product, Dollar, StoreSettings} = req.tenantModels
         if(!Dollar || !Product) {
             return res.status(400).json({ message: 'Dollar and Product models are required' })
         }
         req.Product = Product
         req.Dollar = Dollar
+        req.StoreSettings = StoreSettings
         next()
     }
 }
