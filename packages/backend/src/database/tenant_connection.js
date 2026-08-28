@@ -13,6 +13,7 @@ import { initializeAuditLog, AuditLog } from '../models/inventory_models/auditLo
 import { initializeCustomerCredit, CustomerCredit } from '../models/inventory_models/customerCreditModel.js' 
 import { initializeInvoiceReturn, InvoiceReturn } from '../models/inventory_models/InvoiceReturnModel.js'
 import { initializeCashMovements, CashMovements } from '../models/inventory_models/cash_movements.js'
+import { initializeStoreSettings, StoreSettings } from '../models/inventory_models/StoreSettingsModel.js'
 import { User } from '../models/UserModel.js'
 import { Umzug, SequelizeStorage } from 'umzug'
 import { fileURLToPath, pathToFileURL } from 'url'
@@ -186,20 +187,22 @@ class TenantConnection {
         const CustomerCredit = initializeCustomerCredit(sequelize, schema)        
         const CashMovements = initializeCashMovements(sequelize, schema)
         const InvoiceReturn = initializeInvoiceReturn(sequelize, schema)
-        
+        const StoreSettings = initializeStoreSettings(sequelize, schema)
+
         return {
-            Customer, 
-            Invoice, 
-            InvoiceDetail, 
-            Seller, 
-            Product, 
-            Payment, 
-            PaymentDetail, 
+            Customer,
+            Invoice,
+            InvoiceDetail,
+            Seller,
+            Product,
+            Payment,
+            PaymentDetail,
             Dollar,
             AuditLog,
             CustomerCredit,
-            CashMovements,            
+            CashMovements,
             InvoiceReturn,
+            StoreSettings,
         }
     }
 

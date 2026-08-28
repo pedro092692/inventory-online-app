@@ -16,6 +16,7 @@ import AuditLogRoutes from './routes/AuditLogRoutes.js'
 import SecurityRoutes from './routes/security/SecurityRoutes.js'
 import InvoiceReturnRoutes from './routes/invoiceReturnRoutes.js'
 import StoreStatusRoutes from './routes/StoreStatusRoutes.js'
+import StoreSettingsRoutes from './routes/StoreSettingsRoutes.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 
@@ -108,6 +109,9 @@ class Server {
 
         // store status (active/blocked/expired) for the store's own users
         this.app.use('/api/store', new StoreStatusRoutes().router)
+
+        // store settings (currently: the "tasa colchón" buffer rate for Cotizar/Etiquetas)
+        this.app.use('/api/store-settings', new StoreSettingsRoutes().router)
     }
 
     /**
