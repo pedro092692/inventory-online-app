@@ -24,9 +24,9 @@ export default function InvoiceBasicInfo({invoice}) {
                 </span>
             </h3>
             {/* seller */}
-            <h3 className='p2-b'>Vendedor: 
+            <h3 className='p2-b'>Vendedor:
                 <span className='p2-r'>
-                    { ` ${invoice?.seller.name}` || ' Default Seller'}
+                    { invoice?.seller?.name ? ` ${invoice.seller.name}` : ' Default Seller'}
                 </span>
             </h3>
             {/* status */}

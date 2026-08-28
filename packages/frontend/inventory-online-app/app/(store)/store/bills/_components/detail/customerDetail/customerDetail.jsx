@@ -23,7 +23,7 @@ export default function CustomerInfo({ customer }) {
                 <label htmlFor="id_number">Número de Cedula</label>
                 <Input type='text' id='id_number' icon='id' defaultValue={customer?.id_number || 'ID number'} readOnly={true}/>
                 <label htmlFor="phone">Teléfono</label>
-                <Input type={customer?.phone.startsWith('+58') ? 'phone' : 'text'} id='phone' icon='phone' defaultValue={customer?.phone || 'Phone number'} readOnly={true}/>
+                <Input type={customer?.phone?.startsWith('+58') ? 'phone' : 'text'} id='phone' icon='phone' defaultValue={customer?.phone || 'Phone number'} readOnly={true}/>
             </Container>
         </Container>
     )

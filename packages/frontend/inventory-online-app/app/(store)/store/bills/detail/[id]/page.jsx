@@ -10,7 +10,7 @@ export default async function BillDetail({ params, searchParams}) {
     const { id }  = await params
     const ulrParams = await searchParams
     const page = Number(ulrParams?.pageProducts) || 1
-    const queryString = buildQueryParams(ulrParams, ['page', 'data']) || ulrParams
+    const queryString = buildQueryParams(ulrParams, ['page', 'data'])
     const response = await Request(`invoice-details/total-pages?id=${id}`, 'GET', null, 'Hubo un error inesperado intententa nuevamente')
     const {data, error} = response
     const totalProductPages = data?.total || 0

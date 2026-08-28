@@ -87,7 +87,7 @@ class PayInvoiceController {
         const payment_detail_id = req.body.payment_detail_id
         const pin = req.body.pin || null
         const userRole = getUserRole(req.user.role)
-        const pinIsRequired = !['ADMIN', 'MANAGER'].includes(userRole)
+        const pinIsRequired = !['ADMIN', 'STORE_OWNER', 'MANAGER'].includes(userRole)
         const currentUser = req.user
         const {invoice} = await this.PayInvoice.cancelPaymentInvoiceDetail(payment_detail_id, pinIsRequired, pin, currentUser)
         res.status(200).json({invoice})

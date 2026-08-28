@@ -5,11 +5,11 @@ import { Container } from "@/app/ui/utils/container"
 import { Button } from "@/app/ui/utils/button/buttons"
 import Link from 'next/link'
 
-export default function NavReports() {
+export default function NavReports({canViewAudit = false}) {
     const pathname = usePathname()
     const segments = pathname.split('/')
     const currentEndpoint = segments[3]
-  
+
     const reportsButtons = [
         {
             label: 'Ventas',
@@ -29,6 +29,12 @@ export default function NavReports() {
             endpoint: 'customers',
             link: '/store/reports/customers',
         },
+        ...(canViewAudit ? [{
+            label: 'Auditoría',
+            icon: 'shield',
+            endpoint: 'audit',
+            link: '/store/reports/audit',
+        }] : []),
     ]
 
     return (

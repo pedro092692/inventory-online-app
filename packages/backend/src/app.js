@@ -12,6 +12,7 @@ import PaymentMethodRoutes from './routes/PaymentMethodRoutes.js'
 import PayInvoiceRoutes from './routes/PaymentDetailRoutes.js'
 import DollarValueRoutes from './routes/DollarValueRoutes.js'
 import ReportRoutes from './routes/reportRoutes.js'
+import AuditLogRoutes from './routes/AuditLogRoutes.js'
 import SecurityRoutes from './routes/security/SecurityRoutes.js'
 import InvoiceReturnRoutes from './routes/invoiceReturnRoutes.js'
 import StoreStatusRoutes from './routes/StoreStatusRoutes.js'
@@ -98,6 +99,9 @@ class Server {
 
         // report routes
         this.app.use('/api/reports', new ReportRoutes().router)
+
+        // audit log routes (payment cancellations, product returns, etc.)
+        this.app.use('/api/audit-logs', new AuditLogRoutes().router)
 
         // security routes
         this.app.use('/api/security', new SecurityRoutes().router)

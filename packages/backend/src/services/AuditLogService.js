@@ -44,6 +44,54 @@ class AuditLogService {
             }
         })
     }
+
+    /**
+     * Retrieves all audit log entries, newest first, with the acting user's email and
+     * (when the action was authorized by a supervisor's PIN) the supervisor's name.
+     * @param {number} [limit=10] - Max number of entries to return.
+     * @param {number} [page=1] - Page number.
+     * @returns {Promise<{auditLogs: Array}>} - A promise that resolves to the paginated audit logs.
+     * @throws {ServiceError} - If an error occurs during retrieval.
+     */
+    getAllAuditLogs(limit = 10, page = 1) {
+        const offset = (page - 1) * limit
+        return this.#error.handler(['Read All Audit Logs'], async () => {
+            const auditLogs = await this.AuditLogModel.findAll({
+                include: [
+                    {
+                        association: 'user',
+                        attributes: ['email'],
+                        paranoid: false,
+                    },
+                    {
+                        association: 'supervisorSeller',
+                        attributes: ['name', 'last_name'],
+                        paranoid: false,
+                    }
+                ],
+                order: [['created_at', 'DESC']],
+                limit: limit,
+                offset: offset
+            })
+
+            return {
+                auditLogs: auditLogs
+            }
+        })
+    }
+
+    /**
+     * Calculates the total number of pages for the audit log listing based on a page limit.
+     * @param {number} [limit=10] - The number of records to display per page.
+     * @returns {Promise<number>} A promise that resolves to the total number of calculated pages.
+     * @throws Will be handled by the internal error handler.
+     */
+    totalPages(limit = 10) {
+        return this.#error.handler(['Total pages', 'AuditLog'], async () => {
+            const count = await this.AuditLogModel.count()
+            return Math.ceil(count / limit)
+        })
+    }
 }
 
 export default AuditLogService
