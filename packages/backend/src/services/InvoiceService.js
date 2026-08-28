@@ -274,19 +274,28 @@ class InvoiceService {
             if(referenceProduct){
                 // check if invoice is paid
                 if(invoice.status === 'unpaid') {
-                    // calculate reference amount using the effective (buffer-aware) rate
+                    // invoice.total (and total_paid) are already priced in "true-dollar
+                    // equivalent" terms — when the buffer is active, ProductService bumps the
+                    // USD unit price by (effectiveRate / officialRate) precisely so that
+                    // usdPrice × officialRate === bsPrice (see ProductService._buffereredPrices,
+                    // and PayInvoiceService._checkPaymentMethod for the payment side of this).
+                    // Converting that total back into a Bs amount owed therefore has to use the
+                    // OFFICIAL rate, not the buffer/effective one, or this double-applies the
+                    // buffer. Falls back to .value when there's no buffer (official_value then
+                    // equals value anyway).
                     const dollarValue = await this.dollarValue.getEffectiveValue(this.StoreSettings)
-                    invoice.total_reference = (invoice.total * dollarValue.value).toFixed(2)
+                    const officialRate = parseFloat(dollarValue.official_value ?? dollarValue.value)
+                    invoice.total_reference = (invoice.total * officialRate).toFixed(2)
 
-                    // changed product price to reference price 
-                    invoice.setDataValue('products', this._calculeBolivarPriceProducts(invoiceProducts, { value: dollarValue.value }))
+                    // changed product price to reference price
+                    invoice.setDataValue('products', this._calculeBolivarPriceProducts(invoiceProducts, { value: officialRate }))
 
                     // add total paid in boilvar to invoice
-                    invoice.dataValues.total_Paid_Bolivar = (invoice.total_paid * dollarValue.value).toFixed(2)
+                    invoice.dataValues.total_Paid_Bolivar = (invoice.total_paid * officialRate).toFixed(2)
 
                     // add total to pay in dollar
                     invoice.dataValues.total_to_pay_dollar = (invoice.total - invoice.total_paid).toFixed(2)
-                    
+
 
                 }else {
                     // get reference value
@@ -803,16 +812,20 @@ ${balanceSection}
         if(setDollar) {
             dollarValue = await this.dollarValue.getEffectiveValue(this.StoreSettings)
         }
+        // Same reasoning as getInvoice()'s unpaid branch: invoice.total is already in
+        // "true-dollar-equivalent" terms, so the rate used to derive a Bs total from it has to
+        // be the official one, not the buffer/effective one.
+        const officialRate = dollarValue?.official_value ?? dollarValue?.value
         const invoicesWithExchangeRate = invoices.map((invoice) => {
             if (parseInt(invoice.total_reference)) {
-                invoice.dataValues.exchangeRate = 
+                invoice.dataValues.exchangeRate =
                 (invoice.total_reference && invoice.total) ? (invoice.total_reference / invoice.total).toFixed(2) : null
                 return invoice
             }else {
-                invoice.dataValues.exchangeRate = dollarValue.value
+                invoice.dataValues.exchangeRate = officialRate
                 invoice.dataValues.total_reference = (invoice.total * invoice.dataValues.exchangeRate).toFixed(2)
                 return invoice
-            }  
+            }
         })
         return invoicesWithExchangeRate
     }

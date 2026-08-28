@@ -316,16 +316,20 @@ class PayInvoiceService {
                 const { payment_id, amount } = updates
                 let reference_amount = paymentDetail.reference_amount
 
-                // check if is needed recalculated reference amount 
+                // check if is needed recalculated reference amount
                 if((parseFloat(paymentDetail.amount) / parseFloat(paymentDetail.reference_amount)) !=1 && amount) {
-                    // get effective (buffer-aware) rate
+                    // Use the OFFICIAL rate here, not the buffer/effective one: invoice.total
+                    // (what reference_amount is credited against) is priced in "true-dollar
+                    // equivalent" terms — official_rate is the rate that actually converts a
+                    // Bs amount back to that same equivalent (see _checkPaymentMethod for the
+                    // full explanation). Falls back to .value when there's no buffer, since
+                    // getEffectiveValue() then returns official_value === value anyway.
                     const dollar_value = await this.dollarValue.getEffectiveValue(this.StoreSettings)
-                    // calcule new reference value 
-                    
-                
-                    reference_amount = (amount / parseFloat(dollar_value.value)).toFixed(2)
-                    
-                }else{ 
+                    const officialRate = parseFloat(dollar_value.official_value ?? dollar_value.value)
+                    // calcule new reference value
+                    reference_amount = (amount / officialRate).toFixed(2)
+
+                }else{
                     // calcule new reference amount if payment is in dollar
                     reference_amount = amount
                 }
@@ -473,6 +477,16 @@ class PayInvoiceService {
     /**
      * This method checks the payment method and calculates the reference amount, change, and dollar amount
      * based on the payment ID, dollar value, amount, and total to pay.
+     *
+     * IMPORTANT about which rate this uses: `total_to_pay` (and invoice.total) is priced in
+     * "true-dollar-equivalent" terms — when the buffer is active, ProductService bumps the
+     * displayed USD price by (effectiveRate / officialRate) and the displayed Bs price by
+     * effectiveRate, specifically so that displayedUsd × officialRate === displayedBs (see
+     * ProductService._buffereredPrices). That means converting a Bs amount back into the same
+     * dollar terms invoice.total is in requires dividing by the OFFICIAL rate, not the
+     * buffer/effective one — dividing by the buffer rate here would silently under-credit
+     * every Bs payment once a buffer is enabled. USD payment methods never reach this
+     * conversion at all, so they're unaffected either way.
      * @param {Number} paymentId - The ID of the payment method.
      * @param {Object} dollarValue - The dollar value object containing the current exchange rate
      * @param {Number} amount - The amount of money paid.
@@ -488,7 +502,8 @@ class PayInvoiceService {
         let change = 0
         let change_bs = 0
         let payment_type = null
-        let dollar = dollarValue.toJSON().value
+        const dollarJson = dollarValue.toJSON()
+        let dollar = parseFloat(dollarJson.official_value ?? dollarJson.value)
         let movementAmount = amount
         let converted_amount = amount
 

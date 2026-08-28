@@ -342,7 +342,15 @@ class ProductService{
     }
 
     /**
-     * Retrieves the unit price for multiple products based on their IDs.   
+     * Retrieves the unit price for multiple products based on their IDs.
+     *
+     * Applies the same effective (buffer-aware) price adjustment used when the product was
+     * listed for the cart (see setSellingPriceBs/_buffereredPrices). This is what
+     * InvoiceService.addInvoiceDetails uses to set each detail's unit_price, and what
+     * InvoiceController.createInvoice sums into invoice.total — so it has to match the price
+     * the customer actually saw and agreed to pay, otherwise invoice.total silently drifts
+     * from the frontend's displayed total whenever the buffer is enabled, and payment/change
+     * validation in PayInvoiceService breaks against it.
      * @param {Array} details - array of objects containing product_id and quantity
      * @param {Number} details.product_id - id of the product
      * @returns {Promise<Array>} - returns an array of products with their unit price
@@ -354,6 +362,13 @@ class ProductService{
                 where: { id: details.map(detail => detail.product_id)},
                 attributes: ['id', 'selling_price']
             })
+
+            const dollarValue = await this.dollarValue.getEffectiveValue(this.StoreSettings)
+            products.forEach((product) => {
+                const { sellingPriceUsd } = this._buffereredPrices(product.selling_price, dollarValue)
+                product.dataValues.selling_price = sellingPriceUsd
+            })
+
             return products
         })
     }
