@@ -11,11 +11,11 @@ const escapeHtml = (str) => String(str ?? '')
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
 
-// Select products and print price tags directly from the browser. Prices are read
-// live from each product's USD price and whatever exchange rate is currently set in
-// "Divisa" (see reference_selling_price from the products search) — bump that rate
-// as a buffer against daily devaluation and every label reflects it automatically,
-// no separate "label rate" needed.
+// Select products and print price tags directly from the browser. The Bs price comes
+// straight from the product search (reference_selling_price) — when the store has a
+// "tasa colchón" enabled (see /store/currency), the backend already bakes it in there
+// (see ProductService), same as the product catalog and Vender, so labels automatically
+// match what's charged at the register.
 export default function LabelsForm() {
     const [items, setItems] = useState([])
 

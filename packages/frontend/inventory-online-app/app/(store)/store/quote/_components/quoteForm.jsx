@@ -13,7 +13,12 @@ import styles from './quote.module.css'
 // typed by hand), then send the total by WhatsApp or download it as a PDF. Nothing
 // here touches stock or creates a sale — it's purely informational, so it doesn't
 // need a backend endpoint at all (same building blocks as the "Vender" screen).
-export default function QuoteForm({ exchangeRate = null }) {
+//
+// Prices come straight from the product search (reference_selling_price/selling_price),
+// same as everywhere else in the app — when the store has a "tasa colchón" enabled, the
+// backend already bakes it into reference_selling_price (see ProductService), so this
+// screen doesn't need to know or care about the buffer at all.
+export default function QuoteForm() {
     const [items, setItems] = useState([])
     const [customer, setCustomer] = useState(null)
     const [useManualCustomer, setUseManualCustomer] = useState(false)
