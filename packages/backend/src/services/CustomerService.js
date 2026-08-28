@@ -1,6 +1,6 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
-import { Op, ValidationError, fn, col } from 'sequelize'
+import { Op, fn, col } from 'sequelize'
 
 class CustomerService {
 
@@ -274,7 +274,12 @@ class CustomerService {
     }
 
     /**
-     * Deletes a customer by their ID.
+     * Deletes a customer by their ID (soft-delete).
+     * @description Marks the customer as deleted (sets `deletedAt`) instead of removing the
+     * row, since customers can have invoices/credits associated to them and a hard delete
+     * would either break that FK or destroy that history. Sequelize's `paranoid` mode then
+     * automatically excludes this customer from normal queries (listing, search, lookups),
+     * while their past invoices remain intact and pointing to a valid record.
      * @param {number} customerId - The ID of the customer to delete.
      * @return {Promise<number>} - A promise that resolves to the number of deleted customers (1 if successful).
      * @throws {NotFoundError} - If the customer is not found.
@@ -283,11 +288,8 @@ class CustomerService {
     deleteCustomer(customerId) {
         return this.#error.handler(['Delete Customer', customerId, 'Customer'], async() => {
             const data = await this.getCustomerById(customerId)
-            if (data.customer.invoices.length > 0) {
-                throw new ValidationError('No se puede eliminar a un cliente con facturas asociadas')
-            }
-            
-            // delete customer
+
+            // soft-delete customer (sets deletedAt, row and its invoices/credits stay intact)
             await data.customer.destroy()
             return 1
         })

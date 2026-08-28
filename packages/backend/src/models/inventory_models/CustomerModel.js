@@ -65,15 +65,24 @@ function initializeCustomer(sequelize, schema) {
             },
 
             phone: {
-                type: DataTypes.STRING, 
-                allowNull: false, 
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+
+            deletedAt: {
+                type: DataTypes.DATE,
+                allowNull: true
             }
         },
         {
             sequelize,
             modelName: 'Customer',
             tableName: 'customers',
-            timestamps: false,
+            timestamps: true,
+            createdAt: false,
+            updatedAt: false,
+            paranoid: true,
+            deletedAt: 'deletedAt',
             schema: schema
         }
     )
