@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { PackagePlus, Receipt, StickyNotePlus, FileText } from 'lucide-react'
+import { PackagePlus, Receipt, StickyNotePlus, FileText, Tags } from 'lucide-react'
 import { Container } from '@/app/ui/utils/container'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
 
@@ -12,6 +12,7 @@ const SHORTCUTS = [
     { label: 'Ver facturas', href: '/store/bills', icon: Receipt, role: [1, 2, 3, 4] },
     { label: 'Vender', href: '/store/sell', icon: StickyNotePlus, role: [1,2,3,4] },
     { label: 'Cotizar', href: '/store/quote', icon: FileText, role: [1,2,3,4] },
+    { label: 'Imprimir etiquetas', href: '/store/labels', icon: Tags, role: [1,2,3] },
 
 ]
 

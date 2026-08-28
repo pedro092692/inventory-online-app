@@ -75,6 +75,13 @@ export async function Panel({type = 'store'}) {
             role: [1,2,3,4]
         },
 
+        labels: {
+            title: 'Etiquetas',
+            icon: 'pdf',
+            link: '/store/labels',
+            role: [1,2,3]
+        },
+
         subscription: {
             title: 'Mi tienda',
             icon: 'store',
