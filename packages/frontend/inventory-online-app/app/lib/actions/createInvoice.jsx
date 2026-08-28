@@ -115,32 +115,47 @@ export default async function CreateInvoiceAction(
 
     // --- CASE 2: PAY AN EXISTING INVOICE (invoiceStatus === true) ---
     if (invoiceStatus && invoiceId) {
-        const payment_method_id = formData.get('payment_method_id')
-        const amount = formData.get('amount')
+        const paymentsRaw = formData.get('payments')
+        const changesRaw = formData.get('changes')
 
-        // If payment is made individually from a subscription screen, we send an array of a single element
-        const payInvoiceBody = {
-            invoiceId: parseInt(invoiceId),
-            payments: [
-                {
-                    paymentId: parseInt(payment_method_id),
-                    amount: parseFloat(amount)
-                }
-            ]
+        // Supports one or several payment methods (and change breakdown) in a single submit,
+        // same shape the "create invoice" flow already sends to this same endpoint.
+        const paymentsParsed = JSON.parse(paymentsRaw || '[]')
+
+        if (paymentsParsed.length === 0) {
+            return {
+                message: null,
+                error: 'Debes agregar al menos un método de pago.',
+                invoice: null
+            }
         }
 
-        const payResponse = await Request(payInvoiceEndpoint, 'POST', payInvoiceBody)
+        const paymentsArray = paymentsParsed.map(p => ({
+            paymentId: parseInt(p.payment_method_id),
+            amount: parseFloat(p.amount)
+        }))
+
+        const changesArray = JSON.parse(changesRaw || '[]')
+
+        const payResponse = await Request(payInvoiceEndpoint, 'POST', {
+            invoice_id: parseInt(invoiceId),
+            payments: paymentsArray,
+            changes: changesArray
+        })
+
         const { data: payData, error: payError } = payResponse
 
         if (payError || payData?.errors) {
             return {
                 message: null,
-                errors: payError || payData?.errors || 'Hubo un error al procesar el pago.',
+                error: payError == 'Something went wrong' ? 'Hubo un error al procesar el pago.' : payError || payData?.errors || 'Hubo un error al procesar el pago.',
                 invoice: null
             }
         }
 
         revalidatePath(`/store/${createInvoiceEndpoint}`)
+        revalidatePath(`/store/bills/detail/${invoiceId}`)
+        revalidatePath(`/store/bills/edit/payment/${invoiceId}`)
 
         return {
             message: msg,

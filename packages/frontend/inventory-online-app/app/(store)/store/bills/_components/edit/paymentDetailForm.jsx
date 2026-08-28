@@ -2,10 +2,11 @@
 import { Form } from '@/app/ui/form/form/form'
 import { Container } from '@/app/ui/utils/container'
 import List from '@/app/ui/list/list'
+import PayRemainingForm from '@/app/(store)/store/bills/_components/edit/payRemainingForm'
 import styles from './invoice.module.css'
 
 
-export default function PaymentDetailForm({invoice=null, permissions=[]}) {
+export default function PaymentDetailForm({invoice=null, permissions=[], paymentMethods=[], exchangeRate=null}) {
     const paymentsDetails = invoice?.['payments-details'].map(payment => {
         return {
             paymentMethod: payment?.payments?.name || 'Undefined',
@@ -108,6 +109,11 @@ export default function PaymentDetailForm({invoice=null, permissions=[]}) {
                 }
                 
             </Container>
+
+            {/* pay remaining balance, for invoices left unpaid or as store credit */}
+            {invoice?.status !== 'paid' &&
+                <PayRemainingForm invoice={invoice} paymentMethods={paymentMethods} exchangeRate={exchangeRate}/>
+            }
         </>
     )
 }

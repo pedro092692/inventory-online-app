@@ -69,10 +69,10 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
                     </Link>
                 }
                 
-                {/* anull payment methods */}
+                {/* manage payment methods (pay remaining balance and/or cancel existing payments) */}
                 <Link href={`/store/bills/edit/payment/${invoice?.id}${queryString ? `?${queryString}` : ''}`}>
-                        <Button type='grey' style={{backgroundColor: 'black', padding: '8px'}}
-                            title={'Anular metodos de pago'}
+                        <Button type='grey' style={{backgroundColor: invoice?.status !== 'paid' ? '#3E7C42' : 'black', padding: '8px'}}
+                            title={invoice?.status !== 'paid' ? 'Pagar factura' : 'Anular metodos de pago'}
                         >
                             <Icon icon='coins' size={[24, 24]}></Icon>
                         </Button>
