@@ -17,6 +17,18 @@
     text-align: right;
 }
 
+.tableProducts td[data-label="quantity"],
+.tableProducts td[data-label="unitPriceBs"],
+.tableProducts td[data-label="unitPriceDollar"]
+ {
+    width: 10px;
+}
+
+
+.tableProducts td[data-label="name"]{
+    width: 20%;
+}
+
 .tableProducts, .tableReturnedProducts {
     height: 240px !important;
     border-radius: 4px
