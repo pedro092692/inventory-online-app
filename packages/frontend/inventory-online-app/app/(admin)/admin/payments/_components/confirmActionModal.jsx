@@ -3,7 +3,7 @@ import { Modal } from '@/app/ui/utils/alert/modal'
 import { Container } from '@/app/ui/utils/container'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { OvalLoader } from '@/app/ui/loader/spinner'
-import { useActionState, useEffect } from 'react'
+import { useActionState, useEffect, startTransition } from 'react'
 
 /**
  * Generic confirm-before-you-act modal, built on top of the app's <Modal/>. It owns the
@@ -58,7 +58,11 @@ export default function ConfirmActionModal({
                 <p>{message}</p>
                 <Container padding="12px">
                     <Container padding="0px" direction="row">
-                        <Button type="secondary" disabled={isPending} onClick={() => dispatch()}>
+                        <Button type="secondary" disabled={isPending} onClick={() => {
+                            startTransition(() => {
+                               dispatch()
+                            })
+                        }}>
                             {isPending && <OvalLoader/>}
                             {isPending ? pendingLabel : confirmLabel}
                         </Button>
