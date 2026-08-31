@@ -8,7 +8,7 @@ import InputAddPay from '@/app/(store)/store/sell/_components/payInputButton/pay
 import Payments from '@/app/(store)/store/sell/_components/payments/payments'
 import TotaInfo from '@/app/(store)/store/sell/_components/totalInfo/totalInfo'
 import CreateInvoiceAction from '@/app/lib/actions/createInvoice'
-import { useState, useMemo, useActionState } from 'react'
+import { useState, useMemo, useActionState, startTransition } from 'react'
 import styles from './invoice.module.css'
 
 // Lets you settle the remaining balance of an invoice that is unpaid or was left
@@ -245,7 +245,9 @@ export default function PayRemainingForm({ invoice = null, paymentMethods = [] ,
                             <Button
                                 type={'secondary'}
                                 role={'button'}
-                                onClick={handleAbonar}
+                                onClick={() => startTransition(() => {
+                                    handleAbonar()
+                                })}
                                 showIcon={!isPending}
                                 icon={'coins'}
                                 size={[20, 20]}
