@@ -1,6 +1,9 @@
 import GetItemAction from '@/app/lib/actions/get'
 import List from '@/app/ui/list/list'
 import styles from '@/app/(store)/store/customers/_components/customers.module.css'
+import { Button } from '@/app/ui/utils/button/buttons'
+import Link from 'next/link'
+import { Container } from '@/app/ui/utils/container'
 
 export default async function Customers({ limit = 10, page = 1, query = null, queryString = null}){
  
@@ -55,24 +58,45 @@ export default async function Customers({ limit = 10, page = 1, query = null, qu
     }
     
     return (
-        <List
-            tableHead={
-                {
-                    'nombre': 'Nombre',
-                    'cedula': 'Cédula',
-                    'teléfono': 'Teléfono',
-                    'actions': 'Acciones'
-                }
+        <>
+            {
+                customer.length > 0 
+                ?
+            
+                <List
+                    tableHead={
+                        {
+                            'nombre': 'Nombre',
+                            'cedula': 'Cédula',
+                            'teléfono': 'Teléfono',
+                            'actions': 'Acciones'
+                        }
+                    }
+                    tableData={customer}
+                    showActions={true}
+                    params={rawParams}
+                    endpoint='customers'
+                    deleteKey={'customerId'}
+                    userPermissions={userPermissions}
+                    queryString={queryString}
+                    deleteMsg='Cliente eliminado con éxito'
+                    customClass={styles.table}
+                />
+                :
+                <Container
+                    direction={'column'}
+                    gap={'4px'}
+                    width={'100%'}
+                >
+                    <p className='p1-b'>No tienes a ningún cliente en la base de datos.😮</p>
+                    <p className='p1-b'>Agrega uno nuevo y empieza a vender 😎.</p>
+                    <Link href={'/store/customers/add'}>
+                        <Button showIcon={true} type={'secondary'} icon='circlePlus' children='Agregar Un Cliente Nuevo.'
+                        className='p3-r shadow'/>
+                    </Link>
+                </Container>
             }
-            tableData={customer}
-            showActions={true}
-            params={rawParams}
-            endpoint='customers'
-            deleteKey={'customerId'}
-            userPermissions={userPermissions}
-            queryString={queryString}
-            deleteMsg='Cliente eliminado con éxito'
-            customClass={styles.table}
-        />
+        
+        </>
     )    
 } 
