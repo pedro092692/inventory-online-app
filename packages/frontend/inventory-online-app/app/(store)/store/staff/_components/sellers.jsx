@@ -3,6 +3,8 @@ import List from '@/app/ui/list/list'
 import styles from '@/app/(store)/store/customers/_components/customers.module.css'
 import { Container } from '@/app/ui/utils/container'
 import DeletedSellers from '@/app/(store)/store/staff/_components/deleted/deleted'
+import { Button } from '@/app/ui/utils/button/buttons'
+import Link from 'next/link'
 
 export default async function Sellers({}) {
     const endpoint = 'sellers/all'
@@ -46,30 +48,50 @@ export default async function Sellers({}) {
             direction={'column'}
             gap={'32px'}
         >
-            <List
-                tableHead={
-                    {
-                        'name': 'Nombre',
-                        'last_name': 'Apellido',
-                        'id_number': 'Cedula',
-                        'rol': 'Cargo',
-                        'address': 'Dirección',
-                        'actions': 'Acciones'
-                    }
-                }
-                showActions={true}
-                tableData={sellers}
-                endpoint='staff'
-                deleteKey={'sellerId'}
-                userPermissions={userPermissions}
-                deleteMsg='Personal eliminado con éxito'
-                customClass={styles.table}
-                CustomStyles={{height: 'auto'}}
-            />
             {
-                rawDeleted.length > 0 && <DeletedSellers sellers={deletedSellers} userPermissions={userPermissions}/>
+                sellers.length > 0 
+                ?
+                <>
+                <List
+                    tableHead={
+                        {
+                            'name': 'Nombre',
+                            'last_name': 'Apellido',
+                            'id_number': 'Cedula',
+                            'rol': 'Cargo',
+                            'address': 'Dirección',
+                            'actions': 'Acciones'
+                        }
+                    }
+                    showActions={true}
+                    tableData={sellers}
+                    endpoint='staff'
+                    deleteKey={'sellerId'}
+                    userPermissions={userPermissions}
+                    deleteMsg='Personal eliminado con éxito'
+                    customClass={styles.table}
+                    CustomStyles={{height: 'auto'}}
+                    />
+                
+                    {rawDeleted.length > 0 && <DeletedSellers sellers={deletedSellers} userPermissions={userPermissions}/>}
+                    
+                </>
+                :
+                <Container
+                    direction={'column'}
+                    gap={'4px'}
+                >
+                    <p className='p1-b'>No tienes a ningún vendedor para tu negocio solo estás tú. 😅</p>
+                    <p className='p1-b'>Puedes agregar hasta 5 vendedores si lo necesitas, o seguir vendiendo todo tú 😎.</p>
+                    <Link href={'/store/staff/add'}>
+                        <Button showIcon={true} type={'secondary'} icon='circlePlus' children='Agregar Personal'
+                        className='p3-r shadow'/>
+                    </Link>
+                </Container>
+                
                 
             }
+            
         </Container>
     ) 
 }
