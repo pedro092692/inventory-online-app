@@ -78,7 +78,11 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
             
             {/* seller */}
             <label>Vendedor</label>
-            <Select name='seller_id' options={sellerOptions} selectKey={sellerId} defaultValue={invoice?.seller?.name || 'No tiene vendedor'}/>
+            <Select 
+                name='seller_id' options={sellerOptions} selectKey={sellerId} 
+                defaultValue={invoice?.seller?.name || 'No tiene vendedor'}
+                emptyMsg={'No hay vendedores disponibles.'}
+                />
             
             {/* customer */}
             <label>Cliente</label>

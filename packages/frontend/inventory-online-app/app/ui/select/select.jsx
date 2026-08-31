@@ -12,7 +12,8 @@ export default function Select({
         resetKey = null, 
         onChange = () => {}, 
         disabled = false, 
-        customer = null
+        customer = null,
+        emptyMsg = 'No hay opciones disponibles.'
     }) {
     
     const [open, setOpen] = useState(false)
@@ -82,7 +83,10 @@ export default function Select({
                     alignItem={'start'}
                     className={`${styles.child}`}
                 >
-                    {options.map((option, index) => {
+                    {
+                    options.length > 0 
+                    ?
+                    options.map((option, index) => {
                         const isCreditOption = option.value == STORE_CREDIT_ID
                         const totalCredits = parseFloat(customer?.total_credits || 0)
                         if (isCreditOption && totalCredits <= 0) {
@@ -103,7 +107,10 @@ export default function Select({
                                 </p>
                             </Container>
                         )
-                    })}
+                    })
+                    :
+                    <p>{emptyMsg}</p>
+                    }
                 </Container>
                 )
             }
