@@ -24,11 +24,14 @@ export default function ViewReceiptButton({paymentId}) {
     return (
         <>
             <Button
+                showIcon={true}
+                icon='view'
                 type="outline"
                 size={[15, 15]}
-                style={{padding: '3px 5px'}}
+                style={{padding: '3px 8px'}}
                 onClick={handleClick}
                 disabled={loading}
+                className='p2-r'
             >
                 {loading ? 'Abriendo...' : 'Ver comprobante'}
             </Button>

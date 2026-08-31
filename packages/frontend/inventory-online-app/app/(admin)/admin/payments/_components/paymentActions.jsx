@@ -24,19 +24,24 @@ export default function PaymentActions({paymentId, status = 'pending', payment_s
             {status === 'pending' && (
                 <>
                     <Button
+                        showIcon={true}
+                        icon='coins'
                         type="secondary"
                         size={[15, 15]}
-                        style={{padding: '3px 5px'}}
+                        style={{padding: '3px 8px'}}
                         onClick={() => setShowApprove(true)}
-                    >
+                        className='p2-r'>
                         Aprobar
                     </Button>
 
                     <Button
+                        showIcon={true}
+                        icon='trash'
                         type="danger"
                         size={[15, 15]}
-                        style={{padding: '3px 5px'}}
+                        style={{padding: '3px 8px'}}
                         onClick={() => setShowReject(true)}
+                        className='p2-r'
                     >
                         Rechazar
                     </Button>
@@ -59,10 +64,13 @@ export default function PaymentActions({paymentId, status = 'pending', payment_s
             {status !== 'pending' && (
                 <>
                     <Button
+                        showIcon={true}
+                        icon='circleArrow'
                         type="outline"
                         size={[15, 15]}
-                        style={{padding: '3px 5px'}}
+                        style={{padding: '3px 8px'}}
                         onClick={() => setShowRevert(true)}
+                        className='p2-r'
                     >
                         Revertir a pendiente
                     </Button>
