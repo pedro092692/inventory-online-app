@@ -655,17 +655,20 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                             children={'Cancelar venta'}   
                         />
                         
-                        <Button 
-                            type={'danger'} 
-                            onClick={handleCreditToggle}
-                            showIcon={true}
-                            icon={'coins'}
-                            size={[24, 24]}
-                            title={'Procesar Factura A Crédito'}
-                            className='shadow-sm' 
-                            disabled={isPending || state?.message ? true : false}  
-                            children={isCredit ? 'Cancelar venta a crédito' : 'Procesar factura a crédito'}   
-                        />
+                        {
+                            payments.length < 1 &&
+                            <Button 
+                                type={'danger'} 
+                                onClick={handleCreditToggle}
+                                showIcon={true}
+                                icon={'coins'}
+                                size={[24, 24]}
+                                title={'Procesar Factura A Crédito'}
+                                className='shadow-sm' 
+                                disabled={isPending || state?.message ? true : false}  
+                                children={isCredit ? 'Cancelar venta a crédito' : 'Procesar factura a crédito'}   
+                            />
+                        }
                                     
                     </Container>
                 </div>
