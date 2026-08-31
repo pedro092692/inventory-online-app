@@ -516,6 +516,22 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                         blockedReason={blockedReason}
                     />
                     <ProductSelector  setItems={setItems} items={items} activeScreen={activeScreen} changes={changes} setChanges={setChanges}/>
+                    {
+                        items.length > 0 &&
+                        <div className={styles.cancelContainer}>
+                            <Button 
+                                type={'secondary'} 
+                                onClick={handleReset}
+                                showIcon={true}
+                                icon={'trash'}
+                                size={[24, 24]}
+                                title={'Cancelar esta venta'}
+                                className='shadow-sm' 
+                                disabled={isPending || state?.message ? true : false}  
+                                children={'Cancelar venta'}   
+                            />
+                        </div>
+                    }
                 </div>
 
                 {/* customer section */}
@@ -529,6 +545,19 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                         blockedReason={blockedReason}
                     />
                     <SelectCustomer customer={customer} setCustomer={setCustomer} showResult={false} bgColor={'white'} activeScreen={activeScreen}/>
+                    <div className={styles.cancelContainer}>
+                        <Button 
+                            type={'secondary'} 
+                            onClick={handleReset}
+                            showIcon={true}
+                            icon={'trash'}
+                            size={[24, 24]}
+                            title={'Cancelar esta venta'}
+                            className='shadow-sm' 
+                            disabled={isPending || state?.message ? true : false}  
+                            children={'Cancelar venta'}   
+                        />
+                    </div>
                 </div>
 
                 {/* pay section */}
@@ -613,18 +642,19 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                         alignItem={'end'}
                         padding={'0px'}
                     >
+                       
                         <Button 
                             type={'secondary'} 
                             onClick={handleReset}
                             showIcon={true}
                             icon={'trash'}
                             size={[24, 24]}
-                            title={'Procesar Factura A Crédito'}
+                            title={'Cancelar esta venta'}
                             className='shadow-sm' 
                             disabled={isPending || state?.message ? true : false}  
                             children={'Cancelar venta'}   
                         />
-
+                        
                         <Button 
                             type={'danger'} 
                             onClick={handleCreditToggle}
@@ -645,6 +675,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                 <div className={styles.cartContainer}>
                     <Cart items={items} setItems={setItems} total={total} state={state} totalPaidUSD={totalPaidUSD}/>
                 </div>
+                
             </form>
          
             {/* modal for alert messages */}

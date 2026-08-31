@@ -43,6 +43,13 @@
     font-weight: 400;;
 }
 
+.cancelContainer{
+    display: flex;
+    align-items: flex-end;
+    flex-grow: 1;
+    z-index: -1;
+}
+
 @media screen and (max-width: 1220px){
     .mainContainer {
         flex-direction: column;

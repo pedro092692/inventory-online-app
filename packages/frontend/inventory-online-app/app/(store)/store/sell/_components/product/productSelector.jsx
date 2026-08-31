@@ -158,7 +158,7 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         if (query && results.length === 0) {
             const timer = setTimeout(() => {
                 setShowNoResults(true)
-            }, 400)
+            }, 500)
             return () => clearTimeout(timer)
         }else {
             setShowNoResults(false)
