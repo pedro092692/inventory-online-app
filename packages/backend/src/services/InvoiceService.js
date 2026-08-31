@@ -769,9 +769,13 @@ ${balanceSection}
      */
     totalPages(query = '', limit = 10) {
         return this.#error.handler(['Total pages', query, 'Invoices'], async () => {
+            const count = await this.Invoice.count()
             if (!query) {
                 const count = await this.Invoice.count()
-                return Math.ceil(count / limit)
+                return {
+                    total: Math.ceil(count / limit),
+                    all: count
+                }
             }
             const results = await this.Invoice.findAndCountAll({
                 where: {
@@ -791,8 +795,10 @@ ${balanceSection}
                     paranoid: false,
                 }]
             })
-            return Math.ceil(results.count / limit)
-
+            return {
+                total: Math.ceil(results.count / limit),
+                all: count
+            }
         })
     }
 

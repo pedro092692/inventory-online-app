@@ -1,6 +1,9 @@
 import GetItemAction from '@/app/lib/actions/get'
 import List from '@/app/ui/list/list'
 import styles from '@/app/(store)/store/bills/_components/invoices.module.css'
+import { Button } from '@/app/ui/utils/button/buttons'
+import Link from 'next/link'
+import { Container } from '@/app/ui/utils/container'
 
 export default async function Invoices({limit = 10, page = 1, query = null, queryString = null}) {
     const endpoint =  query ? `invoices/search-query` : 'invoices/all'
@@ -53,33 +56,52 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
     }
 
     return (
-        <List
-            tableHead={
-                {
-                    'n_recibo': 'N° Recibo',
-                    'fecha': 'Fecha',
-                    'total': 'Total',
-                    'total_bs': 'Total Bs',
-                    'exchange_rate': 'Tasa de Cambio',
-                    'estado': 'Estado',
-                    'vendedor': 'Vendedor',
-                    'cliente': 'Cliente',
-                    'actions': 'Acciones'
-                }
+        <>
+            {
+                invoices.length > 0 || query
+                ?
+                <List
+                    tableHead={
+                        {
+                            'n_recibo': 'N° Recibo',
+                            'fecha': 'Fecha',
+                            'total': 'Total',
+                            'total_bs': 'Total Bs',
+                            'exchange_rate': 'Tasa de Cambio',
+                            'estado': 'Estado',
+                            'vendedor': 'Vendedor',
+                            'cliente': 'Cliente',
+                            'actions': 'Acciones'
+                        }
+                    }
+                    showActions={true}
+                    showEdit={false}
+                    showDelete={false}
+                    tableData={invoices}
+                    params={rawParams}
+                    endpoint='bills'
+                    deleteKey={'id'}
+                    userPermissions={userPermissions}
+                    queryString={queryString}
+                    deleteMsg='Recibo eliminado con éxito'
+                    customClass={styles.table}
+                    rowClassName={(rowData) => rowData.status === 'Pendiente' ? styles.pendingRow : ''}
+                />
+                :
+                <Container
+                    direction={'column'}
+                    gap={'4px'}
+                    width={'100%'}
+                >
+                    <p className='p1-b'>No tienes órdenes de compra 📃 en la base de datos.</p>
+                    <p className='p1-b'>Cuando una venta esté hecha, aquí las vas a ver 👀</p>
+                    <Link href={'/store/sell'}>
+                        <Button showIcon={true} type={'secondary'} icon='circlePlus' children='Hacer una venta 💸'
+                        className='p3-r shadow'/>
+                    </Link>
+                </Container>
             }
-            showActions={true}
-            showEdit={false}
-            showDelete={false}
-            tableData={invoices}
-            params={rawParams}
-            endpoint='bills'
-            deleteKey={'id'}
-            userPermissions={userPermissions}
-            queryString={queryString}
-            deleteMsg='Recibo eliminado con éxito'
-            customClass={styles.table}
-            rowClassName={(rowData) => rowData.status === 'Pendiente' ? styles.pendingRow : ''}
-        />
+        </>
     )
 
 }
