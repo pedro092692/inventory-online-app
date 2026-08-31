@@ -43,7 +43,7 @@ export default function RejectPaymentModal({show, onClose, paymentId}) {
                 gap="0px"
             >
                 <p>Indica el motivo del rechazo. El dueño de la tienda podrá verlo y enviar un nuevo comprobante.</p>
-                <Container padding="12px">
+                <Container padding="12px" width={'100%'}>
                     <Form action={formAction}>
                         <Input
                             type="text"
@@ -52,9 +52,10 @@ export default function RejectPaymentModal({show, onClose, paymentId}) {
                             placeHolder="Motivo del rechazo (ej: el monto no coincide)"
                             defaultValue={state.inputs?.reason ?? ''}
                             capitalize={true}
+                            style={{width: '100%'}}
                         />
                         {state?.errors?.reason && <span className="field_error">{state?.errors?.reason}</span>}
-                        <Container padding="0px" direction="row">
+                        <Container padding="0px" direction="row" width={'100%'}>
                             <Button role="submit" type="secondary" disabled={isPending}>
                                 {isPending && <OvalLoader/>}
                                 {isPending ? 'Rechazando...' : 'Sí, rechazar'}
