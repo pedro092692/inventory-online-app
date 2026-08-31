@@ -18,6 +18,7 @@ export default async function Product({searchParams}) {
   const response = await GetItemAction(`products/total-pages${query ? `?data=${query}` : '' }`, 'Hubo un error inesperado intenta nuevamente')
   const {data, error} = response 
   const totalPages = data?.total || 1
+  const all = data?.all || false
   const currentUser = await getCurrentUser()
 
      return (
@@ -29,9 +30,9 @@ export default async function Product({searchParams}) {
           >
           
               <Route path='products' endpoints={['add', 'default']} queryString={queryString} /> 
-              <Search 
+              {all > 0 &&  <Search 
                 placeHolder="Buscar producto por Nombre, Código De Barras"
-              />
+              />}
               <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={7} />}>
                   <Products page={currentPage} query={query} queryString={queryString}/>
               </Suspense>
@@ -42,6 +43,7 @@ export default async function Product({searchParams}) {
                 ) 
                 : 
                 (
+                    data?.total > 0 &&
                     <Container
                         padding={'0px'}
                         width={'100%'}

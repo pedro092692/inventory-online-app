@@ -239,9 +239,12 @@ class CustomerService {
      */
     totalPages(query = '',  limit = 10) {
         return this.#error.handler(['Total pages', query, 'Customer'], async () => {
+            const count = await this.Customer.count()
             if (!query) {
-                const count = await this.Customer.count()
-                return Math.ceil(count / limit)
+                return {
+                    total: Math.ceil(count / limit),
+                    all: count
+                }
             }
 
             const results = await this.Customer.findAndCountAll({
@@ -252,7 +255,10 @@ class CustomerService {
                     ]
                 }
             })
-            return Math.ceil(results.count / limit)
+            return {
+                total: Math.ceil(results.count / limit),
+                all: count
+            }
 
         })
     }

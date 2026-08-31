@@ -81,8 +81,8 @@ class CustomerController {
     totalPages = this.#error.handler( async(req, res) => {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const { data } = req.query || ''
-        const total = await this.customerService.totalPages(data, limit)
-        res.status(200).json({total})
+        const {total, all} = await this.customerService.totalPages(data, limit)
+        res.status(200).json({total, all})
     })
 
     /**

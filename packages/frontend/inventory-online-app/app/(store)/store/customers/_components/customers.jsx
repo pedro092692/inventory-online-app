@@ -60,7 +60,7 @@ export default async function Customers({ limit = 10, page = 1, query = null, qu
     return (
         <>
             {
-                customer.length > 0 
+                customer.length > 0 || query
                 ?
             
                 <List
@@ -83,6 +83,7 @@ export default async function Customers({ limit = 10, page = 1, query = null, qu
                     customClass={styles.table}
                 />
                 :
+                
                 <Container
                     direction={'column'}
                     gap={'4px'}

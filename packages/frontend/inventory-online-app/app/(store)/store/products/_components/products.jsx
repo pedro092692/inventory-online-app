@@ -1,6 +1,9 @@
 import GetItemAction from '@/app/lib/actions/get'
 import List from '@/app/ui/list/list'
 import styles from '@/app/(store)/store/products/products.module.css'
+import { Button } from '@/app/ui/utils/button/buttons'
+import Link from 'next/link'
+import { Container } from '@/app/ui/utils/container'
 
 export default async function Products({ limit = 10, page = 1, query = null, queryString = null}){
     const enpoint = query ? 'products/search' : 'products/all'
@@ -70,19 +73,40 @@ export default async function Products({ limit = 10, page = 1, query = null, que
     }
 
     return (
-        <List
-            tableHead={tableHead}
-            tableData={products}
-            showActions={true}
-            params={rawParams}
-            endpoint='products'
-            userPermissions={userPermissions}
-            queryString={queryString}
-            deleteKey={'productId'}
-            deleteMsg='Producto eliminado con éxito'
-            showView={false}
-            customClass={styles.table}
-            rowClassName={(rowData) => rowData.stock === 0 ? styles.notStockRow : rowData.stock <= 5 ? styles.lowStockRow : ''}
-        />
+        <>
+            {
+                products.length > 0 || query
+                ?
+            
+            <List
+                tableHead={tableHead}
+                tableData={products}
+                showActions={true}
+                params={rawParams}
+                endpoint='products'
+                userPermissions={userPermissions}
+                queryString={queryString}
+                deleteKey={'productId'}
+                deleteMsg='Producto eliminado con éxito'
+                showView={false}
+                customClass={styles.table}
+                rowClassName={(rowData) => rowData.stock === 0 ? styles.notStockRow : rowData.stock <= 5 ? styles.lowStockRow : ''}
+            />
+            :
+            <Container
+                    direction={'column'}
+                    gap={'4px'}
+                    width={'100%'}
+                >
+                    <p className='p1-b'>No tienes a ningún producto 📦 en la base de datos.</p>
+                    <p className='p1-b'>Agrega uno nuevo para vender.</p>
+                    <Link href={'/store/products/add'}>
+                        <Button showIcon={true} type={'secondary'} icon='circlePlus' children='Agregar Un Cliente Nuevo.'
+                        className='p3-r shadow'/>
+                    </Link>
+            </Container>
+            }
+        
+        </>
     )
 }

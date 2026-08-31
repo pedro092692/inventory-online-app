@@ -16,8 +16,7 @@ export default async function Customer({searchParams}) {
     const response = await Request(`customers/total-pages${query ? `?data=${query}` : ''}`, 'GET', null, 'Hubo un error inesperado intententa nuevamente')
     const {data, error} = response 
     const totalPages = data?.total || 1
-
-    
+    const all = data?.all || false
     
     return (
         <Container
@@ -28,7 +27,7 @@ export default async function Customer({searchParams}) {
         >
         
             <Route path='customers' endpoints={['add', 'default']} queryString={queryString} /> 
-            {data?.total != 0 && <Search 
+            {all > 0 && <Search 
                 placeHolder="Buscar cliente por Nombre, Cédula"
             />}
             <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={4} />}>

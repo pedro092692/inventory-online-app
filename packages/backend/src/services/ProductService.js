@@ -264,9 +264,13 @@ class ProductService{
      */
     totalPages(query = '',  limit = 10) {
         return this.#error.handler(['Total pages', query, 'Product'], async () => {
+            const count = await this.Product.count()
             if (!query) {
-                const count = await this.Product.count()
-                return Math.ceil(count / limit)
+                
+                return {
+                    total: Math.ceil(count / limit),
+                    all: count
+                }
             }
 
             const results = await this.Product.findAndCountAll({
@@ -278,7 +282,10 @@ class ProductService{
                 }
             })
             
-            return Math.ceil(results.count / limit)
+            return {
+                total:  Math.ceil(results.count / limit),
+                all: count
+            }
 
         })
     }
