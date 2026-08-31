@@ -70,6 +70,12 @@ export default {
           allow_change: false
         },
         {
+          id: 9,
+          name: 'Cashea',
+          currency: 'Bolivar Digital',
+          allow_change: false,
+        },
+        {
           id: credit_method_id,
           name: 'Nota de Credito',
           currency: 'Saldo tienda',
