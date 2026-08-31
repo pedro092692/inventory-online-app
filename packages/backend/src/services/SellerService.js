@@ -48,10 +48,7 @@ class SellerService {
             }
 
             // check is current user has max allowed seller created
-            const sellersCount = await this.Seller.count()
-            if (sellersCount >= this.maxSellerAllowed) {
-                throw new ValidationError(`El número máximo de personal (${this.maxSellerAllowed - 1}) alcanzado; elimina un usuario para agregar uno nuevo.`)
-            }
+            await this._maxSellerAllowed()
 
             const newSeller = await this.Seller.create({
                 user_id: user_id,
@@ -243,12 +240,15 @@ class SellerService {
             if (!data) throw new NotFoundError('Personal no encontrado')
             
             if (restore === 'true') {
+                // check active sellers 
+                await this._maxSellerAllowed()
+                
                 if( data.seller.deletedAt) {
-                    await data.seller.restore()
+                    // await data.seller.restore()
                 }
 
                 if (data.seller.user.deletedAt) {
-                    await data.seller.user.restore()
+                    // await data.seller.user.restore()
                 }
             }
 
@@ -287,6 +287,14 @@ class SellerService {
 
             return 1
         })
+    }
+    
+
+    async _maxSellerAllowed() {
+        const sellersCount = await this.Seller.count()
+            if (sellersCount >= this.maxSellerAllowed) {
+                throw new ValidationError(`El número máximo de personal (${this.maxSellerAllowed - 1}) alcanzado; elimina un usuario para agregar uno nuevo.`)
+        }
     }
      
 }

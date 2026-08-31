@@ -195,6 +195,7 @@ class SellerController {
         if(updates.pin){
             updates.pin = hasPassword(updates.pin, String(req.user.tenant_id))
         }
+        
         updates.is_supervisor = updates.is_supervisor ? updates.is_supervisor : false
         const updatedSeller = await this.sellerService.updateSeller(id, updates)
         res.status(200).json(updatedSeller)
