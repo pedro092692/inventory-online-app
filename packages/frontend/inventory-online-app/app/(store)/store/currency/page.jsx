@@ -15,6 +15,7 @@ export default async function Currency({searchParams}) {
     const response = await GetItemAction(`dollar-value/total-pages`, 'Hubo un error inesperado intenta nuevamente')
     const {data, error} = response
     const totalPages = data?.total || 1
+    const all = data?.all || false
 
     return (
         <Container
@@ -23,7 +24,7 @@ export default async function Currency({searchParams}) {
               padding='0px'
               width='100%'
         >
-            <BufferRateInfo />
+            {all > 0 && <BufferRateInfo />}
             <Route path='currency' endpoints={['add', 'default']} queryString={queryString} />
             <Suspense key={currentPage} fallback={<ListSkeleton nTitle={3} />}>
                 <Data page={currentPage} queryString={queryString}/>
@@ -34,6 +35,7 @@ export default async function Currency({searchParams}) {
                     <p className='p2-r errorMsg'>{error}</p>
                 )
                 :
+                data?.total > 0 &&
                 <Container
                     padding={'0px'}
                     width={'100%'}

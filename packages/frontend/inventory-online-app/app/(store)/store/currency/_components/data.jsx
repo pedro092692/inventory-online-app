@@ -1,6 +1,9 @@
 import GetItemAction from '@/app/lib/actions/get'
 import List from '@/app/ui/list/list'
 import styles from '@/app/(store)/store/currency/_components/data.module.css'
+import { Button } from '@/app/ui/utils/button/buttons'
+import Link from 'next/link'
+import { Container } from '@/app/ui/utils/container'
 
 export default async function Data({ limit = 10, page = 1, queryString = null}){
     const enpoint = 'dollar-value/all'
@@ -42,18 +45,38 @@ export default async function Data({ limit = 10, page = 1, queryString = null}){
     }
 
     return (
-        <List
-            tableHead={tableHead}
-            tableData={historyData}
-            showActions={true}
-            params={rawParams}
-            endpoint='dollar-value'
-            userPermissions={userPermissions}
-            queryString={queryString}
-            deleteKey={'id'}
-            deleteMsg='Data eliminada con éxito'
-            showView={false}
-            customClass={styles.table}
-        />
+        <>
+            {
+
+            historyData.length > 0 
+            ?
+            <List
+                tableHead={tableHead}
+                tableData={historyData}
+                showActions={true}
+                params={rawParams}
+                endpoint='dollar-value'
+                userPermissions={userPermissions}
+                queryString={queryString}
+                deleteKey={'id'}
+                deleteMsg='Data eliminada con éxito'
+                showView={false}
+                customClass={styles.table}
+            />
+            :
+            <Container
+                    direction={'column'}
+                    gap={'4px'}
+                    width={'100%'}
+                >
+                    <p className='p1-b'>No tienes data histórica del valor de divisa 💲 en la base de datos.</p>
+                    <p className='p1-b'>Agrega un nuevo valor 💸.</p>
+                    <Link href={'/store/currency/add'}>
+                        <Button showIcon={true} type={'secondary'} icon='circlePlus' children='Actualizar Tasa'
+                        className='p3-r shadow'/>
+                    </Link>
+            </Container>
+            }    
+        </>
     )
 }

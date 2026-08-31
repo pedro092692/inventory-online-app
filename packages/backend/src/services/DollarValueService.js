@@ -174,7 +174,10 @@ class DollarValueService {
     totalPages(limit = 10) {
         return this.#error.handler(['Total pages', limit, 'Dollar value'], async () => {
             const count = await this.DollarValue.count()
-            return Math.ceil(count / limit)
+            return {
+                total: Math.ceil(count / limit),
+                all: count
+            }
         })
     }
 

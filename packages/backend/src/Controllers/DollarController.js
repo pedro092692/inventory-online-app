@@ -77,8 +77,8 @@ class DollarValueController {
      */
     totalPages = this.#error.handler( async(req, res) => {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
-        const total = await this.dollarService.totalPages(limit)
-        res.status(200).json({total})
+        const {total, all} = await this.dollarService.totalPages(limit)
+        res.status(200).json({total, all})
     })
 
 

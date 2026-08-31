@@ -68,8 +68,9 @@ export default function BufferRateForm({ settings, officialRate = null, bufferIs
                         min='0'
                         name='buffer_rate'
                         defaultValue={settings?.buffer_rate ?? ''}
-                        placeholder='Ej: 850'
+                        placeholder='Tasa de su preferencia.'
                         className={`p2-r ${InputStyles.input}`}
+                        style={{width: '100%'}}
                     />
                 </Container>
             }
