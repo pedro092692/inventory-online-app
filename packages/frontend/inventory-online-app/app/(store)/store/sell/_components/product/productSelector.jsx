@@ -17,6 +17,7 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     const [results, setResults] = useState([])
     const [highlightedIndex, setHighlightedIndex] = useState(-1)
     const [isScanning, setIsScanning] = useState(false)
+    const [showNoResults, setShowNoResults] = useState(false)
     const lastKeyTime = useRef(0)
     const showResultsRef = useRef(null)
     const inputRef = useRef(null)
@@ -153,6 +154,18 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         }
     }, [activeScreen])
 
+    useEffect(() => {
+        if (query && results.length === 0) {
+            const timer = setTimeout(() => {
+                setShowNoResults(true)
+            }, 400)
+            return () => clearTimeout(timer)
+        }else {
+            setShowNoResults(false)
+        }
+
+    }, [query, results])
+
     return (
         <>
             {/* input search */}
@@ -165,7 +178,16 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
                 results={results} 
                 onClick={handleClick}
                 highlightedIndex={highlightedIndex}
-                /> }
+                /> 
+            }
+
+            {
+                showNoResults && (
+                    <p style={{ padding: '8px', color: '#888' }}>
+                         No se encontraron productos paras "{query}"
+                    </p>
+                )
+            }
         </>
     )
 }   
