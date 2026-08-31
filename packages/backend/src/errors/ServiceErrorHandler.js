@@ -2,6 +2,7 @@ import { ValidationError } from 'sequelize'
 import { FileError, InvalidFileTypeError, EmptyRowsError } from './FileError.js'
 import { NotFoundError } from './NofoundError.js'
 import { InvalidPinError } from '../errors/supervisorPinError.js'
+import { LastActivePaymentMethodError } from './LastActivePaymentMethodError.js'
 import process from 'process'
 
 class ServiceErrorHandler {
@@ -47,7 +48,11 @@ class ServiceErrorHandler {
         if (error instanceof InvalidPinError) {
             throw new InvalidPinError(error.message)
         }
-        
+
+        if (error instanceof LastActivePaymentMethodError) {
+            throw new LastActivePaymentMethodError(error.message)
+        }
+
         if (process.env.NODE_ENV === 'development') {
             throw new Error(`Error in: ${error.message}`)
         }else{

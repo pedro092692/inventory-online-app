@@ -2,6 +2,7 @@ import pkg from '../config/config.js'
 import process from 'process'
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
+import { LastActivePaymentMethodError } from '../errors/LastActivePaymentMethodError.js'
 import { Op } from 'sequelize'
 
 const currentEnv = process.env.NODE_ENV || 'development'
@@ -86,10 +87,32 @@ class PaymentMethodService {
      * @param {String} updates.name - name of the payment method
      * @param {String} updates.currency - name of the currency of the payment method
      * @returns {Promise<Object>} - returns the updated Payment Method
+     * @throws {LastActivePaymentMethodError} - if this update would disable the last active, sellable payment method
      */
     updatePaymentMethod(paymentMethodId, updates) {
         return this.#error.handler(['Update payment method', paymentMethodId, 'Payment Method'], async() => {
             const paymentMethod = await this.getPaymentMethod(paymentMethodId)
+
+            // Disabling a payment method must never leave the store without a
+            // way to get paid. The "Nota de Credito" method (credit_method_id)
+            // doesn't count: it's a store-credit redemption, not a general
+            // way to receive money, and it's already excluded from this
+            // admin listing (see getAllPaymentMethods forListing branch).
+            const isDisabling = updates.status === 'DISABLED' && paymentMethod.status !== 'DISABLED'
+
+            if (isDisabling) {
+                const otherActiveCount = await this.PaymentMethod.count({
+                    where: {
+                        status: 'ACTIVE',
+                        id: { [Op.notIn]: [paymentMethodId, credit_method_id] }
+                    }
+                })
+
+                if (otherActiveCount === 0) {
+                    throw new LastActivePaymentMethodError()
+                }
+            }
+
             const updatedPaymentMethod = await paymentMethod.update(updates)
             return updatedPaymentMethod
         })

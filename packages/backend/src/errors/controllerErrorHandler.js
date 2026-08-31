@@ -1,6 +1,7 @@
 import { NotFoundError } from './NofoundError.js'
 import { FileError, InvalidFileTypeError, EmptyRowsError } from './FileError.js'
 import { InvalidPinError } from '../errors/supervisorPinError.js'
+import { LastActivePaymentMethodError } from './LastActivePaymentMethodError.js'
 import { ValidationError } from 'sequelize'
 
 class ControllerErrorHandler { 
@@ -42,7 +43,11 @@ class ControllerErrorHandler {
         if(error instanceof InvalidPinError){
             return res.status(401).json({error: error.message })
         }
-        
+
+        if(error instanceof LastActivePaymentMethodError){
+            return res.status(400).json({error: error.message })
+        }
+
         return res.status(500).json({ error: error.message })
     }
 }
