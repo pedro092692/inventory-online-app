@@ -71,7 +71,7 @@ export function Modal({
                 alignItem={'center'}
                 className={`${styles.alert} shadow`}
                 onClick={(e) => e.stopPropagation()}
-                padding={'8px 16px'}
+                padding={'16px'}
                 gap={'0px'}
 
             > 
@@ -79,7 +79,7 @@ export function Modal({
                     className={styles.header}
                 >
                     {showIcon && <Icon icon={icon} color={iconColor} size={[56, 56]}/>}
-                    <h3>{title}</h3>
+                    <h3 className='h3'>{title}</h3>
                 </div>
                 <div
                     id='content'

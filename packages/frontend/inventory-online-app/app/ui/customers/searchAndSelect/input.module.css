@@ -52,5 +52,18 @@
     background-color: var(--color-neutralGrey100);
 }
 
+.noResultRow {
+    width: 100%;
+    padding: 6px 16px;
+    text-transform: none;
+}
+
+.addCustomerLink {
+    display: inline-block;
+    margin-top: 2px;
+    color: var(--color-blue700);
+    text-decoration: underline;
+    cursor: pointer;
+}
 
 

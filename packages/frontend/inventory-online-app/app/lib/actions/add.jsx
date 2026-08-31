@@ -46,6 +46,9 @@ export default async function AddItemAction(
     return {
         message: msg,
         errors: {},
-        inputs: {}
+        inputs: {},
+        // raw response body from the API (e.g. { newCustomer: {...} }),
+        // handy for callers that need the created record (id, etc.)
+        item: data
     }
  }
