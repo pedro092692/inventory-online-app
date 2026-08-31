@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Container } from '../utils/container'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
+import styles from './routes.module.css'
 
 
 export default async function Route({path='customers', endpoints=['default', 'add'], queryString='', id=null}) {
@@ -199,10 +200,11 @@ export default async function Route({path='customers', endpoints=['default', 'ad
                                         href={routes[path][endpiont].href}
                                         key={index}
                                     >
-                                        {routes[path][endpiont].label}
+                                        <span className={`p2-r ${styles.statusBadge}`}>{routes[path][endpiont].label}</span>
+                                        
                                     </Link>
                                     :
-                                    <p style={{cursor: 'default', color: 'var(--color-neutralGrey800)'}}>{routes[path][endpiont].label}</p>
+                                    <span className={`p2-r ${styles.statusBadge} ${styles.disable}`} style={{cursor: 'default'}}>{routes[path][endpiont].label}</span>
                                     
                                 }
                                     {index < endpoints.length -1 && '/'}
