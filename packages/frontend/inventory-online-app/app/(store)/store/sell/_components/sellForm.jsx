@@ -7,6 +7,7 @@ import SelectObject from '@/app/utils/selectObject'
 import Select from '@/app/ui/select/select'
 import CreateInvoiceAction from '@/app/lib/actions/createInvoice'
 import AuthorizeAction from '@/app/lib/actions/authorize'
+import GetItemAction from '@/app/lib/actions/get'
 import InvoiceActionButtons from '@/app/(store)/store/sell/_components/buttons/buttons'
 import InputAddPay from '@/app/(store)/store/sell/_components/payInputButton/payInputButton'
 import TotaInfo from '@/app/(store)/store/sell/_components/totalInfo/totalInfo'
@@ -91,10 +92,47 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         const storedPayments = localStorage.getItem('pos_invoice_payments')
         const storedChanges = localStorage.getItem('pos_invoice_changes')
 
-        if (storedItems) setItems(JSON.parse(storedItems))
         if (storedCustomer) setCustomer(JSON.parse(storedCustomer))
         if (storedPayments) setPayments(JSON.parse(storedPayments))
         if (storedChanges) setChanges(JSON.parse(storedChanges))
+
+        // A cart restored from localStorage can be minutes or days old, and
+        // whatever it says about price/stock is whatever was true when it
+        // was saved. The invoice we actually create always charges the
+        // live DB price regardless (see ProductService.getProductUnitPrice
+        // on the backend) — this is purely so the screen never shows the
+        // cashier a total that won't match what the backend ends up
+        // charging. Re-checks every restored item against the current
+        // product data, drops products that no longer exist or are out of
+        // stock, and clamps quantity down if stock shrank below what was
+        // saved.
+        const restoreItems = async () => {
+            if (!storedItems) return
+            const parsedItems = JSON.parse(storedItems)
+            if (parsedItems.length < 1) return
+
+            const refreshedItems = await Promise.all(
+                parsedItems.map(async (item) => {
+                    const { data } = await GetItemAction(`products/${item.id}`)
+                    const freshProduct = data?.product
+
+                    if (!freshProduct || freshProduct.stock <= 0) return null
+
+                    return {
+                        ...item,
+                        name: freshProduct.name,
+                        selling_price: freshProduct.selling_price,
+                        reference_selling_price: freshProduct.reference_selling_price,
+                        stock: freshProduct.stock,
+                        quantity: Math.min(item.quantity, freshProduct.stock)
+                    }
+                })
+            )
+
+            setItems(refreshedItems.filter(Boolean))
+        }
+
+        restoreItems()
     }, [])
 
     // save data automatilly in localStorage
