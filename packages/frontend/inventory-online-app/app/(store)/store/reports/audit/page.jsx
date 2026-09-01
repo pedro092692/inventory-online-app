@@ -19,20 +19,13 @@ export default async function AuditReport({searchParams}) {
     return (
         <Container
             direction={'column'}
-            padding={'16px 0 0 0'}
             alignItem={'start'}
-            width={'100%'}
-            gap={'16px'}
+            padding='0px'
+            width='100%'
         >
+            {data?.total > 0 && <h2 className='h3'>Reporte de auditoría (créditos y montos anulados)</h2>}
             <Suspense key={currentPage} fallback={<ListSkeleton nTitle={5} />}>
-                <Container
-                    padding={'16px'}
-                    width={'100%'}
-                    gap={'24px'}
-                >
-                    
-                    <AuditLogs page={currentPage} />
-                </Container>
+               <AuditLogs page={currentPage} />
             </Suspense>
             {
                 (error || forbidden) ?
@@ -42,6 +35,7 @@ export default async function AuditReport({searchParams}) {
                 :
                 (
                     data?.total > 0 &&
+                    
                     <Pagination totalPages={totalPages} />
                 )
             }

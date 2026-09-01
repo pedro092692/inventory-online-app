@@ -15,15 +15,18 @@ export default async function AuditLogs({limit = 10, page = 1}) {
 
     const response = await GetItemAction(url, 'Hubo un error inesperado intenta nuevamente')
     const { data, error } = response
+    
     // A blocked (non-supervisor) user gets a 403 here, which the fetch layer surfaces
     // as `data.errors` rather than `error`.
     const forbidden = data?.errors
     const rawData = data?.auditLogs || []
 
+    console.log(rawData)
+
     const formatDetail = (log) => {
         if (log.action === 'CANCEL_PAYMENT') {
             const amount = log.old_value?.amount
-            return amount ? `Monto anulado: $${amount}` : '—'
+            return amount ? `Monto anulado: ${amount}` : '—'
         }
         if (log.action === 'FULL_REFUND' || log.action === 'PARTIAL_REFUND') {
             const credit = log.new_value?.total_credit_generated
@@ -32,15 +35,19 @@ export default async function AuditLogs({limit = 10, page = 1}) {
         return '—'
     }
 
-    const auditLogs = rawData.map((log) => ({
-        date: log.created_at
+    const auditLogs = rawData.map((log) => {
+        const invoice_id = log.new_value?.invoice_id || log.new_value?.invoiceId || '—'
+        return {
+             date: log.created_at
             ? new Date(log.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' })
             : '—',
-        action: ACTION_LABELS[log.action] || log.action,
-        user: log.user?.email || 'Usuario desconocido',
-        authorizedBy: log.supervisorSeller ? `${log.supervisorSeller.name} ${log.supervisorSeller.last_name}` : '—',
-        detail: formatDetail(log),
-    }))
+            action: ACTION_LABELS[log.action] || log.action,
+            user: log.user?.email || 'Usuario desconocido',
+            authorizedBy: log.supervisorSeller ? `${log.supervisorSeller.name} ${log.supervisorSeller.last_name}` : '—',
+            detail: formatDetail(log),
+            id: invoice_id,
+        }
+    })
 
     if (error || forbidden) {
         return <p className='p2-r errorMsg'>{error || forbidden}</p>
@@ -58,9 +65,11 @@ export default async function AuditLogs({limit = 10, page = 1}) {
                 user: 'Realizado por',
                 authorizedBy: 'Autorizado por',
                 detail: 'Detalle',
+                actions: 'Acciones',
             }}
+            endpoint='bills'
+            showActions={true}
             tableData={auditLogs}
-            showActions={false}
         />
     )
 }
