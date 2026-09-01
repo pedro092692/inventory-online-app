@@ -1,8 +1,6 @@
 import styles from './page.module.css'
 import Image from 'next/image'
-import Link from 'next/link'
 import { Container } from '../../utils/container.jsx'
-import { Button } from '../../utils/button/buttons'
 import CircleIcon from '@/app/ui/utils/icons/circleIcon'
 import { Icon } from '../../utils/icons/icons'
 
@@ -26,29 +24,6 @@ export function HeroTwo({}) {
 
                 <p className='p1-r' style={{color: 'var(--color-neutralGrey900)'}}>Gestiona inventario, ventas, clientes y reportes desde la nube. Más control, mejores decisiones y más crecimiento.</p>
 
-                {/* call to action buttons */}
-                <Container
-                    padding={'0px'}
-                    gap={'16px'}
-                    width={'100%'}
-                    justifyContent={'start'}
-                >
-                    <Link href='/advantages'>
-                            <Button 
-                                children='Empezar ahora'
-                                type='primary'
-                                showIcon={true}
-                                icon={'rocket'}
-                            />
-                        </Link>
-                        <Button 
-                            children='Solicitar demo'
-                            type='outline'
-                            showIcon={true}
-                            icon={'calendar'}
-                        />
-
-                </Container>
                 {/* icons */}
                 <Container
                     padding={'0px'}

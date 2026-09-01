@@ -1,4 +1,3 @@
-import { Button } from '../../utils/button/buttons'
 import { Container } from '../../utils/container'
 import Image from 'next/image'
 import styles from './page.module.css'
@@ -17,9 +16,6 @@ export function CallToAction() {
                 justifyContent='center'
             >
                 <p className='p1-r'>Comienza a organizar tu inventario, vende más y ahorra tiempo en la gestión de tu empresa.</p>
-                <Button type='secondary' icon='playArrow' showIcon={true} size={[20, 20]}>
-                    Empieza hoy
-                </Button>
             </Container>
             <Container
                 className={styles.imageContainer}

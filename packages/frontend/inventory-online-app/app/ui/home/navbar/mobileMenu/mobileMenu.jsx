@@ -1,17 +1,15 @@
 'use client'
-import React from 'react'
 import { Container } from '../../../utils/container'
-import { useEffect, useRef, useState } from 'react'
-import { subMenuItems } from '../navMenu/subMenu/subMenu'
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import styles from './page.module.css'
 
-export function MobileMenu({open, setOpen, children, showArrow=false}) {
-    const [showDetail, setShowDetail] = useState(false)
-    const [showDetail2, setShowDetail2] = useState(false)
-
+// Misma simplificación que en navMenu.jsx: en vez de 2 acordeones
+// (Funciones/Ventajas) con submenús cruzados y enlaces muertos, se muestran
+// directamente los 3 enlaces reales de la landing.
+export function MobileMenu({open, setOpen, children}) {
     const menuRef = useRef(null)
-    
+
     useEffect(() => {
         if (open) {
             document.body.style.overflow = 'hidden'
@@ -22,7 +20,7 @@ export function MobileMenu({open, setOpen, children, showArrow=false}) {
 
     useEffect(() => {
         function handleClickOutside(event) {
-            if (open && menuRef.current && !menuRef.current.contains(event.target)) {  
+            if (open && menuRef.current && !menuRef.current.contains(event.target)) {
                 setOpen(false)
             }
         }
@@ -33,87 +31,21 @@ export function MobileMenu({open, setOpen, children, showArrow=false}) {
     if (!open) return null
 
     return (
-        <Container 
+        <Container
             ref={menuRef}
             className={styles.mobileMenu}
         >
-               <Container
-                    padding='0'
-                    gap='4px'
-                    onClick={() => setShowDetail(!showDetail)}
-                >
-                    <p className='p1-r' style={{cursor:'pointer', userSelect:'none'}}>Funciones</p>
-                    {showArrow &&
-                    <Image src='images/icons/arrowRight.svg'
-                        width={18}
-                        height={18}
-                        alt='arrow right'
-                    />
-                    }
-                    
-                </Container>
-                {/* submenu for functions */}
-                {showDetail &&
-                <Container
-                    padding='0px'
-                    alignItem='end'
-                    direction='column'
-                    gap='8px'
-                    width='45%'
-                >
-                    {Object.keys(subMenuItems['functions']).map((key, index) => {
-                        return (
-                             <React.Fragment key={index}>
-                                <Link href={subMenuItems['functions'][key].link} onClick={() => setOpen(false)}>
-                                    <p className='p3-b' style={{textAlign: 'right'}}>{subMenuItems['functions'][key].title}</p>
-                                </Link>
-                                <div className={styles.line}></div>
-                            </React.Fragment>
-                        )
-                    })}
-                </Container>
-                }
+            <Link href='/#beneficios' onClick={() => setOpen(false)}>
+                <p className='p1-r' style={{cursor: 'pointer', textAlign: 'right'}}>Beneficios</p>
+            </Link>
+            <div className={styles.line}></div>
 
-                <div className={styles.line}>
+            <Link href='/#clientes' onClick={() => setOpen(false)}>
+                <p className='p1-r' style={{cursor: 'pointer', textAlign: 'right'}}>Clientes</p>
+            </Link>
+            <div className={styles.line}></div>
 
-                </div>
-                <Container
-                    padding='0'
-                    gap='4px'
-                    onClick={() => setShowDetail2(!showDetail2)}
-                >
-                    <p className='p1-r' style={{cursor:'pointer', userSelect:'none'}}>Ventajas</p>
-                    {showArrow &&
-                    <Image src='images/icons/arrowRight.svg'
-                        width={18}
-                        height={18}
-                        alt='arrow right'
-                    />
-                    }
-                </Container>
-                 {/* submenu for advantages */}
-                {showDetail2 &&
-                <Container
-                    padding='0px'
-                    alignItem='end'
-                    direction='column'
-                    gap='8px'
-                    width='70%'
-                >
-                    {Object.keys(subMenuItems['advantages']).map((key, index) => {
-                        return (
-                             <React.Fragment key={index}>
-                                <Link href={subMenuItems['advantages'][key].link} onClick={() => setOpen(false)}>
-                                    <p className='p3-b' style={{textAlign: 'right'}}>{subMenuItems['advantages'][key].title}</p>
-                                </Link>
-                                <div className={styles.line}></div>
-                            </React.Fragment>
-                        )
-                    })}
-                </Container>
-                }
-                <div className={styles.line}></div>
-                {children}
-        </Container> 
+            {children}
+        </Container>
     )
 }
