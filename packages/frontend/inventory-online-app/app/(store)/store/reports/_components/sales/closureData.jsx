@@ -39,7 +39,7 @@ export default async function ClosureSalesData({seller_id, date}) {
                 const amount = parseFloat(r.total_currenty) || 0
 
                 if (isUsd) totalUsd += amount
-                totalBs += amount
+                else totalBs += amount
 
                 return {
                     name: r.payments?.name ?? "—",
