@@ -202,7 +202,7 @@ class SellerService {
             })
             
             if(!authoriZedSeller) {
-                throw new InvalidPinError('Pin incorrecto o el vendedor no tiene permisos de supervisor')
+                throw new InvalidPinError('PIN inválido')
             }
 
  

@@ -7,24 +7,32 @@ class SellerRoutes{
     constructor() {
         this.router = Router()
         this.router.use(authenticated)
-        this.router.use(isOwner)
         this.router.use(this.setRoutesModels.bind(this))
         this.inicializateRoutes()
-    }  
+    }
     /**
      * Initializes the routes for the Seller API.
+     *
+     * `isOwner` is applied per-route rather than to the whole router: every
+     * staff-management route needs it, but `/authorize` is the exception —
+     * it's how a regular seller (who can't sell on credit) asks a
+     * supervisor to unlock that with their PIN, so the requester is
+     * deliberately NOT required to already be an owner/admin. Gating it
+     * behind `isOwner` made the endpoint reject every request with
+     * "Forbidden" before the PIN was ever checked, for correct and
+     * incorrect PINs alike.
      * @returns {void}
      */
     inicializateRoutes() {
         this.router.get('/', (req, res) => res.send('Seller routes'))
-        this.router.get('/all', (req, res) => new SellerController(req.Seller).allSeller(req, res))
-        this.router.get('/all-names', (req, res) => new SellerController(req.Seller).sellersName(req, res))
-        this.router.get('/total-invoices', (req, res) => new SellerController(req.Seller, req.Invoice).getTotalSellerInvoices(req, res))
-        this.router.get('/:id', (req, res) => new SellerController(req.Seller).getSeller(req, res))
-        this.router.post('/', validateFields('createUser'), (req, res) => new SellerController(req.Seller).createSeller(req, res))
+        this.router.get('/all', isOwner, (req, res) => new SellerController(req.Seller).allSeller(req, res))
+        this.router.get('/all-names', isOwner, (req, res) => new SellerController(req.Seller).sellersName(req, res))
+        this.router.get('/total-invoices', isOwner, (req, res) => new SellerController(req.Seller, req.Invoice).getTotalSellerInvoices(req, res))
+        this.router.get('/:id', isOwner, (req, res) => new SellerController(req.Seller).getSeller(req, res))
+        this.router.post('/', isOwner, validateFields('createUser'), (req, res) => new SellerController(req.Seller).createSeller(req, res))
         this.router.post('/authorize', validateFields('authorizedSeller'), (req, res) => new SellerController(req.Seller).authorizedBySeller(req, res))
-        this.router.patch('/:id', (req, res) => new SellerController(req.Seller).updateSeller(req, res))
-        this.router.delete('/', (req, res) => new SellerController(req.Seller).deleteSeller(req, res))
+        this.router.patch('/:id', isOwner, (req, res) => new SellerController(req.Seller).updateSeller(req, res))
+        this.router.delete('/', isOwner, (req, res) => new SellerController(req.Seller).deleteSeller(req, res))
     }
     /**
      * Middleware to attach the `Seller` model from the tenant-specific models to the request object.
@@ -49,4 +57,4 @@ class SellerRoutes{
     }
 }
 
-export default SellerRoutes 
+export default SellerRoutes
