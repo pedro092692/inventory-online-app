@@ -2,6 +2,36 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LabelList,} from 'recharts'
 import { Users, Repeat2, Package, Phone, Calendar, Trophy } from "lucide-react"
 
+// Width reserved for the Y axis labels (product/customer names). Kept as a
+// constant so the truncation math below always matches the actual <YAxis>.
+const Y_AXIS_WIDTH = 140
+// Rough average glyph width at fontSize 16 — good enough to keep long names
+// from overflowing the reserved width and getting clipped by the chart.
+const AVG_CHAR_WIDTH_PX = 8.5
+
+const truncateLabel = (text = '', maxWidth = Y_AXIS_WIDTH) => {
+    const value = String(text ?? '')
+    const maxChars = Math.max(1, Math.floor(maxWidth / AVG_CHAR_WIDTH_PX))
+    if (value.length <= maxChars) return value
+    return `${value.slice(0, maxChars - 1)}…`
+}
+
+// Custom Y axis tick: truncates long names with "…" instead of letting them
+// overflow/clip, and keeps the full name one hover away via a native SVG
+// <title> tooltip (no extra library needed).
+const YAxisNameTick = ({ x, y, payload, maxWidth = Y_AXIS_WIDTH }) => {
+    const fullValue = String(payload?.value ?? '')
+    const truncated = truncateLabel(fullValue, maxWidth)
+
+    return (
+        <g transform={`translate(${x},${y})`}>
+            <text x={0} y={0} dy={4} textAnchor="end" fontSize={16} fontWeight={400} fill="black">
+                {truncated}
+                {truncated !== fullValue && <title>{fullValue}</title>}
+            </text>
+        </g>
+    )
+}
 
 export default function Barchart({ data = [], keys = [], type = null}) {
    
@@ -87,8 +117,8 @@ export default function Barchart({ data = [], keys = [], type = null}) {
                     <YAxis
                         type="category"
                         dataKey={keys[0]}
-                        width={140}
-                        tick={{ fontSize: 16, fill: 'black', fontWeight: 400 }}
+                        width={Y_AXIS_WIDTH}
+                        tick={<YAxisNameTick maxWidth={Y_AXIS_WIDTH} />}
                         axisLine={false}
                         tickLine={false}
                     />
