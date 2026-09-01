@@ -80,7 +80,14 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
 
                 {/* return products */}
                     {invoice?.refund_status !== 'full' && invoice.status === 'paid' &&
-                    <Link href={`/store/bills/edit/product/${invoice?.id}${queryString ? `?${queryString}` : ''}?fromInvoice=true`}>
+                    // `queryString` already comes with no leading "?" (see
+                    // buildQueryParams), so it needs a "&" before
+                    // fromInvoice=true, not a second "?" — the old
+                    // `?${queryString}?fromInvoice=true` produced URLs like
+                    // ?page=7&data=s?fromInvoice=true, where everything after
+                    // the first "?" is one query string and that stray "?"
+                    // just becomes part of the literal value of `data`.
+                    <Link href={`/store/bills/edit/product/${invoice?.id}?${queryString ? `${queryString}&` : ''}fromInvoice=true`}>
                             <Button type='grey' style={{backgroundColor: 'var(--color-accentBlue400)', padding: '8px'}}
                                 title={'Hacer una devolución'}
                             >
