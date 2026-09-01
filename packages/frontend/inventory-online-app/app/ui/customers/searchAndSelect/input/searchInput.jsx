@@ -3,7 +3,7 @@ import { Container } from '@/app/ui/utils/container'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import inputStyles from '@/app/ui/customers/searchAndSelect/input.module.css'
 
-export default function SearchCustomerInput({query, onChange, placeHolder, onKeyDown = () => '', bgColor='var(--color-neutralGrey300)', inputRef=null}) {
+export default function SearchCustomerInput({query, onChange, placeHolder, onKeyDown = () => '', bgColor='var(--color-neutralGrey300)', inputRef=null, autoFocus=true}) {
     return (
         <Container
                 padding={'0px 0px 0px 16px'}
@@ -23,7 +23,7 @@ export default function SearchCustomerInput({query, onChange, placeHolder, onKey
                     name="search" 
                     placeholder={placeHolder} 
                     icon="search" 
-                    autoFocus={true}
+                    autoFocus={autoFocus}
                     onChange={(e) => onChange(e)}
                     onKeyDown={(e) => onKeyDown(e)}
                     value={query}

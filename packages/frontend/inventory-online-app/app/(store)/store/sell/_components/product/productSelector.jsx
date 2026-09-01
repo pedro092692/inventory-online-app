@@ -10,7 +10,8 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     items=[], 
     activeScreen=null,
     changes=[],
-    setChanges=() => ''
+    setChanges=() => '',
+    autoFocus=true
     
     }) {
     const [query, setQuery] = useState('')
@@ -172,6 +173,7 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
             <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} onKeyDown={handleKeyDown}
                 inputRef={inputRef}
                 bgColor='white'
+                autoFocus={autoFocus}
             />
             { results.length > 0 && <ProductResultContainer 
                 ref={showResultsRef} 

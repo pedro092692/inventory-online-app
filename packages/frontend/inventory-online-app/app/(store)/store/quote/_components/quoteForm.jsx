@@ -81,14 +81,14 @@ Presupuesto informativo, sujeto a disponibilidad y a la variación de la tasa de
 
     return (
         <Container direction='column' padding='0px' width='100%' alignItem='start' gap='16px'>
-            <ProductSelector setItems={setItems} items={items} />
+            <ProductSelector setItems={setItems} items={items} autoFocus={true}/>
 
             {/* customer (optional): search an existing one, or type a name/phone for someone who isn't a customer yet */}
             <Container direction='column' padding='0px' alignItem='start' gap='4px' className={styles.section}>
                 <h3 className='p2-b'>Cliente (opcional)</h3>
                 {!useManualCustomer ? (
                     <>
-                        <SelectCustomer customer={customer} setCustomer={setCustomer} bgColor='white' />
+                        <SelectCustomer customer={customer} setCustomer={setCustomer} bgColor='white' autoFocus={false}/>
                         <button type='button' className={styles.toggleLink} onClick={switchToManual}>
                             ¿No es cliente? Escribir nombre y teléfono
                         </button>

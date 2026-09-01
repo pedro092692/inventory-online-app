@@ -12,7 +12,7 @@ import { Modal } from '@/app/ui/utils/alert/modal'
 import QuickAddCustomerForm from '@/app/ui/customers/searchAndSelect/addCustomer/quickAddCustomerForm'
 
 
-export default function CustomerSelector({value, onChange, placeHolder='Buscar cliente por Nombre, Cédula', showResult=true, bgColor, activeScreen=null}) {
+export default function CustomerSelector({value, onChange, placeHolder='Buscar cliente por Nombre, Cédula', showResult=true, bgColor, activeScreen=null, autoFocus=true}) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
     const [error, setError] = useState(null)
@@ -146,7 +146,7 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
         >
             {/* input search */}
             <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} bgColor={bgColor} onKeyDown={handleKeyDown} 
-            inputRef={inputRef}/>
+            inputRef={inputRef} autoFocus={autoFocus}/>
 
             {/* show results  */}
             <SearchResultsContainer
