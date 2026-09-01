@@ -81,6 +81,11 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
     const handleCloseAddModal = () => {
         setShowAddModal(false)
         setCustomerToAdd('')
+        // The modal closes (Escape, the "Cancelar" button, or a customer
+        // being created) but nothing else claims focus afterward, so it was
+        // just getting dropped — send it back to the search box so the
+        // cashier can keep going without reaching for the mouse.
+        inputRef.current?.focus()
     }
 
     const handleCustomerCreated = (newCustomer) => {
@@ -90,11 +95,21 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
 
     const handleKeyDown = (e) => {
         if (results.length === 0) {
-            // No matches: Enter goes straight to "¿Deseas agregarlo?",
-            // the same action as clicking that prompt with the mouse.
-            if (e.key === 'Enter' && searched && !error && query.trim() !== '') {
+            // No matches: Enter goes straight to "¿Deseas agregarlo?", the
+            // same action as clicking that prompt with the mouse. Always
+            // preventDefault on Enter here, whether or not we can actually
+            // open the modal (e.g. the search itself errored out, or nothing
+            // has been searched yet) — this input lives inside SellForm's own
+            // <form>, so an Enter we don't swallow falls through to the
+            // browser's default behavior and submits that outer form
+            // instead. That's what was costing the focus: the sale form
+            // pops up its own "falta completar el pago" warning and the
+            // cashier is dropped out of the flow, forced back to the mouse.
+            if (e.key === 'Enter') {
                 e.preventDefault()
-                handleOpenAddModal()
+                if (searched && !error && query.trim() !== '') {
+                    handleOpenAddModal()
+                }
             }
             return
         }
@@ -113,10 +128,15 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
             )
         }
 
-        if (e.key === 'Enter' && highlightedIndex >=0) {
+        if (e.key === 'Enter') {
+            // Same reasoning as above: swallow Enter unconditionally so it
+            // can never reach the outer form, even before the cashier has
+            // arrow-keyed onto one of the results yet.
             e.preventDefault()
-            setHighlightedIndex(-1)
-            handleClick(results[highlightedIndex])
+            if (highlightedIndex >= 0) {
+                setHighlightedIndex(-1)
+                handleClick(results[highlightedIndex])
+            }
         }
     }
 
