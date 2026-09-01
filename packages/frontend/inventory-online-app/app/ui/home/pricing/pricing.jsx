@@ -21,7 +21,7 @@ export function Pricing() {
                 <p className={styles.subtitle}>Sin niveles, sin límites artificiales, sin sorpresas en la factura.</p>
             </div>
 
-            <div className={styles.card}>
+            <div className={`${styles.card} ${styles.princingTitle}`}>
                 <div className={styles.priceRow}>
                     <span className={styles.price}>20$</span>
                     <span className={styles.pricePeriod}>/ mes</span>

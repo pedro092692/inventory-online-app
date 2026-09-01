@@ -47,9 +47,6 @@ export function Navbar() {
             <div className={styles.rightGroup}>
                 <div className={styles.menuButton}>
                     <LoginButton isLogged={isLogged} />
-                    <Link href='/#precio'>
-                        <span className={styles.priceButton}>Ver precio</span>
-                    </Link>
                 </div>
 
                 <Icon onClick={() => setOpen(!open)} className={styles.segment} icon='segment' color='var(--color-neutralBlack)' />

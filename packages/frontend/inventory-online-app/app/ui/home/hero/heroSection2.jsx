@@ -22,15 +22,15 @@ export function HeroTwo() {
                     </h1>
 
                     <p className={styles.subtext}>
-                        Nexastock lleva tu inventario, tus ventas y tus pedidos de WhatsApp en un solo lugar. Desde la nube, en cualquier equipo.
+                        <span className={'p1-b'}>Nexastock</span> lleva tu inventario, tus ventas y tus <span className={'p1-b'}>pedidos de WhatsApp</span> en un solo lugar. Desde la nube, en cualquier equipo.
                     </p>
 
                     <div className={styles.ctaRow}>
-                        <Link href='/#precio'>
+                        {/* <Link href='/#precio'>
                             <span className={styles.primaryCta}>Ver precio — 20$/mes</span>
-                        </Link>
-                        <a href={WHATSAPP_URL} target='_blank' rel='noopener noreferrer' className={styles.secondaryCta}>
-                            Hablar por WhatsApp
+                        </Link> */}
+                        <a href={WHATSAPP_URL} target='_blank' rel='noopener noreferrer' className={styles.primaryCta}>
+                            Quiero registrame
                         </a>
                     </div>
 
@@ -42,13 +42,13 @@ export function HeroTwo() {
                 </div>
 
                 <div className={styles.heroImageFrame}>
-                    <Image
+                    {/* <Image
                         src='/images/home/hero_img_2.png'
                         fill
                         style={{objectFit: 'contain'}}
                         alt='Panel de reportes de Nexastock'
                         priority
-                    />
+                    /> */}
                 </div>
             </div>
 

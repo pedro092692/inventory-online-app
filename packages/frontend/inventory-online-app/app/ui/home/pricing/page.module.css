@@ -40,6 +40,10 @@
     gap: 26px;
 }
 
+.princingTitle {
+    align-items: center;
+}
+
 .priceRow {
     display: flex;
     align-items: flex-end;
