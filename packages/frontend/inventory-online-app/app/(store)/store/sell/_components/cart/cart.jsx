@@ -7,13 +7,13 @@ import { Button } from '@/app/ui/utils/button/buttons'
 export default function Cart({items=[], setItems, total=0, state={}, totalPaidUSD}) {
 
     const handleRemoveItem = (id) => {
-        if(state?.message) return 
+        if(state?.message) return
         setItems(prev => [...prev.filter(item => item.id !== id)])
     }
 
     const handleQuantityChange = (id, rawValue) => {
         if(state?.message) return
-        if(totalPaidUSD > 0 || !rawValue) {
+        if(totalPaidUSD > 0) {
              return
         }
         setItems(prev =>
@@ -36,7 +36,7 @@ export default function Cart({items=[], setItems, total=0, state={}, totalPaidUS
             })
         )
     }
-    
+
     return (
         <Container className={`${styles.cartContainer} shadow`}>
             <Container className={styles.cartHeader}>
@@ -70,29 +70,30 @@ export default function Cart({items=[], setItems, total=0, state={}, totalPaidUS
                                 <p className={`${styles.itemName} p2-r`}>
                                    {`${item.name.length > 76 ? item.name.slice(0, 76) + '...' : item.name}`}
                                 </p>
-                                <Button 
-                                    icon={'trash'} 
-                                    children={''} 
-                                    showIcon={true} 
-                                    type={state?.message ? 'disabled' : 'danger'} 
-                                    size={[12, 12]} 
+                                <Button
+                                    icon={'trash'}
+                                    children={''}
+                                    showIcon={true}
+                                    type={state?.message ? 'disabled' : 'danger'}
+                                    size={[12, 12]}
                                     style={{padding: '8px'}}
+                                    title={'Quitar producto'}
                                     onClick={() => handleRemoveItem(item.id)}
                                 />
                             </div>
-                            
+
                             <div className={styles.itemPriceContainer}>
                                 <p className={'p2-r'}>
                                     {new Intl.NumberFormat('es-Ve').format(item.reference_selling_price)}
                                 </p>
                             </div>
-                            
+
                             <div className={styles.itemQuantityContainer}>
-                                <input type='number' 
+                                <input type='number'
                                     className={styles.inputQuantity}
-                                    value={item.quantity} 
-                                    min='1' 
-                                    max={item.stock} 
+                                    value={item.quantity}
+                                    min='1'
+                                    max={item.stock}
                                     onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                                     onKeyDown={
                                         (e) => {
@@ -104,7 +105,7 @@ export default function Cart({items=[], setItems, total=0, state={}, totalPaidUS
                                     disabled={state?.message ? true : false}
                                 />
                             </div>
-                            
+
                             <div className={styles.itemTotalContainer}>
                                 <p className={'p2-r'}>
                                     {new Intl.NumberFormat('es-Ve').format(
@@ -114,10 +115,10 @@ export default function Cart({items=[], setItems, total=0, state={}, totalPaidUS
                                 </p>
                             </div>
                         </Container>
-                        
+
                         )
                     })}
-                
+
                     {items.length < 1 && <p className={'p2-r'} style={{padding: '16px'}}>No hay productos agregados...</p>}
                 </Container>
             </Container>

@@ -4,6 +4,11 @@
     user-select: none;
 }
 
+.parent:focus-visible {
+    outline: 2px solid var(--color-accentBlue400, #2563eb);
+    outline-offset: 2px;
+}
+
 .child {
     position: absolute;
     top: 115%;
@@ -22,6 +27,11 @@
 }
 
 .item:hover {
+    background-color: var(--color-neutralGrey200);
+    font-weight: 500;
+}
+
+.itemHighlighted {
     background-color: var(--color-neutralGrey200);
     font-weight: 500;
 }

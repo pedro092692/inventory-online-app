@@ -12,7 +12,7 @@ import { Modal } from '@/app/ui/utils/alert/modal'
 import QuickAddCustomerForm from '@/app/ui/customers/searchAndSelect/addCustomer/quickAddCustomerForm'
 
 
-export default function CustomerSelector({value, onChange, placeHolder='Buscar cliente por Nombre, Cédula', showResult=true, bgColor, activeScreen=null, autoFocus=true}) {
+export default function CustomerSelector({value, onChange, placeHolder='Buscar cliente por Nombre, Cédula', showResult=true, bgColor, activeScreen=null}) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
     const [error, setError] = useState(null)
@@ -26,7 +26,7 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
 
     const endpoint = `customers/search`
     const params = new URLSearchParams()
-    
+
     // add params to url
     params.append('data', query)
     params.append('limitResults', 6)
@@ -89,18 +89,26 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
     }
 
     const handleKeyDown = (e) => {
-        if (results.length === 0) return 
+        if (results.length === 0) {
+            // No matches: Enter goes straight to "¿Deseas agregarlo?",
+            // the same action as clicking that prompt with the mouse.
+            if (e.key === 'Enter' && searched && !error && query.trim() !== '') {
+                e.preventDefault()
+                handleOpenAddModal()
+            }
+            return
+        }
 
         if (e.key === 'ArrowDown') {
             e.preventDefault()
-            setHighlightedIndex(prev => 
+            setHighlightedIndex(prev =>
                 prev < results.length - 1 ? prev + 1 : 0
             )
         }
 
         if (e.key === 'ArrowUp') {
             e.preventDefault()
-            setHighlightedIndex(prev => 
+            setHighlightedIndex(prev =>
                 prev > 0 ? prev - 1 : results.length - 1
             )
         }
@@ -114,7 +122,7 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside)
-        
+
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
         }
@@ -126,11 +134,11 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
         }
     }, [activeScreen])
 
-    // CustomerSelector is used inside the invoice/"sell" <form> (see sellForm.jsx).
-    // A <form> can't legally contain another <form>, so the quick-add modal is
-    // portaled to document.body instead of rendered inline, to avoid nesting
-    // its own <form> inside that outer one (which caused React's
-    // "form was unexpectedly submitted" warning/bug on submit).
+    // The modal (and the <form> inside QuickAddCustomerForm) is portaled to
+    // document.body below, since CustomerSelector normally renders inside
+    // SellForm's own outer <form> — a <form> nested inside another <form>
+    // is invalid HTML and triggers a hydration error. document isn't
+    // available during SSR, so we only portal once mounted on the client.
     useEffect(() => {
         setMounted(true)
     }, [])
@@ -145,8 +153,8 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
             className={inputStyles.father}
         >
             {/* input search */}
-            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} bgColor={bgColor} onKeyDown={handleKeyDown} 
-            inputRef={inputRef} autoFocus={autoFocus}/>
+            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} bgColor={bgColor} onKeyDown={handleKeyDown}
+            inputRef={inputRef}/>
 
             {/* show results  */}
             <SearchResultsContainer
@@ -172,7 +180,14 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
 
             {mounted && createPortal(
                 <Modal show={showAddModal} onClose={handleCloseAddModal} title='Agregar cliente' ignoreEnter={true}>
+                    {/* Modal keeps its children mounted at all times and only
+                        toggles a CSS class to show/hide, so QuickAddCustomerForm's
+                        own autoFocus (which only fires once, at mount) would never
+                        fire again after the very first render. Keying it on
+                        showAddModal forces a fresh mount — and a fresh autoFocus —
+                        every time the modal opens. */}
                     <QuickAddCustomerForm
+                        key={showAddModal}
                         initialQuery={customerToAdd}
                         onCreated={handleCustomerCreated}
                         onCancel={handleCloseAddModal}

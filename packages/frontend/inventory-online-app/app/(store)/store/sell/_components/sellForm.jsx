@@ -19,6 +19,13 @@ import { Container } from '@/app/ui/utils/container'
 import { useState, useMemo, useActionState, useEffect, startTransition, useRef } from 'react'
 const STORE_CREDIT_ID = process.env.NEXT_PUBLIC_STORE_CREDIT_ID || 99
 
+// Only for floating-point noise from currency conversion (dividing a Bs
+// amount by a live exchange rate), never a business "acceptable shortfall".
+// Must stay far below one cent so the frontend can never call a sale
+// "complete" here while the backend's exact `total_paid >= total` check
+// would still leave the invoice as 'unpaid'.
+const FLOAT_EPSILON = 0.001
+
 
 export default function SellForm({ paymentMethods=[], exchangeRate=null, currentUser=null, storeInactive=false, blockedReason=null}) {
     const [activeScreen, setActiveScreen] = useState('products')
@@ -33,7 +40,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
     const [supervisorPin, setSupervisorPin] = useState('')
     const [isCreditAuthorized, setIsCreditAuthorized] = useState(currentUser?.permissions.includes('update') ? true : false)
     const formRef = useRef(null)
-    
+    const paymentSelectRef = useRef(null)
+
     // local state to control actual amount
     const [currentAmount, setCurrentAmount] = useState('')
     const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(1)
@@ -41,12 +49,12 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
     const [showModal, setShowModal] = useState(false)
     const [modalMessage, setModalMessage] = useState('')
     const [resetTime, SetResetTime] = useState(15)
-    
+
     // form action
     const initialState = {message: null, error: null}
     const createInvoice = CreateInvoiceAction.bind(null, 'Factura creada con éxito', false, null)
     const [state, formAction, isPending] = useActionState(createInvoice, initialState)
-    
+
     //modal
     const closeModal = () => {
         setShowModal(false)
@@ -145,8 +153,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         const remaining = changes.reduce((acc, c) => acc + c?.amountInUSD || 0, 0)
         return remaining > 0 ? remaining: 0
     }, [changes])
-    
-    // function to add payment method to payment list 
+
+    // function to add payment method to payment list
     const handleAddPayment = () => {
         if (!currentAmount || parseFloat(currentAmount) <=0) {
             setModalMessage('Por favor ingresa un monto valido...')
@@ -161,34 +169,34 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
             setModalMessage('Metodo de pago no seleccionado')
             setShowModal(true)
             return
-        } 
-        
+        }
+
         const inputAmount = parseFloat(currentAmount)
-        
+
         const isBolivar = paymentMethod.currency === 'Bolivar Digital'
-        
+
         // The amount entered is converted to USD
         const amountInUSD = Number(
-            
+
             isBolivar
                 ? inputAmount / exchangeRate
                 : inputAmount
-            
+
         )
 
         // Rules 1 and 2 validate if it exceeds the remaining amount
         const isCash = paymentMethod.allow_change
-        if (!isCash && amountInUSD > (remainingToPayUSD + 0.01)) {
+        if (!isCash && amountInUSD > (remainingToPayUSD + FLOAT_EPSILON)) {
             const maxAllowed = isBolivar ? (remainingToPayUSD * exchangeRate).toFixed(2) + "Bs" : remainingToPayUSD.toFixed(2) + "$"
             setModalMessage(`Los pagos electronicos no pueden exceder el total. Monto maximo permitido en este metodo de pago: ${maxAllowed}`)
             setShowModal(true)
-            return 
+            return
         }
 
         const isCreditMethod = methodId == STORE_CREDIT_ID
 
         if (isCreditMethod) {
-            
+
             if (!customer) {
                 setModalMessage('Debes seleccionar un cliente para poder utilizar el Crédito de Tienda.')
                 setShowModal(true)
@@ -201,10 +209,10 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
 
             const availableCreditUSD = (parseFloat(customer.total_credits) || 0) - creditAlreadyUsedUSD
 
-            if (amountInUSD > (availableCreditUSD + 0.01)) {
-           
-                const maxAllowedFormatted = isBolivar 
-                    ? (availableCreditUSD * exchangeRate).toFixed(2) + " Bs" 
+            if (amountInUSD > (availableCreditUSD + FLOAT_EPSILON)) {
+
+                const maxAllowedFormatted = isBolivar
+                    ? (availableCreditUSD * exchangeRate).toFixed(2) + " Bs"
                     : availableCreditUSD.toFixed(2) + " $"
 
                 setModalMessage(`Crédito insuficiente. El cliente dispone de ${maxAllowedFormatted} de crédito restante, pero estás intentando ingresar ${inputAmount} ${isBolivar ? 'Bs' : '$'}.`)
@@ -223,11 +231,11 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                 amountInUSD: amountInUSD
             }
         ])
-       
+
         setCurrentAmount('')
     }
 
-    // function to add change 
+    // function to add change
     const handleAddChange = () => {
         if (!currentAmount || parseFloat(currentAmount) <= 0) {
             setModalMessage('Por favor ingresa un monto válido para el vuelto...')
@@ -252,15 +260,15 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
             isBolivar ? inputAmount / exchangeRate : inputAmount
         )
 
-        
+
         // Calculate how much change has already been broken down/allocated by the cashier
         const totalChangesAllocatedUSD = changes.reduce((acc, c) => acc + c.amountInUSD, 0)
         const remainingChangeUSD = Number((changeDueUSD - totalChangesAllocatedUSD).toFixed(2))
 
         // Critical validation: That the cashier does not try to give more change than the actual amount.
-        if (amountInUSD > (remainingChangeUSD + 0.01)) {
-            const maxAllowed = isBolivar 
-                ? (remainingChangeUSD * exchangeRate).toFixed(2) + " Bs" 
+        if (amountInUSD > (remainingChangeUSD + FLOAT_EPSILON)) {
+            const maxAllowed = isBolivar
+                ? (remainingChangeUSD * exchangeRate).toFixed(2) + " Bs"
                 : remainingChangeUSD.toFixed(2) + " $"
             setModalMessage(`El monto indicado supera el vuelto restante por entregar. Máximo permitido: ${maxAllowed}`)
             setShowModal(true)
@@ -283,7 +291,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
 
     // function to handle remove mistake payment
     const removePayment = (index) => {
-       setPayments(prev => 
+       setPayments(prev =>
             prev.filter((_, i) => i !== index)
         )
     }
@@ -295,7 +303,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
 
     const handleSubmitInvoice = (formData) => {
 
-        if (remainingToPayUSD > 0.01 && !isCredit) {
+        if (remainingToPayUSD > FLOAT_EPSILON && !isCredit) {
             setModalMessage(`Falta por completar el pago. Restan: ${remainingToPayUSD.toFixed(2)} $`)
             setShowModal(true)
             return
@@ -304,9 +312,9 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         formData.append('pin', supervisorPin)
 
         // Validation: If change is due, require it to be fully itemized.
-        if (changeDueUSD > 0.01) {
+        if (changeDueUSD > FLOAT_EPSILON) {
             const totalChangesAllocatedUSD = changes.reduce((acc, c) => acc + c.amountInUSD, 0)
-            if (Math.abs(changeDueUSD - totalChangesAllocatedUSD) > 0.01) {
+            if (Math.abs(changeDueUSD - totalChangesAllocatedUSD) > FLOAT_EPSILON) {
                 const pendingUSD = (changeDueUSD - totalChangesAllocatedUSD).toFixed(2)
                 setModalMessage(`Falta por desglosar la totalidad del vuelto. Restan por asignar: ${pendingUSD} $`)
                 setShowModal(true)
@@ -349,7 +357,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
             setIsCreditAuthorized(prev => !prev)
         }
     }
-    
+
     const handleReset = () => {
         setItems([])
         setActiveScreen('products')
@@ -366,7 +374,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         setIsCreditAuthorized(currentUser?.permissions.includes('update') ? true : false)
         const fd = new FormData()
         fd.append('reset', 'true')
-        
+
         startTransition(() => {
             formAction(fd)
         })
@@ -379,10 +387,10 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
             const totalCredits = parseFloat(customer?.total_credits || 0)
             const hasCredits = totalCredits > 0
 
-            const creditMethod = paymentMethods.find(pm => 
+            const creditMethod = paymentMethods.find(pm =>
             pm.id == STORE_CREDIT_ID)
 
-            const posMethod = paymentMethods.find(pm => 
+            const posMethod = paymentMethods.find(pm =>
             pm.name.toLowerCase().includes('punto') || pm.name.toLowerCase().includes('venta'))
 
             if (hasCredits && creditMethod) {
@@ -393,22 +401,22 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                 setSelectedPaymentMethodId(paymentMethods[0]?.id || '')
             }
         }else {
-            const posMethod = paymentMethods.find(pm => 
+            const posMethod = paymentMethods.find(pm =>
             pm.name.toLowerCase().includes('punto') || pm.name.toLowerCase().includes('venta'))
             setSelectedPaymentMethodId(posMethod?.id || paymentMethods[0]?.id || '')
         }
     }, [customer, paymentMethods])
-    
+
     //function to complete amount when store credit is selected
     useEffect(() => {
-        if (!customer) return 
+        if (!customer) return
 
         const availableCredit = parseFloat(customer?.total_credits || 0)
 
         const selectedMethod = paymentMethods.find(pm => pm.id === selectedPaymentMethodId)
         const isCredit = selectedMethod?.id == STORE_CREDIT_ID
-        
-        
+
+
 
         if (isCredit && availableCredit > 0) {
             const totalInvoice = parseFloat(total.total_usd || 0)
@@ -424,13 +432,13 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
     // reset function
     useEffect(() => {
         if (!state?.message) return
-                
+
         const intervalId = setInterval(() => {
             SetResetTime(seconds => seconds -1)
-        }, 1000)        
-        
-        return () => clearInterval(intervalId)     
-        
+        }, 1000)
+
+        return () => clearInterval(intervalId)
+
     }, [state])
 
     // reset on time 0
@@ -455,38 +463,48 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
 
             const shortcuts = ['f1', 'f2', 'f3']
             const key = event.key.toLowerCase()
-            
+
             const screens = {
                 f1: 'products',
                 f2: 'customer',
                 f3: 'pay'
             }
-            
+
             if (shortcuts.includes(key)) {
                 event.preventDefault()
                 if (key === 'f2' && items.length < 1 ) return
-                if (key === 'f3' && !customer ) return 
+                if (key === 'f3' && !customer ) return
                 setActiveScreen(screens[key])
+                return
             }
-            
+
+            // F4: jump straight into the payment method selector and open it,
+            // instead of relying on Tab order to reach it from wherever focus
+            // currently is (e.g. the amount input, several fields away).
+            if (key === 'f4') {
+                if (activeScreen !== 'pay') return
+                event.preventDefault()
+                paymentSelectRef.current?.openAndFocus()
+            }
+
         }
         window.addEventListener('keydown', shortcut)
         return () => window.removeEventListener('keydown', shortcut)
-    }, [items, customer, state])
-    
+    }, [items, customer, state, activeScreen])
 
-    // handle credit info message 
+
+    // handle credit info message
     const creditMessage = () => {
-        if (!customer) return 
-        
+        if (!customer) return
+
         const availableCredit = parseFloat(customer?.total_credits || 0)
         const selectedMethod = paymentMethods.find(pm => pm.id === selectedPaymentMethodId)
         const isCredit = selectedMethod?.id == STORE_CREDIT_ID
-        
+
         if (!isCredit || availableCredit <= 0) return null
 
         const totalInvoice = parseFloat(total.total_usd || 0)
-        
+
         if (availableCredit < totalInvoice) {
             return (
                 <div style={{ marginTop: '8px', color: '#d97706', fontSize: '14px', fontWeight: '500' }}>
@@ -501,7 +519,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
             </div>
         )
     }
-    
+
     return (
         <div className={styles.mainContainer}>
             <form ref={formRef} className={styles.mainContainer} action={handleSubmitInvoice}>
@@ -519,16 +537,16 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                     {
                         items.length > 0 &&
                         <div className={styles.cancelContainer}>
-                            <Button 
-                                type={'secondary'} 
+                            <Button
+                                type={'secondary'}
                                 onClick={handleReset}
                                 showIcon={true}
                                 icon={'trash'}
                                 size={[24, 24]}
                                 title={'Cancelar esta venta'}
-                                className='shadow-sm' 
-                                disabled={isPending || state?.message ? true : false}  
-                                children={'Cancelar venta'}   
+                                className='shadow-sm'
+                                disabled={isPending || state?.message ? true : false}
+                                children={'Cancelar venta'}
                             />
                         </div>
                     }
@@ -546,16 +564,16 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                     />
                     <SelectCustomer customer={customer} setCustomer={setCustomer} showResult={false} bgColor={'white'} activeScreen={activeScreen}/>
                     <div className={styles.cancelContainer}>
-                        <Button 
-                            type={'secondary'} 
+                        <Button
+                            type={'secondary'}
                             onClick={handleReset}
                             showIcon={true}
                             icon={'trash'}
                             size={[24, 24]}
                             title={'Cancelar esta venta'}
-                            className='shadow-sm' 
-                            disabled={isPending || state?.message ? true : false}  
-                            children={'Cancelar venta'}   
+                            className='shadow-sm'
+                            disabled={isPending || state?.message ? true : false}
+                            children={'Cancelar venta'}
                         />
                     </div>
                 </div>
@@ -569,10 +587,11 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                         state={state}
                         storeInactive={storeInactive}
                         blockedReason={blockedReason}
-                    /> 
-                   
-                    <Select 
-                        name='payment_method_id' 
+                    />
+
+                    <Select
+                        ref={paymentSelectRef}
+                        name='payment_method_id'
                         options={paymentOptions}
                         value={selectedPaymentMethodId}
                         resetKey={resetKey}
@@ -581,8 +600,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                         customer={customer}
                     />
                     {creditMessage()}
-                    <InputAddPay setAmount={setCurrentAmount} 
-                                 addPayment={handleAddPayment} 
+                    <InputAddPay setAmount={setCurrentAmount}
+                                 addPayment={handleAddPayment}
                                  amount={currentAmount}
                                  remainingToPayUSD={remainingToPayUSD}
                                  isPending={isPending}
@@ -601,27 +620,27 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                                  isCredit={isCredit}
                                  setIsCredit={setIsCredit}
                                  />
-    
+
                     <div className={`divider`}></div>
-                    
+
                     {/* success info */}
                     { state?.message && <SuccessInfo state={state} onClick={handleReset} time={resetTime}/> }
 
                     {/* error info */}
                     {state?.error && <span className="field_error">{state?.error}</span>}
-                    
 
-                    
-                    <TotaInfo 
-                        total={total} 
-                        totalPaidUSD={totalPaidUSD} 
-                        exchangeRate={exchangeRate} 
+
+
+                    <TotaInfo
+                        total={total}
+                        totalPaidUSD={totalPaidUSD}
+                        exchangeRate={exchangeRate}
                         remainingToPayUSD={remainingToPayUSD}
                         changeDueUSD={changeDueUSD}
                         activeChange={activeChange}
                         remaningChangeDue={remaningChangeDue}
                     />
-                    
+
 
                     <div className={`divider`}></div>
 
@@ -635,41 +654,41 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                     {
                         !state?.message && activeChange && <Pyaments payments={changes} removePayment={removeChange}/>
                     }
-                    
+
                     <Container
                         height={'100%'}
                         justifyContent={'space-between'}
                         alignItem={'end'}
                         padding={'0px'}
                     >
-                       
-                        <Button 
-                            type={'secondary'} 
+
+                        <Button
+                            type={'secondary'}
                             onClick={handleReset}
                             showIcon={true}
                             icon={'trash'}
                             size={[24, 24]}
                             title={'Cancelar esta venta'}
-                            className='shadow-sm' 
-                            disabled={isPending || state?.message ? true : false}  
-                            children={'Cancelar venta'}   
+                            className='shadow-sm'
+                            disabled={isPending || state?.message ? true : false}
+                            children={'Cancelar venta'}
                         />
-                        
+
                         {
                             payments.length < 1 &&
-                            <Button 
-                                type={'danger'} 
+                            <Button
+                                type={'danger'}
                                 onClick={handleCreditToggle}
                                 showIcon={true}
                                 icon={'coins'}
                                 size={[24, 24]}
                                 title={'Procesar Factura A Crédito'}
-                                className='shadow-sm' 
-                                disabled={isPending || state?.message ? true : false}  
-                                children={isCredit ? 'Cancelar venta a crédito' : 'Procesar factura a crédito'}   
+                                className='shadow-sm'
+                                disabled={isPending || state?.message ? true : false}
+                                children={isCredit ? 'Cancelar venta a crédito' : 'Procesar factura a crédito'}
                             />
                         }
-                                    
+
                     </Container>
                 </div>
 
@@ -678,11 +697,11 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                 <div className={styles.cartContainer}>
                     <Cart items={items} setItems={setItems} total={total} state={state} totalPaidUSD={totalPaidUSD}/>
                 </div>
-                
+
             </form>
-         
+
             {/* modal for alert messages */}
-            <Modal 
+            <Modal
                 show={showModal}
                 title={'No se puede realizar esta acción'}
                 showIcon={true}
@@ -690,7 +709,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                 icon='warning'
                 ignoreEnter={true}
                 iconColor='var(--color-accentRed400)'>
-                    <Container 
+                    <Container
                         className={styles.modalContent}
                         direction={'column'}
                         width={'100%'}
@@ -705,7 +724,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                             Aceptar
                     </Button>
             </Modal>
-            
+
             {/* Modal para solicitar PIN del Supervisor */}
             {showSupervisorModal && (
                 <ActionModal
@@ -719,20 +738,20 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                     confirmType="primary"
                     requirePin={true}
                     pin={supervisorPin}
-                    onChangePin={true} 
+                    onChangePin={true}
                     customPin={setSupervisorPin}
-                    action={AuthorizeAction} 
+                    action={AuthorizeAction}
 
                     onSuccess={(state) => {
                         if (state?.message) {
-                            setIsCreditAuthorized(true) 
+                            setIsCreditAuthorized(true)
                             setShowSupervisorModal(false)
                             setIsCredit(true)
                         }
                     }}
                 />
             )}
-            
+
         </div>
     )
 }

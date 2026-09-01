@@ -1,12 +1,12 @@
 export function Container(
-    {   
+    {
         ref,
         children='default content',
         gap,
         width,
         height,
         direction,
-        padding, 
+        padding,
         alignItem,
         justifyContent,
         flexGrow,
@@ -20,6 +20,15 @@ export function Container(
         id=null,
         position=null,
         marginLeft=null,
+        tabIndex=null,
+        onKeyDown,
+        onFocus,
+        onBlur,
+        role=null,
+        'aria-expanded': ariaExpanded,
+        'aria-haspopup': ariaHaspopup,
+        'aria-selected': ariaSelected,
+        'aria-label': ariaLabel,
     }) {
 
         const styles = {
@@ -37,15 +46,23 @@ export function Container(
             marginLeft: marginLeft
         }
     return (
-        <div ref={ref} className={`containerNexa ${className} ${listContiner ? 'container-list' : ''}`} style={styles} 
-            onMouseEnter={onMouseEnter} 
-            onMouseLeave={onMouseLeave} 
+        <div ref={ref} className={`containerNexa ${className} ${listContiner ? 'container-list' : ''}`} style={styles}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
             onClick={onClick}
             id={id}
+            tabIndex={tabIndex}
+            onKeyDown={onKeyDown}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            role={role}
+            aria-expanded={ariaExpanded}
+            aria-haspopup={ariaHaspopup}
+            aria-selected={ariaSelected}
+            aria-label={ariaLabel}
         >
             {children}
         </div>
     )
 }
-
 
