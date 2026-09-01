@@ -39,7 +39,8 @@ export default async function PendingPayments({page = 1, status = 'pending'}) {
     const tableData = payments.map((payment) => ({
         store_name: payment.owner?.store?.name || 'Sin tienda',
         email: payment.owner?.email || '—',
-        amount: `Bs. ${payment.amount_declared}`,
+        amount: `Bs ${new Intl.NumberFormat('es-VE').format(payment.amount_declared)}`,
+        amount_expected: `${payment?.amount_expected ? `Bs ${new Intl.NumberFormat('es-VE').format(payment.amount_expected)}` : '—'}`,
         status: <span className={`p3-r ${styles.statusBadge} ${styles[payment.status] || ''}`}>{statusLabels[payment.status] || payment.status}</span>,
         submitted_at: new Date(payment.submitted_at).toLocaleDateString('es-VE'),
         rejection_reason: payment.status === 'rejected' && payment.rejection_reason ? payment.rejection_reason : '—',
@@ -53,6 +54,7 @@ export default async function PendingPayments({page = 1, status = 'pending'}) {
                     store_name: 'Tienda',
                     email: 'Correo',
                     amount: 'Monto declarado',
+                    amount_expected: 'Monto esperado',
                     status: 'Estado',
                     submitted_at: 'Enviado',
                     rejection_reason: 'Motivo de rechazo',
