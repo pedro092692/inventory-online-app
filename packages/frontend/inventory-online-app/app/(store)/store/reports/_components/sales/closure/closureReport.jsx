@@ -181,7 +181,7 @@ export default function ClosureReport({totalBs = 0, totalUsd = 0, netBs = 0, net
                                 key={r.name}
                                 color={r.color}
                                 name={r.name}
-                                subtitle={r.onlyRefunds ? "Solo vueltos, sin ventas" : `Ventas: ${money(r.sales, r.isUsd ? "$" : "Bs ")}`}
+                                subtitle={r.onlyRefunds ? "Solo vueltos, sin ventas" : `Ventas: ${money(r.sales, r.isUsd ? "$" : "$")}`}
                                 value={money(r.net, r.isUsd ? "$" : "Bs ")}
                                 highlight={r.onlyRefunds}
                             />
