@@ -26,6 +26,19 @@ const STORE_CREDIT_ID = process.env.NEXT_PUBLIC_STORE_CREDIT_ID || 99
 // would still leave the invoice as 'unpaid'.
 const FLOAT_EPSILON = 0.001
 
+// Payment methods a cashier can actually hand back as "vuelto" (change):
+// cash, and any method that can send money back to the customer directly
+// (pago móvil, transferencia, cripto). IDs come from the fixed seeder
+// catalog — the same for every tenant, see
+// packages/backend/src/seeders/20250616062547-seed-payment-methods.js:
+// 2 Pago Movil, 3 Transferencia, 4 Efectivo Bolivares, 5 Efectivo Dolares,
+// 6 Transferencia Dolares, 7 Cripto.
+// Deliberately excluded: 1 Punto de venta, 8 Biopago, 9 Cashea — those only
+// register a transaction on a card/POS terminal, there's no way to physically
+// or digitally hand money back through them. Store Credit is excluded too
+// (never applicable as a change method).
+const CHANGE_ELIGIBLE_PAYMENT_IDS = [2, 3, 4, 5, 6, 7]
+
 
 export default function SellForm({ paymentMethods=[], exchangeRate=null, currentUser=null, storeInactive=false, blockedReason=null}) {
     const [activeScreen, setActiveScreen] = useState('products')
@@ -49,6 +62,13 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
     const [currentAmount, setCurrentAmount] = useState('')
     const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(1)
     const paymentOptions = SelectObject(paymentMethods, 'id', 'name')
+
+    // Filtered list for when the cashier is breaking down "vuelto" (change):
+    // only methods that can actually give money back to the customer.
+    const changeEligiblePaymentMethods = useMemo(() => {
+        return paymentMethods.filter(pm => CHANGE_ELIGIBLE_PAYMENT_IDS.includes(pm.id))
+    }, [paymentMethods])
+    const changePaymentOptions = SelectObject(changeEligiblePaymentMethods, 'id', 'name')
     const [showModal, setShowModal] = useState(false)
     const [modalMessage, setModalMessage] = useState('')
     const [resetTime, SetResetTime] = useState(15)
@@ -434,6 +454,22 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
 
     }, [selectedPaymentMethodId, customer, total, paymentMethods])
 
+    // When entering "Gestionar Vuelto" mode, make sure the selected payment
+    // method is one that can actually give change back. Without this, if the
+    // cashier had e.g. "Punto de venta" selected for the sale, the Select
+    // would silently keep submitting that id for the change breakdown while
+    // just displaying the first eligible option's label instead (Select
+    // falls back to options[0]'s label when the current value isn't among
+    // the options it's given) — the change would get logged under the wrong
+    // payment method.
+    useEffect(() => {
+        if (!activeChange) return
+        const isEligible = changeEligiblePaymentMethods.some(pm => pm.id == selectedPaymentMethodId)
+        if (!isEligible) {
+            setSelectedPaymentMethodId(changeEligiblePaymentMethods[0]?.id || '')
+        }
+    }, [activeChange, changeEligiblePaymentMethods])
+
     // reset function
     useEffect(() => {
         if (!state?.message) return
@@ -666,7 +702,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                     <Select
                         ref={paymentSelectRef}
                         name='payment_method_id'
-                        options={paymentOptions}
+                        options={activeChange ? changePaymentOptions : paymentOptions}
                         value={selectedPaymentMethodId}
                         resetKey={resetKey}
                         onChange={(payment) => setSelectedPaymentMethodId(payment.value)}
