@@ -1,81 +1,65 @@
 import styles from './page.module.css'
 import Image from 'next/image'
-import { Container } from '../../utils/container.jsx'
-import CircleIcon from '@/app/ui/utils/icons/circleIcon'
-import { Icon } from '../../utils/icons/icons'
+import Link from 'next/link'
+import { WHATSAPP_URL } from '../whatsappLink'
 
-export function HeroTwo({}) {
+const benefits = [
+    { title: '100% en la nube', text: 'Entras desde la tienda, la casa o el teléfono.' },
+    { title: 'Órdenes por WhatsApp', text: 'El cliente arma su pedido y te llega listo.' },
+    { title: 'Dólares y bolívares', text: 'Varios métodos de pago en la misma venta.' },
+    { title: 'Reportes al instante', text: 'Qué se vende, quién compra, cuánto queda.' },
+]
+
+export function HeroTwo() {
     return (
-        <section className={styles.hero2}>
-            <Container
-                padding={'40px'}
-                flexGrow={'1'}
-                className={styles.heroText}
-                direction={'column'}
-                gap={'24px'}
-                justifyContent={'start'}
-                alignItem={'start'}
-                // backgroundColor={'red'}
-            >
-                {/* text */}
-                <h1 className='h1'>
-                   El software que te ayuda a <span style={{color: 'var(--color-blue700)'}}>vender más y administrar mejor</span> tu negocio.
-                </h1>
+        <section className={styles.heroSection}>
+            <div className={styles.heroGrid}>
+                <div className={styles.heroTextCol}>
+                    <div className={styles.badge}>Para tiendas, minimarkets y ventas por WhatsApp</div>
 
-                <p className='p1-r' style={{color: 'var(--color-neutralGrey900)'}}>Gestiona inventario, ventas, clientes y reportes desde la nube. Más control, mejores decisiones y más crecimiento.</p>
+                    <h1 className={styles.headline}>
+                        Deja de adivinar<br />qué tienes y qué<br />se está vendiendo.
+                    </h1>
 
-                {/* icons */}
-                <Container
-                    padding={'0px'}
-                    justifyContent={'space-between'}
-                    alignItem={'center'}
-                    width={'100%'}
-                    className={styles.iconWrapper}
-                >
-                    <CircleIcon 
-                        icon='cloud'
-                        title='100% en la nube'
-                        text='accede desde cualquier lugar'
+                    <p className={styles.subtext}>
+                        Nexastock lleva tu inventario, tus ventas y tus pedidos de WhatsApp en un solo lugar. Desde la nube, en cualquier equipo.
+                    </p>
+
+                    <div className={styles.ctaRow}>
+                        <Link href='/#precio'>
+                            <span className={styles.primaryCta}>Ver precio — 20$/mes</span>
+                        </Link>
+                        <a href={WHATSAPP_URL} target='_blank' rel='noopener noreferrer' className={styles.secondaryCta}>
+                            Hablar por WhatsApp
+                        </a>
+                    </div>
+
+                    <div className={styles.disclaimerRow}>
+                        <span>Sin instalación</span><span className={styles.dot}>·</span>
+                        <span>Sin contrato</span><span className={styles.dot}>·</span>
+                        <span>Cancelas cuando quieras</span>
+                    </div>
+                </div>
+
+                <div className={styles.heroImageFrame}>
+                    <Image
+                        src='/images/home/hero_img_2.png'
+                        fill
+                        style={{objectFit: 'contain'}}
+                        alt='Panel de reportes de Nexastock'
+                        priority
                     />
+                </div>
+            </div>
 
-                    <CircleIcon 
-                        icon='whatsapp'
-                        title='Órdenes por WhatsApp'
-                        text='Tus clientes compran más fácil'
-                    />
-
-                    <CircleIcon 
-                        icon='shield'
-                        title='Seguro y confiable'
-                        text='Tus datos siempre protegidos'
-                    />
-
-                    <CircleIcon 
-                        icon='report'
-                        title='Reportes en tiempo real'
-                        text='Toma mejores decisiones al instante'
-                    />
-                </Container>
-
-                <p className='p3-r'>Calificado por negocios que crecen cada día mas de <span className='p3-b'>55 clientes ya confian en nosotros.</span></p>
-            </Container>
-            
-            {/* image */}
-            <Container
-                className={styles.heroImg}
-                padding={'0px'}
-                flexGrow={'1'}
-                children={''}
-                justifyContent={'center'}
-                alignItem={'center'}
-            >
-               <Image 
-                   src='/images/home/hero_img_2.png'
-                   height={715}
-                   width={1011}
-                  alt='Nexastock Software'
-                 />
-            </Container>
+            <div id='beneficios' className={styles.benefitsStrip}>
+                {benefits.map((item, index) => (
+                    <div className={styles.benefitItem} key={index}>
+                        <div className={styles.benefitTitle}>{item.title}</div>
+                        <div className={styles.benefitText}>{item.text}</div>
+                    </div>
+                ))}
+            </div>
         </section>
     )
 }

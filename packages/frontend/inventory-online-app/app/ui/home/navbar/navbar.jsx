@@ -1,5 +1,4 @@
 'use client'
-import { Container } from '../../utils/container'
 import { Logo } from '../../utils/logo'
 import { Icon } from '../../utils/icons/icons'
 import { MobileMenu } from './mobileMenu/mobileMenu'
@@ -15,7 +14,7 @@ const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:/
 export function Navbar() {
     const [isLogged, setIsLogged] = useState(false)
     const [open, setOpen] = useState(false)
-   
+
     useEffect(() => {
         const checkLogin = async () => {
         try {
@@ -32,40 +31,31 @@ export function Navbar() {
     }, [])
 
     return (
-        <nav className={`containerNexa ${styles.navbar}`}>
-            {/* company logo */}
-            <Link href='/' style={{height: '18px'}}> 
-                <Logo />
-            </Link>
+        <nav className={styles.navbar}>
+            {/* logo + menu de escritorio */}
+            <div className={styles.leftGroup}>
+                <Link href='/' style={{height: '18px'}}>
+                    <Logo />
+                </Link>
 
-            {/* main menu */}
-            <Container 
-                className={styles.menuButton}
-                padding='0px'
-                height={'100%'}
-                gap='16px'
-                justifyContent='start'
-                flexGrow='1'
-                >
-
+                <div className={styles.menuButton}>
                     <NavMenu />
+                </div>
+            </div>
 
-            </Container>
-            
-            {/* login button and burge menu */}
-            <Container 
-                className={styles.menuContainer}
-            >
+            {/* login, botón de precio y burger menu */}
+            <div className={styles.rightGroup}>
+                <div className={styles.menuButton}>
+                    <LoginButton isLogged={isLogged} />
+                    <Link href='/#precio'>
+                        <span className={styles.priceButton}>Ver precio</span>
+                    </Link>
+                </div>
 
-                <LoginButton isLogged={isLogged} className={styles.menuButton}/>
-            
-                {/* burger menu */}
-                <Icon onClick={() => setOpen(!open)} className={styles.segment} icon='segment' color='var(--color-neutralBlack)'
-                    
-                />
-            </Container>
-            
-            {/* moible menu */}
+                <Icon onClick={() => setOpen(!open)} className={styles.segment} icon='segment' color='var(--color-neutralBlack)' />
+            </div>
+
+            {/* menu movil */}
             <MobileMenu open={open} setOpen={setOpen}>
                 <LoginButton isLogged={isLogged} onClick={() => setOpen(false)}/>
             </MobileMenu>

@@ -1,0 +1,108 @@
+.section {
+    background: #0f2340;
+    padding: 88px 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 36px;
+    font-family: var(--font-manrope), sans-serif;
+}
+
+.header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.title {
+    margin: 0;
+    font-size: 40px;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    color: #fff;
+}
+
+.subtitle {
+    margin: 0;
+    font-size: 17px;
+    color: #9fb2ce;
+}
+
+.card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 44px;
+    width: 460px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.priceRow {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.price {
+    font-size: 62px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #0f2340;
+    line-height: 1;
+}
+
+.pricePeriod {
+    font-size: 18px;
+    color: #6b7688;
+    font-weight: 600;
+    padding-bottom: 8px;
+}
+
+.divider {
+    height: 1px;
+    background: #eceef2;
+}
+
+.featureList {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    font-size: 16px;
+    color: #2c3a4f;
+}
+
+.cta {
+    display: block;
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    background: #1b4fa8;
+    padding: 16px;
+    border-radius: 9px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.footnote {
+    font-size: 14px;
+    color: #6b7688;
+    text-align: center;
+}
+
+@media screen and (max-width: 560px) {
+    .section {
+        padding: 56px 24px;
+    }
+
+    .title {
+        font-size: 30px;
+    }
+
+    .card {
+        padding: 28px;
+        width: 100%;
+    }
+}

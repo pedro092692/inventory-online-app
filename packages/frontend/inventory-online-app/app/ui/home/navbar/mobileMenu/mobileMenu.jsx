@@ -4,9 +4,6 @@ import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import styles from './page.module.css'
 
-// Misma simplificación que en navMenu.jsx: en vez de 2 acordeones
-// (Funciones/Ventajas) con submenús cruzados y enlaces muertos, se muestran
-// directamente los 3 enlaces reales de la landing.
 export function MobileMenu({open, setOpen, children}) {
     const menuRef = useRef(null)
 
@@ -40,8 +37,13 @@ export function MobileMenu({open, setOpen, children}) {
             </Link>
             <div className={styles.line}></div>
 
-            <Link href='/#clientes' onClick={() => setOpen(false)}>
-                <p className='p1-r' style={{cursor: 'pointer', textAlign: 'right'}}>Clientes</p>
+            <Link href='/#como-funciona' onClick={() => setOpen(false)}>
+                <p className='p1-r' style={{cursor: 'pointer', textAlign: 'right'}}>Cómo funciona</p>
+            </Link>
+            <div className={styles.line}></div>
+
+            <Link href='/#precio' onClick={() => setOpen(false)}>
+                <p className='p1-r' style={{cursor: 'pointer', textAlign: 'right'}}>Precio</p>
             </Link>
             <div className={styles.line}></div>
 

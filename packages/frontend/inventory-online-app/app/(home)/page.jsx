@@ -1,17 +1,16 @@
-import { Hero } from '@/app/ui/home/hero/heroSection.jsx'
 import { HeroTwo } from '@/app/ui/home/hero/heroSection2.jsx'
-import { Benefits } from '@/app/ui/home/benefits/benefits.jsx'
-import { Customer } from '@/app/ui/home/customers/customers.jsx'
-import { CallToAction } from '@/app/ui/home/callToAction/callToAction.jsx'
+import { HowItWorks } from '@/app/ui/home/howItWorks/howItWorks.jsx'
+import { WhatsappOrders } from '@/app/ui/home/whatsappOrders/whatsappOrders.jsx'
+import { Pricing } from '@/app/ui/home/pricing/pricing.jsx'
 
 
 export default function Home() {
   return (
     <>
       <HeroTwo />
-      <Benefits /> 
-      <Customer />
-      <CallToAction />
+      <HowItWorks />
+      <WhatsappOrders />
+      <Pricing />
     </>
   )
 }
