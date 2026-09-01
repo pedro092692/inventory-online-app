@@ -322,9 +322,16 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         )
 
 
-        // Calculate how much change has already been broken down/allocated by the cashier
+        // Calculate how much change has already been broken down/allocated by the cashier.
+        // Kept at full precision — rounding this to 2 decimals in USD before
+        // converting to Bs was the bug: with an exchange rate near 795, a
+        // single USD cent is worth ~7.95 Bs, so truncating here (e.g. 0.1126
+        // -> 0.11) could understate the Bs limit by several bolívares versus
+        // what TotaInfo displays as "Cambio (Vuelto)" (which uses the
+        // unrounded changeDueUSD) — the cashier would see e.g. "89.52 Bs" as
+        // the change owed but get rejected entering anything past "87.45 Bs".
         const totalChangesAllocatedUSD = changes.reduce((acc, c) => acc + c.amountInUSD, 0)
-        const remainingChangeUSD = Number((changeDueUSD - totalChangesAllocatedUSD).toFixed(2))
+        const remainingChangeUSD = changeDueUSD - totalChangesAllocatedUSD
 
         // Critical validation: That the cashier does not try to give more change than the actual amount.
         if (amountInUSD > (remainingChangeUSD + FLOAT_EPSILON)) {
