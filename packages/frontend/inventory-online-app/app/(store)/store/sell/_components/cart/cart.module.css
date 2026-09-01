@@ -12,6 +12,11 @@
     gap: 0px;
 }
 
+.cartModeActive{
+    outline: 2px solid var(--color-blue400, #2563eb);
+    outline-offset: -2px;
+}
+
 .cartHeader{
     padding: 8px 16px;
     width: 100%;
@@ -43,7 +48,7 @@
     display: flex;
     justify-content: flex-end;
     /* background: grey; */
-    
+
 }
 
 .headerTOTAL{
@@ -86,6 +91,10 @@
     background-color: rgba(165, 164, 164, 0.15);
 }
 
+.cartRowHighlighted{
+    background-color: var(--color-blue100, rgba(37, 99, 235, 0.12));
+}
+
 .itemNameContainer{
     display: flex;
     justify-content: space-between;
@@ -114,7 +123,7 @@
 
 .itemName{
     flex: 1;
-    min-width: 0; 
+    min-width: 0;
     max-width: 90%;
 }
 

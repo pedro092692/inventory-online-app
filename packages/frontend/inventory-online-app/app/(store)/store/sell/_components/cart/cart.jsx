@@ -4,7 +4,7 @@ import styles from './cart.module.css'
 import { Button } from '@/app/ui/utils/button/buttons'
 
 
-export default function Cart({items=[], setItems, total=0, state={}, totalPaidUSD}) {
+export default function Cart({items=[], setItems, total=0, state={}, totalPaidUSD, highlightedIndex=-1}) {
 
     const handleRemoveItem = (id) => {
         if(state?.message) return
@@ -38,7 +38,7 @@ export default function Cart({items=[], setItems, total=0, state={}, totalPaidUS
     }
 
     return (
-        <Container className={`${styles.cartContainer} shadow`}>
+        <Container className={`${styles.cartContainer} ${highlightedIndex >= 0 ? styles.cartModeActive : ''} shadow`}>
             <Container className={styles.cartHeader}>
                 <div className={styles.headerNAME}>
                     <p className={'p3-b'}>
@@ -64,8 +64,9 @@ export default function Cart({items=[], setItems, total=0, state={}, totalPaidUS
             <Container className={styles.cartContent}>
                 <Container className={styles.cartItems}>
                     {items.map((item, index) => {
+                        const isHighlighted = index === highlightedIndex
                         return (
-                        <Container key={index} className={styles.cartRow}>
+                        <Container key={index} className={`${styles.cartRow} ${isHighlighted ? styles.cartRowHighlighted : ''}`}>
                             <div className={styles.itemNameContainer}>
                                 <p className={`${styles.itemName} p2-r`}>
                                    {`${item.name.length > 76 ? item.name.slice(0, 76) + '...' : item.name}`}

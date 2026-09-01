@@ -1,18 +1,19 @@
 'use client'
 import GetItemAction from '@/app/lib/actions/get'
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect, useMemo, useImperativeHandle } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import SearchCustomerInput from '@/app/ui/customers/searchAndSelect/input/searchInput'
 import ProductResultContainer from '@/app/(store)/store/sell/_components/product/productContainer'
 
-export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras', 
-    setItems=() => '', 
-    items=[], 
+export default function ProductSelector({placeHolder='Buscar Producto Por Nombre O Código De Barras',
+    setItems=() => '',
+    items=[],
     activeScreen=null,
     changes=[],
     setChanges=() => '',
-    autoFocus=true
-    
+    autoFocus=true,
+    ref=null
+
     }) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
@@ -25,46 +26,46 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
 
     const endpoint = `products/search`
     const params = new URLSearchParams()
-    
+
     // add params to url
     params.append('data', query)
     params.append('limit', 8)
     params.append('page', 1)
     params.append('stock', true)
     const url = `${endpoint}?${params.toString()}`
-    
+
     const handleInputChange = (e) => {
         const now = Date.now()
         const delta = now - lastKeyTime.current
         const value = e.target.value
-        // check if time is less than 30ms 
+        // check if time is less than 30ms
         if (delta < 30) {
             setIsScanning(true)
         }else {
             setIsScanning(false)
         }
-        
+
         // update last key time
         lastKeyTime.current = now
-        
+
         setQuery(value)
-        
+
         handleSearch(value)
     }
 
     const handleSearch = useDebouncedCallback(async (term) => {
         // check if there is products with zero quantity
         checkZeroQuantityProducts()
-        
+
         if(term) {
             const response = await GetItemAction(url)
             const {data, error} = response
             setResults(data?.products || [])
-            
+
             // check if product is scanning and add it to cart automatically
             if (data?.products.length == 1 && isScanning) handleClick(data?.products[0])
-            
-            // highligh first result 
+
+            // highligh first result
             if (highlightedIndex == -1) {
                 setHighlightedIndex(0)
             }
@@ -86,7 +87,7 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
         if (item) {
             const newQuantity = item.quantity + 1 > product.stock
                 ? product.stock
-                : item.quantity + 1 
+                : item.quantity + 1
 
             setItems(prev => prev.map(item => {
                 if (item.id !== product.id ) return item
@@ -112,24 +113,24 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
             setItems(prev => prev.map(item => {
                 if (item.quantity === "") return {...item, quantity: 1}
                 return item
-            
+
             }))
         }
     }
 
     const handleKeyDown = (e) => {
-        if (results.length === 0) return 
+        if (results.length === 0) return
 
         if (e.key === 'ArrowDown') {
             e.preventDefault()
-            setHighlightedIndex(prev => 
+            setHighlightedIndex(prev =>
                 prev < results.length - 1 ? prev + 1 : 0
             )
         }
 
         if (e.key === 'ArrowUp') {
             e.preventDefault()
-            setHighlightedIndex(prev => 
+            setHighlightedIndex(prev =>
                 prev > 0 ? prev - 1 : results.length - 1
             )
         }
@@ -140,10 +141,10 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
             handleClick(results[highlightedIndex])
         }
     }
-    
+
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside)
-        
+
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
         }
@@ -167,6 +168,13 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
 
     }, [query, results])
 
+    // Lets a parent (e.g. the Alt+C "cart mode" shortcut) return focus to the
+    // search box explicitly, since leaving cart mode doesn't itself change
+    // activeScreen and so wouldn't otherwise re-trigger the effect above.
+    useImperativeHandle(ref, () => ({
+        focusInput: () => inputRef.current?.focus()
+    }), [])
+
     return (
         <>
             {/* input search */}
@@ -175,12 +183,12 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
                 bgColor='white'
                 autoFocus={autoFocus}
             />
-            { results.length > 0 && <ProductResultContainer 
-                ref={showResultsRef} 
-                results={results} 
+            { results.length > 0 && <ProductResultContainer
+                ref={showResultsRef}
+                results={results}
                 onClick={handleClick}
                 highlightedIndex={highlightedIndex}
-                /> 
+                />
             }
 
             {
@@ -192,4 +200,4 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
             }
         </>
     )
-}   
+}

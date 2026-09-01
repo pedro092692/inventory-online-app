@@ -35,12 +35,15 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
     const [changes, setChanges] = useState([])
     const [resetKey, setResetKey] = useState(0)
     const [activeChange, setActiveChange] = useState(false)
+    const [cartMode, setCartMode] = useState(false)
+    const [cartHighlightedIndex, setCartHighlightedIndex] = useState(-1)
     const [isCredit, setIsCredit] = useState(false)
     const [showSupervisorModal, setShowSupervisorModal] = useState(false)
     const [supervisorPin, setSupervisorPin] = useState('')
     const [isCreditAuthorized, setIsCreditAuthorized] = useState(currentUser?.permissions.includes('update') ? true : false)
     const formRef = useRef(null)
     const paymentSelectRef = useRef(null)
+    const productSelectorRef = useRef(null)
 
     // local state to control actual amount
     const [currentAmount, setCurrentAmount] = useState('')
@@ -365,6 +368,8 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         setPayments([])
         setChanges([])
         setActiveChange(false)
+        setCartMode(false)
+        setCartHighlightedIndex(-1)
         setCurrentAmount('')
         setResetKey(prev => prev + 1)
         setSelectedPaymentMethodId('')
@@ -453,16 +458,85 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         if(items.length < 1) {
             setActiveScreen('products')
             setChanges([])
+            setCartMode(false)
+            setCartHighlightedIndex(-1)
         }
     }, [items])
+
+    // Leaves "cart mode" (see the Alt+C shortcut below): drops the row
+    // highlight and, if we're looking at the product screen, sends focus
+    // back to the search box so the cashier can keep scanning right away.
+    const exitCartMode = () => {
+        setCartMode(false)
+        setCartHighlightedIndex(-1)
+        if (activeScreen === 'products') {
+            productSelectorRef.current?.focusInput()
+        }
+    }
 
     //Keyboard shortcuts
     useEffect(() => {
         const shortcut = (event) => {
             if(state?.message) return
 
-            const shortcuts = ['f1', 'f2', 'f3']
             const key = event.key.toLowerCase()
+
+            // Alt+C: toggle "cart mode". Lets a whole line be entered with
+            // the keyboard alone — scan/add a product once, Alt+C into the
+            // cart, then bump its quantity with the arrow keys instead of
+            // reaching for the mouse or scanning the same barcode 5 more
+            // times (e.g. a customer taking 6 of the same soap).
+            if (event.altKey && key === 'c') {
+                event.preventDefault()
+                if (cartMode) {
+                    exitCartMode()
+                } else {
+                    if (items.length < 1) return
+                    setCartMode(true)
+                    setCartHighlightedIndex(items.length - 1)
+                }
+                return
+            }
+
+            if (cartMode) {
+                if (key === 'escape' || key === 'enter') {
+                    event.preventDefault()
+                    exitCartMode()
+                    return
+                }
+
+                if (key === 'arrowup' || key === 'arrowdown') {
+                    event.preventDefault()
+                    setCartHighlightedIndex(prev => {
+                        if (items.length < 1) return -1
+                        if (key === 'arrowdown') return prev < items.length - 1 ? prev + 1 : 0
+                        return prev > 0 ? prev - 1 : items.length - 1
+                    })
+                    return
+                }
+
+                if (key === 'arrowright' || key === 'arrowleft') {
+                    event.preventDefault()
+                    setItems(prev => prev.map((item, index) => {
+                        if (index !== cartHighlightedIndex) return item
+                        const currentQuantity = parseInt(item.quantity) || 0
+                        const nextQuantity = key === 'arrowright'
+                            ? Math.min(currentQuantity + 1, item.stock)
+                            : Math.max(1, currentQuantity - 1)
+                        return {...item, quantity: nextQuantity}
+                    }))
+                    return
+                }
+
+                if (key === 'delete' || key === 'backspace') {
+                    event.preventDefault()
+                    setItems(prev => prev.filter((_, index) => index !== cartHighlightedIndex))
+                    setCartHighlightedIndex(prev => Math.min(prev, items.length - 2))
+                    return
+                }
+            }
+
+            const shortcuts = ['f1', 'f2', 'f3']
 
             const screens = {
                 f1: 'products',
@@ -490,7 +564,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         }
         window.addEventListener('keydown', shortcut)
         return () => window.removeEventListener('keydown', shortcut)
-    }, [items, customer, state, activeScreen])
+    }, [items, customer, state, activeScreen, cartMode, cartHighlightedIndex])
 
 
     // handle credit info message
@@ -533,7 +607,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
                         storeInactive={storeInactive}
                         blockedReason={blockedReason}
                     />
-                    <ProductSelector  setItems={setItems} items={items} activeScreen={activeScreen} changes={changes} setChanges={setChanges}/>
+                    <ProductSelector  ref={productSelectorRef} setItems={setItems} items={items} activeScreen={activeScreen} changes={changes} setChanges={setChanges}/>
                     {
                         items.length > 0 &&
                         <div className={styles.cancelContainer}>
@@ -695,7 +769,7 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
 
                 {/* cart section */}
                 <div className={styles.cartContainer}>
-                    <Cart items={items} setItems={setItems} total={total} state={state} totalPaidUSD={totalPaidUSD}/>
+                    <Cart items={items} setItems={setItems} total={total} state={state} totalPaidUSD={totalPaidUSD} highlightedIndex={cartMode ? cartHighlightedIndex : -1}/>
                 </div>
 
             </form>
