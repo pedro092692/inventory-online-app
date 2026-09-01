@@ -75,8 +75,17 @@ export function Input({
                     placeholder={'Teléfono'}
                     mask={'+58 9999-999-99-99'}
                     onChange={onChange}
-                    defaultValue={value ?? defaultValue ?? ""}
-                    readOnly={readOnly}  
+                    // `defaultValue` only seeds InputMask once, at mount — it
+                    // never re-applies on a later render, so a parent that
+                    // resets its `value` state after the fact (e.g. clearing
+                    // the phone field once a customer is saved) has no way
+                    // to actually clear what's on screen or in the DOM
+                    // (which is what a plain form submit reads). Every
+                    // current caller of type="phone" already tracks its own
+                    // state and wires both `value` and `onChange`, so making
+                    // this properly controlled is safe and fixes the reset.
+                    value={value ?? defaultValue ?? ""}
+                    readOnly={readOnly}
                     name={name}
                     required={required}
                 />
