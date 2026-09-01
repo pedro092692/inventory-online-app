@@ -41,9 +41,27 @@ class AuthorizationMiddleWare {
         const response = NextResponse.next({ request: forwardedRequestInit(request, refreshedToken) })
         return applyRefreshedCookie(response, refreshedToken)
     }
+
+    checkOwner = async (request) => {
+        const { valid, data, refreshedToken } = await verifySession(request)
+        if (!valid) {
+            const redirectUrl = new URL('/login', request.url)
+            redirectUrl.searchParams.set('next', new URL(request.url).pathname)
+            return NextResponse.redirect(redirectUrl)
+        }
+
+        if (![1, 2 ].includes(data.role)) {
+            const response = NextResponse.redirect(new URL('/store', request.url))
+            return applyRefreshedCookie(response, refreshedToken)
+        }
+
+        const response = NextResponse.next({ request: forwardedRequestInit(request, refreshedToken) })
+        return applyRefreshedCookie(response, refreshedToken)
+    }
 }
 
 const checkAuthorization = new AuthorizationMiddleWare().checkAuthorization
 const checkAdmin = new AuthorizationMiddleWare().checkAdmin
+const checkOwner = new AuthorizationMiddleWare().checkOwner
 
-export { checkAuthorization, checkAdmin }
+export { checkAuthorization, checkAdmin, checkOwner }

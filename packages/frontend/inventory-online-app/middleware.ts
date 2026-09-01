@@ -1,6 +1,6 @@
 import { verifyAuth } from './app/middlewares/auth.js'
 import { redirectIfLoggedIn } from './app/middlewares/public.js'
-import { checkAuthorization, checkAdmin } from './app/middlewares/authorization.js'
+import { checkAuthorization, checkAdmin, checkOwner } from './app/middlewares/authorization.js'
 import { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
@@ -13,9 +13,9 @@ export function middleware(request: NextRequest) {
                           '/store/payment-methods',
                           '/store/currency',
                           '/store/reports',
-                          '/store/staff',
                           '/api/export',
                         ]
+  const ownerPaths = ['/store/staff']
   const adminPaths = ['/admin']
 
   if(publicPaths.some((path) => pathname.startsWith(path))) {
@@ -25,6 +25,10 @@ export function middleware(request: NextRequest) {
 
   if(authorizePaths.some((path) => pathname.startsWith(path))) {
     return checkAuthorization(request)
+  }
+
+  if(ownerPaths.some((path) => pathname.startsWith(path))) {
+    return checkOwner(request)
   }
 
   if(adminPaths.some((path) => pathname.startsWith(path))) {

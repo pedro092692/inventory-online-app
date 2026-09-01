@@ -36,7 +36,7 @@ export async function Panel({type = 'store'}) {
             title: 'Personal',
             icon: 'cashier',
             link: '/store/staff',
-            role: [1,2,3]
+            role: [1,2]
         },
 
         paymentMethods: {
