@@ -7,3 +7,10 @@
   flex-grow: 0 !important;
   border-radius: 8px;
 }
+
+@media screen and (max-width: 700px) {
+  .form,
+  .formview {
+    width: 100% !important;
+  }
+}

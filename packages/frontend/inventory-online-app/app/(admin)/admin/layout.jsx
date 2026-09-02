@@ -1,16 +1,18 @@
 import { Container } from '@/app/ui/utils/container'
 import { Panel } from '@/app/ui/dashboard/panel/panel'
+import styles from '@/app/(store)/layout.module.css'
 
 export default function Dashboard({children}) {
     return (
         <Container
-            marginLeft={'15%'}
+            className={styles.wrapper}
             flexGrow='1'
             alignItem='start'
             justifyContent='start'
             direction='row'
             padding='0'
             gap='0px'
+
 
         >
             {/* panel */}
@@ -20,9 +22,9 @@ export default function Dashboard({children}) {
                 padding='8px'
                 direction='column'
                 flexGrow='1'
-                height='100%'
                 alignItem='start'
                 justifyContent='start'
+                gap='8px'
             >
                 {/* content */}
                 {children}

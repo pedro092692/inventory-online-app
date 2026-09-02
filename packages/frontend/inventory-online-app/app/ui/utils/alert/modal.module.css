@@ -61,3 +61,13 @@
     align-items: center;
     overflow-y: auto;
 }
+
+/* en móvil el min-width fijo de .alert se salía del viewport y no dejaba ver
+   los botones del modal (Confirmar/Cancelar quedaban fuera de pantalla) */
+@media screen and (max-width: 500px) {
+    .alert {
+        min-width: 0;
+        width: calc(100vw - 32px);
+        max-width: 400px;
+    }
+}

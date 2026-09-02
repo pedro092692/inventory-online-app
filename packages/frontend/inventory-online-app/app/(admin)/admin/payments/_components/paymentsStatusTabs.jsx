@@ -32,6 +32,7 @@ export default function PaymentsStatusTabs() {
             className='shadow-sm'
             borderRadius={'8px'}
             backgroundColor={'var(--color-neutralGrey300)'}
+            flexWrap={'wrap'}
         >
             {
                 TABS.map((tab) => {

@@ -1,0 +1,10 @@
+.wrapper {
+    margin-left: var(--panel-width, 220px);
+}
+
+@media (max-width: 768px) {
+    .wrapper {
+        margin-left: 0;
+        margin-top: var(--topbar-height, 56px);
+    }
+}

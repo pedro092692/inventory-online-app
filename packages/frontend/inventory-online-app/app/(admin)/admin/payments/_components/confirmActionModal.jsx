@@ -57,7 +57,7 @@ export default function ConfirmActionModal({
             >
                 <p>{message}</p>
                 <Container padding="12px">
-                    <Container padding="0px" direction="row">
+                    <Container padding="0px" direction="row" flexWrap={'wrap'}>
                         <Button type="secondary" disabled={isPending} onClick={() => {
                             startTransition(() => {
                                dispatch()

@@ -14,7 +14,7 @@ export default async function CurrentRateCard() {
     const rate = data?.rate || null
 
     return (
-        <Container padding='0px' width='100%' justifyContent='flex-start' gap='32px'>
+        <Container padding='0px' width='100%' justifyContent='flex-start' gap='32px' flexWrap={'wrap'}>
             {
                 rate ? (
                     <KpiCard

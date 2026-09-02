@@ -6,7 +6,7 @@ import { Container } from '@/app/ui/utils/container'
 
 function KpiRowSkeleton({ count = 6 }) {
     return (
-        <Container padding={'0px'} width={'100%'} justifyContent={'flex-start'} gap={'20px'}>
+        <Container padding={'0px'} width={'100%'} justifyContent={'flex-start'} gap={'20px'} flexWrap={'wrap'}>
             {Array.from({ length: count }).map((_, i) => (
                 <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 h-19 w-55 animate-pulse" />
             ))}

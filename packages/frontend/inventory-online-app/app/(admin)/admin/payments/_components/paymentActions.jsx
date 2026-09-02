@@ -18,7 +18,7 @@ export default function PaymentActions({paymentId, status = 'pending', payment_s
     const revertAction = RevertPaymentAction.bind(null, paymentId)
     console.log(status)
     return (
-        <Container padding="0px" gap="8px" direction="row" justifyContent="start">
+        <Container padding="0px" gap="8px" direction="row" justifyContent="start" flexWrap={'wrap'}>
             <ViewReceiptButton paymentId={paymentId}/>
 
             {status === 'pending' && (

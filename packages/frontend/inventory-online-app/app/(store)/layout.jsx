@@ -2,7 +2,7 @@ import { Container } from '@/app/ui/utils/container'
 import { Panel } from '../ui/dashboard/panel/panel'
 import StoreStatusBanner from './_components/storeStatusBanner'
 import GetItemAction from '@/app/lib/actions/get'
-import styles from './layout.module.css'
+import styles from '@/app/(store)/layout.module.css'
 
 export default async function Dashboard({children, }) {
     const { data } = await GetItemAction('store/status')

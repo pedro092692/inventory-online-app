@@ -55,7 +55,7 @@ export default function RejectPaymentModal({show, onClose, paymentId}) {
                             style={{width: '100%'}}
                         />
                         {state?.errors?.reason && <span className="field_error">{state?.errors?.reason}</span>}
-                        <Container padding="0px" direction="row" width={'100%'}>
+                        <Container padding="0px" direction="row" width={'100%'} flexWrap={'wrap'}>
                             <Button role="submit" type="secondary" disabled={isPending}>
                                 {isPending && <OvalLoader/>}
                                 {isPending ? 'Rechazando...' : 'Sí, rechazar'}

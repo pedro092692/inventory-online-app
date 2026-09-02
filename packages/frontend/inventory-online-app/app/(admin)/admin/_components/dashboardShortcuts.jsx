@@ -27,7 +27,7 @@ function ShortcutCard({ label, href, icon: Icon }) {
 
 export default function DashboardShortcuts() {
     return (
-        <Container padding={'0px'} width={'100%'} justifyContent={'flex-start'} gap={'20px'}>
+        <Container padding={'0px'} width={'100%'} justifyContent={'flex-start'} gap={'20px'} flexWrap={'wrap'}>
             {SHORTCUTS.map((shortcut) => (
                 <ShortcutCard key={shortcut.href} {...shortcut} />
             ))}

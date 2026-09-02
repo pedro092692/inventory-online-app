@@ -60,7 +60,7 @@ export default function BlockStoreModal({show, onClose, tenantId}) {
                             style={{width: '100%'}}
                         />
                         {state?.errors?.reason && <span className="field_error">{state?.errors?.reason}</span>}
-                        <Container padding="0px" direction="row" width={'100%'}>
+                        <Container padding="0px" direction="row" width={'100%'} flexWrap={'wrap'}>
                             <Button role="submit" type="secondary" disabled={isPending}>
                                 {isPending && <OvalLoader/>}
                                 {isPending ? 'Bloqueando...' : 'Si, bloquear'}

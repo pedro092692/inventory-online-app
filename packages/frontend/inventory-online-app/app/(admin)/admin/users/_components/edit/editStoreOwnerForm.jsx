@@ -72,6 +72,7 @@ export default function StoreOwnerDetailForm({user, seller, store, stats}) {
                         padding={'0px'}
                         gap={'16px'}
                         width={'100%'}
+                        flexWrap={'wrap'}
                     >
                         <Card
                             title={'Estatus de suscripción'}

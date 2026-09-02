@@ -22,7 +22,7 @@ export default async function DashboardStats() {
     const stats = statsRes?.data?.stats || {}
 
     return (
-        <Container padding={'0px'} width={'100%'} justifyContent={'flex-start'} gap={'20px'}>
+        <Container padding={'0px'} width={'100%'} justifyContent={'flex-start'} gap={'20px'} flexWrap={'wrap'}>
             <KpiCard label={'Tasa del dólar (plataforma)'} value={rate ? `Bs. ${rate}` : '—'} icon={DollarSign} />
             <KpiCard label={'Tiendas totales'} value={stats.totalStores ?? '—'} icon={Store} />
             <KpiCard label={'Tiendas activas'} value={stats.activeStores ?? '—'} icon={CheckCircle2} textColor='green-700' />
