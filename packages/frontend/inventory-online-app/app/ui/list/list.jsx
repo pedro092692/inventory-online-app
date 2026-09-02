@@ -25,6 +25,10 @@ export default function List({
         editButtonType = 'warning'
 
     }) {
+    // etiquetas en el mismo orden que las columnas, para mostrarlas en la vista
+    // de tarjetas en pantallas angostas (ver list.module.css, media query mobile)
+    const headerLabels = Object.values(tableHead)
+
     return (
         <div className={`${styles.container} shadow-sm ${customClass}`} style={CustomStyles}>
             <table className={`${styles.table} p3-b`}>
@@ -53,16 +57,16 @@ export default function List({
                                         Object.keys(data).map((key, idx) => {
                                             if (key !== 'id' && !noRenderKeys.includes(key)) {
                                                 return (
-                                                    <td key={idx} data-label={key} 
+                                                    <td key={idx} data-label={key} data-label-text={headerLabels[idx] || key}
                                                         style={key === 'name' ? { textTransform: 'capitalize' } : {}}>
-                                                        {data[key]} 
+                                                        {data[key]}
                                                     </td>
                                                 )
                                             }
-                                            
+
                                             if (key === 'id' && showActions) {
                                                 return (
-                                                    <td key={idx} data-label={'actions'}>
+                                                    <td key={idx} data-label={'actions'} data-label-text={headerLabels[idx] || 'Acciones'}>
                                                         <Actions
                                                             userPermissions={userPermissions}
                                                             endpoint={endpoint}

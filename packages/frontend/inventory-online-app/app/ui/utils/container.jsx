@@ -20,6 +20,7 @@ export function Container(
         id=null,
         position=null,
         marginLeft=null,
+        flexWrap=null,
         tabIndex=null,
         onKeyDown,
         onFocus,
@@ -43,7 +44,8 @@ export function Container(
             backgroundColor: backgroundColor,
             borderRadius: borderRadius,
             position: position,
-            marginLeft: marginLeft
+            marginLeft: marginLeft,
+            flexWrap: flexWrap
         }
     return (
         <div ref={ref} className={`containerNexa ${className} ${listContiner ? 'container-list' : ''}`} style={styles}

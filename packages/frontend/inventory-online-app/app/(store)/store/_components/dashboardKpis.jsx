@@ -42,7 +42,7 @@ export default async function DashboardKpis() {
                 : `Vencida hace ${Math.abs(remaining)} día${Math.abs(remaining) === 1 ? '' : 's'}`
 
     return (
-        <Container padding={'0px'} width={'100%'} justifyContent={'flex-start'} gap={'20px'}>
+        <Container padding={'0px'} width={'100%'} justifyContent={'flex-start'} gap={'20px'} flexWrap={'wrap'}>
             <KpiCard label={'Tasa del dólar'} value={dollarRate ? `Bs. ${dollarRate}` : '—'} icon={DollarSign} mainTextSize='md'/>
             <KpiCard label={'Clientes'} value={customersKpi.total_customers ?? '—'} icon={Users} mainTextSize='md'/>
             <KpiCard label={'Productos registrados'} value={productsKpi.total_products ?? '—'} icon={Package} mainTextSize='md'/>

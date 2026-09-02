@@ -35,7 +35,7 @@ export default async function DashboardShortcuts() {
     const visibleShortcuts = SHORTCUTS.filter((shortcut) => shortcut.role.includes(userInfo?.role))
 
     return (
-        <Container padding={'0px'} width={'100%'} justifyContent={'flex-start'} gap={'20px'}>
+        <Container padding={'0px'} width={'100%'} justifyContent={'flex-start'} gap={'20px'} flexWrap={'wrap'}>
             {visibleShortcuts.map((shortcut) => (
                 <ShortcutCard key={shortcut.href} {...shortcut} />
             ))}
