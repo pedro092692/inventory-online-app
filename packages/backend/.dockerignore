@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log*
+.env
+.env.*
+.git
+.gitignore
+readme.md
+README.md
+
+# NOTE: do NOT add a bare "package.json" line here — this repo relies on several NESTED
+# package.json files (src/config/package.json, src/migrations/package.json,
+# src/migrations/tenant_migrations/package.json, src/seeders/admin/package.json) that each
+# just declare {"type": "commonjs"} or {"type": "module"} to override the root package.json's
+# module type for that folder. A pattern like "package.json" is NOT anchored to the repo root
+# — it would match and exclude ALL of those too, silently breaking CJS/ESM interop at runtime.

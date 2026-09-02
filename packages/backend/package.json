@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "migrate": "sequelize-cli db:migrate"
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +27,7 @@
     "pg": "^8.16.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
+    "sequelize-cli": "^6.6.2",
     "umzug": "^3.8.2",
     "xlsx": "^0.18.5"
   },

@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Produces a self-contained .next/standalone build (server + only the node_modules it
+  // actually needs) instead of requiring the full node_modules tree at runtime — this is
+  // what keeps the production Docker image small. See Dockerfile.
+  output: 'standalone',
   experimental: {
     authInterrupts: true,
     serverActions: {

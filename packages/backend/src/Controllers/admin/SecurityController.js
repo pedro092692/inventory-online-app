@@ -2,7 +2,16 @@ import UserService from '../../services/admin/UserService.js'
 import ControllerErrorHandler from '../../errors/controllerErrorHandler.js'
 import SecurityService from '../../services/admin/SecurityService.js'
 import { getUserPermission } from '../../middlewares/authorization.js'
+import process from 'process'
 
+// 'strict' only works when the frontend and backend are same-site (e.g. app.tudominio.com +
+// api.tudominio.com on the same registrable domain). Deploying to the free *.fly.dev
+// subdomains first — before a custom domain is ready — puts them on different "sites" (fly.dev
+// is on the public suffix list), so 'strict' cookies would never be sent cross-site at all.
+// Set the Fly secret COOKIE_SAME_SITE=none temporarily in that case (requires secure:true,
+// already set below); once the custom domain + subdomains are live, remove that secret (or set
+// it back to 'strict') so the app goes back to its normal, stronger default. See DEPLOY.md.
+const COOKIE_SAME_SITE = process.env.COOKIE_SAME_SITE || 'strict'
 
 class SecurityController {
     // new instance of controller error handler 
@@ -40,13 +49,13 @@ class SecurityController {
         res.cookie('access_token', token, {
             httpOnly: true,
             secure: true,
-            sameSite: 'strict',
+            sameSite: COOKIE_SAME_SITE,
             maxAge: 1000 * 60 * 60
         })
         .cookie('refresh_token', refreshToken, {
             httpOnly: true,
             secure: true,
-            sameSite: 'strict',
+            sameSite: COOKIE_SAME_SITE,
             maxAge: 1000 * 60 * 60 * 24 * 7
         })
         .status(200).json({message: 'Login successful'})
@@ -85,7 +94,7 @@ class SecurityController {
         res.cookie('access_token', token, {
             httpOnly: true,
             secure: true,
-            sameSite: 'strict',
+            sameSite: COOKIE_SAME_SITE,
             maxAge: 1000 * 60 * 60
         })
         .status(200).json({message: 'Token refreshed'})

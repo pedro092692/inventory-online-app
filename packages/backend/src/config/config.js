@@ -1,14 +1,33 @@
 /* eslint-disable no-undef */
 require('dotenv').config()
 
-const dbConfig = {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'postgres',
-    db_user_tenant: process.env.DB_USERTETANT
+// Fly Postgres (via `fly postgres attach`) — and most managed Postgres providers — inject a
+// single DATABASE_URL secret instead of separate host/user/password/database vars. Parse it
+// when present so deployment doesn't require manually splitting it into DB_* secrets; local
+// dev (which sets DB_USER/DB_PASSWORD/etc. individually in .env) keeps working unchanged since
+// DATABASE_URL simply isn't set there.
+let dbConfig
+if (process.env.DATABASE_URL) {
+    const dbUrl = new URL(process.env.DATABASE_URL)
+    dbConfig = {
+        username: decodeURIComponent(dbUrl.username),
+        password: decodeURIComponent(dbUrl.password),
+        database: dbUrl.pathname.replace(/^\//, ''),
+        host: dbUrl.hostname,
+        port: dbUrl.port ? parseInt(dbUrl.port, 10) : 5432,
+        dialect: 'postgres',
+        db_user_tenant: process.env.DB_USERTETANT
+    }
+} else {
+    dbConfig = {
+        username: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DATABASE,
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        dialect: 'postgres',
+        db_user_tenant: process.env.DB_USERTETANT
+    }
 }
 
 const appConfig = {
