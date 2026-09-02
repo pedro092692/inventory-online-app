@@ -1,0 +1,56 @@
+name: Deploy to Fly.io
+
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/backend/**"
+      - "packages/frontend/inventory-online-app/**"
+
+  workflow_dispatch:
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'packages/backend/**'
+            frontend:
+              - 'packages/frontend/inventory-online-app/**'
+
+  deploy-backend:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    concurrency: deploy-backend-nexastock-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy backend
+        working-directory: packages/backend
+        run: flyctl deploy --remote-only --app nexastock-api
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+  deploy-frontend:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    concurrency: deploy-frontend-nexastock-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy frontend
+        working-directory: packages/frontend/inventory-online-app
+        run: flyctl deploy --remote-only --app nexastock-app
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
