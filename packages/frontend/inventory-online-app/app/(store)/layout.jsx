@@ -26,7 +26,6 @@ export default async function Dashboard({children, }) {
                 padding='8px'
                 direction='column'
                 flexGrow='1'
-                height='100%'
                 alignItem='start'
                 justifyContent='start'
                 gap='8px'
