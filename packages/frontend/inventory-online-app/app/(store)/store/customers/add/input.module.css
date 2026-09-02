@@ -17,3 +17,15 @@
   padding: 16px;
   border-radius: 8px;
 }
+
+/* en pantallas angostas el 50% fijo aprieta demasiado el formulario */
+@media screen and (max-width: 700px) {
+  .form {
+    width: 100% !important;
+  }
+
+  .formview {
+    width: 100% !important;
+  }
+}
+

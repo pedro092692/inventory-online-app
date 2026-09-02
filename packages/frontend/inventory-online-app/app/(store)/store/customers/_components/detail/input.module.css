@@ -28,3 +28,9 @@
     text-align: right;
 }
 
+
+@media screen and (max-width: 700px) {
+  .formview {
+    width: 100% !important;
+  }
+}

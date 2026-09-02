@@ -14,7 +14,7 @@
   background: var(--color-neutralGrey500);
   padding: 16px;
   width: 50% !important;
-flex-grow: 0 !important;
+  flex-grow: 0 !important;
   border-radius: 8px;
 }
 
@@ -22,4 +22,13 @@ flex-grow: 0 !important;
 .table td[data-label="total"],
 .table td[data-label="date"]{
     text-align: right;
+}
+
+
+/* en pantallas angostas el 50% fijo aprieta demasiado el formulario */
+@media screen and (max-width: 700px) {
+  .formview {
+    width: 100% !important;
+    /* flex-grow: 0 !important; */
+  }
 }

@@ -292,6 +292,13 @@ a {
   border-radius: 8px;
 }
 
+/* en pantallas angostas el 50% fijo aprieta demasiado el formulario */
+@media screen and (max-width: 700px) {
+  .form-edit {
+    width: 100% !important;
+  }
+}
+
 .divider {
   width: 100%;
   height: 1px;
