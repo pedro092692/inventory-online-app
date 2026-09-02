@@ -1,0 +1,21 @@
+.wrapper {
+    flex-direction: row;
+}
+
+.divider {
+    width: 2px;
+    height: 100%;
+}
+
+/* en pantallas angostas los dos formularios (individual y carga masiva)
+   se apilan uno debajo del otro en vez de compartir la fila */
+@media screen and (max-width: 900px) {
+    .wrapper {
+        flex-direction: column;
+    }
+
+    .divider {
+        width: 100%;
+        height: 2px;
+    }
+}

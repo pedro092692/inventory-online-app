@@ -3,6 +3,7 @@ import Route from '@/app/ui/routesLinks/routes'
 import AddProductForm from '@/app/(store)/store/products/_components/add/addProductForm'
 import AddBulkProductsForm from '@/app/(store)/store/products/_components/bulk/addBulkProductsForm'
 import { Container } from '@/app/ui/utils/container'
+import styles from './addProduct.module.css'
 
 export default async function AddProduct({searchParams}) {
     const urlParams = await searchParams
@@ -17,7 +18,7 @@ export default async function AddProduct({searchParams}) {
                 alignItem={'start'}
                 justifyContent={'start'}
                 gap={'40px'}
-                className='shadow'
+                className={`shadow ${styles.wrapper}`}
                 borderRadius={'8px'}
             >
                 <Container
@@ -35,8 +36,7 @@ export default async function AddProduct({searchParams}) {
                 <Container
                     padding={'0px'}
                     backgroundColor={'#D2D3D3'}
-                    width={'2px'}
-                    height={'100%'}
+                    className={styles.divider}
                 >
                     <span></span>
                 </Container>
