@@ -88,6 +88,11 @@ a {
   --color-accentRed300: #EA9595;
   --color-accentRed200: #F2BFBF;
   /* end red accent */
+
+  /* store layout */
+  --panel-width: 220px;
+  --topbar-height: 56px;
+  /* end store layout */
 }
 
 html {

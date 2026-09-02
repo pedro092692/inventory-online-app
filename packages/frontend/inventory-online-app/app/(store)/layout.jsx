@@ -2,6 +2,7 @@ import { Container } from '@/app/ui/utils/container'
 import { Panel } from '../ui/dashboard/panel/panel'
 import StoreStatusBanner from './_components/storeStatusBanner'
 import GetItemAction from '@/app/lib/actions/get'
+import styles from './layout.module.css'
 
 export default async function Dashboard({children, }) {
     const { data } = await GetItemAction('store/status')
@@ -9,7 +10,7 @@ export default async function Dashboard({children, }) {
 
     return (
         <Container
-            marginLeft={'15%'}
+            className={styles.wrapper}
             flexGrow='1'
             alignItem='start'
             justifyContent='start'
