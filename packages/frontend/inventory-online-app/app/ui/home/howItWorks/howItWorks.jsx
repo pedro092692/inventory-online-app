@@ -4,7 +4,7 @@ const steps = [
     {
         n: '01',
         title: 'Carga tus productos',
-        text: 'Súbelos desde tu lista o cárgalos uno a uno. Precio, existencia y proveedor.',
+        text: 'Súbelos desde tu lista o cárgalos uno a uno. Costo, existencia y precio de venta.',
     },
     {
         n: '02',

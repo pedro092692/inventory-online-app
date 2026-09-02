@@ -6,7 +6,6 @@ const features = [
     'Órdenes de compra por WhatsApp',
     'Pagos en dólares y bolívares',
     'Reportes y análisis de clientes',
-    'Acceso desde cualquier dispositivo',
     'Soporte directo por WhatsApp',
 ]
 
