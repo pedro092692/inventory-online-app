@@ -6,6 +6,7 @@ import SplitListChart from '@/app/(store)/store/reports/_components/charts/barch
 import MethodsComparativeTable from '@/app/(store)/store/reports/_components/table/table'
 import {Container} from '@/app/ui/utils/container'
 import { PieChart, TrendingUp, CreditCard } from 'lucide-react'
+import styles from './detailsData.module.css'
 
 
 export default async function DetailsSales() {
@@ -128,6 +129,7 @@ export default async function DetailsSales() {
                 padding={'0px'}
                 gap={'16px'}
                 width={'100%'}
+                className={styles.chartsRow}
             >
                 <ChartSection title="Distribución por método" subtitle="% del total en USD"  icon={PieChart}>
                     <DonutChart methods={detailMethods} totalUsd={totalUsd} />

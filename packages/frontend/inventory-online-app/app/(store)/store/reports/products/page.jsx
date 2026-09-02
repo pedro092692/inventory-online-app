@@ -4,7 +4,7 @@ import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
 import ProductKPI from '@/app/(store)/store/reports/_components/products/kpi'
 import TopProducts from '@/app/(store)/store/reports/_components/products/topProductsData'
 import WorstProducts from '@/app/(store)/store/reports/_components/products/worstProductsData'
-
+import styles from './products.module.css'
 
 export default function Reports() {
     return (
@@ -20,9 +20,7 @@ export default function Reports() {
             
             <Suspense key={'charts'} fallback={<FormSkeleton nFields={1}/>} >
                 <Container
-                    padding={'16px'}
-                    width={'100%'}
-                    gap={'24px'}
+                    className={styles.chartContainer}
                 >   
                     <TopProducts />
                     <WorstProducts />

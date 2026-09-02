@@ -2,6 +2,7 @@ import GetItemAction from '@/app/lib/actions/get'
 import KpiCard from '@/app/(store)/store/reports/_components/kpiCards/kpiCards'
 import {Container} from '@/app/ui/utils/container'
 import { Users, Repeat2, Package, Boxes, Warehouse, BadgeDollarSign} from 'lucide-react'
+import styles from '../sales/kpi.module.css'
 
 
 export default async function ProductKPI({}) {
@@ -22,9 +23,9 @@ export default async function ProductKPI({}) {
         <Container
             padding={'0px 24px'}
             width={'100%'}
-            // justifyContent={'space-between'}
-            justifyContent={'flex-start'}
             gap={'32px'}
+            flexWrap={'wrap'}
+            className={styles.kpiContainer}
         >
                 <KpiCard label={'Productos registrados'} value={kpi.total_products} icon={Package} />
                 <KpiCard label={'Valor de inventario (costo)'} value={`$${new Intl.NumberFormat('es-VE').format(kpi.inventory_value)}`} icon={Warehouse} />

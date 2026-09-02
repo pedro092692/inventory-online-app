@@ -2,6 +2,7 @@ import GetItemAction from '@/app/lib/actions/get'
 import KpiCard from '@/app/(store)/store/reports/_components/kpiCards/kpiCards'
 import {Container} from '@/app/ui/utils/container'
 import { Users, Repeat2, Package, Phone, Calendar, Trophy, DollarSign} from 'lucide-react'
+import styles from '../sales/kpi.module.css'
 
 
 export default async function CustomerKPI({}) {
@@ -22,9 +23,9 @@ export default async function CustomerKPI({}) {
         <Container
             padding={'0px 24px'}
             width={'100%'}
-            // justifyContent={'space-between'}
-            justifyContent={'flex-start'}
             gap={'32px'}
+            flexWrap={'wrap'}
+            className={styles.kpiContainer}
         >
                 <KpiCard label={'Clientes'} value={kpi.total_customers} icon={Users} />
                 <KpiCard label={'Ticket Promedio'} value={`$${kpi.avg_ticket}`} icon={DollarSign} />

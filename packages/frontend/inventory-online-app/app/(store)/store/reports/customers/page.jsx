@@ -5,6 +5,7 @@ import { Suspense } from 'react'
 import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
 import TopRecurring from '@/app/(store)/store/reports/_components/customers/topRecurringData'
 import CustomerKPI from '@/app/(store)/store/reports/_components/customers/kpi'
+import styles from '../products/products.module.css'
 
 
 export default function Reports() {
@@ -21,9 +22,7 @@ export default function Reports() {
             
             <Suspense key={'charts'} fallback={<FormSkeleton nFields={1}/>} >
                 <Container
-                    padding={'16px'}
-                    width={'100%'}
-                    gap={'24px'}
+                    className={styles.chartContainer}
                 >
                     <TopSpenders />
                     <TopRecurring />

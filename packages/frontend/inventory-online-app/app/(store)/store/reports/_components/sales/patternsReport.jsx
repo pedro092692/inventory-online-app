@@ -4,6 +4,7 @@ import BestWorstDays from '@/app/(store)/store/reports/_components/sales/bestAnd
 import {Container} from '@/app/ui/utils/container'
 import { Suspense } from 'react'
 import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
+import styles from './patterns.module.css'
 
 
 export default async function SalesPatterns() {
@@ -18,6 +19,7 @@ export default async function SalesPatterns() {
             <Container
                 padding={'0px'}
                 width={'100%'}
+                className={styles.chartContainer}
             >
                 
                 <Suspense key={'SalesPeakHours'} fallback={<FormSkeleton nFields={1}/>} >

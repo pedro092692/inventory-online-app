@@ -3,7 +3,7 @@ import {Container} from '@/app/ui/utils/container'
 import { useState } from 'react'
 import { ReceiptText, Wallet, AlertTriangle } from "lucide-react"
 import ChartSection from '@/app/(store)/store/reports/_components/charts/sectionChart'
-
+import styles from './closure.module.css'
 
 export default function ClosureReport({totalBs = 0, totalUsd = 0, netBs = 0, netUsd = 0, closing_rows = [], balance_rows = []}) {
     const palette = {
@@ -142,7 +142,7 @@ export default function ClosureReport({totalBs = 0, totalUsd = 0, netBs = 0, net
     const CashClosingView = () => {
         return (
             <div style={{ display: "flex", flexDirection: "column", gap: 18, width: "100%" }}>
-                <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                <div className={styles.kpiContainer}>
                     <KpiCard icon={ReceiptText} label="Vendido en bolívares" value={money(totalBs, "Bs ")} />
                     <KpiCard icon={ReceiptText} label="Vendido en dólares" value={money(totalUsd, "$")} />
                 </div>
@@ -168,7 +168,7 @@ export default function ClosureReport({totalBs = 0, totalUsd = 0, netBs = 0, net
     const CashBalanceView = () => {
         return (
             <div style={{ display: "flex", flexDirection: "column", gap: 18, width: "100%"  }}>
-                <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                <div className={styles.kpiContainer}>
                     <KpiCard icon={Wallet} label="Neto en bolívares" value={money(netBs, "Bs ")} />
                     <KpiCard icon={Wallet} label="Neto en dólares" value={money(netUsd, "$")} />
                 </div>

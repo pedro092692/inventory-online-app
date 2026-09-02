@@ -21,8 +21,6 @@ export default async function AuditLogs({limit = 10, page = 1}) {
     const forbidden = data?.errors
     const rawData = data?.auditLogs || []
 
-    console.log(rawData)
-
     const formatDetail = (log) => {
         if (log.action === 'CANCEL_PAYMENT') {
             const amount = log.old_value?.amount

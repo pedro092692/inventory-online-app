@@ -1,0 +1,27 @@
+.navRow {
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* pantallas angostas: los tabs no entran todos en el ancho disponible.
+   En vez de recortarlos o hacerlos wrap (raro para una barra de tabs),
+   dejamos la fila deslizable horizontalmente y ocultamos la scrollbar. */
+@media screen and (max-width: 700px) {
+    .navRow {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .navRow::-webkit-scrollbar {
+        display: none;
+    }
+
+    .navRow > a {
+        flex-shrink: 0;
+    }
+}

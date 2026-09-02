@@ -1,5 +1,6 @@
 import GetItemAction from '@/app/lib/actions/get'
 import KpiCard from '@/app/(store)/store/reports/_components/kpiCards/kpiCards'
+import styles from './kpi.module.css'
 import {Container} from '@/app/ui/utils/container'
 import { Package, TrendingUp, Trophy, DollarSign} from 'lucide-react'
 import Link from 'next/link'
@@ -23,9 +24,9 @@ export default async function SaleKPI({}) {
         <Container
             padding={'0px 24px'}
             width={'100%'}
-            // justifyContent={'space-between'}
-            justifyContent={'flex-start'}
             gap={'32px'}
+            flexWrap={'wrap'}
+            className={styles.kpiContainer}
         >
                 <KpiCard label={'Unidades vendidas (30 días)'} value={kpi.total_products} icon={Package} />
                 <KpiCard label={'Ingresos (30 días)'} value={`$${kpi.revenue}`} icon={DollarSign} />

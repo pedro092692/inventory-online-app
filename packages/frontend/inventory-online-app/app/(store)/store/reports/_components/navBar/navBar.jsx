@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Container } from "@/app/ui/utils/container"
 import { Button } from "@/app/ui/utils/button/buttons"
 import Link from 'next/link'
+import styles from './navBar.module.css'
 
 export default function NavReports({canViewAudit = false}) {
     const pathname = usePathname()
@@ -41,9 +42,7 @@ export default function NavReports({canViewAudit = false}) {
         <Container
             padding={'16px'}
             width={'100%'}
-            alignItem={'center'}
-            justifyContent={'start'}
-            className='shadow-sm'
+            className={`shadow-sm ${styles.navRow}`}
             borderRadius={'8px'}
             backgroundColor={'var(--color-neutralGrey300)'}
         >

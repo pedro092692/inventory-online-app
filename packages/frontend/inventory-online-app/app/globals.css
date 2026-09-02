@@ -112,6 +112,7 @@ body {
   flex-direction: column;
   background-color: var(--color-neutralGrey100);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* fonts */

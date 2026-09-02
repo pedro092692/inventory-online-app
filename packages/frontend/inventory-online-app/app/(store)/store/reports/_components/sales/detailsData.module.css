@@ -1,0 +1,12 @@
+.chartsRow {
+    flex-direction: row;
+}
+
+/* el donut tiene un SVG de tamaño fijo (210px) — si esta fila se
+   comprime a la mitad del ancho en un celular, el donut se desborda.
+   Por eso apilamos las dos gráficas en vez de dejarlas en fila. */
+@media screen and (max-width: 700px) {
+    .chartsRow {
+        flex-direction: column;
+    }
+}

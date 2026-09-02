@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Container } from "@/app/ui/utils/container"
 import { Button } from "@/app/ui/utils/button/buttons"
 import Link from 'next/link'
+import styles from './navBar.module.css'
 
 export default function SalesNavbar() {
     const pathname = usePathname().split('/')
@@ -38,6 +39,7 @@ export default function SalesNavbar() {
             alignItem={'center'}
             justifyContent={'start'}
             borderRadius={'8px'}
+            className={styles.navRow}
         >
           
             {
