@@ -26,9 +26,9 @@ export function HeroTwo() {
                     </p>
 
                     <div className={styles.ctaRow}>
-                        {/* <Link href='/#precio'>
-                            <span className={styles.primaryCta}>Ver precio — 20$/mes</span>
-                        </Link> */}
+                        <Link href='/#precio'>
+                            <span className={styles.primaryCta}>Ver precio</span>
+                        </Link>
                         <a href={WHATSAPP_URL} target='_blank' rel='noopener noreferrer' className={styles.primaryCta}>
                             Quiero registrame
                         </a>
@@ -41,14 +41,15 @@ export function HeroTwo() {
                     </div>
                 </div>
 
-                <div className={styles.heroImageFrame}>
-                    {/* <Image
-                        src='/images/home/hero_img_2.png'
+                {/* <div className={styles.heroImageFrame}> */}
+                <div className={`${styles.heroImageFrame}`}>
+                    <Image
+                        src='/images/home/hero_img_106.png'
                         fill
-                        style={{objectFit: 'contain'}}
+                        style={{objectFit: 'cover'}}
                         alt='Panel de reportes de Nexastock'
                         priority
-                    /> */}
+                    />
                 </div>
             </div>
 

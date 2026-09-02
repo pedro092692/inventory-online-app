@@ -5,12 +5,12 @@ export function WhatsappOrders() {
     return (
         <section className={styles.section}>
             <div className={styles.imageFrame}>
-                {/* <Image
-                    src='/images/home/whatsapp_order.png'
+                <Image
+                    src='/images/home/invoice_1.png'
                     fill
                     style={{objectFit: 'contain'}}
                     alt='Orden de compra enviada por WhatsApp en Nexastock'
-                /> */}
+                />
             </div>
 
             <div className={styles.textCol}>
