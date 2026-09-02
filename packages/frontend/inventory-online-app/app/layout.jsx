@@ -75,19 +75,18 @@ export const metadata = {
     description: "Controla tu inventario, factura y vende desde un solo lugar.",
     url: "https://app.nexa-stock.com",
     siteName: "Nexastock",
-    // TODO: /icon.png es cuadrado (512x512) — sirve como imagen temporal, pero una
-    // imagen 1200x630 (horizontal) se ve mucho mejor en la mayoría de vistas previas.
-    // Cuando tengas una, cámbiala aquí.
-    images: [{ url: "/img/home/hero_img_105.png", width: 512, height: 512, alt: "Nexastock" }],
+    // Imagen real: 1920x1080 (16:9) — más ancha que alta, se ve bien en la mayoría
+    // de vistas previas. Lo ideal para Open Graph es 1200x630, pero esta se acerca.
+    images: [{ url: "/images/home/hero_img_105.png", width: 1920, height: 1080, alt: "Nexastock" }],
     locale: "es_VE",
     type: "website",
   },
   // Igual que Open Graph pero específico para X/Twitter — usa las mismas imágenes.
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Nexastock — Gestión de Inventarios Simplificada",
     description: "Controla tu inventario, factura y vende desde un solo lugar.",
-    images: ["/img/home/hero_img_105.png"],
+    images: ["/images/home/hero_img_105.png"],
   },
   robots: {
     index: true,
