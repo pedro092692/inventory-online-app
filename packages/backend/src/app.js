@@ -30,12 +30,14 @@ class Server {
      */
     constructor(){
         this.app = express()
-        this.port = 4000,
+        // Platforms like Fly.io/Render/Railway/Heroku assign the port at runtime and expect
+        // the app to bind to it via process.env.PORT — falls back to 4000 for local dev.
+        this.port = process.env.PORT || 4000
         this.db = new Database()
-        
+
         //app middlewares
         this.middlewares()
-        
+
         // app routes
         this.routes()
 
@@ -49,8 +51,11 @@ class Server {
         this.app.use(express.urlencoded({ extended: true }))
         this.app.use(express.json())
         this.app.use(cookieParser())
+        // FRONTEND_URL must be set in production to the deployed frontend's real origin
+        // (e.g. https://app.nexastock.com) — cookies-based auth needs an exact origin match,
+        // "*" won't work with credentials:true. Falls back to localhost for local dev.
         this.app.use(cors({
-            origin: 'http://127.0.0.1:3000',
+            origin: process.env.FRONTEND_URL || 'http://127.0.0.1:3000',
             credentials: true
         }))
     }

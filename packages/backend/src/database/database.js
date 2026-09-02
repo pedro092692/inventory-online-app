@@ -27,10 +27,18 @@ class Database {
             port: port,
             dialect: dialect,
             logging: false,
+            // This ONE pool is shared by the public schema AND every tenant schema (see
+            // TenantConnection, which used to open a separate connection pool per tenant —
+            // that grew without bound as the number of active stores grew). DB_POOL_MAX lets
+            // this be tuned to whatever your Postgres plan's connection limit allows; 10 is a
+            // reasonable default for a small deployment. `acquire` (how long a query waits for
+            // a free connection before failing) is bumped from the previous 3s to Sequelize's
+            // own default of 30s, since a few requests briefly queuing for a connection under
+            // load is normal and shouldn't error out that fast.
             pool: {
-                max: 3, 
+                max: parseInt(process.env.DB_POOL_MAX, 10) || 10,
                 min: 0,
-                acquire: 3000,
+                acquire: 30000,
                 idle: 10000
             }
         })

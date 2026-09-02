@@ -1,96 +1,101 @@
 import { DataTypes, Model } from 'sequelize'
 
-class Invoice extends Model {
-    // model relations
-
-    /**
-     * Creates an association between the Invoice model and the Customer model.
-     * @param {{Customer: typeof Model}} model - An object containing the Customer model.
-     * @returns {void} This method does not return a value.
-     */
-    static associate(model) {
-        this.belongsTo(model.Customer, {
-            foreignKey: 'customer_id',
-            as: 'customer'
-        })
-    }
-
-    /**
-     * Creates an association between Invoice model and the InvoiceDetail Model.
-     * @param {{InvoiceDetail: typeof Model}} model - An object containing the InvoiceDetail model.
-     * @returns {void} This method does not return a value. 
-     */
-    static associateDetail(model) {
-        this.hasMany(model.InvoiceDetail, {
-            foreignKey: 'invoice_id',
-            as: 'details'
-        })
-    }
-
-    /**
-     * Creates and association between Invoice model and the Product Model through InvoiceDetail mode.
-     * @param {{Product: typeof Model}} model - An object containing the Product model.
-     * @returns {void} This method does not return a value. 
-     */
-    static associationProducts(model) {
-        this.belongsToMany(model.Product, {
-            through: 'invoice_details',
-            foreignKey: 'invoice_id',
-            timestamps: false,
-            as: 'products'
-        }) 
-    }
-
-
-    /**
-     * Creates an association between Invoice model and the Seller model.
-     * @param {{Seller: typeof Model}} model - An object containing the Seller model.
-     * @returns {void} This method does not return a value. 
-     */
-    static associationSeller(model) {
-        this.belongsTo(model.Seller, {
-            foreignKey: 'seller_id',
-            as: 'seller'
-        })
-    }
-
-    /**
-     * Creates an association between Invoice model and the PaymentDetail mode.
-     * @param {{PaymentDetail: typeof Model}} model - An object containing the InvoiceDetail model
-     * @return {void} This method does not return a value. 
-     */
-    static associatePaymentDetail(model) {
-        this.hasMany(model.PaymentDetail, {
-            foreignKey: 'invoice_id',
-            as: 'payments-details'
-        })
-    }
-
-    /**
-     * Creates an association between Invoice model the Pyament model through PaymentDetail model.
-     * @param {{Payment: typeof Model}} model - An object containing the Payment model
-     * @return {void} This method does not return a value. 
-     */
-    static associatePayments(model) {
-        this.belongsToMany(model.Payment, {
-            through: 'payment_details',
-            foreignKey: 'invoice_id',
-            timestamps: false,
-            as: 'payments'
-        })
-    }
-
-}
 /**
  * Initializes the Invoice model with its schema definition and configuration.
- * This function sets up the Invoice model with fields such as `id`, `date`, `product_id`, `customer_id`, `seller_id`, `total`, 
+ * This function sets up the Invoice model with fields such as `id`, `date`, `product_id`, `customer_id`, `seller_id`, `total`,
  * `total_reference`, `total_paid` and `status`
  * and configures Sequelize options like model name, table name, schema, and timestamps.
+ *
+ * IMPORTANT: the `Invoice` class is defined INSIDE this function on purpose, so every call
+ * returns a brand-new class bound to its own `sequelize`/`schema` — see the comment in
+ * CustomerModel.js for why a shared, module-level class is unsafe in a schema-per-tenant setup.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
  * @param {string} schema - The schame used to register the model.
  * @return {Invoice: typeof model} returns invoice model.
  */
 function initializeInvoice(sequelize, schema) {
+    class Invoice extends Model {
+        // model relations
+
+        /**
+         * Creates an association between the Invoice model and the Customer model.
+         * @param {{Customer: typeof Model}} model - An object containing the Customer model.
+         * @returns {void} This method does not return a value.
+         */
+        static associate(model) {
+            this.belongsTo(model.Customer, {
+                foreignKey: 'customer_id',
+                as: 'customer'
+            })
+        }
+
+        /**
+         * Creates an association between Invoice model and the InvoiceDetail Model.
+         * @param {{InvoiceDetail: typeof Model}} model - An object containing the InvoiceDetail model.
+         * @returns {void} This method does not return a value.
+         */
+        static associateDetail(model) {
+            this.hasMany(model.InvoiceDetail, {
+                foreignKey: 'invoice_id',
+                as: 'details'
+            })
+        }
+
+        /**
+         * Creates and association between Invoice model and the Product Model through InvoiceDetail mode.
+         * @param {{Product: typeof Model}} model - An object containing the Product model.
+         * @returns {void} This method does not return a value.
+         */
+        static associationProducts(model) {
+            this.belongsToMany(model.Product, {
+                through: 'invoice_details',
+                foreignKey: 'invoice_id',
+                timestamps: false,
+                as: 'products'
+            })
+        }
+
+
+        /**
+         * Creates an association between Invoice model and the Seller model.
+         * @param {{Seller: typeof Model}} model - An object containing the Seller model.
+         * @returns {void} This method does not return a value.
+         */
+        static associationSeller(model) {
+            this.belongsTo(model.Seller, {
+                foreignKey: 'seller_id',
+                as: 'seller'
+            })
+        }
+
+        /**
+         * Creates an association between Invoice model and the PaymentDetail mode.
+         * @param {{PaymentDetail: typeof Model}} model - An object containing the InvoiceDetail model
+         * @return {void} This method does not return a value.
+         */
+        static associatePaymentDetail(model) {
+            this.hasMany(model.PaymentDetail, {
+                foreignKey: 'invoice_id',
+                as: 'payments-details'
+            })
+        }
+
+        /**
+         * Creates an association between Invoice model the Pyament model through PaymentDetail model.
+         * @param {{Payment: typeof Model}} model - An object containing the Payment model
+         * @return {void} This method does not return a value.
+         */
+        static associatePayments(model) {
+            this.belongsToMany(model.Payment, {
+                through: 'payment_details',
+                foreignKey: 'invoice_id',
+                timestamps: false,
+                as: 'payments'
+            })
+        }
+
+    }
+
     Invoice.init(
         {
             id: {
@@ -142,7 +147,7 @@ function initializeInvoice(sequelize, schema) {
             },
 
             total_reference: {
-                type: DataTypes.DECIMAL(20, 2), 
+                type: DataTypes.DECIMAL(20, 2),
                 allowNull: true,
                 defaultValue: 0.00,
                 validate: {
@@ -186,4 +191,4 @@ function initializeInvoice(sequelize, schema) {
     return Invoice
 }
 
-export { initializeInvoice, Invoice } 
+export { initializeInvoice }

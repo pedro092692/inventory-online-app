@@ -1,74 +1,84 @@
 import { DataTypes, Model } from 'sequelize'
 
-class InvoiceReturn extends Model {
-    // model relations
-
-    /**
-     * Creates an association between InvoiceDetail model and the CustomerCredit model.
-     * @param {{InvoiceDetail: typeof: Model}} model - An object containing the InvoiceDetail model.model
-     * @return {void} Thid method does not return a value.
-     */
-    static associationInvoiceDetail(model) {
-        this.belongsTo(model.InvoiceDetail, {
-            foreignKey: 'invoice_detail_id',
-            as: 'invoice_detail'
-        })
-    }
-
-    /**
-     * Creates an association between Invoice model and the CustomerCredit model.
-     * @param {{Invoice: typeof Model}} model - An object containing the Invoice model.
-     * @return {void} This method does not return a value.
-     */
-    static associationInvoice(model) {
-        this.belongsTo(model.Invoice, {
-            foreignKey: 'invoice_id',
-            as: 'invoice'
-        })
-    }
-
-    /**
-     * Creates an association between User model and the CustomerCredit model.
-     * @param {{User: typeof Model}} model - An object containing the User model.
-     * @return {void} This method does not return a value.
-     */
-    static associationCustomerCredit(model) {
-        this.belongsTo(model.CustomerCredit, {
-            foreignKey: 'customer_credit_id',
-            as: 'customer_credit'
-        })
-    }
-
-     /**
-     * Creates an association between User model and the CustomerCredit model.
-     * @param {{Seller: typeof Model}} model - An object containing the User model.
-     * @return {void} This method does not return a value.
-     */
-    static associationUser(model) {
-        this.belongsTo(model.User, {
-            foreignKey: 'user_id',
-            as: 'user',
-            constraints: false
-        })
-    }
-
-    /**
-     * Creates an association between Seller model and the CustomerCredit model.
-     * @param {{Seller: typeof Model}} model - An object containing the Seller model.
-     * @return {void} This method does not return a value.
-     */
-    static associationSupervisorSeller(model) {
-        this.belongsTo(model.Seller, {
-            foreignKey: 'supervisor_seller_id',
-            as: 'supervisorSeller',
-            constraints: false,
-        })
-    }
-
-
-}
-
+/**
+ * Initializes the InvoiceReturn model with its schema definition and configuration.
+ *
+ * IMPORTANT: the `InvoiceReturn` class is defined INSIDE this function on purpose, so every call
+ * returns a brand-new class bound to its own `sequelize`/`schema` — see the comment in
+ * CustomerModel.js for why a shared, module-level class is unsafe in a schema-per-tenant setup.
+ * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
+ * @param {string} schema - The schame used to register the model.
+ * @return {InvoiceReturn: typeof model} returns InvoiceReturn model.
+ */
 function initializeInvoiceReturn(sequelize, schema) {
+    class InvoiceReturn extends Model {
+        // model relations
+
+        /**
+         * Creates an association between InvoiceDetail model and the CustomerCredit model.
+         * @param {{InvoiceDetail: typeof: Model}} model - An object containing the InvoiceDetail model.model
+         * @return {void} Thid method does not return a value.
+         */
+        static associationInvoiceDetail(model) {
+            this.belongsTo(model.InvoiceDetail, {
+                foreignKey: 'invoice_detail_id',
+                as: 'invoice_detail'
+            })
+        }
+
+        /**
+         * Creates an association between Invoice model and the CustomerCredit model.
+         * @param {{Invoice: typeof Model}} model - An object containing the Invoice model.
+         * @return {void} This method does not return a value.
+         */
+        static associationInvoice(model) {
+            this.belongsTo(model.Invoice, {
+                foreignKey: 'invoice_id',
+                as: 'invoice'
+            })
+        }
+
+        /**
+         * Creates an association between User model and the CustomerCredit model.
+         * @param {{User: typeof Model}} model - An object containing the User model.
+         * @return {void} This method does not return a value.
+         */
+        static associationCustomerCredit(model) {
+            this.belongsTo(model.CustomerCredit, {
+                foreignKey: 'customer_credit_id',
+                as: 'customer_credit'
+            })
+        }
+
+         /**
+         * Creates an association between User model and the CustomerCredit model.
+         * @param {{Seller: typeof Model}} model - An object containing the User model.
+         * @return {void} This method does not return a value.
+         */
+        static associationUser(model) {
+            this.belongsTo(model.User, {
+                foreignKey: 'user_id',
+                as: 'user',
+                constraints: false
+            })
+        }
+
+        /**
+         * Creates an association between Seller model and the CustomerCredit model.
+         * @param {{Seller: typeof Model}} model - An object containing the Seller model.
+         * @return {void} This method does not return a value.
+         */
+        static associationSupervisorSeller(model) {
+            this.belongsTo(model.Seller, {
+                foreignKey: 'supervisor_seller_id',
+                as: 'supervisorSeller',
+                constraints: false,
+            })
+        }
+
+
+    }
+
     InvoiceReturn.init(
         {
             id: {
@@ -76,12 +86,12 @@ function initializeInvoiceReturn(sequelize, schema) {
                 autoIncrement: true,
                 primaryKey: true
             },
-            
+
             invoice_id:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            
+
             invoice_detail_id:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -90,7 +100,7 @@ function initializeInvoiceReturn(sequelize, schema) {
                     key: 'id'
                 }
             },
-            
+
             customer_credit_id: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
@@ -146,4 +156,4 @@ function initializeInvoiceReturn(sequelize, schema) {
     return InvoiceReturn
 }
 
-export { initializeInvoiceReturn, InvoiceReturn }
+export { initializeInvoiceReturn }

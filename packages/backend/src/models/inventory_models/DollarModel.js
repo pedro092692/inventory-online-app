@@ -1,23 +1,27 @@
 import { DataTypes, Model } from 'sequelize'
 
-class Dollar extends Model {
-    // model relations
-}
-
 /**
  * Initializes the Dollar model with its schema definition and configuration.
  * This function sets up the Dollar model with fields such as `id`, `value`, and `date`,
  * and configures Sequelize options like table name, schema, and timestamps.
+ *
+ * IMPORTANT: the `Dollar` class is defined INSIDE this function on purpose, so every call
+ * returns a brand-new class bound to its own `sequelize`/`schema` — see the comment in
+ * CustomerModel.js for why a shared, module-level class is unsafe in a schema-per-tenant setup.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
  * @param {String} schema - The schame used to register the model.
  * @return {Dollar: typeof model} returns Dollar model.
  */
 function initializeDollar(sequelize, schema) {
+    class Dollar extends Model {
+        // model relations
+    }
+
     Dollar.init(
         {
             id: {
                 type: DataTypes.INTEGER,
-                autoIncrement: true, 
+                autoIncrement: true,
                 primaryKey: true
             },
 
@@ -53,4 +57,4 @@ function initializeDollar(sequelize, schema) {
     return Dollar
 }
 
-export { initializeDollar, Dollar }
+export { initializeDollar }

@@ -1,9 +1,5 @@
 import { DataTypes, Model } from 'sequelize'
 
-class StoreSettings extends Model {
-    // model relations
-}
-
 /**
  * Initializes the StoreSettings model with its schema definition and configuration.
  *
@@ -13,11 +9,18 @@ class StoreSettings extends Model {
  * Cotizar/Etiquetas screens — see `applyBufferRate` on the frontend for the math. Real
  * sales/invoices are intentionally never read from here.
  *
+ * IMPORTANT: the `StoreSettings` class is defined INSIDE this function on purpose, so every
+ * call returns a brand-new class bound to its own `sequelize`/`schema` — see the comment in
+ * CustomerModel.js for why a shared, module-level class is unsafe in a schema-per-tenant setup.
  * @param {import('sequelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
  * @param {String} schema - The schema used to register the model.
  * @return {StoreSettings: typeof model} returns StoreSettings model.
  */
 function initializeStoreSettings(sequelize, schema) {
+    class StoreSettings extends Model {
+        // model relations
+    }
+
     StoreSettings.init(
         {
             id: {
@@ -62,4 +65,4 @@ function initializeStoreSettings(sequelize, schema) {
     return StoreSettings
 }
 
-export { initializeStoreSettings, StoreSettings }
+export { initializeStoreSettings }

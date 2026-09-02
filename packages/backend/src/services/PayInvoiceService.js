@@ -8,7 +8,6 @@ import CustomerCreditService from './CustomerCreditService.js'
 import { sequelize } from '../database/database.js'
 import hasPassword from '../utils/encrypt.js'
 import process from 'process'
-import { Customer } from '../models/inventory_models/CustomerModel.js'
 
 class PayInvoiceService {
     // instace of error handler

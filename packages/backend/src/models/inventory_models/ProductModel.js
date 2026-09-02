@@ -1,40 +1,44 @@
 import { DataTypes, Model } from 'sequelize'
 
-class Product extends Model {
-    // model relations
-
-    /**
-     * Creates an association between Product model and the Invoice model.
-     * @param {{Invoice: typeof Model}} model -An object containing the Invoice model.
-     * @return {void} This method does not return a value. 
-     */
-    static associationInvoiceDetails(model) {
-        this.belongsToMany(model.Invoice, {
-            through: 'invoice_details',
-            foreignKey: 'product_id',
-            timestamps: false,
-            as: 'invoices'
-        })
-    }
-
-  
-    
-}
-
 /**
  * Initializes Product model with its schema definition and configuration.
  * This function set up Product model with filds such as: `id`, `barcpde`, `name`, `purchase_price`, `stock` and `selling_price`.
  * And configure Sequelize options like model name, table name, schema and timestamps.
+ *
+ * IMPORTANT: the `Product` class is defined INSIDE this function on purpose, so every call
+ * returns a brand-new class bound to its own `sequelize`/`schema` — see the comment in
+ * CustomerModel.js for why a shared, module-level class is unsafe in a schema-per-tenant setup.
  * @param {import('seuqelize').Sequelize} sequelize - The Sequelize instance used to initialize the model.
  * @param {string} schema - The schame used to register the model.
  * @return {Product: typeof model} returns Product model.
  */
 function initializeProduct(sequelize, schema) {
+    class Product extends Model {
+        // model relations
+
+        /**
+         * Creates an association between Product model and the Invoice model.
+         * @param {{Invoice: typeof Model}} model -An object containing the Invoice model.
+         * @return {void} This method does not return a value.
+         */
+        static associationInvoiceDetails(model) {
+            this.belongsToMany(model.Invoice, {
+                through: 'invoice_details',
+                foreignKey: 'product_id',
+                timestamps: false,
+                as: 'invoices'
+            })
+        }
+
+
+
+    }
+
     Product.init(
         {
             id: {
-                type: DataTypes.INTEGER, 
-                autoIncrement: true, 
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
                 primaryKey: true
             },
 
@@ -48,14 +52,14 @@ function initializeProduct(sequelize, schema) {
             },
 
             name: {
-                type: DataTypes.STRING, 
-                allowNull: false, 
+                type: DataTypes.STRING,
+                allowNull: false,
                 defaultValue: 'Default product',
-            }, 
+            },
 
             purchase_price: {
                 type: DataTypes.DECIMAL(10, 2),
-                allowNull: false, 
+                allowNull: false,
                 validate: {
                     isNumeric: {
                         msg: 'A valid price is required.'
@@ -65,7 +69,7 @@ function initializeProduct(sequelize, schema) {
 
             selling_price: {
                 type: DataTypes.DECIMAL(10, 2),
-                allowNull: false, 
+                allowNull: false,
                 validate: {
                     isNumeric: {
                         msg: 'A valid number is required.'
@@ -118,5 +122,4 @@ function initializeProduct(sequelize, schema) {
     return Product
 }
 
-export { initializeProduct, Product }
-
+export { initializeProduct }

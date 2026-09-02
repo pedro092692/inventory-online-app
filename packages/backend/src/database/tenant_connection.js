@@ -1,19 +1,19 @@
 import pkg from '../config/config.js'
 import process from 'process'
 import { Sequelize } from 'sequelize'
-import { initializeCustomer, Customer } from '../models/inventory_models/CustomerModel.js'
-import { initializeInvoice, Invoice } from '../models/inventory_models/InvoiceModel.js'
-import { initializeInvoiceDetail, InvoiceDetail } from '../models/inventory_models/InvoiceDetailModel.js'
-import { initializeSeller, Seller } from '../models/inventory_models/SellerModel.js'
-import { initializeProduct, Product } from '../models/inventory_models/ProductModel.js'
-import { initializePayment, Payment } from '../models/inventory_models/PaymentModel.js'
-import { initializePaymentDetail, PaymentDetail } from '../models/inventory_models/PaymentDetailModel.js' 
-import { initializeDollar, Dollar } from '../models/inventory_models/DollarModel.js'
-import { initializeAuditLog, AuditLog } from '../models/inventory_models/auditLogModel.js'
-import { initializeCustomerCredit, CustomerCredit } from '../models/inventory_models/customerCreditModel.js' 
-import { initializeInvoiceReturn, InvoiceReturn } from '../models/inventory_models/InvoiceReturnModel.js'
-import { initializeCashMovements, CashMovements } from '../models/inventory_models/cash_movements.js'
-import { initializeStoreSettings, StoreSettings } from '../models/inventory_models/StoreSettingsModel.js'
+import { initializeCustomer } from '../models/inventory_models/CustomerModel.js'
+import { initializeInvoice } from '../models/inventory_models/InvoiceModel.js'
+import { initializeInvoiceDetail } from '../models/inventory_models/InvoiceDetailModel.js'
+import { initializeSeller } from '../models/inventory_models/SellerModel.js'
+import { initializeProduct } from '../models/inventory_models/ProductModel.js'
+import { initializePayment } from '../models/inventory_models/PaymentModel.js'
+import { initializePaymentDetail } from '../models/inventory_models/PaymentDetailModel.js'
+import { initializeDollar } from '../models/inventory_models/DollarModel.js'
+import { initializeAuditLog } from '../models/inventory_models/auditLogModel.js'
+import { initializeCustomerCredit } from '../models/inventory_models/customerCreditModel.js'
+import { initializeInvoiceReturn } from '../models/inventory_models/InvoiceReturnModel.js'
+import { initializeCashMovements } from '../models/inventory_models/cash_movements.js'
+import { initializeStoreSettings } from '../models/inventory_models/StoreSettingsModel.js'
 import { User } from '../models/UserModel.js'
 import { Umzug, SequelizeStorage } from 'umzug'
 import { fileURLToPath, pathToFileURL } from 'url'
@@ -33,34 +33,19 @@ class TenantConnection {
 
     constructor(sequelize) {
 
-        // sequelize instance 
+        // sequelize instance — SHARED by every tenant (see TenantConnection() below for why).
         this.sequelize = sequelize
 
         // save connection for tenant
         this.tenantRegister = new Map()
 
+        // in-flight setup promises for tenants that are being registered for the first time
+        // (schema creation + migrations). Two concurrent requests for the same brand-new
+        // tenant would otherwise both pass the "not registered yet" check and race to create
+        // the schema and run migrations at the same time; keeping the promise here means the
+        // second request just awaits the first one's result instead of duplicating the work.
+        this.pendingTenants = new Map()
     }
-
-    /**
-     * Creates a new sequelize instance
-     * @returns {Obeject} - The sequelize instace 
-     */
-    newSequelizeInstance() {
-        const tenantSequelize = new Sequelize(database, username, password, {
-            host: host,
-            port: port,
-            dialect: dialect,
-            logging: false,
-            pool: {
-                max: 3,
-                min: 0,
-                acquire: 3000,
-                idle: 10000
-            } 
-        })
-        return tenantSequelize
-    }
-   
 
     /**
      * Creates new schema if it not exist in the dababase.
@@ -73,16 +58,28 @@ class TenantConnection {
 
 
     /**
-     * Establishes and initializes a Sequelize connection for a specific tenant.
+     * Establishes and initializes the tenant's models for a specific tenant/schema, reusing
+     * the app's single shared Sequelize connection/pool.
      *
      * This method:
      * 1. Builds a tenant-specific schema name.
-     * 2. Creates the schema if it does not already exist.
-     * 3. Checks if the tenant is already registered and returns it if so.
-     * 4. Creates a new Sequelize instance for the tenant.
-     * 5. Initializes models and their associations for the tenant.
-     * 6. Saves the tenant's connection and models in the registry.
-     * 7. Executes pending migrations and seeders for the tenant's schema.
+     * 2. Returns the tenant's already-registered models if this process has seen it before.
+     * 3. Otherwise, creates the schema if needed, initializes the tenant's models and
+     *    associations, runs any pending migrations/seeders for that schema, and caches the
+     *    result — guarded against concurrent duplicate setup for the same brand-new tenant.
+     *
+     * IMPORTANT — this used to create a brand-new `Sequelize` instance (its own connection
+     * pool) per tenant, and every model class was a single module-level object shared by all
+     * tenants. Both of those were bugs in a schema-per-tenant app: connections grew without
+     * bound as the number of active stores grew (a `pool.max` per tenant × every tenant, held
+     * forever), and — more seriously — since `Model.init()` mutates the class it's called on,
+     * a second tenant logging in would silently re-point the FIRST tenant's already-in-use
+     * model classes at the second tenant's schema, risking cross-tenant data leaks under
+     * concurrent traffic. Postgres schemas are just a query-time namespace, not a separate
+     * connection, so one shared connection can safely serve every tenant as long as each
+     * tenant has its own model classes (see CustomerModel.js and friends, which now define
+     * their class inside the `initialize*` function instead of at module scope) bound to that
+     * tenant's schema.
      *
      * @async
      * @param {string} tenant_id - The unique identifier of the tenant.
@@ -91,7 +88,7 @@ class TenantConnection {
      *
      * @example
      * const tenantData = await TenantConnection('tenant123');
-     * 
+     *
      */
     async TenantConnection(tenant_id) {
         // set schema
@@ -100,55 +97,71 @@ class TenantConnection {
             schema = 'test_schema'
         }
 
-        // create new schema for tenant if it not exist
-        await this.createNewShema(schema)
-        
-
-        // checks if tenant is alreay registered 
-        const tenant = this.isTenantRegistered(tenant_id, schema)
+        // already registered in this process — nothing else to do.
+        const tenant = this.isTenantRegistered(tenant_id)
         if(tenant) {
             return tenant
         }
 
-        // if tenant if not register create new sequelize instance
-        const tenantSequelize = this.newSequelizeInstance()
+        // a setup for this tenant is already in flight (a concurrent request got here first)
+        // — await that instead of starting a second one.
+        if(this.pendingTenants.has(tenant_id)) {
+            return this.pendingTenants.get(tenant_id)
+        }
 
-        // initializes model 
-        const models = await this.initializeTenantModels(tenantSequelize, schema)
+        const setupPromise = this._registerTenant(tenant_id, schema).finally(() => {
+            this.pendingTenants.delete(tenant_id)
+        })
+        this.pendingTenants.set(tenant_id, setupPromise)
 
-        // initializes tenant model relations
-        await this.initializeTenantAssociations()
+        return setupPromise
+    }
 
-        // save data for tenant
-        this._saveTenantData(tenant_id, models)
+    /**
+     * Does the actual first-time setup for a tenant: creates its schema if needed,
+     * initializes its models/associations, caches them, and runs pending migrations/seeders.
+     * Split out from TenantConnection() so the in-flight promise can be stored before any of
+     * this work starts (see the comment there).
+     * @param {string} tenant_id
+     * @param {string} schema
+     * @returns {Promise<{sequelize: import('sequelize').Sequelize, models: Object.<string, import('sequelize').Model>}>}
+     */
+    async _registerTenant(tenant_id, schema) {
+        // create new schema for tenant if it not exist
+        await this.createNewShema(schema)
 
-        // execute migrations for the new schema 
-        await this.newMigration(schema, tenantSequelize)
+        // initializes model — all tenants share this.sequelize (see class-level comment)
+        const models = await this.initializeTenantModels(this.sequelize, schema)
+
+        // initializes tenant model relations for THIS tenant's own model classes
+        this.initializeTenantAssociations(models)
+
+        // execute migrations for the new schema
+        await this.newMigration(schema, this.sequelize)
 
         // execute default seeder for payment mehtod
-        await this .newMigration(schema, tenantSequelize, seedersGloPath)
+        await this.newMigration(schema, this.sequelize, seedersGloPath)
+
+        // save data for tenant — only AFTER migrations/seeder finish. isTenantRegistered()
+        // (checked at the very top of TenantConnection(), before the pendingTenants guard)
+        // treats any entry here as "ready to query". Saving it earlier — right after building
+        // the model classes, before the tables actually exist — meant a second, concurrent
+        // request for this same brand-new tenant could sneak past the pendingTenants guard,
+        // see a "registered" tenant, and immediately query a table (e.g. sellers) that this
+        // migration run hadn't created yet, throwing "relation ...sellers does not exist".
+        this._saveTenantData(tenant_id, models)
 
         // return tenant data
         return this.tenantRegister.get(tenant_id)
     }
-    
+
     /**
-     * Checks if a tenant is already registered and initializes its models and associations if found.
-     *
+     * Returns the tenant's cached connection/models if this process has already registered it.
      * @param {string} tenant_id - The unique identifier of the tenant.
-     * @param {string} schema - The database schema associated with the tenant.
      * @returns {object|undefined} The tenant object if registered, otherwise `undefined`.
      */
-    isTenantRegistered(tenant_id, schema) {
-        if(this.tenantRegister.has(tenant_id)) {
-            const tenant = this.tenantRegister.get(tenant_id)
-            
-            // initialize models for tenant 
-            this.initializeTenantModels(tenant.sequelize, schema)
-            // initialize relations for tenant
-            this.initializeTenantAssociations()
-            return tenant
-        }
+    isTenantRegistered(tenant_id) {
+        return this.tenantRegister.get(tenant_id)
     }
 
 
@@ -184,7 +197,7 @@ class TenantConnection {
         const PaymentDetail = initializePaymentDetail(sequelize, schema)
         const Dollar = initializeDollar(sequelize, schema)
         const AuditLog = initializeAuditLog(sequelize, schema)
-        const CustomerCredit = initializeCustomerCredit(sequelize, schema)        
+        const CustomerCredit = initializeCustomerCredit(sequelize, schema)
         const CashMovements = initializeCashMovements(sequelize, schema)
         const InvoiceReturn = initializeInvoiceReturn(sequelize, schema)
         const StoreSettings = initializeStoreSettings(sequelize, schema)
@@ -208,17 +221,27 @@ class TenantConnection {
 
 
     /**
-     * Initializes model associations for the tenant's Sequelize models.
+     * Initializes model associations for one tenant's own Sequelize models.
      *
      * This method sets up all the necessary relationships between models such as
      * `Customer`, `Invoice`, `InvoiceDetail`, `Seller`, `Product`, `Payment`, and `PaymentDetail`.
      * It ensures that Sequelize understands how these models are connected, enabling
      * features like eager loading and referential integrity.
      *
-     * @async
-     * @returns {Promise<void>} Resolves when all associations are initialized.
+     * IMPORTANT: this takes the tenant's own `models` object (as returned by
+     * initializeTenantModels) rather than reaching for the module-level imports — each
+     * tenant has its own model classes now, so associations must be wired on THOSE specific
+     * classes, not on whichever tenant happened to import these model files first.
+     *
+     * @param {Object.<string, import('sequelize').Model>} models - this tenant's own initialized models.
+     * @returns {void} Resolves when all associations are initialized.
      */
-    async initializeTenantAssociations() {
+    initializeTenantAssociations(models) {
+        const {
+            Customer, Invoice, InvoiceDetail, Seller, Product, Payment,
+            PaymentDetail, AuditLog, CustomerCredit, CashMovements, InvoiceReturn
+        } = models
+
         Customer.associate({Invoice})
         Customer.associateCredit({CustomerCredit})
         Invoice.associate({Customer})
@@ -250,9 +273,9 @@ class TenantConnection {
         CashMovements.associationPaymentMehotd({Payment})
         CashMovements.associationUser({User})
     }
-    
-    
-    
+
+
+
     /**
      * Stores Sequelize connection and model references for a specific tenant.
      *
@@ -291,15 +314,33 @@ class TenantConnection {
      * // Logs: "Migrations were executed successfully."
      */
     async newMigration(schema, sequelize, glop_path=migrationsGlobPath) {
-        // queryInterface for migration 
+        // queryInterface for migration
         const queryInterface = await sequelize.getQueryInterface()
-        // create umzug instance 
+        // create umzug instance
         const umzug = await this.newUmzug(schema, sequelize, queryInterface, glop_path)
+
+        // Sanity check: `umzug.migrations()` lists every migration file the glob pattern
+        // resolves to, regardless of whether it has already run. If this comes back empty,
+        // the glob itself isn't matching any files (wrong path, an OS-specific glob quirk,
+        // the directory doesn't exist, etc.) — NOT "nothing pending". Silently continuing in
+        // that case is exactly how a tenant schema ends up created with zero tables: no error
+        // is thrown, `new_migrations.length` is just 0, and the caller (_registerTenant) goes
+        // on to mark the tenant as ready. Fail loudly instead so this is never silent again.
+        const context = await umzug.getContext()
+        const allMigrations = await umzug.migrations(context)
+        if(allMigrations.length === 0) {
+            throw new Error(
+                `No migration files matched glob "${glop_path}" for schema "${schema}". ` +
+                `Refusing to continue — this tenant would otherwise be created with no tables.`
+            )
+        }
+
         const new_migrations = await umzug.pending()
+        console.log(`[tenant migrations] schema="${schema}": ${allMigrations.length} file(s) found, ${new_migrations.length} pending.`)
         if(new_migrations.length > 0) {
             await umzug.up() // execute migrations
+            console.log(`[tenant migrations] schema="${schema}": applied ${new_migrations.length} migration(s).`)
         }
-        console.log('Migrations were executed successfully.')
 
     }
 
@@ -323,7 +364,7 @@ class TenantConnection {
                 glob: glop_path,
                 resolve: ({ name, path, context }) => {
                     return {
-                        name, 
+                        name,
                         up: async () => {
                             const migrationPath = pathToFileURL(path)
                             const migration = await (await import(migrationPath)).default
@@ -340,6 +381,23 @@ class TenantConnection {
             logger: console,
             storage: new SequelizeStorage({
                 sequelize,
+                // IMPORTANT: SequelizeStorage registers its tracking model on the shared
+                // `sequelize` instance under the name `modelName` (default: 'SequelizeMeta').
+                // Internally it does `sequelize.isDefined(modelName) ? sequelize.model(modelName)
+                // : sequelize.define(modelName, ..., {schema})` — Sequelize caches defined
+                // models by NAME on the instance, not by schema. Since every tenant now shares
+                // ONE `sequelize` instance, the very first tenant to run migrations (e.g.
+                // test_schema) permanently "claims" the name 'SequelizeMeta': every later
+                // tenant's SequelizeStorage sees `isDefined('SequelizeMeta') === true` and
+                // silently reuses THAT FIRST tenant's model — meaning it reads/writes the
+                // first tenant's schema's meta table no matter what `schema` is passed here.
+                // The result: `pending()` for a brand-new tenant checks whether ITS migrations
+                // are in the FIRST tenant's already-fully-migrated meta table, finds them all
+                // "done", and returns 0 pending — so no table ever actually gets created, with
+                // no error. Giving each schema its own modelName avoids the name collision;
+                // the physical table name/columns (tableName: 'SequelizeMeta', inside this
+                // tenant's own `schema`) stay exactly the same as before.
+                modelName: `SequelizeMeta_${schema}`,
                 tableName: 'SequelizeMeta',
                 schema: schema
             })

@@ -23,19 +23,22 @@ module.exports = {
         email: 'daniel@gmail.com',
         password: await bcrypt.hash('12345678', saltRounds),
         role_id: 4, // Assuming 4 is the role ID for a regular user
-        tenant_id: 1
+        tenant_id: 1,
+        is_super_admin: false
      },
      {
         email: 'andrea@gmail.com',
         password: await bcrypt.hash('12345678', saltRounds),
         role_id: 4, // Assuming 4 is the role ID for a regular user
-        tenant_id: 1
+        tenant_id: 1,
+        is_super_admin: false
      },
      {
         email: 'javier@gmail.com',
         password: await bcrypt.hash('12345678', saltRounds),
         role_id: 3, // Assuming 3 is the role ID for a supervisor
-        tenant_id: 1
+        tenant_id: 1,
+        is_super_admin: false
      }
     ])
   },

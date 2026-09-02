@@ -1,51 +1,55 @@
 import { DataTypes, Model } from 'sequelize'
 
-class Seller extends Model {
-    // model relations 
-
-    /**
-     * Creates an association between Seller model and the Invoice model.
-     * @param {{Invoice: typeof Model}} model - An object containing the Invoice model.
-     * @return {void} This method does not return a value. 
-     */
-    static associationSales(model) {
-        this.hasMany(model.Invoice, {
-            foreignKey: 'seller_id',
-            as: 'sales',
-        })
-    }
-
-    /**
-     * Creates an association between Seller model and the User model.
-     * @param {{User: typeof Model}} model - An object containing the User model.
-     * @return {void} This method does not return a value. 
-     */
-    static associationUser(model) {
-        this.belongsTo(model.User, {
-            foreignKey: 'user_id',
-            as: 'user',
-            constraints: false,
-        })
-    }
-}
-
 /**
  * Initialize Seller model with its schema definiton and configuration.
  * This function set up Seller model with fields such as: `id`, `id_number`, `is_supervisor`, `pin`, `name`, `last_name`, and `address`
  * and Configure Sequelize options like model name, table name, schema and timestamps.
- * @param {import('sequelize').Sequelize} sequelize -An Sequelize instance used to initialize the Seller model. 
+ *
+ * IMPORTANT: the `Seller` class is defined INSIDE this function on purpose, so every call
+ * returns a brand-new class bound to its own `sequelize`/`schema` — see the comment in
+ * CustomerModel.js for why a shared, module-level class is unsafe in a schema-per-tenant setup.
+ * @param {import('sequelize').Sequelize} sequelize -An Sequelize instance used to initialize the Seller model.
  * @param {string} schema - The schame used to register the model.
  * @return {Seller: typeof model} returns Seller model.
  */
 function initializeSeller(sequelize, schema) {
+    class Seller extends Model {
+        // model relations
+
+        /**
+         * Creates an association between Seller model and the Invoice model.
+         * @param {{Invoice: typeof Model}} model - An object containing the Invoice model.
+         * @return {void} This method does not return a value.
+         */
+        static associationSales(model) {
+            this.hasMany(model.Invoice, {
+                foreignKey: 'seller_id',
+                as: 'sales',
+            })
+        }
+
+        /**
+         * Creates an association between Seller model and the User model.
+         * @param {{User: typeof Model}} model - An object containing the User model.
+         * @return {void} This method does not return a value.
+         */
+        static associationUser(model) {
+            this.belongsTo(model.User, {
+                foreignKey: 'user_id',
+                as: 'user',
+                constraints: false,
+            })
+        }
+    }
+
     Seller.init(
         {
             id: {
-                 type: DataTypes.INTEGER, 
+                 type: DataTypes.INTEGER,
                  autoIncrement: true,
                  primaryKey: true,
              },
-            
+
             user_id: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
@@ -72,7 +76,7 @@ function initializeSeller(sequelize, schema) {
             },
 
             id_number: {
-                 type: DataTypes.INTEGER, 
+                 type: DataTypes.INTEGER,
                  allowNull: false,
                  validate: {
                      notEmpty: {
@@ -82,7 +86,7 @@ function initializeSeller(sequelize, schema) {
              },
 
             name: {
-                 type: DataTypes.STRING, 
+                 type: DataTypes.STRING,
                  allowNull: false,
                  validate: {
                      notEmpty: {
@@ -132,4 +136,4 @@ function initializeSeller(sequelize, schema) {
     return Seller
 }
 
-export { initializeSeller, Seller }
+export { initializeSeller }
