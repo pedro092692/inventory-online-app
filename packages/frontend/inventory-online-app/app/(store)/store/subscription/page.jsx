@@ -5,6 +5,7 @@ import FormSkeleton from '@/app/ui/skeleton/form/formSkeleton'
 import StoreOverview from '@/app/(store)/store/subscription/_components/storeOverview'
 import PaymentForm from '@/app/(store)/store/subscription/_components/paymentForm'
 import PaymentHistory from '@/app/(store)/store/subscription/_components/paymentHistory'
+import styles from '@/app/(store)/store/subscription/_components/subscription.module.css'
 
 export default async function Subscription({searchParams}) {
     const userInfo = await getCurrentUser()
@@ -42,14 +43,15 @@ export default async function Subscription({searchParams}) {
                 width={'100%'}
                 justifyContent={'start'}
                 gap={'24px'}
+                className={styles.columnsRow}
             >
                 <Container
                     padding={'0px'}
-                    width={'30%'}
                     height={'100%'}
                     direction={'column'}
                     alignItem={'start'}
                     justifyContent={'start'}
+                    className={styles.formColumn}
                 >
                     <h2 className='h3'>Reportar un pago</h2>
                     <PaymentForm />
@@ -57,11 +59,11 @@ export default async function Subscription({searchParams}) {
 
                 <Container
                     padding={'0px'}
-                    width={'70%'}
                     direction={'column'}
                     alignItem={'start'}
                     justifyContent={'start'}
                     height={'100%'}
+                    className={styles.historyColumn}
                 >
                     <h2 className='h3'>Historial de pagos</h2>
                     <Suspense key={currentPage} fallback={<FormSkeleton nFields={3}/>}>

@@ -50,3 +50,26 @@
 .fileInput {
   display: none !important;
 }
+
+.columnsRow {
+    flex-direction: row;
+}
+
+.formColumn {
+    width: 30%;
+}
+
+.historyColumn {
+    width: 70%;
+}
+
+@media screen and (max-width: 700px) {
+    .columnsRow {
+        flex-direction: column;
+    }
+
+    .formColumn,
+    .historyColumn {
+        width: 100%;
+    }
+}

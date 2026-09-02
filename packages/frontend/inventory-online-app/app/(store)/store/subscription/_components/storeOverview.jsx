@@ -39,6 +39,7 @@ export default async function StoreOverview() {
             // justifyContent={'space-between'}
             justifyContent={'flex-start'}
             gap={'32px'}
+            flexWrap={'wrap'}
         >
             <KpiCard label={'Suscripción'} value={isBlocked ? 'Bloqueada' : subscriptionLabel} 
                 icon={CalendarClock} text='md'
