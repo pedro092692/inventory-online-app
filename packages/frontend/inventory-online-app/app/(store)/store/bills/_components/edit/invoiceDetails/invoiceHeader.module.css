@@ -1,0 +1,13 @@
+.headerContainer {
+    flex-direction: row;
+}
+
+@media screen and (max-width: 700px) {
+  .headerTitle {
+    font-size: 1rem;
+  }
+
+  .headerContainer {
+    flex-direction: column;
+  }
+}

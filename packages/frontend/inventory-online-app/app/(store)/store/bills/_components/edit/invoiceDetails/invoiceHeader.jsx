@@ -1,4 +1,5 @@
 import { Container } from '@/app/ui/utils/container'
+import styles from './invoiceHeader.module.css'
 
 export default function InvoiceHeader({invoice=null}) {
     if (!invoice) return null
@@ -9,21 +10,21 @@ export default function InvoiceHeader({invoice=null}) {
         <Container
             width={'100%'}
             padding={'4px 16px'}
-            direction={'row'}
             alignItem={'center'}
             justifyContent={'space-between'}
             borderRadius={'8px'}
             backgroundColor={'var(--color-neutralGrey300)'}
-            className='shadow'
+            className={`${styles.headerContainer} shadow`}
         >   
             <Container
                 padding={'0px'}
             >
                 
-            <p className='p1-b'>Nota de crédito de la factura: #{invoice?.id}</p>
+                <p className={`p1-b ${styles.headerTitle}`}>Nota de crédito de la factura: #{invoice?.id}</p>
             </Container>
             <Container
                 padding={'0px'}
+                className={`${styles.headerContainer}`}
             >
                 <p className='p2-r'>Fecha:</p>
                 <p className='p2-r'>{new Date(invoice?.date).toLocaleDateString('es-VE', {year: 'numeric', month: 'long', day: 'numeric'})}</p>

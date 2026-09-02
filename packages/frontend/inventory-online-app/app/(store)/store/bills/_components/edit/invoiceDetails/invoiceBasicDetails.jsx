@@ -1,5 +1,6 @@
 
 import { Container } from '@/app/ui/utils/container'
+import styles from './basicInfo.module.css'
 export default function InvoiceBasicDetails({invoice=null}) {
     if (!invoice) return null
     return (
@@ -7,7 +8,7 @@ export default function InvoiceBasicDetails({invoice=null}) {
             width={'100%'}
             padding={'8px'}
             alignItem={'center'}
-            justifyContent={'space-between'}
+            className={styles.mainContainer}
         >
            
             <Container

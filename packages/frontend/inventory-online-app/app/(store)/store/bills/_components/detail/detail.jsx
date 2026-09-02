@@ -11,6 +11,7 @@ import { Button } from '@/app/ui/utils/button/buttons'
 import { Icon } from '@/app/ui/utils/icons/icons'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
 import Pagination from '@/app/ui/pagination/pagination'
+import Styles from './invoiceDetail.module.css'
 import Link from 'next/link'
 
 export default async function BillInfo({ id, queryString='', limit = 5, page = 1, totalProductPages = 0 }) {
@@ -102,8 +103,8 @@ export default async function BillInfo({ id, queryString='', limit = 5, page = 1
             
             {/* invoice details */}
             <Container
+                className={Styles.infoContainer}
                 padding={'0px'}
-                direction={'row'}
                 gap={'16px'}
                 alignItem={'start'}
                 justifyContent={'start'}

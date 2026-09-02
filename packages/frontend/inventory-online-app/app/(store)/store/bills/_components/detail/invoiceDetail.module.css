@@ -1,0 +1,12 @@
+.infoContainer {
+    flex-direction: row;
+    
+
+}
+
+@media screen and (max-width: 700px) {
+  .infoContainer {
+    flex-direction: column;
+  }
+
+}

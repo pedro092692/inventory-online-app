@@ -42,20 +42,31 @@
 }
 
 /* pantallas angostas: cada fila se convierte en una tarjeta apilada
-   en vez de forzar scroll horizontal sobre la tabla */
+   en vez de forzar scroll horizontal sobre la tabla.
+   Todo lleva !important porque algunas páginas le pasan su propio
+   customClass a <List> con alturas/anchos fijos para las columnas de
+   escritorio (ej. invoice.module.css: height:240px!important, o
+   anchos por [data-label] con más especificidad que estas reglas) —
+   sin !important esas reglas de escritorio ganarían y romperían la
+   vista de tarjetas en vez de solo acomodar columnas. */
 @media screen and (max-width: 700px) {
-    .container {
-        height: auto;
-        overflow-x: visible;
+    /* .container.container: mismo selector duplicado a propósito, para ganarle
+       en especificidad a reglas como ".tableProducts { height: 240px !important }"
+       que algunas páginas agregan vía customClass — ambas usan !important, así
+       que sin este empate se resolvería por orden de carga de los CSS modules,
+       algo que no podemos garantizar. */
+    .container.container {
+        height: auto !important;
+        overflow-x: visible !important;
     }
 
     .table thead {
-        display: none;
+        display: none !important;
     }
 
     .table, .table tbody, .table tr, .table td {
-        display: block;
-        width: 100%;
+        display: block !important;
+        width: 100% !important;
     }
 
     .table tr {
@@ -70,18 +81,18 @@
     }
 
     .table td {
-        display: flex;
+        display: flex !important;
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
         gap: 4px 12px;
-        border: none;
-        border-bottom: 1px solid #eee;
+        border: none !important;
+        border-bottom: 1px solid #eee !important;
         text-align: right;
     }
 
     .table td:last-child {
-        border-bottom: none;
+        border-bottom: none !important;
     }
 
     .table td::before {
