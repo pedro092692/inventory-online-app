@@ -84,6 +84,12 @@ function initializeUser(sequelize) {
                 allowNull: true
             },
 
+            is_super_admin: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            },
+
             deletedAt: {
                 type: DataTypes.DATE,
                 allowNull: true

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import UserController from '../../Controllers/admin/UserController.js'
 import { validateFields } from '../../validators/fieldValidator.js'
-import { authenticated, isAdmin } from '../../middlewares/authMiddleware.js'
+import { authenticated, isAdmin, isSuperAdmin } from '../../middlewares/authMiddleware.js'
 
 class UserRoutes {
     constructor(){
@@ -23,6 +23,11 @@ class UserRoutes {
         // Same reason as /payments below: must stay before the generic '/:id' route.
         this.router.get('/dashboard-stats', (req, res) => new UserController().getDashboardStats(req, res))
         this.router.get('/store-owner/:id', (req, res) => new UserController().getStoreOwner(req, res))
+        // NOTE: these /admins routes (like /payments below) must stay registered before the
+        // generic '/:id' route — otherwise a GET to '/admins' would be swallowed by '/:id'
+        // (id='admins').
+        this.router.get('/admins', (req, res) => new UserController().getAllAdmins(req, res))
+        this.router.post('/admins', isSuperAdmin, validateFields('createAdmin'), (req, res) => new UserController().createAdminUser(req, res))
         // NOTE: these /payments routes must stay registered before the generic '/:id' route
         // below — otherwise a GET to '/payments' would be swallowed by '/:id' (id='payments').
         this.router.get('/payments', (req, res) => new UserController().getPayments(req, res))

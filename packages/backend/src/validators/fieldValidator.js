@@ -45,6 +45,11 @@ function validateFields(rule) {
             check_isLen('password', 8)
         ],
 
+        createAdmin: [
+            check('email').isEmail().withMessage('El email tiene que ser válido'),
+            check_isLen('password', 8, 'La contraseña'),
+        ],
+
         createStore: [
             check_id_number,
             check_isLen('given_name', 3, 'Nombre'),

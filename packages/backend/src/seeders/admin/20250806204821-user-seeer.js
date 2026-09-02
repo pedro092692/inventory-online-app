@@ -16,7 +16,8 @@ module.exports = {
         email: admin_user,
         password: await bcrypt.hash(admin_pass, saltRounds),
         role_id: parseInt(admin_role),
-        tenant_id: parseInt(admin_tenant)
+        tenant_id: parseInt(admin_tenant),
+        is_super_admin: true // dueño de la plataforma; único que puede crear otros admins
      },
      {
         email: 'daniel@gmail.com',

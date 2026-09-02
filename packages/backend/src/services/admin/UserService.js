@@ -10,6 +10,7 @@ import { Store } from '../../models/StoreModel.js'
 import { SubscriptionPayment } from '../../models/SubscriptionPaymentModel.js'
 import StorageService from '../StorageService.js'
 import bcrypt from 'bcrypt'
+import { ROLES } from '../../constants/roles.js'
 
 
 const currentEnv = process.env.NODE_ENV || 'development'
@@ -35,10 +36,18 @@ class UserService {
      */
     createUser(email, password, role_id, current_user, options={}) {
         return this.#error.handler(['Create user'], async() => {
-     
+
             if (current_user && current_user?.role_name != 'admin' && (role_id == 1 || role_id == 2)) {
                 throw new Error ('Forbidden')
             }
+
+            // Creating another admin (role_id 1) is reserved for the super-admin, regardless
+            // of who is calling this method or how — this catches it even if some future
+            // caller passes a plain admin as current_user.
+            if (role_id == ROLES.ADMIN && !current_user?.is_super_admin) {
+                throw new Error('Solo un super administrador puede crear otro administrador.')
+            }
+
             let user = null
 
             const newUser = await User.create({
@@ -67,6 +76,46 @@ class UserService {
         })
     }
 
+
+    /**
+     * Creates a new platform admin account. Restricted to super-admins — enforced by the
+     * `isSuperAdmin` route middleware, not by this method — but `role_id` and `tenant_id`
+     * are hardcoded here too (rather than trusted from the caller) so this method can never
+     * be used to create anything other than a plain (non-super) admin, no matter what gets
+     * passed to it.
+     * @param {string} email - The email of the new admin.
+     * @param {string} password - The raw password for the new admin.
+     * @return {Promise<Object>} - A promise that resolves to the created admin without the password.
+     * @throws {ServiceError} - If the email is already taken or an error occurs during creation.
+     */
+    createAdmin(email, password) {
+        return this.#error.handler(['Create admin'], async () => {
+            const newAdmin = await User.create({
+                email,
+                password: await bcrypt.hash(password, saltRounds),
+                role_id: ROLES.ADMIN,
+                tenant_id: null,
+                is_super_admin: false
+            })
+            return this.detelePassword(newAdmin)
+        })
+    }
+
+    /**
+     * Retrieves every platform admin account (role_id = ADMIN), including whether each one
+     * is the super-admin.
+     * @return {Promise<Array>} - A promise that resolves to an array of admin users.
+     * @throws {ServiceError} - If an error occurs during retrieval.
+     */
+    getAllAdmins() {
+        return this.#error.handler(['Read admin users'], async () => {
+            const admins = await User.findAll({
+                where: { role_id: ROLES.ADMIN },
+                attributes: ['id', 'email', 'is_super_admin']
+            })
+            return admins
+        })
+    }
 
     /**
      * Creates a new store owner user, its store profile, initializes a tenant schema,

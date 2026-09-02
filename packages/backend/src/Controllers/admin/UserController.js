@@ -1,5 +1,6 @@
 import UserService from '../../services/admin/UserService.js'
 import controllerErrorHandler from '../../errors/controllerErrorHandler.js'
+import { ROLES } from '../../constants/roles.js'
 
 class UserController {
     // new instance of controller error handler 
@@ -19,8 +20,44 @@ class UserController {
      */
     createUser = this.#error.handler( async(req, res) => {
         let { email, password, role_id  } = req.body
+
+        // Creating another admin through this generic endpoint is reserved for the
+        // super-admin — same rule as the dedicated /admins endpoint below, checked here
+        // too since this route only requires isAdmin and role_id is caller-supplied.
+        if (Number(role_id) === ROLES.ADMIN && !req.user?.is_super_admin) {
+            return res.status(403).json({ message: 'Solo un super administrador puede crear otro administrador.' })
+        }
+
         const user = await this.User.createUser(email, password, role_id)
         res.status(201).json(user)
+    })
+
+    /**
+     * Creates a new platform admin account. Unlike `createUser`, `role_id` is never taken
+     * from the request body — it's hardcoded to ADMIN in the service — so this endpoint can
+     * only ever create a plain admin. Restricted to super-admins by the `isSuperAdmin`
+     * route middleware.
+     * @param {Object} req - request object containing email/password in the body
+     * @param {Object} res - response object to send the created admin
+     * @throws {ServiceError} - throws an error if the admin could not be created
+     * @returns {Promise<void>} - returns the created admin in the response
+     */
+    createAdminUser = this.#error.handler( async(req, res) => {
+        const { email, password } = req.body
+        const admin = await this.User.createAdmin(email, password)
+        res.status(201).json(admin)
+    })
+
+    /**
+     * Retrieves every platform admin account.
+     * @param {Object} req - request object
+     * @param {Object} res - response object to send the list of admins
+     * @throws {ServiceError} - throws an error if the admins could not be retrieved
+     * @returns {Promise<void>} - returns { admins } in the response
+     */
+    getAllAdmins = this.#error.handler( async(req, res) => {
+        const admins = await this.User.getAllAdmins()
+        res.status(200).json({ admins })
     })
 
     /**

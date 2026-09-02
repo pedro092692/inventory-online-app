@@ -72,8 +72,32 @@ class AuthMiddleware {
     })
     
     /**
+     * Express middleware to verify if the user is the platform's super-admin.
+     *
+     * It checks for a user in the request payload and requires both `role === 1` (admin)
+     * and `is_super_admin === true` — a flag on the users row, not a hardcoded user id, so
+     * it survives a database reset (which would otherwise silently reassign a hardcoded
+     * `id === 1` check to whoever gets that id next) and lets more than one account hold
+     * this privilege in the future without a code change.
+     * If the user isn't a super-admin, it sends a 403 or 401 response, respectively.
+     * This method is wrapped with a controller error handler to catch unexpected errors.
+     * @type {import('express').RequestHandler}
+     */
+    isSuperAdmin = this.#error.handler((req, res, next) => {
+        if(!req.user) {
+            return res.status(401).json({message: 'Unauthorized'})
+        }
+
+        if(req.user.role == 1 && req.user.is_super_admin === true) {
+            return next()
+        }
+
+        res.status(403).json({ message: 'Forbidden' })
+    })
+
+    /**
      * Express middleware to verify if the user has admin or owner privileges.
-     * 
+     *
      * It checks for a user in the request payload and verifies the role.
      * if the role is admin (`role === 1` or `role === 2`), it continues to the next middleware.
      * If the role is invalid or missing, it sends a 403 or 401 response, respectively.
@@ -127,7 +151,8 @@ class AuthMiddleware {
 
 const authenticated = new AuthMiddleware().authenticatedToken
 const isAdmin = new AuthMiddleware().isAdmin
+const isSuperAdmin = new AuthMiddleware().isSuperAdmin
 const isOwner = new AuthMiddleware().isOwner
 const requireActiveStore = new AuthMiddleware().requireActiveStore
 
-export { authenticated, isAdmin, isOwner, requireActiveStore }
+export { authenticated, isAdmin, isSuperAdmin, isOwner, requireActiveStore }

@@ -39,7 +39,8 @@ class SecurityService {
                     role: user.role_id,
                     role_name: this.roleName(user.role_id),
                     tenant_id: user.tenant_id,
-                    store_name: user.store_name ?? null
+                    store_name: user.store_name ?? null,
+                    is_super_admin: user.is_super_admin ?? false
                 },
                 jtw_secret,
                 {
@@ -125,7 +126,8 @@ class SecurityService {
                     role: data.role,
                     role_name: this.roleName(data.role),
                     tenant_id: data.tenant_id,
-                    store_name: data.store_name ?? null
+                    store_name: data.store_name ?? null,
+                    is_super_admin: data.is_super_admin ?? false
                 }
             }catch {
                 return false
