@@ -5,7 +5,7 @@ import { Button } from '@/app/ui/utils/button/buttons'
 import Link from 'next/link'
 import { Container } from '@/app/ui/utils/container'
 
-export default async function Products({ limit = 10, page = 1, query = null, queryString = null}){
+export default async function Products({ limit = 10, page = 1, query = null, queryString = null, sortBy = null, sortDir = null}){
     const enpoint = query ? 'products/search' : 'products/all'
     const params = new URLSearchParams()
     const rawParams = params.toString()
@@ -14,6 +14,10 @@ export default async function Products({ limit = 10, page = 1, query = null, que
     params.append('page', page)
     if (query){
         params.append('data', query)
+    }
+    if (sortBy){
+        params.append('sortBy', sortBy)
+        params.append('sortDir', sortDir || 'asc')
     }
 
     const url = `${enpoint}?${params.toString()}`
@@ -91,6 +95,11 @@ export default async function Products({ limit = 10, page = 1, query = null, que
                 showView={false}
                 customClass={styles.table}
                 rowClassName={(rowData) => rowData.stock === 0 ? styles.notStockRow : rowData.stock <= 5 ? styles.lowStockRow : ''}
+                sortableColumns={{ selling_price: 'selling_price', stock: 'stock' }}
+                sortBy={sortBy}
+                sortDir={sortDir}
+                basePath='/store/products'
+                sortParams={query ? new URLSearchParams({ data: query }).toString() : ''}
             />
             :
             <Container

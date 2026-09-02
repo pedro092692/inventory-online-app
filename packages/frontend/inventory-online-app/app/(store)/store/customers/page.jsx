@@ -11,7 +11,9 @@ import { buildQueryParams } from '@/app/utils/buildQueryParams'
 export default async function Customer({searchParams}) {
     const params = await searchParams
     const query = params?.data || null
-    const queryString = buildQueryParams(params, ['page', 'data'])
+    const sortBy = params?.sortBy || null
+    const sortDir = params?.sortDir || null
+    const queryString = buildQueryParams(params, ['page', 'data', 'sortBy', 'sortDir'])
     const currentPage = Number(params?.page) || 1
     const response = await Request(`customers/total-pages${query ? `?data=${query}` : ''}`, 'GET', null, 'Hubo un error inesperado intententa nuevamente')
     const {data, error} = response 
@@ -31,7 +33,7 @@ export default async function Customer({searchParams}) {
                 placeHolder="Buscar cliente por Nombre, Cédula"
             />}
             <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={4} />}>
-                <Customers page={currentPage} query={query} queryString={queryString}/>
+                <Customers page={currentPage} query={query} queryString={queryString} sortBy={sortBy} sortDir={sortDir}/>
             </Suspense>
             
             {

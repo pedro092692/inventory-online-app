@@ -57,8 +57,10 @@ class ProductController{
         let includePurchasePrice = this.includePurchasePrice(req)
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
+        const sortBy = req.query.sortBy || null
+        const sortDir = req.query.sortDir || null
         const permissions = userPermissions(req)
-        const {products} = await this.ProductService.getAllProducts(limit, page, includePurchasePrice)
+        const {products} = await this.ProductService.getAllProducts(limit, page, includePurchasePrice, sortBy, sortDir)
         res.status(200).json({products, permissions: permissions})
     })
 
@@ -88,8 +90,10 @@ class ProductController{
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
         const stock = req.query.stock ? req.query.stock : false
+        const sortBy = req.query.sortBy || null
+        const sortDir = req.query.sortDir || null
         const permissions = userPermissions(req)
-        const { products } = await this.ProductService.searchProducts(data, page, limit, includePurchasePrice, stock)
+        const { products } = await this.ProductService.searchProducts(data, page, limit, includePurchasePrice, stock, sortBy, sortDir)
         res.status(200).json( { products, permissions } )
     })
 

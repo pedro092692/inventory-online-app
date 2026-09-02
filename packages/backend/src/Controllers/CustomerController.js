@@ -32,8 +32,10 @@ class CustomerController {
     allCustomers = this.#error.handler( async(req, res) => {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
+        const sortBy = req.query.sortBy || null
+        const sortDir = req.query.sortDir || null
         const userPermissions = this.userPermissions(req)
-        const {customers} = await this.customerService.getAllCustomers(limit, page)
+        const {customers} = await this.customerService.getAllCustomers(limit, page, false, sortBy, sortDir)
         res.status(200).json({customers, permissions: userPermissions})
     })
 
@@ -63,8 +65,10 @@ class CustomerController {
         const { data } = req.query
         const limitResults = req.query.limitResults ? parseInt(req.query.limitResults) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
+        const sortBy = req.query.sortBy || null
+        const sortDir = req.query.sortDir || null
         const userPermissions = this.userPermissions(req)
-        const { customers } = await this.customerService.searchCustomers(data, page, limitResults)
+        const { customers } = await this.customerService.searchCustomers(data, page, limitResults, sortBy, sortDir)
         res.status(200).json( { customers, permissions: userPermissions } )
     })
 

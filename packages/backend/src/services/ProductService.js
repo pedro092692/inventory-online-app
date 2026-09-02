@@ -3,6 +3,7 @@ import { NotFoundError } from '../errors/NofoundError.js'
 import { FileError, InvalidFileTypeError, EmptyRowsError } from '../errors/FileError.js'
 import DollarValueService from './DollarValueService.js'
 import { Op, ValidationError, col, where as sequelizeWhere } from 'sequelize'
+import resolveSortOrder from '../utils/resolveSortOrder.js'
 import XLSX from 'xlsx'
 
 class ProductService{
@@ -146,7 +147,7 @@ class ProductService{
      * @returns {Promise<Array>} - returns an array of products
      * @throws {ServiceError} - throws an error if the products could not be retrieved
      */
-    getAllProducts(limit = 10, page = 1, includePurchasePrice = false) {
+    getAllProducts(limit = 10, page = 1, includePurchasePrice = false, sortBy = null, sortDir = null) {
         const offset = (page - 1) * limit
         let attributes  = ['id', 'barcode', 'name', 'selling_price','stock']
         if (includePurchasePrice) {
@@ -156,7 +157,7 @@ class ProductService{
         return this.#error.handler(['Read All Products'], async () => {
             const products = await this.Product.findAll({
                 attributes: attributes,
-                order: [['name', 'ASC']],
+                order: resolveSortOrder(sortBy, sortDir, ['selling_price', 'stock'], [['name', 'ASC']]),
                 limit: limit,
                 offset: offset
             })
@@ -213,7 +214,7 @@ class ProductService{
      * @return {Promise<Object>} - A promise that resolves to an object containing search results and pagination info.
      * @throws {ServiceError} - If an error occurs during the search.
      */
-    searchProducts(query, page = 1, limit = 10, includePurchasePrice = true, stock = true) {
+    searchProducts(query, page = 1, limit = 10, includePurchasePrice = true, stock = true, sortBy = null, sortDir = null) {
         const offset = (page - 1) * limit
         const terms = query
             .toLowerCase()
@@ -242,7 +243,7 @@ class ProductService{
                     stock: stock ? {[Op.gt]: 0} : {[Op.gte]: 0},
                 },
                 attributes: attributes,
-                order: [['id', 'DESC']],
+                order: resolveSortOrder(sortBy, sortDir, ['selling_price', 'stock'], [['id', 'DESC']]),
                 limit: limit,
                 offset: offset
             })

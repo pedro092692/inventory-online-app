@@ -11,7 +11,9 @@ import { buildQueryParams } from '@/app/utils/buildQueryParams'
 export default async function Bills({searchParams}) {
    const params = await searchParams
    const query = params?.data || null
-   const queryString = buildQueryParams(params, ['page', 'data'])
+   const sortBy = params?.sortBy || null
+   const sortDir = params?.sortDir || null
+   const queryString = buildQueryParams(params, ['page', 'data', 'sortBy', 'sortDir'])
    const currentPage = Number(params?.page) || 1
    const response = await GetItemAction(`invoices/total-pages${query ? `?data=${query}` : '' }`, 'Hubo un error inesperado intenta nuevamente')
    const { data, error } = response || {}
@@ -28,7 +30,7 @@ export default async function Bills({searchParams}) {
             <Route path='sell' endpoints={['add', 'default']} queryString={queryString}/>
             {all > 0 && <Search placeHolder="Buscar factura por # número, Nombre del cliente o Cédula del cliente" />}
             <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={7} />}>
-                <Invoices page={currentPage} query={query} queryString={queryString}/>
+                <Invoices page={currentPage} query={query} queryString={queryString} sortBy={sortBy} sortDir={sortDir}/>
             </Suspense>
             {
                 error ? 

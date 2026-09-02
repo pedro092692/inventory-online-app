@@ -19,3 +19,16 @@
 .notStockRow{
   background-color: var(--color-accentRed400) !important; 
 }
+
+.paginationContainer {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+@media screen and (max-width: 700px) {
+  .paginationContainer {
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+  }
+}

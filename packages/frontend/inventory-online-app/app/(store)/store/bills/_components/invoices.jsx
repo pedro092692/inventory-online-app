@@ -5,7 +5,7 @@ import { Button } from '@/app/ui/utils/button/buttons'
 import Link from 'next/link'
 import { Container } from '@/app/ui/utils/container'
 
-export default async function Invoices({limit = 10, page = 1, query = null, queryString = null}) {
+export default async function Invoices({limit = 10, page = 1, query = null, queryString = null, sortBy = null, sortDir = null}) {
     const endpoint =  query ? `invoices/search-query` : 'invoices/all'
     const params = new URLSearchParams()
     const rawParams = params.toString()
@@ -17,6 +17,10 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
     }else{
     params.append('limit', limit)
     params.append('page', page)
+    }
+    if (sortBy){
+        params.append('sortBy', sortBy)
+        params.append('sortDir', sortDir || 'asc')
     }
 
     const url  = `${endpoint}?${params.toString()}`
@@ -86,6 +90,11 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
                     deleteMsg='Recibo eliminado con éxito'
                     customClass={styles.table}
                     rowClassName={(rowData) => rowData.status === 'Pendiente' ? styles.pendingRow : ''}
+                    sortableColumns={{ fecha: 'date' }}
+                    sortBy={sortBy}
+                    sortDir={sortDir}
+                    basePath='/store/bills'
+                    sortParams={query ? new URLSearchParams({ data: query }).toString() : ''}
                 />
                 :
                 <Container

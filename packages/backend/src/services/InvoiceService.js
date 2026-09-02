@@ -7,6 +7,7 @@ import { NotFoundError } from '../errors/NofoundError.js'
 import verifyDetails from '../utils/VerifiyDetails.js'
 import { Op, cast, where, col, ValidationError } from 'sequelize'
 import hasPassword from '../utils/encrypt.js'
+import resolveSortOrder from '../utils/resolveSortOrder.js'
 
 class InvoiceService {
     
@@ -122,7 +123,7 @@ class InvoiceService {
     * @param {number} offset - number of invoices to skip 
     * @returns {Array} - array of invoices with details
     */
-    getAllInvoices(limit=10, page=1, includeDetails=false) {
+    getAllInvoices(limit=10, page=1, includeDetails=false, sortBy=null, sortDir=null) {
         const offset = (page - 1) * limit
         return this.#error.handler(['Read All invoices'], async() => {
             const customerAssociation = {
@@ -147,7 +148,7 @@ class InvoiceService {
             }
             const invoices = await this.Invoice.findAll({
                 include: inludes,
-                order: [['id', 'DESC']],
+                order: resolveSortOrder(sortBy, sortDir, ['date'], [['id', 'DESC']]),
                 limit: limit,
                 offset: offset,
             })
@@ -376,7 +377,7 @@ class InvoiceService {
      * the array of matching invoice models, enriched with calculated exchange rates.
      * * @throws {Error} Re-throws errors handled by the internal error handler.
      */
-    searchInvoices(query, page=10, limitResults=10) {
+    searchInvoices(query, page=10, limitResults=10, sortBy=null, sortDir=null) {
         const offesetResults = (page  - 1) * limitResults
         
         return this.#error.handler(['Search Invoices', query, 'Invoices'], async() => {
@@ -416,10 +417,10 @@ class InvoiceService {
 
 
 
-                order: [['id', 'DESC']],
+                order: resolveSortOrder(sortBy, sortDir, ['date'], [['id', 'DESC']]),
                 limit: limitResults,
                 offset: offesetResults,
-                
+
             })
             const invoicesWithExchangeRate = await this.calculateExchangeRate(results, false)
             return {

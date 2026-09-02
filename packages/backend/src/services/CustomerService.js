@@ -1,6 +1,7 @@
 import ServiceErrorHandler from '../errors/ServiceErrorHandler.js'
 import { NotFoundError } from '../errors/NofoundError.js'
 import { Op, fn, col } from 'sequelize'
+import resolveSortOrder from '../utils/resolveSortOrder.js'
 
 class CustomerService {
 
@@ -39,7 +40,7 @@ class CustomerService {
      * @return {Promise<Array>} - A promise that resolves to an array of customer objects with their invoices.
      * @throws {ServiceError} - If an error occurs during customer retrieval.
      */
-    getAllCustomers(limit=10, page=1, includeInvoices=false,) {
+    getAllCustomers(limit=10, page=1, includeInvoices=false, sortBy=null, sortDir=null) {
         const offset = (page - 1) * limit
         const invoiceAssociation = {}
         if (includeInvoices) {
@@ -51,7 +52,7 @@ class CustomerService {
 
             const customers = await this.Customer.findAndCountAll({
                 include: includeInvoices ? [invoiceAssociation] : [],
-                order: includeInvoices ? invoiceAssociation.order : [['id', 'DESC']],
+                order: includeInvoices ? invoiceAssociation.order : resolveSortOrder(sortBy, sortDir, ['name'], [['id', 'DESC']]),
                 limit: limit,
                 offset: offset
             })
@@ -166,7 +167,7 @@ class CustomerService {
      * @return {Promise<Object>} - A promise that resolves to an object containing search results and pagination info.
      * @throws {ServiceError} - If an error occurs during the search.
      */
-    searchCustomers(query, page=1, limitResults=10,) {
+    searchCustomers(query, page=1, limitResults=10, sortBy=null, sortDir=null) {
         const offsetResults = (page - 1) * limitResults
         const terms = query
             .toLowerCase()
@@ -217,8 +218,8 @@ class CustomerService {
                 group: [
                     'Customer.id',
                 ],
-                
-                order: [['id', 'DESC']],
+
+                order: resolveSortOrder(sortBy, sortDir, ['name'], [['id', 'DESC']]),
                 distinct: true,
                 subQuery: false,
                 limit: limitResults,

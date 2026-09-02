@@ -9,12 +9,15 @@ import GetItemAction from '@/app/lib/actions/get'
 import { buildQueryParams } from '@/app/utils/buildQueryParams'
 import { getCurrentUser } from '@/app/utils/getCurrentUser'
 import ExportProductForm from '@/app/(store)/store/products/_components/export/exportForm'
+import styles from './products.module.css'
 
 export default async function Product({searchParams}) {
   const params = await searchParams
   const query = params?.data || null
   const currentPage = Number(params?.page) || 1
-  const queryString = buildQueryParams(params, ['page', 'data'])
+  const sortBy = params?.sortBy || null
+  const sortDir = params?.sortDir || null
+  const queryString = buildQueryParams(params, ['page', 'data', 'sortBy', 'sortDir'])
   const response = await GetItemAction(`products/total-pages${query ? `?data=${query}` : '' }`, 'Hubo un error inesperado intenta nuevamente')
   const {data, error} = response 
   const totalPages = data?.total || 1
@@ -34,7 +37,7 @@ export default async function Product({searchParams}) {
                 placeHolder="Buscar producto por Nombre, Código De Barras"
               />}
               <Suspense key={query + currentPage} fallback={<ListSkeleton nTitle={7} />}>
-                  <Products page={currentPage} query={query} queryString={queryString}/>
+                  <Products page={currentPage} query={query} queryString={queryString} sortBy={sortBy} sortDir={sortDir}/>
               </Suspense>
               {
                 error ? 
@@ -47,7 +50,7 @@ export default async function Product({searchParams}) {
                     <Container
                         padding={'0px'}
                         width={'100%'}
-                        justifyContent={'space-between'}
+                        className={styles.paginationContainer}
                     >
                         <Pagination totalPages={totalPages} />
 

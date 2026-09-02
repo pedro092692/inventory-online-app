@@ -65,8 +65,10 @@ class InvoiceController {
     allInvoices = this.#error.handler( async(req, res) => {
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
+        const sortBy = req.query.sortBy || null
+        const sortDir = req.query.sortDir || null
         const permission = userPermissions(req)
-        const {invoices} = await this.invoiceService.getAllInvoices(limit, page, false)
+        const {invoices} = await this.invoiceService.getAllInvoices(limit, page, false, sortBy, sortDir)
         res.status(200).json({invoices, permissions: permission})
     })
     
@@ -134,9 +136,11 @@ class InvoiceController {
     */
     searchInvoices = this.#error.handler( async(req, res) => {
         const { data } = req.query
-        const limitResults = req.query.limit ? parseInt(req.query.limitResults) : 10 
+        const limitResults = req.query.limit ? parseInt(req.query.limitResults) : 10
         const page = req.query.page ? parseInt(req.query.page) : 1
-        const { invoices } = await this.invoiceService.searchInvoices(data, page, limitResults)
+        const sortBy = req.query.sortBy || null
+        const sortDir = req.query.sortDir || null
+        const { invoices } = await this.invoiceService.searchInvoices(data, page, limitResults, sortBy, sortDir)
         res.status(200).json({ invoices })
     })
 
