@@ -110,7 +110,7 @@ export default async function Products({ limit = 10, page = 1, query = null, que
                     <p className='p1-b'>No tienes a ningún producto 📦 en la base de datos.</p>
                     <p className='p1-b'>Agrega uno nuevo para vender.</p>
                     <Link href={'/store/products/add'}>
-                        <Button showIcon={true} type={'secondary'} icon='circlePlus' children='Agregar Un Cliente Nuevo.'
+                        <Button showIcon={true} type={'secondary'} icon='circlePlus' children='Agregar Un Producto Nuevo.'
                         className='p3-r shadow'/>
                     </Link>
             </Container>
