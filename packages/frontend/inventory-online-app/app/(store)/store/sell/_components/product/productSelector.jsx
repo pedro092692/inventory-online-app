@@ -119,6 +119,22 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     }
 
     const handleKeyDown = (e) => {
+        // El Enter de este campo NUNCA debe llegar a enviar el <form> de la venta.
+        // Una pistola de escaneo "escribe" el código y termina con un Enter en
+        // milisegundos — mucho antes de que el debounce de 300ms de la búsqueda
+        // resuelva y results deje de estar vacío. Si no bloqueamos el Enter aquí
+        // arriba (antes del "if results.length === 0 return" de más abajo), el
+        // navegador interpreta ese Enter como "enviar el formulario" y dispara
+        // handleSubmitInvoice con el carrito tal cual estaba en ese instante.
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            if (results.length > 0 && highlightedIndex >= 0) {
+                setHighlightedIndex(-1)
+                handleClick(results[highlightedIndex])
+            }
+            return
+        }
+
         if (results.length === 0) return
 
         if (e.key === 'ArrowDown') {
@@ -133,12 +149,6 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
             setHighlightedIndex(prev =>
                 prev > 0 ? prev - 1 : results.length - 1
             )
-        }
-
-        if (e.key === 'Enter' && highlightedIndex >=0) {
-            e.preventDefault()
-            setHighlightedIndex(-1)
-            handleClick(results[highlightedIndex])
         }
     }
 
