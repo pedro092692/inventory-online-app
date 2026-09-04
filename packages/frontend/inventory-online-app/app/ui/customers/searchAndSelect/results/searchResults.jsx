@@ -15,6 +15,7 @@ export default function SearchResultsContainer({results=[], onClick, ref, highli
                 alignItem={'start'}
                 justifyContent={'start'}
                 className={inputStyles.results}
+                zIndex={'100'}
                 ref={ref}
             >
                 {results.map((customer, index) => {

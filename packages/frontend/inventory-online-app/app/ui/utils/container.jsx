@@ -26,6 +26,7 @@ export function Container(
         onFocus,
         onBlur,
         role=null,
+        zIndex='auto',
         'aria-expanded': ariaExpanded,
         'aria-haspopup': ariaHaspopup,
         'aria-selected': ariaSelected,
@@ -45,7 +46,8 @@ export function Container(
             borderRadius: borderRadius,
             position: position,
             marginLeft: marginLeft,
-            flexWrap: flexWrap
+            flexWrap: flexWrap,
+            zIndex: zIndex
         }
     return (
         <div ref={ref} className={`containerNexa ${className} ${listContiner ? 'container-list' : ''}`} style={styles}
