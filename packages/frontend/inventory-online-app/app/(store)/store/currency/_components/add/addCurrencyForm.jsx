@@ -33,7 +33,7 @@ export default function AddCurrencyValueForm() {
                 justifyContent='start'
             >
                 <Icon icon={'dollar'} color='black'/>
-                <FloatInput valueInput={state.inputs?.value ?? false} />
+                <FloatInput />
             </Container>
 
             {state?.errors?.value && <span className="field_error">{state?.errors?.value}</span>}

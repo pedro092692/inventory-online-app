@@ -2,6 +2,7 @@
 import AddItemAction from '@/app/lib/actions/add'
 import { Form } from '@/app/ui/form/form/form'
 import { Input } from '@/app/ui/form/input/input'
+import FloatInput from '@/app/ui/form/input/floatInput'
 import { Button } from '@/app/ui/utils/button/buttons'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState, useState, useEffect } from 'react'
@@ -64,7 +65,7 @@ export default function AddProductForm() {
             {typeof state?.errors === 'string' && <span className="field_error">{state.errors}</span>}
 
             <label>Precio de compra $</label>
-            <Input type="text" placeHolder="Precio de compra $" icon="dollar" 
+            <Input type="number" step="0.01" placeHolder="Precio de compra $" icon="dollar" 
             defaultValue={state.inputs?.purchase_price ?? ""}
             onChange={() => setField({...field, purchase_price: {isEdited: true}})}  
             name={'purchase_price'} />
@@ -72,7 +73,7 @@ export default function AddProductForm() {
             {state?.errors?.purchase_price && <span className="field_error">{state?.errors?.purchase_price}</span>}
 
             <label>Precio de venta $</label>
-            <Input type="text" placeHolder="Precio De Venta $" icon="selling_price" 
+            <Input type="number" step="0.01" placeHolder="Precio De Venta $" icon="selling_price" 
             defaultValue={state.inputs?.selling_price ?? ""}
             onChange={() => setField({...field, selling_price: {isEdited: true}})}
             name={'selling_price'} />
@@ -80,7 +81,7 @@ export default function AddProductForm() {
             {state?.errors?.selling_price && <span className="field_error">{state?.errors?.selling_price}</span>}
             
             <label>Stock</label>
-            <Input type="text" placeHolder="Stock" icon="boxes" 
+            <Input type="number" step="1" placeHolder="Stock" icon="boxes" 
             defaultValue={state.inputs?.stock ?? ""}
             onChange={() => setField({...field, stock: {isEdited: true}})}
             name={'stock'} />
