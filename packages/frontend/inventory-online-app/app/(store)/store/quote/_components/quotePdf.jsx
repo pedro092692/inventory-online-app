@@ -40,7 +40,7 @@ export default function QuotePdf({ items = [], total = { total_usd: 0, total_bs:
                     <Container padding={'0px'} direction={'row'} gap={'16px'} justifyContent={'space-between'}>
                         <header className={styles.header}>
                             <h2>Presupuesto / Cotización</h2>
-                            <p className='p2-r'>Fecha: {now.toLocaleDateString('es-VE')} — {now.toLocaleTimeString('es-VE', {hour: '2-digit', minute: '2-digit'})}</p>
+                            <p className='p2-r'>Fecha: {now.toLocaleDateString('es-VE')} — {now.toLocaleTimeString('es-VE', {timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true})}</p>
                         </header>
                         {customerName &&
                             <section className={styles.header}>

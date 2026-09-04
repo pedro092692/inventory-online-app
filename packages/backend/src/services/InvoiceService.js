@@ -708,9 +708,9 @@ class InvoiceService {
      */
     invoiceDataForWhatsapp(invoice) {
         return this.#error.handler(['Create invoice data for whatsapp'], async() => {
-            const date = invoice.date.toLocaleDateString('es-VE')
-            const hours = `${invoice.date.getHours()}:${invoice.date.getMinutes()}`
-            const invoiceNumber = invoice.id.toString().padStart(8, '0');
+            const date = invoice.date.toLocaleDateString('es-VE', {timeZone: 'America/Caracas', year: 'numeric', month: '2-digit', day: '2-digit'})
+            const hours = invoice.date.toLocaleTimeString('es-VE', {timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true})
+            const invoiceNumber = invoice.id.toString().padStart(8, '0')
             const customer = invoice.customer.name
             const products = invoice.dataValues.products.map(product => {
                 return { name: product.products.name, quantity: product.quantity, price: product.unit_price }
