@@ -5,7 +5,7 @@ import { Container } from '@/app/ui/utils/container'
 import EditItemAction from '@/app/lib/actions/edit'
 import SelectedCustomer from '@/app/ui/customers/searchAndSelect/selectedCustomer'
 import { OvalLoader } from '@/app/ui/loader/spinner'
-import { useActionState, useState, useEffect } from 'react'
+import { useActionState, useState, useEffect, useRef } from 'react'
 import SelectObject from '@/app/utils/selectObject'
 import Select from '@/app/ui/select/select'
 import styles from './invoice.module.css'
@@ -26,6 +26,7 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
     const [sellerId, setSellerId] = useState(invoice?.seller_id || '')
     const [customer, setCustomer] = useState(initialCustomer || null)
     const sellerOptions = SelectObject(sellers, 'id', 'name') || []
+    const sellerSelectRef = useRef(null)
     
 
     const initialSte = {message: null, inputs: originalValues, errors: {}}
@@ -79,8 +80,11 @@ export default function InvoiceDetailForm({invoice=null, sellers=null}) {
             {/* seller */}
             <label>Vendedor</label>
             <Select 
-                name='seller_id' options={sellerOptions} selectKey={sellerId} 
-                defaultValue={invoice?.seller?.name || 'No tiene vendedor'}
+                name='seller_id' 
+                ref={sellerSelectRef}
+                options={sellerOptions} 
+                value={sellerId}
+                onChange={(seller) => setSellerId(seller.value)}
                 emptyMsg={'No hay vendedores disponibles.'}
                 />
             

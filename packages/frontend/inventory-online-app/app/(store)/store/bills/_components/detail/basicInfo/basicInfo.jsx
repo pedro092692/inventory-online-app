@@ -72,18 +72,23 @@ export default function InvoiceBasicInfo({invoice}) {
 }
 
 function formatDate(date, time = false) {
+    const d = new Date(date)
     if(!time) {
-        return new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' })
+        return d.toLocaleDateString('es-ES', {
+            timeZone: 'America/Caracas',
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit'
+        })
     }
-
-    const actualDate = new Date(date)
-    let hours = actualDate.getUTCHours()
-    let minutes = actualDate.getUTCMinutes()
-    const ampm = hours >=12 ? 'PM' : 'AM'
-    hours = hours % 12
-    hours = hours ? hours : 12
-    const min = minutes.toString().padStart(2, '0')
-    return `${hours}:${min} ${ampm}`
+        
+    return d.toLocaleTimeString('es-ES', {
+        timeZone: 'America/Caracas',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true 
+    })
+    
 }
 
 export { formatDate }

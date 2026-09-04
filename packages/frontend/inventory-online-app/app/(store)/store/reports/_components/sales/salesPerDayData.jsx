@@ -14,7 +14,7 @@ export default async function SalesPerDay() {
 
     const salesData = rawData.map(item  => {
         return {
-            day: new Date(item.day).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }),
+            day: new Date(item.day).toLocaleDateString('es-ES', { timeZone: 'America/Caracas', day: '2-digit', month: 'short', year: 'numeric' }),
             sales: parseInt(item.sales, 10),
             revenue: parseFloat(item.revenue)
         }

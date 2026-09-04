@@ -19,6 +19,7 @@ export default function Select({
 
     const [open, setOpen] = useState(false)
     const [highlightedIndex, setHighlightedIndex] = useState(-1)
+    const [inputValue, setInputValue] = useState('')
     const selectRef = useRef(null)
     const triggerRef = useRef(null)
 
@@ -35,6 +36,7 @@ export default function Select({
     const displayLabel = selectedOption ? selectedOption.label : (options[0]?.label || 'Seleccionar...')
 
     const handleOptionClick = (option) => {
+        setInputValue(option.value)
         onChange(option)
         setOpen(false)
         triggerRef.current?.focus()
@@ -152,6 +154,7 @@ export default function Select({
                     alignItem={'start'}
                     className={`${styles.child}`}
                     role='listbox'
+                    zIndex={'100'}
                 >
                     {
                     visibleOptions.length > 0
@@ -182,7 +185,7 @@ export default function Select({
                 </Container>
                 )
             }
-            <input type='hidden' name={name} value={value} />
+            <input type='hidden' name={name} value={inputValue} />
         </Container>
 
 

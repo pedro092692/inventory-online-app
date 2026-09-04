@@ -24,7 +24,7 @@ export default async function Data({ limit = 10, page = 1, queryString = null}){
 
     const historyData = rawData.map(data => {
         return {
-            date: new Date(data.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }),
+            date: new Date(data.date).toLocaleDateString('es-ES', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit', year: '2-digit' }),
             value: new Intl.NumberFormat('es-VE').format(data.value),
             id: data.id
         }

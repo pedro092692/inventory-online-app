@@ -15,7 +15,7 @@ export default async function InvoiceInfo({id}){
 
     const invoice = invoiceData?.invoice || null
     const sellers = sellersData?.sellers || null
-    invoice.date = invoice?.date ? new Date(invoice.date).toDateString() : null   
+    invoice.date = invoice?.date ? new Date(invoice.date).toLocaleDateString('es-ES', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit', year: '2-digit' }) : null
 
     // await new Promise(resolve => setTimeout(resolve, 2000))
 

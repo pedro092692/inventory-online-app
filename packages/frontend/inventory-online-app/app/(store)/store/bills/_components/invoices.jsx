@@ -35,7 +35,7 @@ export default async function Invoices({limit = 10, page = 1, query = null, quer
             data = invoices.map(invoice => (
                 {
                     invoice_number: String(invoice.id).padStart(8, '0'),
-                    date: new Date(invoice.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' }),
+                    date: new Date(invoice.date).toLocaleDateString('es-ES', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit', year: '2-digit' }),
                     total: `$ ${invoice.total}`,
                     total_reference: new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(invoice.total_reference),
                     exchange_rate: invoice.exchangeRate ? new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(invoice.exchangeRate) : 'N/A',
