@@ -26,7 +26,7 @@ export function Container(
         onFocus,
         onBlur,
         role=null,
-        zIndex='auto',
+        zIndex=null,
         'aria-expanded': ariaExpanded,
         'aria-haspopup': ariaHaspopup,
         'aria-selected': ariaSelected,
