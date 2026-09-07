@@ -60,5 +60,9 @@
     .cartContainer {
         min-width: 100%;
     }
+
+    .cartContainer {
+        z-index: -1;
+    }
 }
 

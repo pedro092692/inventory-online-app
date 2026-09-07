@@ -19,7 +19,7 @@ export default function Select({
 
     const [open, setOpen] = useState(false)
     const [highlightedIndex, setHighlightedIndex] = useState(-1)
-    const [inputValue, setInputValue] = useState('')
+    const [inputValue, setInputValue] = useState(value ?? '')
     const selectRef = useRef(null)
     const triggerRef = useRef(null)
 

@@ -6,6 +6,7 @@ import { Button } from '@/app/ui/utils/button/buttons'
 import { Container } from '@/app/ui/utils/container'
 import { OvalLoader } from '@/app/ui/loader/spinner'
 import { useActionState, useEffect, useState } from 'react'
+import styles from './quickAdd.module.css'
 
 /**
  * Compact "agregar cliente" form meant to live inside a Modal, used when a
@@ -50,9 +51,8 @@ export default function QuickAddCustomerForm({ initialQuery = '', onCreated = ()
         // it; the form's own submit (via the `action`) still runs normally.
         <div onKeyDown={(e) => { if (e.key === 'Enter') e.stopPropagation() }}>
         <Form action={handleSubmit}>
-            <Container direction='column' padding='0px' gap='16px' justifyContent='start' alignItem='start'
-                width={'400px'}
-            >
+            <Container className={styles.formContainer} direction='column' padding='0px' gap='16px' justifyContent='start' alignItem='start'>
+                
                 <Input type="text" icon="person" name={'name'}
                     defaultValue={state.inputs?.name ?? ''}
                     placeHolder='Nombre'

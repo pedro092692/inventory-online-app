@@ -173,8 +173,9 @@ export default function CustomerSelector({value, onChange, placeHolder='Buscar c
             className={inputStyles.father}
         >
             {/* input search */}
-            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} bgColor={bgColor} onKeyDown={handleKeyDown}            autoFocus={autoFocus}
-            inputRef={inputRef}/>
+            <SearchCustomerInput query={query} onChange={handleInputChange} placeHolder={placeHolder} bgColor={bgColor} onKeyDown={handleKeyDown}           
+                autoFocus={autoFocus}
+                inputRef={inputRef}/>
 
             {/* show results  */}
             <SearchResultsContainer
