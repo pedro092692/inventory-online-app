@@ -32,6 +32,12 @@ export default function ProductSelector({placeHolder='Buscar Producto Por Nombre
     params.append('limit', 8)
     params.append('page', 1)
     params.append('stock', true)
+    // forSale=true: get selling_price/reference_selling_price at 4-decimal precision instead
+    // of the usual 2 — this is what gets added to the cart, and the cart's own running total
+    // needs to match, to the cent, what getProductUnitPrice computes at sale time (also 4
+    // decimals), or a Bolivar payment for "the full amount" can get rejected as exceeding the
+    // (slightly lower) real total. See ProductService.getProduct's comment.
+    params.append('forSale', 'true')
     const url = `${endpoint}?${params.toString()}`
 
     const handleInputChange = (e) => {

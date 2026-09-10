@@ -173,17 +173,27 @@ class ProductService{
     /**
      * Retrieves a product by its ID.
      * @param {Number} id - id of the product to retrieve
+     * @param {boolean} [priceReference=true] - whether to compute/attach the buffer-aware price.
+     * @param {number} [decimals=2] - decimal places for the returned selling_price. Callers
+     * populating a sale in progress (the POS "add to cart" flow) pass 4 here — see the
+     * explanation on `getProductUnitPrice` and `_buffereredPrices`: the cart's own running
+     * total is computed client-side from this same value, and if it's only 2-decimal precise
+     * per item it can drift a few cents from the true total the backend computes at sale time
+     * (via getProductUnitPrice, also at 4 decimals), which then makes a Bolivar payment for
+     * "the full amount" get rejected as exceeding the (slightly lower) real total. Every other
+     * caller (product catalog, edit form) keeps the default of 2 — a human-facing price only
+     * needs cents.
      * @returns {Promise<Object>} - returns the product with the given id
      * @throws {ServiceError} - throws an error if the product could not be retrieved
      */
-    getProduct(id, priceReference=true) {
+    getProduct(id, priceReference=true, decimals=2) {
         return this.#error.handler(['Read Product', id, 'Product'], async () => {
             const product = await this.Product.findByPk(id)
 
             if(!product) {
                 throw new NotFoundError()
             }
-            
+
             // add reference selling price to product
             if(priceReference){
                 // get the effective rate (the store's "tasa colchón" when active, else the official rate)
@@ -193,7 +203,7 @@ class ProductService{
                     // if dollar value is not found, set reference selling price to message
                     product.dataValues.reference_selling_price = 'No dollar value found'
                 } else {
-                    const { sellingPriceUsd, referenceSellingPriceBs } = this._buffereredPrices(product.selling_price, dollarValue)
+                    const { sellingPriceUsd, referenceSellingPriceBs } = this._buffereredPrices(product.selling_price, dollarValue, decimals)
                     // when the buffer is active this also nudges the displayed USD price up by
                     // the same ratio, so a customer multiplying it by the official rate they
                     // know still lands on the Bs price actually charged — see _buffereredPrices.
@@ -201,7 +211,7 @@ class ProductService{
                     product.dataValues.reference_selling_price = referenceSellingPriceBs
                 }
             }
-            
+
             return product
         })
     }
@@ -211,16 +221,18 @@ class ProductService{
      * @param {string} query - The name or barcode to search for.
      * @param {number} [limit=10] - The maximum number of results to return.
      * @param {number} [offset=0] - The number of results to skip.
+     * @param {number} [decimals=2] - decimal places for the returned selling_price — see the
+     * matching note on getProduct. The POS product search (adding items to a sale) passes 4.
      * @return {Promise<Object>} - A promise that resolves to an object containing search results and pagination info.
      * @throws {ServiceError} - If an error occurs during the search.
      */
-    searchProducts(query, page = 1, limit = 10, includePurchasePrice = true, stock = true, sortBy = null, sortDir = null) {
+    searchProducts(query, page = 1, limit = 10, includePurchasePrice = true, stock = true, sortBy = null, sortDir = null, decimals = 2) {
         const offset = (page - 1) * limit
         const terms = query
             .toLowerCase()
             .split(" ")
             .filter(t => t.trim() !== "")
-        
+
             let attributes  = ['id', 'barcode', 'name', 'selling_price','stock']
         if (includePurchasePrice) {
             attributes.push('purchase_price')
@@ -228,18 +240,18 @@ class ProductService{
         return this.#error.handler(['Search Products', query, 'Product'], async () => {
             const results = await this.Product.findAll({
                 where: {
-    
+
                     [Op.or]: [
-                        { id: parseInt(query) ? parseInt(query) : null}, 
+                        { id: parseInt(query) ? parseInt(query) : null},
                         { barcode: query.toLowerCase() },
-                        { 
+                        {
                             [Op.and]: terms.map(term => ({
                                 name: {[Op.substring]: term}
                             }))
                         },
-                        
+
                     ],
-                    
+
                     stock: stock ? {[Op.gt]: 0} : {[Op.gte]: 0},
                 },
                 attributes: attributes,
@@ -249,7 +261,7 @@ class ProductService{
             })
 
             // add selleing bs price
-            const productsSellingPriceBs = await this.setSellingPriceBs(results)
+            const productsSellingPriceBs = await this.setSellingPriceBs(results, decimals)
             return {
                 products: productsSellingPriceBs,
             }
@@ -441,15 +453,17 @@ class ProductService{
      * Calculates and sets the reference selling price in Bolivars (Bs) for a list of products
      * based on the most recent dollar exchange rate.
      *
-     * @param {Array<Object>|null} [products=null] - An array of product objects to process. 
+     * @param {Array<Object>|null} [products=null] - An array of product objects to process.
      * Expected to have 'selling_price' and a 'dataValues' property.
+     * @param {number} [decimals=2] - decimal places for the returned selling_price — see the
+     * matching note on getProduct/searchProducts.
      * @returns {Promise<Array<Object>|null>} The updated array of products with 'reference_selling_price' added.
      */
-    async setSellingPriceBs(products = null) {
+    async setSellingPriceBs(products = null, decimals = 2) {
         //add reference price to products, using the effective (buffer-aware) rate
         const dollarValue = await this.dollarValue.getEffectiveValue(this.StoreSettings)
         products.forEach((product) => {
-            const { sellingPriceUsd, referenceSellingPriceBs } = this._buffereredPrices(product.selling_price, dollarValue)
+            const { sellingPriceUsd, referenceSellingPriceBs } = this._buffereredPrices(product.selling_price, dollarValue, decimals)
             // when the buffer is active this also nudges the displayed USD price up by the
             // same ratio, so a customer multiplying it by the official rate they know still
             // lands on the Bs price actually charged — see _buffereredPrices.

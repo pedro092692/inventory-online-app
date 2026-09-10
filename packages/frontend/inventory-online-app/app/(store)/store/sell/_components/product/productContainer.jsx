@@ -47,12 +47,14 @@ export default function ProductResultContainer({results = [], ref, onClick=() =>
                             </div>
                             <div className={styles.resultPriceBs}>
                                 <p className={'p2-b'}>
-                                    {new Intl.NumberFormat('es-Ve').format(product.reference_selling_price)}
+                                    {/* forSale=true (productSelector.jsx) returns these prices at 4-decimal
+                                        precision for accurate cart totals — always display just 2. */}
+                                    {new Intl.NumberFormat('es-Ve', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(product.reference_selling_price)}
                                 </p>
                             </div>
                             <div className={styles.resultPrice}>
                                 <p className={'p2-b'}>
-                                    {new Intl.NumberFormat('es-Ve').format(product.selling_price)}
+                                    {new Intl.NumberFormat('es-Ve', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(product.selling_price)}
                                 </p>
                             </div>
                         </Container>

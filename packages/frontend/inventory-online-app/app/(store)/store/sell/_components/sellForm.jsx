@@ -113,7 +113,11 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
 
             const refreshedItems = await Promise.all(
                 parsedItems.map(async (item) => {
-                    const { data } = await GetItemAction(`products/${item.id}`)
+                    // forSale=true keeps this restored item's price at the same 4-decimal
+                    // precision the cart totals are computed from (see productSelector.jsx) —
+                    // otherwise a page-reload mid-sale would quietly reintroduce the rounding
+                    // drift this whole fix removes.
+                    const { data } = await GetItemAction(`products/${item.id}?forSale=true`)
                     const freshProduct = data?.product
 
                     if (!freshProduct || freshProduct.stock <= 0) return null

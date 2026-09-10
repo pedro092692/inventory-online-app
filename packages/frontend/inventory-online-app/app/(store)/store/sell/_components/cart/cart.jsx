@@ -85,7 +85,10 @@ export default function Cart({items=[], setItems, total=0, state={}, totalPaidUS
 
                             <div className={styles.itemPriceContainer}>
                                 <p className={'p2-r'}>
-                                    {new Intl.NumberFormat('es-Ve').format(item.reference_selling_price)}
+                                    {/* item.reference_selling_price now carries 4-decimal precision
+                                        (see productSelector.jsx's forSale=true) so the cart's own total
+                                        matches the invoice's — always display just 2 decimals here. */}
+                                    {new Intl.NumberFormat('es-Ve', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(item.reference_selling_price)}
                                 </p>
                             </div>
 
@@ -109,7 +112,7 @@ export default function Cart({items=[], setItems, total=0, state={}, totalPaidUS
 
                             <div className={styles.itemTotalContainer}>
                                 <p className={'p2-r'}>
-                                    {new Intl.NumberFormat('es-Ve').format(
+                                    {new Intl.NumberFormat('es-Ve', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(
                                         isNaN(item.quantity) ? 0 :
                                         item.quantity * item.reference_selling_price
                                     )}

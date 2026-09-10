@@ -91,7 +91,12 @@ class ProductController{
      */
     getProduct = this.#error.handler( async(req, res) => {
         const { id } = req.params
-        const product = await this.ProductService.getProduct(id)
+        // `forSale=true` (set by the POS/sell flow when it fetches a product) asks for
+        // 4-decimal precision instead of the normal 2 — see ProductService.getProduct's
+        // comment for why: a sale in progress needs its running total to match, to the cent,
+        // what the backend will actually charge at checkout.
+        const decimals = req.query.forSale === 'true' ? 4 : 2
+        const product = await this.ProductService.getProduct(id, true, decimals)
         res.status(200).json({product})
     })
 
@@ -111,7 +116,10 @@ class ProductController{
         const sortBy = req.query.sortBy || null
         const sortDir = req.query.sortDir || null
         const permissions = userPermissions(req)
-        const { products } = await this.ProductService.searchProducts(data, page, limit, includePurchasePrice, stock, sortBy, sortDir)
+        // see the comment on getProduct above: the POS product search (adding items to a
+        // sale) passes forSale=true to get 4-decimal precision instead of the usual 2.
+        const decimals = req.query.forSale === 'true' ? 4 : 2
+        const { products } = await this.ProductService.searchProducts(data, page, limit, includePurchasePrice, stock, sortBy, sortDir, decimals)
         res.status(200).json( { products, permissions } )
     })
 
