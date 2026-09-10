@@ -2,12 +2,18 @@ import { buildQueryParams } from '@/app/utils/buildQueryParams'
 import Route from '@/app/ui/routesLinks/routes'
 import AddProductForm from '@/app/(store)/store/products/_components/add/addProductForm'
 import AddBulkProductsForm from '@/app/(store)/store/products/_components/bulk/addBulkProductsForm'
+import AddBulkProductsZyonForm from '@/app/(store)/store/products/_components/bulk/addBulkProductsZyonForm'
+import GetItemAction from '@/app/lib/actions/get'
 import { Container } from '@/app/ui/utils/container'
 import styles from './addProduct.module.css'
 
 export default async function AddProduct({searchParams}) {
     const urlParams = await searchParams
     const queryString = buildQueryParams(urlParams, ['page', 'data'])
+    // Prefills the Zyon import's exchange-rate field with Nexastock's own last registered
+    // rate; the user can still edit it if the provider's file used a different day's rate.
+    const { data } = await GetItemAction('dollar-value/latest')
+    const defaultExchangeRate = data?.lastValue?.value ?? ''
 
     return (
         <>
@@ -52,7 +58,26 @@ export default async function AddProduct({searchParams}) {
                     <h2 className='p1-b'>Carga Masiva De Productos</h2>
                     <AddBulkProductsForm />
                 </Container>
+
+                <Container
+                    padding={'0px'}
+                    backgroundColor={'#D2D3D3'}
+                    className={styles.divider}
+                >
+                    <span></span>
+                </Container>
+
+                <Container
+                    width={'100%'}
+                    padding={'4px'}
+                    direction={'column'}
+                    alignItem={'start'}
+                    gap={'0px'}
+                >
+                    <h2 className='p1-b'>Subir Inventario Zyon</h2>
+                    <AddBulkProductsZyonForm defaultExchangeRate={defaultExchangeRate} />
+                </Container>
             </Container>
-        </>          
+        </>
    )
 }

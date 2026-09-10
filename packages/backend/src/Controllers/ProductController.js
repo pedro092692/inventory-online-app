@@ -47,6 +47,24 @@ class ProductController{
     })
 
     /**
+     * Bulk-imports products from a Zyon-style provider inventory file (.txt/.csv,
+     * ';'-delimited, prices in Bs). Converts Costo/Pvp to USD using `exchangeRate`
+     * (sent alongside the file as a form field) and reports which rows were skipped
+     * (missing data, zero prices, duplicate barcodes) instead of failing the whole import.
+     * @param {Object} req - request object; `req.file` is the uploaded file (Multer), and
+     * `req.body.exchangeRate` is the Bs-per-USD rate to convert with.
+     * @param {Object} res - response object to send the import summary
+     * @throws {ServiceError} - throws an error if the file/rate is invalid or the import fails
+     * @returns {Promise<void>} - returns { newProducts, productsToUpdate, ignoredProducts, skippedCount, skippedRows, exchangeRateUsed }
+     */
+    bulkProductsZyon = this.#error.handler( async(req, res) => {
+        const file = req.file || null
+        const { exchangeRate } = req.body
+        const result = await this.ProductService.createProductsBulkFromZyon(file, exchangeRate)
+        res.status(201).json(result)
+    })
+
+    /**
      * Retrieves all products.
      * @param {Object} req - request object
      * @param {Object} res - response object to send the list of products

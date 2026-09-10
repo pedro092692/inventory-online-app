@@ -36,6 +36,9 @@ class ProductRoutes {
         // dashboard's "Agregar producto" shortcut being hidden from the vendedor role.
         this.router.post('/', requireActiveStore, authorization(PERMISSIONS.UPDATE), validateFields('createProduct'), (req, res) => new ProductController(req.Product).createProduct(req, res))
         this.router.post('/bulk', authorization(PERMISSIONS.UPDATE), this.upload.single('file'), (req, res) => new ProductController(req.Product).bulkProducts(req, res))
+        // Bulk import from a third-party provider's own export format ("Zyon"): Bs prices,
+        // different columns — see ProductService.createProductsBulkFromZyon.
+        this.router.post('/bulk/zyon', authorization(PERMISSIONS.UPDATE), this.upload.single('file'), (req, res) => new ProductController(req.Product).bulkProductsZyon(req, res))
         this.router.post('/export', authorization(PERMISSIONS.UPDATE), (req, res) => new ProductController(req.Product).exportProductsSheet(req, res))
         this.router.patch('/:id', requireActiveStore, authorization(PERMISSIONS.UPDATE), validateFields('createProduct'), (req, res) => new ProductController(req.Product).updateProduct(req, res))
         this.router.delete('/', authorization(PERMISSIONS.UPDATE), (req, res) => new ProductController(req.Product).deleteProduct(req, res))

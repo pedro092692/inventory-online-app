@@ -904,6 +904,293 @@ class ProductService{
         })
     }
 
+    /**
+     * Handles the bulk import of products from a third-party provider's inventory export
+     * ("Zyon"-style file): a ';'-delimited .txt/.csv with columns Codigo, Codigo de Barras,
+     * Descripcion, Linea, Marca, Categoria, Existencia, Costo, Pvp, IVA, where Costo/Pvp are
+     * in Bolívares. Unlike {@link createProductsBulk}, this is tolerant of the data-quality
+     * issues real provider exports have (missing barcodes, zero prices, duplicate barcodes):
+     * instead of aborting on the first bad row, it skips that row, records why, and imports
+     * everything else — see {@link zyonProductData} and {@link dedupeZyonBarcodes}.
+     *
+     * @param {File|Blob|Buffer} file - The raw uploaded file (from Multer).
+     * @param {number|string} exchangeRate - Bs-per-USD rate to convert Costo/Pvp with.
+     * @returns {Promise<{
+     *   newProducts: number,
+     *   productsToUpdate: number,
+     *   ignoredProducts: number,
+     *   skippedCount: number,
+     *   skippedRows: Array<{row: number, barcode: (string|null), name?: string, reason: string}>,
+     *   exchangeRateUsed: number
+     * }>}
+     * @throws {FileError} Throws if the file/extension is invalid, the rate is missing or
+     * not a positive number, or the required columns are missing from the file.
+     */
+    createProductsBulkFromZyon(file, exchangeRate) {
+        return this.#error.handler(['Create Products Bulk Zyon'], async() => {
+            if (!file) {
+                throw new Error('File is required')
+            }
+
+            const rate = parseFloat(exchangeRate)
+            if (!rate || isNaN(rate) || rate <= 0) {
+                throw new FileError('La tasa de cambio es requerida y debe ser un número mayor a 0')
+            }
+
+            // parse (not validateFile/XLSX.read: see validateZyonFile for why)
+            const { headers, rows } = await this.validateZyonFile(file)
+            const columns = this.resolveZyonColumns(headers)
+
+            const { products, skipped: invalidRows } = this.zyonProductData(columns, rows, rate)
+            const { products: dedupedProducts, skipped: duplicateRows } = this.dedupeZyonBarcodes(products)
+            const skippedRows = [...invalidRows, ...duplicateRows].sort((a, b) => a.row - b.row)
+
+            let newProducts = 0
+            let productsToUpdate = 0
+            let ignoredProducts = 0
+
+            if (dedupedProducts.length > 0) {
+                // upsertProductsBulk only expects the model fields — strip the row number
+                // we've been carrying along purely for the skipped-rows report.
+                const result = await this.upsertProductsBulk(
+                    dedupedProducts.map(({ row, ...product }) => product)
+                )
+                newProducts = result.newProducts
+                productsToUpdate = result.productsToUpdate
+                ignoredProducts = result.ignoredProducts
+            }
+
+            return {
+                newProducts,
+                productsToUpdate,
+                ignoredProducts,
+                skippedCount: skippedRows.length,
+                // capped so a large provider file can't blow up the response payload
+                skippedRows: skippedRows.slice(0, 50),
+                exchangeRateUsed: rate
+            }
+        })
+    }
+
+    /**
+     * Validates and reads a Zyon-style inventory file (.txt/.csv, ';'-delimited).
+     *
+     * Deliberately does NOT go through XLSX.read: SheetJS auto-detects numeric-looking CSV
+     * cells and converts them to JS numbers, which silently strips leading zeros from
+     * barcodes like "0791466996005" (a real value seen in this provider's export) — turning
+     * a valid EAN into a different, wrong number. Reading the file as plain delimited text
+     * instead keeps every column a string until we explicitly parse the numeric ones
+     * (Costo/Pvp/Existencia), so barcodes survive intact.
+     *
+     * Also auto-detects the text encoding: this provider's export (like many older
+     * POS/ERP systems) is typically Windows-1252/Latin-1, not UTF-8 — decoding it as UTF-8
+     * mangles accented characters (e.g. "ARESÁN" becomes "ARES�N"), so we fall back to
+     * latin1 whenever the UTF-8 decode produces replacement characters.
+     *
+     * @param {Object} file - The file object (typically from Multer).
+     * @param {string} file.originalname - Original filename including extension.
+     * @param {Buffer} file.buffer - The raw file bytes.
+     * @returns {Promise<{headers: string[], rows: string[][]}>}
+     * @throws {InvalidFileTypeError} If the extension isn't .txt or .csv.
+     * @throws {FileError} If the file has no data rows.
+     */
+    validateZyonFile(file) {
+        return this.#error.handler(['Validate Zyon File'], async() => {
+            const allowedExtensions = ['txt', 'csv']
+            const fileExtension = file.originalname.split('.').pop().toLowerCase()
+
+            if (!allowedExtensions.includes(fileExtension)) {
+                throw new InvalidFileTypeError('Solo se permiten archivos .txt o .csv exportados del sistema del proveedor')
+            }
+
+            let text = file.buffer.toString('utf8')
+            if (text.includes('�')) {
+                // UTF-8 decode produced replacement chars: this was actually latin1/cp1252
+                text = file.buffer.toString('latin1')
+            }
+            text = text.replace(/^﻿/, '') // strip BOM if present
+
+            return this.parseDelimitedText(text)
+        })
+    }
+
+    /**
+     * Splits raw delimited text into a header row and data rows, auto-detecting whether
+     * ';' or ',' is the field separator (this provider uses ';'; kept generic in case a
+     * different export from the same family of systems uses a comma instead).
+     *
+     * Note: this is a plain split, not a full CSV parser — it doesn't handle quoted fields
+     * that contain the delimiter itself. That matches this provider's export (no quoting),
+     * but a different source file with quoted/escaped fields would need a proper CSV parser.
+     *
+     * @param {string} text - The decoded file contents.
+     * @returns {{headers: string[], rows: string[][]}}
+     * @throws {FileError} If the file is empty or has no data rows.
+     */
+    parseDelimitedText(text) {
+        const lines = text.split(/\r\n|\r|\n/).filter(line => line.trim() !== '')
+
+        if (lines.length < 2) {
+            throw new FileError('El archivo está vacío o no contiene filas de datos')
+        }
+
+        const delimiter = (lines[0].split(';').length >= lines[0].split(',').length) ? ';' : ','
+        const parseLine = (line) => line.split(delimiter).map(cell => cell.trim())
+
+        const [headerLine, ...dataLines] = lines
+        return {
+            headers: parseLine(headerLine),
+            rows: dataLines.map(parseLine)
+        }
+    }
+
+    /**
+     * Locates the column index of each field Nexastock needs within the Zyon file's header
+     * row, normalizing headers the same way {@link validateHeaders} does (trim, lowercase,
+     * strip accents, collapse spaces) so minor formatting differences don't matter.
+     *
+     * @param {string[]} headers - The raw header row.
+     * @returns {{codigo: number, barcode: number, name: number, stock: number, purchase_price: number, selling_price: number}}
+     * @throws {FileError} If any required column is missing.
+     */
+    resolveZyonColumns(headers) {
+        const required = {
+            codigo: 'codigo',
+            barcode: 'codigo de barras',
+            name: 'descripcion',
+            stock: 'existencia',
+            purchase_price: 'costo',
+            selling_price: 'pvp'
+        }
+
+        const normalize = (header) => String(header ?? '')
+            .trim()
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, ' ')
+
+        const normalizedHeaders = headers.map(normalize)
+        const columns = {}
+        const missing = []
+
+        Object.entries(required).forEach(([key, expectedHeader]) => {
+            const index = normalizedHeaders.indexOf(expectedHeader)
+            if (index === -1) {
+                missing.push(expectedHeader)
+            } else {
+                columns[key] = index
+            }
+        })
+
+        if (missing.length > 0) {
+            throw new FileError(`Columnas inválidas. El archivo debe contener las columnas: Codigo, Codigo de Barras, Descripcion, Existencia, Costo y Pvp. Faltan: ${missing.join(', ')}`)
+        }
+
+        return columns
+    }
+
+    /**
+     * Transforms raw Zyon rows into Nexastock product objects, converting Bs prices to USD
+     * and applying the fallbacks agreed for this provider's data quality:
+     * - barcode: falls back to the internal "Codigo" when "Codigo de Barras" is blank
+     *   (~17% of rows in a real export from this provider), so those products aren't lost.
+     * - rows with an empty description, no barcode/codigo at all, or a Costo/Pvp of 0 or
+     *   invalid are skipped (not imported) and reported back instead of aborting the whole
+     *   file, since a real export from this provider has hundreds of such rows.
+     * - Existencia is rounded to the nearest integer (Nexastock's stock is an integer
+     *   column); a missing/invalid value defaults to 0 rather than being skipped.
+     *
+     * @param {{codigo: number, barcode: number, name: number, stock: number, purchase_price: number, selling_price: number}} columns
+     * @param {string[][]} rows - Raw data rows (strings), header row excluded.
+     * @param {number} exchangeRate - Bs-per-USD rate to divide Costo/Pvp by.
+     * @returns {{products: Array<Object>, skipped: Array<{row: number, barcode: (string|null), name?: string, reason: string}>}}
+     */
+    zyonProductData(columns, rows, exchangeRate) {
+        const products = []
+        const skipped = []
+
+        rows.forEach((row, index) => {
+            const rowNumber = index + 2 // header is row 1
+
+            const rawCodigo = row[columns.codigo]
+            const rawBarcode = row[columns.barcode]
+            const rawName = row[columns.name]
+            const rawStock = row[columns.stock]
+            const rawCost = row[columns.purchase_price]
+            const rawPvp = row[columns.selling_price]
+
+            const name = (rawName || '').trim()
+            if (!name) {
+                skipped.push({ row: rowNumber, barcode: (rawBarcode || rawCodigo || null), reason: 'Descripción vacía' })
+                return
+            }
+
+            const barcode = (rawBarcode && rawBarcode.trim()) ? rawBarcode.trim() : (rawCodigo || '').trim()
+            if (!barcode) {
+                skipped.push({ row: rowNumber, barcode: null, name, reason: 'Sin código de barras ni código interno' })
+                return
+            }
+
+            const costBs = parseFloat(rawCost)
+            if (!costBs || isNaN(costBs) || costBs <= 0) {
+                skipped.push({ row: rowNumber, barcode, name, reason: 'Costo en 0 o inválido' })
+                return
+            }
+
+            const pvpBs = parseFloat(rawPvp)
+            if (!pvpBs || isNaN(pvpBs) || pvpBs <= 0) {
+                skipped.push({ row: rowNumber, barcode, name, reason: 'Precio de venta en 0 o inválido' })
+                return
+            }
+
+            const stockRaw = parseFloat(rawStock)
+            const stock = isNaN(stockRaw) ? 0 : Math.max(0, Math.round(stockRaw))
+
+            products.push({
+                row: rowNumber,
+                name: name.toLowerCase(),
+                barcode,
+                purchase_price: (costBs / exchangeRate).toFixed(2),
+                selling_price: (pvpBs / exchangeRate).toFixed(2),
+                stock
+            })
+        })
+
+        return { products, skipped }
+    }
+
+    /**
+     * Removes products that share a barcode within the same file (keeping the first
+     * occurrence), reporting the rest as skipped rather than letting them reach
+     * `upsertProductsBulk` — two rows with the same barcode in one `bulkCreate` call would
+     * violate the barcode partial-unique-index and fail the whole batch.
+     *
+     * @param {Object[]} products - Products already mapped by {@link zyonProductData}.
+     * @returns {{products: Object[], skipped: Array<{row: number, barcode: string, name: string, reason: string}>}}
+     */
+    dedupeZyonBarcodes(products) {
+        const seen = new Set()
+        const deduped = []
+        const skipped = []
+
+        products.forEach((product) => {
+            if (seen.has(product.barcode)) {
+                skipped.push({
+                    row: product.row,
+                    barcode: product.barcode,
+                    name: product.name,
+                    reason: 'Código de barras duplicado en el archivo (se usó la primera aparición)'
+                })
+                return
+            }
+            seen.add(product.barcode)
+            deduped.push(product)
+        })
+
+        return { products: deduped, skipped }
+    }
+
 }
 
 export default ProductService
