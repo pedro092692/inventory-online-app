@@ -211,7 +211,19 @@ class PayInvoiceService {
                 let status = 'unpaid'
                 if (total_paid >= total) {
                     status = 'paid'
-                    total_reference = (total * parseFloat(dollarValue.value)).toFixed(2)
+                    // `total` (invoice.total) is priced in "true-dollar-equivalent" terms — when
+                    // the buffer is active, ProductService bumps the displayed USD price by
+                    // (effectiveRate / officialRate) precisely so that
+                    // displayedUsd × officialRate === displayedBs (see
+                    // ProductService._buffereredPrices, and _checkPaymentMethod above, which
+                    // already gets this right). Multiplying by the EFFECTIVE/buffer rate here
+                    // instead double-applies the buffer, permanently overstating the Bs amount
+                    // this paid invoice is frozen at — every later Bs display sourced from
+                    // total_reference (invoice detail, WhatsApp, PDF/print) would then disagree
+                    // with what was actually charged/quoted at checkout. Falls back to .value
+                    // when there's no buffer (official_value then equals value anyway).
+                    const officialRate = parseFloat(dollarValue.official_value ?? dollarValue.value)
+                    total_reference = (total * officialRate).toFixed(2)
                 }
 
                 // 5. Register all details in the database, either in bulk or one by one.

@@ -43,7 +43,11 @@ export default async function Products({ limit = 10, page = 1, query = null, que
                 {
                     name: product.name,
                     barcode: product.barcode,
-                    purchase_price: `${product.purchase_price} $`,
+                    // purchase_price is stored with 4 decimals (see the price-precision
+                    // migration), so it's rounded to 2 here for display — selling_price
+                    // doesn't need this: the backend already returns it rounded to 2
+                    // (see ProductService._buffereredPrices).
+                    purchase_price: `${Number(product.purchase_price).toFixed(2)} $`,
                     selling_price: `${product.selling_price} $`,
                     selling_price_bs: 
                         new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(product.reference_selling_price),

@@ -179,17 +179,25 @@ export default function SellForm({ paymentMethods=[], exchangeRate=null, current
         localStorage.removeItem('pos_invoice_changes')
     }
 
-    // total order amount in USD and Bs
+    // Total order amount in USD and Bs.
+    //
+    // total_bs is derived from total_usd * exchangeRate (the same formula the "End" key
+    // shortcut and the Bs-payment flow use — see payInputButton.jsx and _checkPaymentMethod
+    // in PayInvoiceService), rather than summing each item's already-rounded (2-decimal)
+    // reference_selling_price. Summing independently-rounded per-item Bs prices and
+    // independently-rounded per-item USD prices takes two different rounding paths to what
+    // should be the same total, so they'd drift apart by a few Bs — exactly the kind of
+    // "round too early, then multiply by the exchange rate" drift this whole precision pass
+    // has been fixing on the backend. Deriving total_bs from total_usd instead keeps this
+    // total consistent with what pressing "End" fills in and what the invoice is actually
+    // charged for.
     const total = useMemo(() => {
-        return items.reduce((acc, item) => {
-            const bs = item.quantity * parseFloat(item.reference_selling_price || 0)
-            const usd = item.quantity * parseFloat(item.selling_price || 0)
-            return {
-                total_bs: acc.total_bs + bs,
-                total_usd: acc.total_usd + usd,
-            }
-        }, {total_bs: 0, total_usd: 0})
-    }, [items])
+        const total_usd = items.reduce((acc, item) => {
+            return acc + (item.quantity * parseFloat(item.selling_price || 0))
+        }, 0)
+        const total_bs = total_usd * (parseFloat(exchangeRate) || 0)
+        return { total_usd, total_bs }
+    }, [items, exchangeRate])
 
     // total paid converted in usd
     const totalPaidUSD = useMemo(() => {

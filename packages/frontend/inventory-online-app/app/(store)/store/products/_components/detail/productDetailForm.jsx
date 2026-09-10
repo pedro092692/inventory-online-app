@@ -10,7 +10,10 @@ export default function ProductDetailForm({product}) {
     const originalValues = {
         name: product?.name,
         barcode: product?.barcode,
-        purchase_price: product?.purchase_price,
+        // purchase_price is stored with 4 decimals (see the price-precision migration);
+        // rounded to 2 here so the edit form shows the usual "0.28" instead of "0.2820".
+        // Saving unchanged still resubmits a valid 2-decimal price.
+        purchase_price: product?.purchase_price != null ? Number(product.purchase_price).toFixed(2) : product?.purchase_price,
         selling_price: product?.selling_price,
         stock: product?.stock,
         min_stock: product?.min_stock

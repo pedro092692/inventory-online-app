@@ -57,8 +57,17 @@ function initializeProduct(sequelize, schema) {
                 defaultValue: 'Default product',
             },
 
+            // DECIMAL(10, 4) (not 2): prices are always canonical USD, but bulk imports that
+            // convert from a foreign-currency source (e.g. the "Zyon" provider import)
+            // divide a Bs price by the day's exchange rate, where 1 cent of USD can be
+            // worth several Bs — 2 decimals rounds that conversion too coarsely (drifting
+            // the price if reconstructed back to Bs, or even flooring very cheap products
+            // to $0.00). 4 decimals keeps that rounding effectively invisible. This doesn't
+            // change how invoices/payments total money — that math already rounds to 2
+            // decimals on its own (see ProductService._buffereredPrices) — it only makes
+            // the stored price itself more faithful to its original source.
             purchase_price: {
-                type: DataTypes.DECIMAL(10, 2),
+                type: DataTypes.DECIMAL(10, 4),
                 allowNull: false,
                 validate: {
                     isNumeric: {
@@ -68,7 +77,7 @@ function initializeProduct(sequelize, schema) {
             },
 
             selling_price: {
-                type: DataTypes.DECIMAL(10, 2),
+                type: DataTypes.DECIMAL(10, 4),
                 allowNull: false,
                 validate: {
                     isNumeric: {

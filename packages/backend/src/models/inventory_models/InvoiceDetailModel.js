@@ -94,7 +94,13 @@ function initializeInvoiceDetail(sequelize, schema) {
             },
 
             unit_price: {
-                type: DataTypes.DECIMAL(10, 2),
+                // DECIMAL(10, 4): widened from (10, 2) so the price frozen into this column at
+                // sale time (see ProductService.getProductUnitPrice) keeps the same precision
+                // products.selling_price now carries. At typical Bs/USD rates, 1 cent of USD is
+                // worth several Bs, so a 2-decimal snapshot drifted whenever this price was
+                // re-multiplied by the exchange rate later (checkout, WhatsApp, PDF/print) —
+                // see the invoice-price-precision migration for the full explanation.
+                type: DataTypes.DECIMAL(10, 4),
                 allowNull: false,
                 validate: {
                     isNumeric: {

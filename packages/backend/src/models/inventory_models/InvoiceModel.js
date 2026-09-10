@@ -136,7 +136,12 @@ function initializeInvoice(sequelize, schema) {
             },
 
             total: {
-                type: DataTypes.DECIMAL(10, 2),
+                // DECIMAL(10, 4): widened from (10, 2) alongside invoice_details.unit_price —
+                // this is the sum of unit_price × quantity (see utils/calculeTotal.js), so
+                // storing it at only 2 decimals would truncate the higher-precision unit
+                // prices right back down the moment the total is saved, undoing the point of
+                // widening unit_price at all. See the invoice-price-precision migration.
+                type: DataTypes.DECIMAL(10, 4),
                 allowNull: false,
                 defaultValue: 0.00,
                 validate: {
@@ -147,6 +152,8 @@ function initializeInvoice(sequelize, schema) {
             },
 
             total_reference: {
+                // Stays at (20, 2): this is a Bs amount, not USD — Bs currency doesn't need
+                // finer subdivision than 2 decimals, so it's unaffected by this precision fix.
                 type: DataTypes.DECIMAL(20, 2),
                 allowNull: true,
                 defaultValue: 0.00,
@@ -158,7 +165,10 @@ function initializeInvoice(sequelize, schema) {
             },
 
             total_paid: {
-                type: DataTypes.DECIMAL(10, 2),
+                // DECIMAL(10, 4): widened alongside `total` for the same reason, and so the
+                // `total_paid >= total` comparison in PayInvoiceService compares like-precision
+                // values.
+                type: DataTypes.DECIMAL(10, 4),
                 allowNull: true,
                 defaultValue: 0.00,
                 validate: {

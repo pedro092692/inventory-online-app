@@ -359,6 +359,13 @@ class ProductService{
      * the customer actually saw and agreed to pay, otherwise invoice.total silently drifts
      * from the frontend's displayed total whenever the buffer is enabled, and payment/change
      * validation in PayInvoiceService breaks against it.
+     *
+     * Requests `_buffereredPrices` at 4 decimals (instead of the default 2): this price gets
+     * frozen into `invoice_details.unit_price` and re-multiplied by the exchange rate every
+     * time a paid invoice's Bs total is redisplayed (checkout, WhatsApp, PDF/print) — 2
+     * decimals of USD can be worth several Bs at typical exchange rates, so rounding here
+     * would drift on reconversion (see invoice_details.unit_price's DECIMAL(10,4) migration
+     * and the comment on _buffereredPrices).
      * @param {Array} details - array of objects containing product_id and quantity
      * @param {Number} details.product_id - id of the product
      * @returns {Promise<Array>} - returns an array of products with their unit price
@@ -373,7 +380,7 @@ class ProductService{
 
             const dollarValue = await this.dollarValue.getEffectiveValue(this.StoreSettings)
             products.forEach((product) => {
-                const { sellingPriceUsd } = this._buffereredPrices(product.selling_price, dollarValue)
+                const { sellingPriceUsd } = this._buffereredPrices(product.selling_price, dollarValue, 4)
                 product.dataValues.selling_price = sellingPriceUsd
             })
 
@@ -464,18 +471,30 @@ class ProductService{
      * like they're being charged more than the sticker price implies. With no buffer active
      * (effectiveRate === officialRate), the ratio is 1 and the USD price is left untouched.
      *
+     * `decimals` controls how many decimal places the returned `sellingPriceUsd` carries.
+     * It defaults to 2, which is right for anything the customer actually reads (catalog,
+     * cart, product detail) — a human-facing USD price doesn't need more than cents. But
+     * `getProductUnitPrice` (the price frozen into `invoice_details.unit_price` at sale time)
+     * passes 4: that value gets re-multiplied by the exchange rate later on for every Bs
+     * display of a paid invoice (checkout, WhatsApp, PDF/print), and at Bs/USD rates in the
+     * hundreds or thousands, 1 cent of USD can be worth several Bs — so hard-rounding to 2
+     * decimals here, before the price is even stored, drifts on reconversion (the exact
+     * "products.selling_price precision" problem this fixed at the product level, one step
+     * further down the pipeline). `referenceSellingPriceBs` always stays at 2 decimals — it's
+     * a Bs amount, and Bs currency itself doesn't need finer subdivision than that.
      * @param {number|string} trueSellingPriceUsd - the product's real, stored USD selling price.
      * @param {{value: number, official_value?: number}|false} dollarValue - result of getEffectiveValue().
+     * @param {number} [decimals=2] - decimal places for the returned sellingPriceUsd.
      * @returns {{sellingPriceUsd: string, referenceSellingPriceBs: string}}
      */
-    _buffereredPrices(trueSellingPriceUsd, dollarValue) {
+    _buffereredPrices(trueSellingPriceUsd, dollarValue, decimals = 2) {
         const trueUsd = parseFloat(trueSellingPriceUsd) || 0
         const effectiveRate = dollarValue?.value ? parseFloat(dollarValue.value) : 1
         const officialRate = dollarValue?.official_value ? parseFloat(dollarValue.official_value) : effectiveRate
         const usdAdjustmentRatio = officialRate ? (effectiveRate / officialRate) : 1
 
         return {
-            sellingPriceUsd: (trueUsd * usdAdjustmentRatio).toFixed(2),
+            sellingPriceUsd: (trueUsd * usdAdjustmentRatio).toFixed(decimals),
             referenceSellingPriceBs: (trueUsd * effectiveRate).toFixed(2)
         }
     }
@@ -1098,6 +1117,11 @@ class ProductService{
      * - rows with an empty description, no barcode/codigo at all, or a Costo/Pvp of 0 or
      *   invalid are skipped (not imported) and reported back instead of aborting the whole
      *   file, since a real export from this provider has hundreds of such rows.
+     * - Costo/Pvp are converted with 4 decimal places (matching the Product model's
+     *   DECIMAL(10,4) columns) rather than 2: at typical Bs/USD rates, 1 cent of USD can be
+     *   worth several Bs, so rounding to cents can noticeably drift the price once
+     *   reconstructed back to Bs. A row whose converted price *still* rounds to $0.00 (very
+     *   cheap products) is skipped and reported rather than silently saved as free.
      * - Existencia is rounded to the nearest integer (Nexastock's stock is an integer
      *   column); a missing/invalid value defaults to 0 rather than being skipped.
      *
@@ -1144,6 +1168,22 @@ class ProductService{
                 return
             }
 
+            // 4 decimals (matching the Product model's DECIMAL(10,4) columns), not 2: at
+            // typical Bs/USD rates, 1 cent of USD can be worth several Bs, so rounding this
+            // conversion to cents can noticeably drift the price and, for cheap products,
+            // floor it all the way to $0.00 — see the guards right below.
+            const purchasePriceUsd = (costBs / exchangeRate).toFixed(4)
+            if (parseFloat(purchasePriceUsd) <= 0) {
+                skipped.push({ row: rowNumber, barcode, name, reason: 'Precio de compra convertido resulta en $0.00' })
+                return
+            }
+
+            const sellingPriceUsd = (pvpBs / exchangeRate).toFixed(4)
+            if (parseFloat(sellingPriceUsd) <= 0) {
+                skipped.push({ row: rowNumber, barcode, name, reason: 'Precio de venta convertido resulta en $0.00' })
+                return
+            }
+
             const stockRaw = parseFloat(rawStock)
             const stock = isNaN(stockRaw) ? 0 : Math.max(0, Math.round(stockRaw))
 
@@ -1151,8 +1191,8 @@ class ProductService{
                 row: rowNumber,
                 name: name.toLowerCase(),
                 barcode,
-                purchase_price: (costBs / exchangeRate).toFixed(2),
-                selling_price: (pvpBs / exchangeRate).toFixed(2),
+                purchase_price: purchasePriceUsd,
+                selling_price: sellingPriceUsd,
                 stock
             })
         })

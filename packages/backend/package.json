@@ -9,6 +9,7 @@
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "migrate": "sequelize-cli db:migrate",
+    "migrate:tenants": "node src/utils/migrateTenants.js",
     "seed": "sequelize-cli db:seed:all"
   },
   "author": "",
